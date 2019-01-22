@@ -205,7 +205,11 @@ class PkdbModel(object):
     
     @property
     def url(self):
-         return urljoin(self.base_url, f'{self.name}_elastic/')
+        if self.name == "substances":
+            return urljoin(self.base_url, f'{self.name}_statistics/')
+        
+        return urljoin(self.base_url, f'{self.name}_elastic/')
+        
         
     def add_data(self, data):
         self.data = data    
@@ -219,6 +223,7 @@ class PkdbModel(object):
         self._preprocess_outputs()
         self._preprocess_interventions()
         self._preprocess_characteristica()
+        self._preprocess_substances()
         self._preprocess_studies()
 
         self.preprocessed = True
@@ -235,7 +240,7 @@ class PkdbModel(object):
              return {'header' :[0,1],'index_col': [0,1,2]}
         elif self.name in ["all_subjects"]:
             return {'header':[0,1], "index_col":[0,1,2,3]}
-        elif self.name in ["all_complete","groups_complete","individuals_complete","caffeine_timecourse","caffeine_clearance","studies"]:
+        elif self.name in ["all_complete","groups_complete","individuals_complete","caffeine_timecourse","caffeine_clearance","studies","substances"]:
             return {'header':[0], "index_col":[0]}
         elif self.name in ["all_results"]:
             return {'header':[0]}
@@ -269,8 +274,16 @@ class PkdbModel(object):
     @property
     def select_output(output):
         return 
-        
-        
+    
+    def _preprocess_substances(self):
+         if self.name in ["substances"]:
+            self.data = self.data[["name","studies","interventions","outputs","timecourses"]]
+            self.data.insert(1,"study_number", self.data["studies"].apply(len))
+            self.data.insert(2,"intervention_number", self.data["interventions"].apply(len))
+            self.data.insert(3,"timecourse_number", self.data["timecourses"].apply(len))
+            self.data.insert(4,"output_number", self.data["outputs"].apply(len))
+            self.data.sort_values(by="study_number", ascending=False, inplace=True)
+            
     def _preprocess_outputs(self):
         if self.name in ["outputs","timecourses"]:
             self.data.drop(["final","individual_name","group_name"],axis=1, inplace=True)
