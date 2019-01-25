@@ -146,7 +146,7 @@ def add_level_to_df(df, level_name):
     return  df.swaplevel(axis=1)     
 
 def curator_parse(x):
-    return ",".join([curator['first_name'] + " " + curator['last_name'] for curator in x ])
+    return ", ".join([curator['first_name'][0] + " " + curator['last_name'][0] for curator in x ])
 
 def groups_parse(groups_pks, groups):
     this_groups = []
@@ -154,7 +154,7 @@ def groups_parse(groups_pks, groups):
         this_group = groups.data.loc[groups_pk]
         groups_dict  = {}
         groups_dict["count"] = this_group[("general","group_count")]
-        groups_dict["subject_name"] = this_group["subject_name"]
+        groups_dict["name"] = this_group["subject_name"]
         this_groups.append(groups_dict)
     return this_groups
 
@@ -240,7 +240,7 @@ class PkdbModel(object):
              return {'header' :[0,1],'index_col': [0,1,2]}
         elif self.name in ["all_subjects"]:
             return {'header':[0,1], "index_col":[0,1,2,3]}
-        elif self.name in ["all_complete","groups_complete","individuals_complete","caffeine_timecourse","caffeine_clearance","studies","substances"]:
+        elif self.name in ["all_complete","groups_complete","individuals_complete","caffeine_timecourse","caffeine_clearance","studies","substances","caffeine_thalf"]:
             return {'header':[0], "index_col":[0]}
         elif self.name in ["all_results"]:
             return {'header':[0]}
@@ -279,6 +279,7 @@ class PkdbModel(object):
          if self.name in ["substances"]:
             self.data = self.data[["name","studies","interventions","outputs","timecourses"]]
             self.data.insert(1,"study_number", self.data["studies"].apply(len))
+            self.data = self.data[self.data["study_number"] > 0 ]
             self.data.insert(2,"intervention_number", self.data["interventions"].apply(len))
             self.data.insert(3,"timecourse_number", self.data["timecourses"].apply(len))
             self.data.insert(4,"output_number", self.data["outputs"].apply(len))
@@ -339,8 +340,8 @@ class PkdbModel(object):
 
             studies_statistics = pd.DataFrame()
             studies_statistics["name"] = self.data["name"]
-            studies_statistics["substances"] = self.data["substances"].apply(lambda x: ' '.join(x))
-            studies_statistics['creator'] = self.data[['creator_first_name', 'creator_last_name']].apply(lambda x: ' '.join(x), axis=1)
+            studies_statistics["substances"] = self.data["substances"].apply(lambda x: ', '.join(x))
+            studies_statistics['creator'] = self.data[['creator_first_name', 'creator_last_name']].apply(lambda x: x["creator_first_name"][0]+" "+x["creator_last_name"][0], axis=1)
             studies_statistics["curators"] = self.data["curators"].apply(lambda x: curator_parse(x))
             studies_statistics["groups_count"] = self.data["group_count"]
             studies_statistics["group_all_count"] = self.data["groupset_groups"].apply(lambda x: groups_all_count(x,groups))
