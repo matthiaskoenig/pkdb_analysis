@@ -240,7 +240,7 @@ class PkdbModel(object):
              return {'header' :[0,1],'index_col': [0,1,2]}
         elif self.name in ["all_subjects"]:
             return {'header':[0,1], "index_col":[0,1,2,3]}
-        elif self.name in ["all_complete","groups_complete","individuals_complete","caffeine_timecourse","caffeine_clearance","studies","substances","caffeine_thalf","caffeine_tmax","caffeine_vd","caffeine_auc_inf"]:
+        elif self.name in ["all_complete","groups_complete","individuals_complete","caffeine_timecourse","caffeine_clearance","studies","substances","caffeine_thalf","caffeine_tmax","caffeine_vd","caffeine_auc_inf","caffeine_kel"]:
             return {'header':[0], "index_col":[0]}
         elif self.name in ["all_results"]:
             return {'header':[0]}
