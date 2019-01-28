@@ -15,7 +15,7 @@ def unstring(value):
         return eval(value)
     else:
         return value
-    
+
 def array_from_string(value):
     try:
         return np.array(unstring(value)).astype('float32')
@@ -23,29 +23,29 @@ def array_from_string(value):
         return np.fromstring(value.strip('[]') ,dtype=float, sep=" ")
 
 
-def convert_unit(df, unit_in, unit_out, factor=1.0, 
+def convert_unit(df, unit_in, unit_out, factor=1.0,
                  unit_field="unit", data_fields=['mean','median','value', 'sd', 'se', 'min', 'max'], inplace=True, subset=False):
     """ Unit conversion in given data frame. """
     if not inplace:
         df = df.copy()
     if subset:
         for column in subset:
-            is_weightidx =  df[column].notnull() 
-            df = df[is_weightidx]     
+            is_weightidx =  df[column].notnull()
+            df = df[is_weightidx]
             if isinstance(factor, pd.Series):
                 factor = factor[is_weightidx]
-        
-        
+
+
     idx = (df[unit_field] == unit_in)
-    
+
 
     for key in data_fields:
         df.loc[idx, key] = df.loc[idx, key]*factor
     df.loc[idx, unit_field] = unit_out
-    
+
     if subset:
         return df[idx]
-    
+
     return df
 
 def caffeine_idx(data):
@@ -62,7 +62,7 @@ def codeine_idx(data):
 
 def pktype_data(data,pktype):
     return data[data.pktype==pktype]
-    
+
 
 def abs_idx(data,unit_field):
     return ~rel_idx(data,unit_field)
@@ -94,9 +94,9 @@ def individual_idx(data):
 
 def get_data(url,**kwargs):
     """
-    gets the data from a paginated rest api. 
+    gets the data from a paginated rest api.
     """
-    
+
     url_params = "?"+urlencode(kwargs)
     acctual_url = urljoin(url,url_params)
     response = requests.get(acctual_url)
@@ -112,7 +112,7 @@ def get_data(url,**kwargs):
 
 def flatten_json(y):
     """
-    
+
     """
     out = {}
 
@@ -132,7 +132,7 @@ def flatten_json(y):
     return out
 
 def my_tuple(data):
-    
+
     if any(data):
         if len(data) == 1:
             return tuple(data)[0]
@@ -143,7 +143,7 @@ def my_tuple(data):
 
 def add_level_to_df(df, level_name):
     df.columns = pd.MultiIndex.from_tuples(list(zip(df.columns, len(df.columns)*[level_name])))
-    return  df.swaplevel(axis=1)     
+    return  df.swaplevel(axis=1)
 
 def curator_parse(x):
     return ", ".join([curator['first_name'][0] + " " + curator['last_name'][0] for curator in x ])
@@ -164,7 +164,7 @@ def groups_all_count(groups_pks,groups):
         this_group = groups.data.loc[groups_pk]
         if this_group["subject_name"] == "all":
             return this_group[("general","group_count")]
-        
+
 
 def individuals_parse(individuals_pks,individuals):
     result = None
@@ -173,7 +173,7 @@ def individuals_parse(individuals_pks,individuals):
         if len(result) == 0:
             result = None
     return result
-    
+
 def interventions_parse(interventions_pks,interventions):
     result = None
     if isinstance(interventions_pks, list):
@@ -181,17 +181,17 @@ def interventions_parse(interventions_pks,interventions):
         if len(result) == 0:
             result = None
     return result
-     
+
 @attr.s
 class PkdbModel(object):
-    
+
     name = attr.ib()
     base_url =  attr.ib(default="http://0.0.0.0:8000/api/v1/")
     loaded = attr.ib(default=False)
     preprocessed =  attr.ib(default=False)
     saved = attr.ib(default=False)
     destination =  attr.ib(default="0-raw")
-    
+
     @property
     def path(self):
         return Path(FPATH).parent / "data" / self.destination / f"{self.name}.tsv"
@@ -199,21 +199,21 @@ class PkdbModel(object):
     @property
     def base_params(self):
         if self.name in ["individuals","groups","studies"]:
-                   return {"format":"json"} 
+                   return {"format":"json"}
         else:
             return {"format":"json", "final":"true"}
-    
+
     @property
     def url(self):
         if self.name == "substances":
             return urljoin(self.base_url, f'{self.name}_statistics/')
-        
+
         return urljoin(self.base_url, f'{self.name}_elastic/')
-        
-        
+
+
     def add_data(self, data):
-        self.data = data    
-    
+        self.data = data
+
     def load(self):
         self.data = get_data(self.url, **self.base_params)
         self.loaded = True
@@ -228,10 +228,10 @@ class PkdbModel(object):
 
         self.preprocessed = True
         self.destination = "1-preprocessed"
-    
-    
+
+
     @property
-    def read_kwargs(self): 
+    def read_kwargs(self):
         if self.name in ["interventions"]:
              return {'header' :[0],'index_col': [0,1,2]}
         elif self.name in ["outputs", 'timecourses']:
@@ -240,27 +240,27 @@ class PkdbModel(object):
              return {'header' :[0,1],'index_col': [0,1,2]}
         elif self.name in ["all_subjects"]:
             return {'header':[0,1], "index_col":[0,1,2,3]}
-        elif self.name in ["all_complete","groups_complete","individuals_complete","caffeine_timecourse","caffeine_clearance","studies","substances","caffeine_thalf"]:
+        elif self.name in ["all_complete","groups_complete","individuals_complete","caffeine_timecourse","caffeine_clearance","studies","substances","caffeine_thalf","caffeine_tmax","caffeine_vd","caffeine_auc_inf"]:
             return {'header':[0], "index_col":[0]}
         elif self.name in ["all_results"]:
             return {'header':[0]}
-    
-    
-        
+
+
+
     def save(self):
         self.data.to_csv(self.path, sep="\t")
         self.saved = True
-    
+
     def read(self):
         self.data = pd.read_csv(self.path, sep="\t",**self.read_kwargs)
         self.data.columns = [eval(c) if "," in c else c for c in list(self.data.columns) ]
-    
+
     def to_array(self):
         for value in ["mean","median","sd","se","cv","value","time"]:
             self.data[value] = self.data[value].apply(lambda x :array_from_string(x))
-            
-        
-          
+
+
+
 
     def report(self):
         print("_"*60)
@@ -270,11 +270,11 @@ class PkdbModel(object):
         print(f"saved: {self.saved}")
         if all([self.loaded,self.preprocessed,self.saved]):
             print(f"{self.name} were succsesfully saved to <{self.path}>")
-    
+
     @property
     def select_output(output):
-        return 
-    
+        return
+
     def _preprocess_substances(self):
          if self.name in ["substances"]:
             self.data = self.data[["name","studies","interventions","outputs","timecourses"]]
@@ -284,7 +284,7 @@ class PkdbModel(object):
             self.data.insert(3,"timecourse_number", self.data["timecourses"].apply(len))
             self.data.insert(4,"output_number", self.data["outputs"].apply(len))
             self.data.sort_values(by="study_number", ascending=False, inplace=True)
-            
+
     def _preprocess_outputs(self):
         if self.name in ["outputs","timecourses"]:
             self.data.drop(["final","individual_name","group_name"],axis=1, inplace=True)
@@ -294,14 +294,14 @@ class PkdbModel(object):
             # sort columns by number of not nan values
             self.data = self.data[self.data.apply(lambda x: x.count()).sort_values(ascending=False).index]
             self.data.set_index(["study","pk"], inplace=True)
-            
+
     def _preprocess_interventions(self):
         if self.name in ["interventions"]:
             self.data = self.data.drop("final",axis=1)
             self.data = self.data[self.data.apply(lambda x: x.count()).sort_values(ascending=False).index]
-                               
+
             self.data.set_index(["study","pk","name"], inplace=True)
-    
+
     def _preprocess_characteristica(self):
         if self.name in ["individuals", "groups"]:
             lst_col = 'characteristica_all_final'
@@ -315,14 +315,14 @@ class PkdbModel(object):
                 df["group_count"] = intermidiate_df["count"]
                 df = df.pivot_table(index=["study","subject_pk","subject_name","group_count"], columns=["category"], aggfunc=my_tuple)
                 df.reset_index(level=["group_count"], inplace=True, col_fill='general')
-            else:    
+            else:
                 df = df.pivot_table(index=["study","subject_pk","subject_name"], columns=["category"], aggfunc=my_tuple)
-                
+
             df.columns = df.columns.swaplevel(0, 1)
             df = df[df.groupby(level=0, axis=0).count().sum().max(level=0).sort_values(ascending=False).index]
             df.dropna(how="all", axis=1, inplace=True)
             self.data = df
-            
+
     def _preprocess_studies(self):
         if self.name in ["studies"]:
             groups = PkdbModel("groups", destination="1-preprocessed")
@@ -352,21 +352,21 @@ class PkdbModel(object):
             studies_statistics["outputs_count"] = self.data["output_count"]
             studies_statistics["timecourses_count"] = self.data["timecourse_count"]
             studies_statistics["results_count"] = studies_statistics["outputs_count"] + studies_statistics["timecourses_count"]
-            
+
             self.data = studies_statistics.sort_values(by="results_count", ascending=False)
-            
+
 
 @attr.s
 class Preprocessed(object):
-    
+
     destination = attr.ib(default="2-merged")
-    
+
     def read(self):
         for field in self._preprocessed_fields:
             pkdb_model = PkdbModel(name=field, destination="1-preprocessed")
             pkdb_model.read()
             setattr(self,field,pkdb_model)
-    
+
     def merge(self):
         #self.interventions.data = add_level_to_df(self.interventions.data,"intervention")
         #self.timecourses.data = add_level_to_df(self.timecourses.data,"timecourse")
@@ -381,18 +381,18 @@ class Preprocessed(object):
     def save(self):
         for field in self._merged_fields:
             getattr(self,field).save()
-            
-    
+
+
     @property
     def _preprocessed_fields(self):
         return ['outputs','timecourses','interventions','individuals','groups']
-    
+
     @property
     def _merged_fields(self):
         return ["all_subjects", "all_results", "individuals_complete", "groups_complete","all_complete"]
-    
+
     def _merge_groups_individuals(self):
-        df = pd.concat([self.individuals.data,self.groups.data], keys=["individual","group"])   
+        df = pd.concat([self.individuals.data,self.groups.data], keys=["individual","group"])
         df.reset_index(inplace=True)
         df.rename(columns={"level_0":"subject_type"},inplace=True)
         df.set_index(["study","subject_type","subject_pk","subject_name"], inplace=True)
@@ -401,9 +401,9 @@ class Preprocessed(object):
         all_subjects = PkdbModel(name="all_subjects", destination=self.destination)
         all_subjects.add_data(df)
         self.all_subjects = all_subjects
-    
+
     def _merge_outputs_timecourses(self):
-        df = pd.concat([self.outputs.data,self.timecourses.data], keys=["outputs","timecourses"])   
+        df = pd.concat([self.outputs.data,self.timecourses.data], keys=["outputs","timecourses"])
         df.reset_index(inplace=True)
         df.rename(columns={"level_0":"output_type"},inplace=True)
         df.set_index(["study","output_type","pk"], inplace=True)
@@ -412,7 +412,7 @@ class Preprocessed(object):
         all_results = PkdbModel(name="all_results", destination=self.destination)
         all_results.add_data(df)
         self.all_results = all_results
-    
+
     def _merge_individuals_interventions_all_results(self):
         #all_results = add_level_to_df(self.interventions.data,"intervention")
         #intervention = add_level_to_df(self.timeocourses.data,"timecourse")
@@ -423,44 +423,43 @@ class Preprocessed(object):
         individuals_complete = PkdbModel(name="individuals_complete", destination=self.destination)
         individuals_complete.add_data(individuals_complete_df)
         self.individuals_complete = individuals_complete
-    
+
     def _merge_groups_interventions_all_results(self):
         groups_complete_intermediate = pd.merge(left=self.all_results.data, right=self.interventions.data,  how='inner', suffixes=('','_intervention'),left_on='interventions', right_on="pk")
         groups_complete_df = pd.merge(groups_complete_intermediate,self.groups.data.reset_index(),  how='inner', suffixes=('','subject'),left_on='group_pk', right_on="subject_pk")
         groups_complete = PkdbModel(name="groups_complete", destination=self.destination)
         groups_complete.add_data(groups_complete_df)
         self.groups_complete = groups_complete
-    
+
     def _merge_all_subjects_interventions_all_results(self):
-        
+
         all_complete_intermediate = pd.merge(left=self.all_results.data.reset_index(), right=self.interventions.data,  how='left', suffixes=('','_intervention'),left_on='interventions', right_on="pk")
-        
+
         all_complete_intermediate["subject_type"] = False
         all_complete_intermediate["subject_pk"] = False
 
         group_idx = all_complete_intermediate["group_pk"].notnull()
         individual_idx = all_complete_intermediate["individual_pk"].notnull()
 
-        
+
         all_complete_intermediate.loc[group_idx,"subject_type"] = "group"
         all_complete_intermediate.loc[individual_idx,"subject_type"] = "individual"
-        
+
         all_complete_intermediate.loc[group_idx,"subject_pk"] = all_complete_intermediate[group_idx]["group_pk"]
         all_complete_intermediate.loc[individual_idx,"subject_pk"] = all_complete_intermediate[individual_idx]["individual_pk"]
         all_complete_df = pd.merge(all_complete_intermediate,self.all_subjects.data.reset_index(),  how='inner', suffixes=('','subject'), on=["subject_pk","subject_type"] )
         all_complete = PkdbModel(name="all_complete", destination=self.destination)
         all_complete.add_data(all_complete_df)
         self.all_complete = all_complete
-        
+
     def _add_per_bodyweight(self):
             return None
-        
-        
+
+
 @attr.s
 class Result(object):
     compelete_all = attr.ib()
-    
-    
+
+
     def plot(self):
         return None
-        
