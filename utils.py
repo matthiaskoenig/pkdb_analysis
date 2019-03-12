@@ -30,14 +30,12 @@ def convert_unit(df, unit_in, unit_out, factor=1.0,
         df = df.copy()
     if subset:
         for column in subset:
-            is_weightidx =  df[column].notnull()
+            is_weightidx = df[column].notnull()
             df = df[is_weightidx]
             if isinstance(factor, pd.Series):
                 factor = factor[is_weightidx]
 
-
     idx = (df[unit_field] == unit_in)
-
 
     for key in data_fields:
         df.loc[idx, key] = df.loc[idx, key]*factor
@@ -68,7 +66,7 @@ def abs_idx(data,unit_field):
     return ~rel_idx(data,unit_field)
 
 def rel_idx(data,unit_field):
-    return data[unit_field].str.contains('kg')
+    return data[unit_field].str.contains('kilogram')
 
 def filter_out(data,unit_field,units):
     return data[~data[unit_field].isin(units)]
@@ -159,17 +157,24 @@ def groups_parse(groups_pks, groups):
     return this_groups
 
 def groups_all_count(groups_pks,groups):
-    this_groups = []
-    for groups_pk in groups_pks:
-        this_group = groups.data.loc[groups_pk]
-        if this_group["subject_name"] == "all":
-            return this_group[("general","group_count")]
+    try:
+        for groups_pk in groups_pks["groupset_groups"]:
+            this_group = groups.data.loc[groups_pk]
+
+            if this_group["subject_name"] == "all":
+                return this_group[("general","group_count")]
+    except TypeError:
+        raise TypeError(f"Group is not working: {groups_pks} ,{groups} ")
+    except KeyError:
+        raise KeyError(f"Group is not working: {groups_pks} ,{groups} ")
+
+
 
 
 def individuals_parse(individuals_pks,individuals):
     result = None
     if isinstance(individuals_pks, list):
-        result =  [individuals.data.loc[individuals_pk]["subject_name"] for individuals_pk in individuals_pks]
+        result = [individuals.data.loc[individuals_pk]["subject_name"] for individuals_pk in individuals_pks]
         if len(result) == 0:
             result = None
     return result
@@ -177,7 +182,7 @@ def individuals_parse(individuals_pks,individuals):
 def interventions_parse(interventions_pks,interventions):
     result = None
     if isinstance(interventions_pks, list):
-        result =  [interventions.data.loc[interventions_pk]["name"] for individuals_pk in individuals_pks]
+        result =  [interventions.data.loc[interventions_pk]["name"] for interventions_pk in interventions_pks]
         if len(result) == 0:
             result = None
     return result
@@ -201,7 +206,7 @@ class PkdbModel(object):
         if self.name in ["individuals","groups","studies"]:
                    return {"format":"json"}
         else:
-            return {"format":"json", "final":"true"}
+            return {"format":"json", "normed":"true"}
 
     @property
     def url(self):
@@ -287,7 +292,7 @@ class PkdbModel(object):
 
     def _preprocess_outputs(self):
         if self.name in ["outputs","timecourses"]:
-            self.data.drop(["final","individual_name","group_name"],axis=1, inplace=True)
+            self.data.drop(["normed","individual_name","group_name"],axis=1, inplace=True)
             self.data["interventions"] = self.data["interventions"].apply(lambda interventions: interventions[0]['pk'] if len(interventions) == 1 else np.nan)
             self.data.dropna(subset = ["interventions"], inplace=True)
             self.data.interventions = self.data.interventions.astype(int)
@@ -297,16 +302,16 @@ class PkdbModel(object):
 
     def _preprocess_interventions(self):
         if self.name in ["interventions"]:
-            self.data = self.data.drop("final",axis=1)
+            self.data = self.data.drop("normed",axis=1)
             self.data = self.data[self.data.apply(lambda x: x.count()).sort_values(ascending=False).index]
 
             self.data.set_index(["study","pk","name"], inplace=True)
 
     def _preprocess_characteristica(self):
         if self.name in ["individuals", "groups"]:
-            lst_col = 'characteristica_all_final'
+            lst_col = 'characteristica_all_normed'
             intermidiate_df = pd.DataFrame({col:np.repeat(self.data[col].values, self.data[lst_col].str.len()) for col in self.data.columns.difference([lst_col])}).assign(**{lst_col:np.concatenate(self.data[lst_col].values)})[self.data.columns.tolist()]
-            df = intermidiate_df["characteristica_all_final"].apply(pd.Series)
+            df = intermidiate_df["characteristica_all_normed"].apply(pd.Series)
             df["study"] = intermidiate_df["study_name"]
             df.drop(["pk", "ctype"], axis=1,inplace=True)
             df["subject_pk"] = intermidiate_df["pk"]
@@ -344,12 +349,13 @@ class PkdbModel(object):
             studies_statistics['creator'] = self.data[['creator_first_name', 'creator_last_name']].apply(lambda x: x["creator_first_name"][0]+" "+x["creator_last_name"][0], axis=1)
             studies_statistics["curators"] = self.data["curators"].apply(lambda x: curator_parse(x))
             studies_statistics["groups_count"] = self.data["group_count"]
-            studies_statistics["group_all_count"] = self.data["groupset_groups"].apply(lambda x: groups_all_count(x,groups))
+            studies_statistics["group_all_count"] = self.data.apply(lambda x: groups_all_count(x,groups), axis=1)
             studies_statistics["groups"] = self.data["groupset_groups"].apply(lambda x: groups_parse(x,groups))
             studies_statistics["individuals_count"] = self.data["individual_count"]
             studies_statistics["individuals"] = self.data["individualset_individuals"].apply(lambda x:individuals_parse(x,individuals))
             studies_statistics["interventions_count"] = self.data["intervention_count"]
             studies_statistics["outputs_count"] = self.data["output_count"]
+            studies_statistics["outputs_calculated_count"] = self.data["output_calculated_count"]
             studies_statistics["timecourses_count"] = self.data["timecourse_count"]
             studies_statistics["results_count"] = studies_statistics["outputs_count"] + studies_statistics["timecourses_count"]
 
