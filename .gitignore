@@ -2,3 +2,5 @@
 .ipynb_checkpoints/
 .~lock*
 pkdb_analysis.egg-info/
+.idea/
+__pycache__/
