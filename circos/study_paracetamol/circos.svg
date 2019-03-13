@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="3000px" height="3000px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="bg">
+<rect x="0" y="0" width="3000px" height="3000px" style="fill:rgb(255,255,255);"/>
+</g>
+<g id="ideograms">
+<path d="M1635.694,534.489 A975.000,975.000 40.000 1,1 1635.374,534.444 L1677.027,237.349 A1275.000,1275.000 0.000 1,0 1677.446,237.408 Z" style="stroke-linecap:round;fill:rgb(244,202,228);" />
+<text x="1310.9" y="2846.5" font-size="46.8px" font-family="CMUBright-Roman" style="text-anchor:middle;fill:rgb(0,0,0);" transform="rotate(8.0,1310.9,2846.5)" >PARACETAMOL</text>
+<line x1='1683.7' y1='192.8' x2='1683.7' y2='192.8' style="stroke-width:1.0;stroke:rgb(0,0,0);stroke-linecap:round;fill:none;" />
+<line x1='1532.6' y1='1268.3' x2='1674.7' y2='257.2' style="stroke-width:1.0;stroke:rgb(150,150,150);stroke-linecap:round;fill:none;" />
+<line x1='2554.2' y1='705.6' x2='2554.2' y2='705.6' style="stroke-width:1.0;stroke:rgb(0,0,0);stroke-linecap:round;fill:none;" />
+<line x1='1686.9' y1='1359.2' x2='2502.3' y2='744.7' style="stroke-width:1.0;stroke:rgb(150,150,150);stroke-linecap:round;fill:none;" />
+<line x1='2807.2' y1='1683.7' x2='2807.2' y2='1683.7' style="stroke-width:1.0;stroke:rgb(0,0,0);stroke-linecap:round;fill:none;" />
+<line x1='1731.7' y1='1532.6' x2='2742.8' y2='1674.6' style="stroke-width:1.0;stroke:rgb(150,150,150);stroke-linecap:round;fill:none;" />
+<line x1='2294.5' y1='2554.2' x2='2294.5' y2='2554.2' style="stroke-width:1.0;stroke:rgb(0,0,0);stroke-linecap:round;fill:none;" />
+<line x1='1640.8' y1='1686.9' x2='2255.3' y2='2502.2' style="stroke-width:1.0;stroke:rgb(150,150,150);stroke-linecap:round;fill:none;" />
+<line x1='1316.4' y1='2807.2' x2='1316.4' y2='2807.2' style="stroke-width:1.0;stroke:rgb(0,0,0);stroke-linecap:round;fill:none;" />
+<line x1='1467.5' y1='1731.7' x2='1325.4' y2='2742.8' style="stroke-width:1.0;stroke:rgb(150,150,150);stroke-linecap:round;fill:none;" />
+<line x1='445.9' y1='2294.5' x2='445.9' y2='2294.5' style="stroke-width:1.0;stroke:rgb(0,0,0);stroke-linecap:round;fill:none;" />
+<line x1='1313.1' y1='1640.8' x2='497.8' y2='2255.4' style="stroke-width:1.0;stroke:rgb(150,150,150);stroke-linecap:round;fill:none;" />
+<line x1='192.8' y1='1316.4' x2='192.8' y2='1316.4' style="stroke-width:1.0;stroke:rgb(0,0,0);stroke-linecap:round;fill:none;" />
+<line x1='1268.3' y1='1467.5' x2='257.2' y2='1325.5' style="stroke-width:1.0;stroke:rgb(150,150,150);stroke-linecap:round;fill:none;" />
+<line x1='705.5' y1='445.9' x2='705.5' y2='445.9' style="stroke-width:1.0;stroke:rgb(0,0,0);stroke-linecap:round;fill:none;" />
+<line x1='1359.1' y1='1313.1' x2='744.6' y2='497.8' style="stroke-width:1.0;stroke:rgb(150,150,150);stroke-linecap:round;fill:none;" />
+<line x1='1683.5' y1='192.8' x2='1683.5' y2='192.8' style="stroke-width:1.0;stroke:rgb(0,0,0);stroke-linecap:round;fill:none;" />
+<line x1='1532.5' y1='1268.3' x2='1674.5' y2='257.2' style="stroke-width:1.0;stroke:rgb(150,150,150);stroke-linecap:round;fill:none;" />
+</g>
+<g id="plot0">
+<g id="plot0-axis">
+</g>
+<text x="2457.4" y="1268.4" font-size="32.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(345.5,2457.4,1268.4)" >Critchley2005</text>
+<text x="1734.1" y="2456.8" font-size="32.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(75.5,1734.1,2456.8)" >Rawlins1977</text>
+<text x="1011.4" y="2355.3" font-size="32.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(-59.5,1011.4,2355.3)" >Baraka1990</text>
+<text x="549.7" y="1759.3" font-size="32.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(-14.5,549.7,1759.3)" >Jensen2004</text>
+<text x="1240.7" y="549.8" font-size="32.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(75.5,1240.7,549.8)" >Ameer1981</text>
+<text x="644.7" y="1011.4" font-size="32.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(30.5,644.7,1011.4)" >Albert1974</text>
+<text x="2342.1" y="2011.0" font-size="32.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(30.5,2342.1,2011.0)" >Chiew2010</text>
+<text x="2011.1" y="658.0" font-size="32.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(300.5,2011.1,658.0)" >Chan1997</text>
+</g>
+<g id="plot1">
+<g id="plot1-axis">
+</g>
+<text x="1897.4" y="840.2" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(300.5,1897.4,840.2)" >177</text>
+<text x="2247.6" y="1314.4" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(345.5,2247.6,1314.4)" >78</text>
+<text x="2159.9" y="1897.3" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(30.5,2159.9,1897.3)" >54</text>
+<text x="1685.6" y="2247.5" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(75.5,1685.6,2247.5)" >37</text>
+<text x="1115.6" y="2167.5" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(-59.5,1115.6,2167.5)" >30</text>
+<text x="756.2" y="1700.2" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(-14.5,756.2,1700.2)" >25</text>
+<text x="832.5" y="1115.6" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(30.5,832.5,1115.6)" >24</text>
+<text x="1299.8" y="756.2" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(75.5,1299.8,756.2)" >22</text>
+</g>
+<g id="plot2">
+<g id="plot2-axis">
+</g>
+<text x="1915.0" y="813.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(300.5,1915.0,813.3)" >O</text>
+<text x="1928.5" y="821.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(301.6,1928.5,821.6)" >O</text>
+<text x="1922.6" y="800.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(300.5,1922.6,800.3)" >O</text>
+<text x="1930.7" y="786.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(300.5,1930.7,786.5)" >O</text>
+<text x="1943.9" y="794.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(301.6,1943.9,794.7)" >O</text>
+<text x="1916.9" y="777.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(299.4,1916.9,777.2)" >O</text>
+<text x="2279.0" y="1307.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(345.5,2279.0,1307.8)" >O</text>
+<text x="2310.0" y="1299.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(345.5,2310.0,1299.8)" >O</text>
+<text x="2207.4" y="1927.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(30.5,2207.4,1927.1)" >O</text>
+<text x="1684.4" y="2297.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(76.4,1684.4,2297.3)" >O</text>
+<text x="1899.5" y="804.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(299.5,1899.5,804.1)" >N</text>
+<text x="1903.4" y="797.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(299.5,1903.4,797.2)" >N</text>
+<text x="1928.7" y="804.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(301.3,1928.7,804.1)" >N</text>
+<text x="1908.2" y="790.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(299.6,1908.2,790.7)" >N</text>
+<text x="1932.9" y="797.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(301.3,1932.9,797.2)" >N</text>
+<text x="1912.2" y="783.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(299.6,1912.2,783.8)" >N</text>
+<text x="1934.9" y="771.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(300.5,1934.9,771.6)" >N</text>
+<text x="1942.1" y="775.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(301.1,1942.1,775.9)" >N</text>
+<text x="1927.2" y="765.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(299.9,1927.2,765.9)" >N</text>
+<text x="1948.4" y="779.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(301.6,1948.4,779.8)" >N</text>
+<text x="1938.9" y="764.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(300.5,1938.9,764.7)" >N</text>
+<text x="1945.3" y="768.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(301.0,1945.3,768.5)" >N</text>
+<text x="1931.2" y="758.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(299.9,1931.2,758.9)" >N</text>
+<text x="1952.6" y="773.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(301.6,1952.6,773.0)" >N</text>
+<text x="1943.0" y="757.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(300.5,1943.0,757.8)" >N</text>
+<text x="1949.4" y="761.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(301.0,1949.4,761.7)" >N</text>
+<text x="1935.2" y="752.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(299.9,1935.2,752.0)" >N</text>
+<text x="1955.8" y="765.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(301.5,1955.8,765.6)" >N</text>
+<text x="1947.1" y="750.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(300.5,1947.1,750.9)" >N</text>
+<text x="1953.6" y="754.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(301.0,1953.6,754.8)" >N</text>
+<text x="1939.1" y="745.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(299.9,1939.1,745.1)" >N</text>
+<text x="1960.0" y="758.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(301.5,1960.0,758.8)" >N</text>
+<text x="1951.1" y="744.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(300.5,1951.1,744.0)" >N</text>
+<text x="1957.7" y="747.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(301.0,1957.7,747.9)" >N</text>
+<text x="1943.1" y="738.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(299.9,1943.1,738.1)" >N</text>
+<text x="1964.2" y="752.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(301.5,1964.2,752.0)" >N</text>
+<text x="1955.2" y="737.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(300.5,1955.2,737.1)" >N</text>
+<text x="2280.9" y="1315.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(346.4,2280.9,1315.6)" >N</text>
+<text x="2274.8" y="1291.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(344.6,2274.8,1291.4)" >N</text>
+<text x="2288.7" y="1313.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(346.4,2288.7,1313.7)" >N</text>
+<text x="2282.5" y="1289.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(344.6,2282.5,1289.2)" >N</text>
+<text x="2292.6" y="1300.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(345.5,2292.6,1300.2)" >N</text>
+<text x="2295.5" y="1307.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(346.1,2295.5,1307.8)" >N</text>
+<text x="2291.3" y="1291.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(344.9,2291.3,1291.1)" >N</text>
+<text x="2297.4" y="1315.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(346.6,2297.4,1315.7)" >N</text>
+<text x="2301.3" y="1297.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(345.5,2301.3,1297.9)" >N</text>
+<text x="2303.3" y="1305.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(346.1,2303.3,1305.9)" >N</text>
+<text x="2299.0" y="1289.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(344.9,2299.0,1289.0)" >N</text>
+<text x="2305.1" y="1313.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(346.6,2305.1,1313.9)" >N</text>
+<text x="2312.0" y="1308.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(346.4,2312.0,1308.0)" >N</text>
+<text x="2305.6" y="1282.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(344.6,2305.6,1282.9)" >N</text>
+<text x="2319.5" y="1305.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(346.3,2319.5,1305.1)" >N</text>
+<text x="2313.3" y="1280.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(344.6,2313.3,1280.7)" >N</text>
+<text x="2323.6" y="1292.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(345.5,2323.6,1292.2)" >N</text>
+<text x="2326.3" y="1299.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(346.0,2326.3,1299.1)" >N</text>
+<text x="2322.1" y="1282.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(344.9,2322.1,1282.7)" >N</text>
+<text x="2328.3" y="1307.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(346.6,2328.3,1307.3)" >N</text>
+<text x="2332.3" y="1289.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(345.5,2332.3,1289.9)" >N</text>
+<text x="2334.1" y="1297.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(346.0,2334.1,1297.2)" >N</text>
+<text x="2329.9" y="1280.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(344.9,2329.9,1280.6)" >N</text>
+<text x="2336.0" y="1305.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(346.6,2336.0,1305.5)" >N</text>
+<text x="2340.0" y="1287.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(345.5,2340.0,1287.9)" >N</text>
+<text x="2341.8" y="1295.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(346.0,2341.8,1295.2)" >N</text>
+<text x="2337.6" y="1278.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(344.9,2337.6,1278.5)" >N</text>
+<text x="2343.8" y="1303.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(346.6,2343.8,1303.6)" >N</text>
+<text x="2188.8" y="1911.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(30.5,2188.8,1911.5)" >N</text>
+<text x="2184.7" y="1918.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(31.1,2184.7,1918.3)" >N</text>
+<text x="2193.4" y="1903.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(29.9,2193.4,1903.8)" >N</text>
+<text x="2180.5" y="1925.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(31.6,2180.5,1925.1)" >N</text>
+<text x="2195.7" y="1915.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(30.5,2195.7,1915.6)" >N</text>
+<text x="2191.5" y="1922.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(31.1,2191.5,1922.5)" >N</text>
+<text x="2200.3" y="1907.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(29.9,2200.3,1907.8)" >N</text>
+<text x="2187.3" y="1929.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(31.6,2187.3,1929.3)" >N</text>
+<text x="2202.6" y="1919.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(30.5,2202.6,1919.6)" >N</text>
+<text x="2198.4" y="1926.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(31.1,2198.4,1926.6)" >N</text>
+<text x="2207.3" y="1911.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(29.9,2207.3,1911.7)" >N</text>
+<text x="2194.1" y="1933.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(31.6,2194.1,1933.5)" >N</text>
+<text x="2203.1" y="1934.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(31.4,2203.1,1934.2)" >N</text>
+<text x="2216.3" y="1912.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(29.6,2216.3,1912.2)" >N</text>
+<text x="2209.9" y="1938.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(31.4,2209.9,1938.4)" >N</text>
+<text x="2223.2" y="1916.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(29.6,2223.2,1916.1)" >N</text>
+<text x="2222.4" y="1931.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(30.5,2222.4,1931.3)" >N</text>
+<text x="2219.0" y="1939.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(31.1,2219.0,1939.0)" >N</text>
+<text x="2228.1" y="1923.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(29.9,2228.1,1923.7)" >N</text>
+<text x="2214.6" y="1946.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(31.6,2214.6,1946.1)" >N</text>
+<text x="2230.2" y="1935.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(30.5,2230.2,1935.9)" >N</text>
+<text x="2226.4" y="1942.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(31.0,2226.4,1942.2)" >N</text>
+<text x="2235.0" y="1927.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(29.9,2235.0,1927.7)" >N</text>
+<text x="2221.9" y="1949.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(31.6,2221.9,1949.4)" >N</text>
+<text x="2237.1" y="1939.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(30.5,2237.1,1939.9)" >N</text>
+<text x="2233.2" y="1946.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(31.0,2233.2,1946.3)" >N</text>
+<text x="2241.9" y="1931.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(29.9,2241.9,1931.6)" >N</text>
+<text x="2228.7" y="1953.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(31.6,2228.7,1953.6)" >N</text>
+<text x="2244.0" y="1944.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(30.5,2244.0,1944.0)" >N</text>
+<text x="1696.1" y="2278.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(75.5,1696.1,2278.0)" >N</text>
+<text x="1688.4" y="2280.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(76.1,1688.4,2280.0)" >N</text>
+<text x="1705.8" y="2275.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(74.8,1705.8,2275.5)" >N</text>
+<text x="1680.6" y="2281.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(76.6,1680.6,2281.8)" >N</text>
+<text x="1698.1" y="2285.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(75.5,1698.1,2285.8)" >N</text>
+<text x="1690.3" y="2287.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(76.1,1690.3,2287.7)" >N</text>
+<text x="1707.9" y="2283.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(74.8,1707.9,2283.3)" >N</text>
+<text x="1682.4" y="2289.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(76.6,1682.4,2289.6)" >N</text>
+<text x="1700.1" y="2293.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(228,26,28);" transform="rotate(75.5,1700.1,2293.5)" >N</text>
+<text x="1709.0" y="2291.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(74.9,1709.0,2291.2)" >N</text>
+<text x="1703.1" y="2301.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(75.4,1703.1,2301.0)" >N</text>
+<text x="1712.1" y="2298.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(74.8,1712.1,2298.7)" >N</text>
+<text x="1097.1" y="2193.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-59.5,1097.1,2193.9)" >N</text>
+<text x="1090.3" y="2189.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-58.9,1090.3,2189.9)" >N</text>
+<text x="1105.8" y="2198.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-60.2,1105.8,2198.9)" >N</text>
+<text x="1083.4" y="2185.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-58.4,1083.4,2185.8)" >N</text>
+<text x="1093.1" y="2200.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-59.5,1093.1,2200.8)" >N</text>
+<text x="1086.1" y="2196.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-58.9,1086.1,2196.7)" >N</text>
+<text x="1101.8" y="2205.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-60.2,1101.8,2205.8)" >N</text>
+<text x="1079.2" y="2192.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-58.4,1079.2,2192.6)" >N</text>
+<text x="1089.0" y="2207.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-59.5,1089.0,2207.7)" >N</text>
+<text x="1082.0" y="2203.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-58.9,1082.0,2203.6)" >N</text>
+<text x="1097.9" y="2212.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-60.2,1097.9,2212.8)" >N</text>
+<text x="1075.0" y="2199.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-58.4,1075.0,2199.4)" >N</text>
+<text x="1085.0" y="2214.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-59.5,1085.0,2214.6)" >N</text>
+<text x="1077.9" y="2210.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-58.9,1077.9,2210.4)" >N</text>
+<text x="1093.9" y="2219.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-60.2,1093.9,2219.7)" >N</text>
+<text x="1070.8" y="2206.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-58.4,1070.8,2206.2)" >N</text>
+<text x="1080.9" y="2221.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-59.5,1080.9,2221.5)" >N</text>
+<text x="1073.7" y="2217.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-58.9,1073.7,2217.3)" >N</text>
+<text x="1089.0" y="2226.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-60.1,1089.0,2226.1)" >N</text>
+<text x="1066.6" y="2213.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-58.4,1066.6,2213.0)" >N</text>
+<text x="1076.8" y="2228.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-59.5,1076.8,2228.4)" >N</text>
+<text x="1069.6" y="2224.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-58.9,1069.6,2224.1)" >N</text>
+<text x="1085.0" y="2233.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-60.1,1085.0,2233.1)" >N</text>
+<text x="1062.4" y="2219.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-58.4,1062.4,2219.8)" >N</text>
+<text x="1072.8" y="2235.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-59.5,1072.8,2235.3)" >N</text>
+<text x="1065.5" y="2231.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-58.9,1065.5,2231.0)" >N</text>
+<text x="1081.0" y="2240.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-60.1,1081.0,2240.0)" >N</text>
+<text x="1059.1" y="2227.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-58.4,1059.1,2227.2)" >N</text>
+<text x="1068.7" y="2242.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-59.5,1068.7,2242.2)" >N</text>
+<text x="1061.4" y="2237.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-58.9,1061.4,2237.8)" >N</text>
+<text x="724.5" y="1705.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-14.5,724.5,1705.8)" >N</text>
+<text x="722.5" y="1698.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-13.9,722.5,1698.1)" >N</text>
+<text x="727.1" y="1715.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-15.2,727.1,1715.4)" >N</text>
+<text x="720.5" y="1690.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(-13.4,720.5,1690.4)" >N</text>
+<text x="716.7" y="1707.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-14.5,716.7,1707.8)" >N</text>
+<text x="714.7" y="1700.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-13.9,714.7,1700.0)" >N</text>
+<text x="719.1" y="1716.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-15.1,719.1,1716.6)" >N</text>
+<text x="712.7" y="1692.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-13.4,712.7,1692.2)" >N</text>
+<text x="709.0" y="1709.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-14.5,709.0,1709.8)" >N</text>
+<text x="706.9" y="1701.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-13.9,706.9,1701.9)" >N</text>
+<text x="711.4" y="1718.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-15.1,711.4,1718.7)" >N</text>
+<text x="705.2" y="1695.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-13.4,705.2,1695.0)" >N</text>
+<text x="701.2" y="1711.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-14.5,701.2,1711.8)" >N</text>
+<text x="699.2" y="1703.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-13.9,699.2,1703.9)" >N</text>
+<text x="703.7" y="1720.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-15.1,703.7,1720.8)" >N</text>
+<text x="697.4" y="1696.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-13.4,697.4,1696.9)" >N</text>
+<text x="693.5" y="1713.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-14.5,693.5,1713.8)" >N</text>
+<text x="691.4" y="1705.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-13.9,691.4,1705.8)" >N</text>
+<text x="695.9" y="1722.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-15.1,695.9,1722.8)" >N</text>
+<text x="689.6" y="1698.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-13.4,689.6,1698.8)" >N</text>
+<text x="685.7" y="1715.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-14.5,685.7,1715.8)" >N</text>
+<text x="683.6" y="1707.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-13.9,683.6,1707.7)" >N</text>
+<text x="688.2" y="1724.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-15.1,688.2,1724.9)" >N</text>
+<text x="681.9" y="1700.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-13.4,681.9,1700.6)" >N</text>
+<text x="678.0" y="1717.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-14.5,678.0,1717.8)" >N</text>
+<text x="806.1" y="1097.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(30.5,806.1,1097.2)" >N</text>
+<text x="810.1" y="1090.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(31.1,810.1,1090.3)" >N</text>
+<text x="801.6" y="1105.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(29.9,801.6,1105.0)" >N</text>
+<text x="814.2" y="1083.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(31.6,814.2,1083.4)" >N</text>
+<text x="799.2" y="1093.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(30.5,799.2,1093.1)" >N</text>
+<text x="803.3" y="1086.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(31.1,803.3,1086.2)" >N</text>
+<text x="794.7" y="1101.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(29.9,794.7,1101.0)" >N</text>
+<text x="807.4" y="1079.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(31.6,807.4,1079.3)" >N</text>
+<text x="792.3" y="1089.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(30.5,792.3,1089.0)" >N</text>
+<text x="796.4" y="1082.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(31.1,796.4,1082.0)" >N</text>
+<text x="787.7" y="1097.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(29.9,787.7,1097.0)" >N</text>
+<text x="800.6" y="1075.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(31.6,800.6,1075.1)" >N</text>
+<text x="785.4" y="1085.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(30.5,785.4,1085.0)" >N</text>
+<text x="789.6" y="1077.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(31.1,789.6,1077.9)" >N</text>
+<text x="780.8" y="1093.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(29.9,780.8,1093.0)" >N</text>
+<text x="793.8" y="1070.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(31.6,793.8,1070.9)" >N</text>
+<text x="778.5" y="1080.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(30.5,778.5,1080.9)" >N</text>
+<text x="782.7" y="1073.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(31.1,782.7,1073.8)" >N</text>
+<text x="773.9" y="1089.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(29.9,773.9,1089.0)" >N</text>
+<text x="787.0" y="1066.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(31.6,787.0,1066.7)" >N</text>
+<text x="771.6" y="1076.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(30.5,771.6,1076.9)" >N</text>
+<text x="775.3" y="1070.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(31.0,775.3,1070.5)" >N</text>
+<text x="766.9" y="1085.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(29.9,766.9,1085.0)" >N</text>
+<text x="779.6" y="1063.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(31.6,779.6,1063.4)" >N</text>
+<text x="1294.2" y="724.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(75.5,1294.2,724.5)" >N</text>
+<text x="1301.9" y="722.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(76.1,1301.9,722.5)" >N</text>
+<text x="1285.5" y="726.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(74.9,1285.5,726.8)" >N</text>
+<text x="1309.6" y="720.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(76.6,1309.6,720.5)" >N</text>
+<text x="1292.1" y="716.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(75.5,1292.1,716.7)" >N</text>
+<text x="1299.9" y="714.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(76.1,1299.9,714.7)" >N</text>
+<text x="1283.4" y="719.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(74.9,1283.4,719.1)" >N</text>
+<text x="1307.8" y="712.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(228,26,28);" transform="rotate(76.6,1307.8,712.8)" >N</text>
+<text x="1290.1" y="709.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(75.5,1290.1,709.0)" >N</text>
+<text x="1298.0" y="706.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(76.1,1298.0,706.9)" >N</text>
+<text x="1281.3" y="711.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(74.9,1281.3,711.4)" >N</text>
+<text x="1305.9" y="705.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(76.6,1305.9,705.0)" >N</text>
+<text x="1288.1" y="701.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(75.5,1288.1,701.2)" >N</text>
+<text x="1295.1" y="699.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(76.0,1295.1,699.4)" >N</text>
+<text x="1279.2" y="703.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(74.9,1279.2,703.7)" >N</text>
+<text x="1303.1" y="697.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(76.6,1303.1,697.4)" >N</text>
+<text x="1286.1" y="693.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(75.5,1286.1,693.5)" >N</text>
+<text x="1293.2" y="691.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(76.0,1293.2,691.7)" >N</text>
+<text x="1277.1" y="695.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(74.9,1277.1,695.9)" >N</text>
+<text x="1301.2" y="689.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(76.6,1301.2,689.7)" >N</text>
+<text x="1284.1" y="685.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(75.5,1284.1,685.8)" >N</text>
+<text x="1291.2" y="683.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(76.0,1291.2,683.9)" >N</text>
+</g>
+<g id="plot3">
+<g id="plot3-axis">
+</g>
+<text x="1810.8" y="987.2" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(300.5,1810.8,987.2)" >16</text>
+<text x="1642.9" y="2082.3" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(75.5,1642.9,2082.3)" >4</text>
+<text x="2082.4" y="1357.1" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(345.5,2082.4,1357.1)" >8</text>
+<text x="2012.8" y="1810.7" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(30.5,2012.8,1810.7)" >6</text>
+<text x="1202.2" y="2020.4" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(-59.5,1202.2,2020.4)" >2</text>
+<text x="921.4" y="1657.4" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(-14.5,921.4,1657.4)" >3</text>
+<text x="979.5" y="1202.2" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(30.5,979.5,1202.2)" >2</text>
+<text x="1342.5" y="921.4" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(75.5,1342.5,921.4)" >2</text>
+</g>
+<g id="plot4">
+<g id="plot4-axis">
+</g>
+<text x="1824.9" y="958.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(300.5,1824.9,958.2)" >N</text>
+<text x="1831.7" y="962.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(301.2,1831.7,962.4)" >N</text>
+<text x="1816.3" y="953.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(299.6,1816.3,953.2)" >N</text>
+<text x="1829.0" y="951.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(300.5,1829.0,951.3)" >N</text>
+<text x="1835.9" y="955.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(301.2,1835.9,955.5)" >N</text>
+<text x="1821.2" y="946.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(299.7,1821.2,946.7)" >N</text>
+<text x="1833.1" y="944.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(300.5,1833.1,944.4)" >N</text>
+<text x="1840.0" y="948.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(301.2,1840.0,948.7)" >N</text>
+<text x="1825.1" y="939.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(299.7,1825.1,939.8)" >N</text>
+<text x="1837.1" y="937.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(300.5,1837.1,937.5)" >N</text>
+<text x="1844.2" y="941.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(301.2,1844.2,941.8)" >N</text>
+<text x="1829.1" y="932.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(299.7,1829.1,932.8)" >N</text>
+<text x="1841.2" y="930.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(300.5,1841.2,930.6)" >N</text>
+<text x="1848.3" y="935.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(301.2,1848.3,935.0)" >N</text>
+<text x="1833.1" y="925.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(299.7,1833.1,925.9)" >N</text>
+<text x="1845.2" y="923.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(300.5,1845.2,923.8)" >N</text>
+<text x="2112.9" y="1346.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(345.5,2112.9,1346.7)" >N</text>
+<text x="2114.7" y="1354.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(346.2,2114.7,1354.4)" >N</text>
+<text x="2110.4" y="1337.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(344.6,2110.4,1337.0)" >N</text>
+<text x="2120.6" y="1344.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(345.5,2120.6,1344.6)" >N</text>
+<text x="2122.5" y="1352.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(346.2,2122.5,1352.5)" >N</text>
+<text x="2118.1" y="1334.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(344.6,2118.1,1334.9)" >N</text>
+<text x="2128.3" y="1342.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(345.5,2128.3,1342.6)" >N</text>
+<text x="2130.3" y="1350.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(346.2,2130.3,1350.6)" >N</text>
+<text x="2041.8" y="1824.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(30.5,2041.8,1824.9)" >N</text>
+<text x="2037.7" y="1831.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(31.2,2037.7,1831.7)" >N</text>
+<text x="2046.9" y="1816.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(29.6,2046.9,1816.3)" >N</text>
+<text x="2048.7" y="1829.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(30.5,2048.7,1829.0)" >N</text>
+<text x="2044.5" y="1835.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(31.2,2044.5,1835.9)" >N</text>
+<text x="2053.3" y="1821.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(29.7,2053.3,1821.1)" >N</text>
+<text x="1653.4" y="2112.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(75.5,1653.4,2112.8)" >N</text>
+<text x="1645.6" y="2114.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(76.2,1645.6,2114.7)" >N</text>
+<text x="1662.1" y="2110.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(74.7,1662.1,2110.6)" >N</text>
+<text x="1655.4" y="2120.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(55,126,184);" transform="rotate(75.5,1655.4,2120.6)" >N</text>
+<text x="1183.7" y="2046.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-59.5,1183.7,2046.9)" >N</text>
+<text x="1176.9" y="2042.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-58.8,1176.9,2042.8)" >N</text>
+<text x="889.7" y="1663.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-14.5,889.7,1663.1)" >N</text>
+<text x="887.7" y="1655.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-13.8,887.7,1655.4)" >N</text>
+<text x="892.0" y="1671.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(-15.3,892.0,1671.7)" >N</text>
+<text x="953.1" y="1183.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(30.5,953.1,1183.8)" >N</text>
+<text x="957.1" y="1176.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(31.2,957.1,1176.9)" >N</text>
+<text x="1336.9" y="889.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(75.5,1336.9,889.7)" >N</text>
+<text x="1344.6" y="887.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(55,126,184);" transform="rotate(76.2,1344.6,887.7)" >N</text>
+</g>
+<g id="plot5">
+<g id="plot5-axis">
+</g>
+<text x="1694.5" y="1184.6" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(300.5,1694.5,1184.6)" >38.0</text>
+<text x="1860.5" y="1414.5" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(345.5,1860.5,1414.5)" >20.0</text>
+<text x="1318.5" y="1823.0" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(-59.5,1318.5,1823.0)" >10.0</text>
+<text x="1177.0" y="1318.5" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(30.5,1177.0,1318.5)" >10.0</text>
+<text x="1815.4" y="1694.5" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(30.5,1815.4,1694.5)" >9.0</text>
+<text x="1585.5" y="1860.5" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(75.5,1585.5,1860.5)" >6.0</text>
+<text x="1143.3" y="1600.0" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(-14.5,1143.3,1600.0)" >6.0</text>
+<text x="1399.9" y="1143.3" font-size="19.5px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(75.5,1399.9,1143.3)" >1.0</text>
+</g>
+<g id="plot6">
+<g id="plot6-axis">
+</g>
+<text x="1714.5" y="1153.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(300.5,1714.5,1153.5)" >O</text>
+<text x="1718.7" y="1138.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(300.5,1718.7,1138.5)" >N</text>
+<text x="1722.8" y="1131.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(300.5,1722.8,1131.6)" >N</text>
+<text x="1726.8" y="1124.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(300.5,1726.8,1124.7)" >N</text>
+<text x="1730.9" y="1117.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(300.5,1730.9,1117.8)" >N</text>
+<text x="1735.0" y="1110.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(300.5,1735.0,1110.9)" >N</text>
+<text x="1725.7" y="1142.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(301.6,1725.7,1142.9)" >N</text>
+<text x="1729.9" y="1136.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(301.6,1729.9,1136.1)" >N</text>
+<text x="1734.1" y="1129.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(301.6,1734.1,1129.2)" >N</text>
+<text x="1738.3" y="1122.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(301.6,1738.3,1122.4)" >N</text>
+<text x="1742.5" y="1115.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(301.6,1742.5,1115.6)" >N</text>
+<text x="1710.7" y="1133.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(299.2,1710.7,1133.8)" >N</text>
+<text x="1714.6" y="1126.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(299.2,1714.6,1126.8)" >N</text>
+<text x="1718.5" y="1119.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(299.2,1718.5,1119.8)" >N</text>
+<text x="1895.7" y="1402.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(345.5,1895.7,1402.8)" >N</text>
+<text x="1903.5" y="1400.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(345.5,1903.5,1400.8)" >N</text>
+<text x="1911.2" y="1398.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(345.5,1911.2,1398.8)" >N</text>
+<text x="1919.0" y="1396.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(345.5,1919.0,1396.8)" >N</text>
+<text x="1926.7" y="1394.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(345.5,1926.7,1394.8)" >N</text>
+<text x="1934.5" y="1392.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(345.5,1934.5,1392.8)" >N</text>
+<text x="1942.2" y="1390.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(345.5,1942.2,1390.8)" >N</text>
+<text x="1940.0" y="1382.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(344.4,1940.0,1382.2)" >N</text>
+<text x="1936.5" y="1401.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(346.6,1936.5,1401.3)" >N</text>
+<text x="1944.3" y="1399.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(346.6,1944.3,1399.4)" >N</text>
+<text x="1950.0" y="1388.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(345.5,1950.0,1388.8)" >N</text>
+<text x="1957.7" y="1386.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(345.5,1957.7,1386.8)" >N</text>
+<text x="1965.5" y="1384.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(345.5,1965.5,1384.8)" >N</text>
+<text x="1973.2" y="1382.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(345.5,1973.2,1382.8)" >N</text>
+<text x="1980.9" y="1380.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(345.5,1980.9,1380.8)" >N</text>
+<text x="1988.7" y="1378.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(345.5,1988.7,1378.8)" >N</text>
+<text x="1996.4" y="1376.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(345.5,1996.4,1376.8)" >N</text>
+<text x="1951.8" y="1396.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(346.5,1951.8,1396.5)" >N</text>
+<text x="1959.6" y="1394.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(346.5,1959.6,1394.6)" >N</text>
+<text x="1967.4" y="1392.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(346.5,1967.4,1392.7)" >N</text>
+<text x="1848.6" y="1711.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(30.5,1848.6,1711.1)" >N</text>
+<text x="1855.5" y="1715.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(30.5,1855.5,1715.2)" >N</text>
+<text x="1862.3" y="1719.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(30.5,1862.3,1719.2)" >N</text>
+<text x="1869.2" y="1723.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(30.5,1869.2,1723.3)" >N</text>
+<text x="1876.1" y="1727.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(30.5,1876.1,1727.3)" >N</text>
+<text x="1883.0" y="1731.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(30.5,1883.0,1731.4)" >N</text>
+<text x="1889.9" y="1735.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(30.5,1889.9,1735.5)" >N</text>
+<text x="1853.1" y="1703.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(29.2,1853.1,1703.4)" >N</text>
+<text x="1860.1" y="1707.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(29.2,1860.1,1707.3)" >N</text>
+<text x="1597.2" y="1895.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(75.5,1597.2,1895.7)" >N</text>
+<text x="1599.2" y="1903.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(75.5,1599.2,1903.5)" >N</text>
+<text x="1601.2" y="1911.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(75.5,1601.2,1911.2)" >N</text>
+<text x="1603.2" y="1919.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(75.5,1603.2,1919.0)" >N</text>
+<text x="1605.2" y="1926.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(75.5,1605.2,1926.7)" >N</text>
+<text x="1607.2" y="1934.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(77,175,74);" transform="rotate(75.5,1607.2,1934.5)" >N</text>
+<text x="1297.5" y="1853.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(-59.5,1297.5,1853.6)" >N</text>
+<text x="1293.5" y="1860.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(-59.5,1293.5,1860.5)" >N</text>
+<text x="1289.4" y="1867.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(-59.5,1289.4,1867.4)" >N</text>
+<text x="1285.4" y="1874.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(-59.5,1285.4,1874.3)" >N</text>
+<text x="1281.3" y="1881.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(-59.5,1281.3,1881.2)" >N</text>
+<text x="1277.2" y="1888.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(-59.5,1277.2,1888.1)" >N</text>
+<text x="1273.2" y="1895.0" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(-59.5,1273.2,1895.0)" >N</text>
+<text x="1273.9" y="1876.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(-58.4,1273.9,1876.9)" >N</text>
+<text x="1269.7" y="1883.7" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(-58.4,1269.7,1883.7)" >N</text>
+<text x="1265.5" y="1890.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(-58.4,1265.5,1890.5)" >N</text>
+<text x="1106.8" y="1606.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(-14.5,1106.8,1606.9)" >N</text>
+<text x="1099.0" y="1608.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(-14.5,1099.0,1608.9)" >N</text>
+<text x="1091.3" y="1610.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(-14.5,1091.3,1610.9)" >N</text>
+<text x="1083.5" y="1612.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(-14.5,1083.5,1612.9)" >N</text>
+<text x="1075.8" y="1614.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(-14.5,1075.8,1614.9)" >N</text>
+<text x="1068.0" y="1616.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(-14.5,1068.0,1616.9)" >N</text>
+<text x="1146.3" y="1297.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(30.5,1146.3,1297.5)" >N</text>
+<text x="1139.5" y="1293.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(30.5,1139.5,1293.5)" >N</text>
+<text x="1132.6" y="1289.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(30.5,1132.6,1289.4)" >N</text>
+<text x="1125.7" y="1285.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(30.5,1125.7,1285.4)" >N</text>
+<text x="1118.8" y="1281.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(30.5,1118.8,1281.3)" >N</text>
+<text x="1111.9" y="1277.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(30.5,1111.9,1277.2)" >N</text>
+<text x="1105.0" y="1273.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(30.5,1105.0,1273.2)" >N</text>
+<text x="1143.6" y="1286.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(31.6,1143.6,1286.5)" >N</text>
+<text x="1136.7" y="1282.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(31.6,1136.7,1282.3)" >N</text>
+<text x="1129.9" y="1278.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(77,175,74);" transform="rotate(31.6,1129.9,1278.1)" >N</text>
+<text x="1393.1" y="1106.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(152,78,163);" transform="rotate(75.5,1393.1,1106.8)" >N</text>
+</g>
+<g id="plot7">
+<g id="plot7-axis">
+</g>
+<text x="1552.3" y="1728.1" font-size="16.9px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(75.5,1552.3,1728.1)" >4</text>
+<text x="1624.3" y="1301.8" font-size="16.9px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(300.5,1624.3,1301.8)" >1</text>
+<text x="1728.1" y="1447.7" font-size="16.9px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(345.5,1728.1,1447.7)" >1</text>
+<text x="1698.3" y="1624.3" font-size="16.9px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:start;fill:rgb(0,0,0);" transform="rotate(30.5,1698.3,1624.3)" >2</text>
+<text x="1386.9" y="1704.9" font-size="16.9px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(-59.5,1386.9,1704.9)" >3</text>
+<text x="1275.2" y="1564.9" font-size="16.9px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(-14.5,1275.2,1564.9)" >1</text>
+<text x="1295.1" y="1386.9" font-size="16.9px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(30.5,1295.1,1386.9)" >2</text>
+<text x="1435.1" y="1275.2" font-size="16.9px" font-family="CMUSansSerif-DemiCondensed" style="text-anchor:end;fill:rgb(0,0,0);" transform="rotate(75.5,1435.1,1275.2)" >2</text>
+</g>
+<g id="plot8">
+<g id="plot8-axis">
+</g>
+<text x="1640.8" y="1270.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(255,127,0);" transform="rotate(300.5,1640.8,1270.8)" >N</text>
+<text x="1761.6" y="1437.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(255,127,0);" transform="rotate(345.5,1761.6,1437.5)" >N</text>
+<text x="1729.2" y="1640.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(255,127,0);" transform="rotate(30.5,1729.2,1640.8)" >N</text>
+<text x="1734.4" y="1643.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(255,127,0);" transform="rotate(30.5,1734.4,1643.8)" >N</text>
+<text x="1562.5" y="1761.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(255,127,0);" transform="rotate(75.5,1562.5,1761.6)" >N</text>
+<text x="1564.0" y="1767.4" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(255,127,0);" transform="rotate(75.5,1564.0,1767.4)" >N</text>
+<text x="1565.5" y="1773.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(255,127,0);" transform="rotate(75.5,1565.5,1773.3)" >N</text>
+<text x="1567.0" y="1779.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:start;fill:rgb(255,127,0);" transform="rotate(75.5,1567.0,1779.1)" >N</text>
+<text x="1367.8" y="1734.3" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(255,127,0);" transform="rotate(-59.5,1367.8,1734.3)" >N</text>
+<text x="1364.8" y="1739.5" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(255,127,0);" transform="rotate(-59.5,1364.8,1739.5)" >N</text>
+<text x="1361.7" y="1744.6" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(255,127,0);" transform="rotate(-59.5,1361.7,1744.6)" >N</text>
+<text x="1240.9" y="1572.2" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(255,127,0);" transform="rotate(-14.5,1240.9,1572.2)" >N</text>
+<text x="1265.7" y="1367.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(255,127,0);" transform="rotate(30.5,1265.7,1367.8)" >N</text>
+<text x="1260.5" y="1364.8" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(255,127,0);" transform="rotate(30.5,1260.5,1364.8)" >N</text>
+<text x="1427.8" y="1240.9" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(255,127,0);" transform="rotate(75.5,1427.8,1240.9)" >N</text>
+<text x="1426.3" y="1235.1" font-size="26.0px" font-family="CircosSymbols" style="text-anchor:end;fill:rgb(255,127,0);" transform="rotate(75.5,1426.3,1235.1)" >N</text>
+</g>
+<defs>
+<pattern id="checker" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="10" y2="0" style="stroke:black;stroke-width:5" /><line x1="0" y1="0" x2="0" y2="10" style="stroke:black;stroke-width:4" /></pattern>
+<pattern id="hline" width="10" height="10" patternTransform="rotate(0 0 0)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="10" y2="0" style="stroke:black;stroke-width:5" /></pattern>
+<pattern id="checker" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="10" y2="0" style="stroke:black;stroke-width:2" /><line x1="0" y1="0" x2="0" y2="10" style="stroke:black;stroke-width:2" /></pattern>
+<pattern id="vline" width="10" height="10" patternTransform="rotate(0 0 0)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="10" style="stroke:black;stroke-width:5" /></pattern>
+<pattern id="hline-sparse" width="10" height="10" patternTransform="rotate(0 0 0)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="10" y2="0" style="stroke:black;stroke-width:2" /></pattern>
+<pattern id="vline-sparse" width="10" height="10" patternTransform="rotate(0 0 0)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="10" style="stroke:black;stroke-width:2" /></pattern>
+</defs>
+</svg>
