@@ -1,326 +1,324 @@
-study	pk	name	raw_pk	category	route	unit	substance_name	time_unit	value	time	form	application	choice	min	max	se
-Abernethy1985	2	D1	1	dosing	oral	gram	caffeine	h	1.62e-01	0.00e+00						
-Akinyinka2000	4	Dcaf	3	dosing	oral	gram	caffeine	hr	3.00e-01	0.00e+00						
-Backman2008	10	Dcaf	9	dosing	oral	gram	caffeine	hr	1.00e-01	0.00e+00	tablet	single dose				
-Balogh1992	12	caf	11	dosing	oral	gram	caffeine	hr	2.25e-01	0.00e+00	solution	single dose				
-Balogh1995	14	Dcaf	13	dosing	oral	gram	caffeine	hr	2.00e-01	0.00e+00	tablet	single dose				
-Balogh1995	16	DA	15	dosing	oral	gram	gestodene		7.50e-05							
-Balogh1995	18	DB	17	dosing	oral	gram	levonorgestrel		1.25e-04							
-Balogh1995	20	DEE2	19	dosing	oral	gram	ethinylestradiol		3.00e-05							
-Barnet1990	22	Dcaf	21	dosing	oral	gram	caffeine	hr	3.50e-01	0.00e+00		single dose				
-Barnet1990	24	Dppa	23	dosing	oral	gram	pipemidic acid		8.00e-01							
-Barnet1990	26	Dnfc	25	dosing	oral	gram	norfloxacin		8.00e-01							
-Beach1986	28	Dcaf	27	dosing	oral	gram	caffeine	hr	2.00e-01	0.00e+00	solution	single dose				
-Beach1986	30	Dds250	29	dosing	oral	gram / hour	disulfiram	hr	1.04e-02	0.00e+00		single dose				
-Beach1986	32	Dds500	31	dosing	oral	gram / hour	disulfiram	hr	2.08e-02	0.00e+00		single dose				
-Begas2007	34	Dcaf	33	dosing	oral	gram	caffeine	hr	2.00e-01	0.00e+00	capsule	single dose				
-Benowitz1995	36	Dcaf_2mg	35	dosing	oral	gram / kilogram	caffeine	hr	2.00e-03	0.00e+00	capsule	single dose				
-Benowitz1995	38	Dcaf_4mg	37	dosing	oral	gram / kilogram	caffeine	hr	4.00e-03	0.00e+00	capsule	single dose				
-Benowitz1995	40	Dpx_2mg	39	dosing	oral	gram / kilogram	paraxanthine	hr	2.00e-03	0.00e+00	capsule	single dose				
-Benowitz1995	42	Dpx_4mg	41	dosing	oral	gram / kilogram	paraxanthine	hr	4.00e-03	0.00e+00	capsule	single dose				
-Benowitz2003	44	Dcaf	43	dosing	oral	gram	caffeine	hr	2.50e-01	0.00e+00						
-Benowitz2003	46	Dchlo	45	dosing	oral	gram	chlorzoxazone	hr	2.50e-01	0.00e+00						
-Benowitz2003	48	Smoking	47	smoking									Y			
-Benowitz2003	50	CO	49	medication type									carbon monoxide			
-Blanchard1983a	52	Dcaf_oral	51	dosing	oral	gram / kilogram	caffeine	hr	4.94e-03	0.00e+00	solution	single dose		4.84e-03	5.17e-03	3.00e-05
-Blanchard1983a	54	Dcaf_iv	53	dosing	iv	gram / kilogram	caffeine	hr	4.85e-03	0.00e+00	solution	single dose		4.64e-03	5.63e-03	9.00e-05
-Bonati1982	56	D1	55	dosing	oral	gram / kilogram	caffeine	hr	2.20e-04	0.00e+00						
-Bonati1982	58	D2	57	dosing	oral	gram / kilogram	caffeine	hr	1.00e-03	0.00e+00						
-Bonati1982	60	D3	59	dosing	oral	gram / kilogram	caffeine	hr	1.54e-03	0.00e+00						
-Bonati1982	62	D4	61	dosing	oral	gram / kilogram	caffeine	hr	5.00e-03	0.00e+00						
-Bonati1982	64	D5	63	dosing	oral	gram / kilogram	caffeine	hr	1.00e-02	0.00e+00						
-Campbell1987a	66	Dcaf	65	dosing	oral	gram / kilogram	caffeine	h	4.00e-03	0.00e+00						
-Carbo1989	68	Dcaf	67	dosing	oral	gram	caffeine	hr	3.50e-01	0.00e+00		single dose				
-Carbo1989	70	Dnfc	69	dosing	oral	gram	norfloxacin		8.00e-01							
-Carbo1989	72	Dppa	71	dosing	oral	gram	pipemidic acid		8.00e-01							
-Carrillo2000a	74	Dcaf	73	dosing	oral	gram	caffeine	hr	1.00e-01	0.00e+00	tablet	single dose				
-Cheng1990	78	Dcaf_70	75	dosing	oral	gram	caffeine	hr	7.00e-02	0.00e+00						
-Cheng1990	79	Dcaf_200	76	dosing	oral	gram	caffeine	hr	2.00e-01	0.00e+00						
-Cheng1990	80	Dcaf_300	77	dosing	oral	gram	caffeine	hr	3.00e-01	0.00e+00						
-Culm-Merdek2005	82	Dcaf	81	dosing	oral	gram	caffeine	hr	2.50e-01	0.00e+00						
-Culm-Merdek2005	87	Dflux_A	83	dosing	oral	gram	fluvoxamine	hr	1.00e-01	-2.60e+01						
-Culm-Merdek2005	88	Dflux_B	84	dosing	oral	gram	fluvoxamine	hr	1.00e-01	-1.80e+01						
-Culm-Merdek2005	89	Dflux_C	85	dosing	oral	gram	fluvoxamine	hr	1.00e-01	-2.50e+00						
-Culm-Merdek2005	90	Dflux_D	86	dosing	oral	gram	fluvoxamine	hr	1.00e-01	8.00e+00						
-Desmond1980	92	D1	91	dosing	oral	gram	caffeine	hr	2.50e-01	0.00e+00						
-Faber2004	94	Dcaf	93	dosing	oral	gram	caffeine	h	1.48e-01	0.00e+00	solution	single dose				
-Fuhr1993a	96	Dcaf	95	dosing	oral	gram	caffeine	hr	1.67e-01	0.00e+00	solution	single dose				
-Fuhr1993a	98	Dgf	97	dosing	oral	gram	grapefruit juice	hr	1.43e-01	0.00e+00	solution	single dose		1.26e-01	1.59e-01	
-George1986	100	Dcaf	99	dosing	oral	gram	caffeine	hr	1.10e-01	0.00e+00	solution	single dose				
-George1986	102	Dap	101	dosing	oral	gram / kilogram	antipyrine	hr	1.00e-02	0.00e+00	solution	single dose				
-Ghassabian2009	104	Dcaf	103	dosing	oral	gram	caffeine	hr	1.00e-01	0.00e+00						
-Ghassabian2009	106	Dome	105	dosing	oral	gram	omeprazole	hr	2.00e-02	0.00e+00						
-Ghassabian2009	108	Dlos	107	dosing	oral	gram	losartan	hr	2.50e-02	0.00e+00						
-Ghassabian2009	110	Ddex	109	dosing	oral	gram	dextromethorphan	hr	1.00e-01	0.00e+00						
-Ghassabian2009	112	Dmid	111	dosing	oral	gram	midazolam	hr	2.00e-03	0.00e+00						
-Granfors2005	114	Dcaf	113	dosing	oral	gram	caffeine	hr	1.00e-01	0.00e+00	tablet	single dose				
-Haller2002	116	Dcaf	115	dosing	oral	gram	caffeine	hr	1.75e-01	0.00e+00	capsule					
-Harder1988	118	D_CAF	117	dosing	oral	gram	caffeine	hr	2.30e-01	0.00e+00						
-Harder1988	123	D_OFL_A	119	dosing	oral	gram	ofloxacin	hr	2.00e-01	0.00e+00						
-Harder1988	124	D_OFL_B	120	dosing	oral	gram	ofloxacin	hr	2.00e-01	2.40e+01						
-Harder1988	125	D_OFL_C	121	dosing	oral	gram	ofloxacin	hr	2.00e-01	4.80e+01						
-Harder1988	126	D_OFL_D	122	dosing	oral	gram	ofloxacin	hr	2.00e-01	7.20e+01						
-Harder1988	131	D_NOR_A	127	dosing	oral	gram	norfloxacin	hr	4.00e-01	0.00e+00						
-Harder1988	132	D_NOR_B	128	dosing	oral	gram	norfloxacin	hr	4.00e-01	2.40e+01						
-Harder1988	133	D_NOR_C	129	dosing	oral	gram	norfloxacin	hr	4.00e-01	4.80e+01						
-Harder1988	134	D_NOR_D	130	dosing	oral	gram	norfloxacin	hr	4.00e-01	7.20e+01						
-Harder1988	139	D_PPA_A	135	dosing	oral	gram	pipemidic acid	hr	4.00e-01	0.00e+00						
-Harder1988	140	D_PPA_B	136	dosing	oral	gram	pipemidic acid	hr	4.00e-01	2.40e+01						
-Harder1988	141	D_PPA_C	137	dosing	oral	gram	pipemidic acid	hr	4.00e-01	4.80e+01						
-Harder1988	142	D_PPA_D	138	dosing	oral	gram	pipemidic acid	hr	4.00e-01	7.20e+01						
-Harder1988	147	D_CIP1_A	143	dosing	oral	gram	ciprofloxacin	hr	1.00e-01	0.00e+00						
-Harder1988	148	D_CIP1_B	144	dosing	oral	gram	ciprofloxacin	hr	1.00e-01	2.40e+01						
-Harder1988	149	D_CIP1_C	145	dosing	oral	gram	ciprofloxacin	hr	1.00e-01	4.80e+01						
-Harder1988	150	D_CIP1_D	146	dosing	oral	gram	ciprofloxacin	hr	1.00e-01	7.20e+01						
-Harder1988	155	D_CIP2_A	151	dosing	oral	gram	ciprofloxacin	hr	2.50e-01	0.00e+00						
-Harder1988	156	D_CIP2_B	152	dosing	oral	gram	ciprofloxacin	hr	2.50e-01	2.40e+01						
-Harder1988	157	D_CIP2_C	153	dosing	oral	gram	ciprofloxacin	hr	2.50e-01	4.80e+01						
-Harder1988	158	D_CIP2_D	154	dosing	oral	gram	ciprofloxacin	hr	2.50e-01	7.20e+01						
-Harder1988	163	D_CIP3_A	159	dosing	oral	gram	ciprofloxacin	hr	5.00e-01	0.00e+00						
-Harder1988	164	D_CIP3_B	160	dosing	oral	gram	ciprofloxacin	hr	5.00e-01	2.40e+01						
-Harder1988	165	D_CIP3_C	161	dosing	oral	gram	ciprofloxacin	hr	5.00e-01	4.80e+01						
-Harder1988	166	D_CIP3_D	162	dosing	oral	gram	ciprofloxacin	hr	5.00e-01	7.20e+01						
-Harder1988	171	D_ENX1_A	167	dosing	oral	gram	enoxacin	hr	1.00e-01	0.00e+00						
-Harder1988	172	D_ENX1_B	168	dosing	oral	gram	enoxacin	hr	1.00e-01	2.40e+01						
-Harder1988	173	D_ENX1_C	169	dosing	oral	gram	enoxacin	hr	1.00e-01	4.80e+01						
-Harder1988	174	D_ENX1_D	170	dosing	oral	gram	enoxacin	hr	1.00e-01	7.20e+01						
-Harder1988	179	D_ENX2_A	175	dosing	oral	gram	enoxacin	hr	2.00e-01	0.00e+00						
-Harder1988	180	D_ENX2_B	176	dosing	oral	gram	enoxacin	hr	2.00e-01	2.40e+01						
-Harder1988	181	D_ENX2_C	177	dosing	oral	gram	enoxacin	hr	2.00e-01	4.80e+01						
-Harder1988	182	D_ENX2_D	178	dosing	oral	gram	enoxacin	hr	2.00e-01	7.20e+01						
-Harder1988	187	D_ENX3_A	183	dosing	oral	gram	enoxacin	hr	4.00e-01	0.00e+00						
-Harder1988	188	D_ENX3_B	184	dosing	oral	gram	enoxacin	hr	4.00e-01	2.40e+01						
-Harder1988	189	D_ENX3_C	185	dosing	oral	gram	enoxacin	hr	4.00e-01	4.80e+01						
-Harder1988	190	D_ENX3_D	186	dosing	oral	gram	enoxacin	hr	4.00e-01	7.20e+01						
-Harder1989	192	D_CAF	191	dosing	oral	gram	caffeine	hr	2.30e-01	0.00e+00						
-Harder1989	197	D_OFL_A	193	dosing	oral	gram	ofloxacin	hr	2.00e-01	0.00e+00						
-Harder1989	198	D_OFL_B	194	dosing	oral	gram	ofloxacin	hr	2.00e-01	2.40e+01						
-Harder1989	199	D_OFL_C	195	dosing	oral	gram	ofloxacin	hr	2.00e-01	4.80e+01						
-Harder1989	200	D_OFL_D	196	dosing	oral	gram	ofloxacin	hr	2.00e-01	7.20e+01						
-Harder1989	205	D_NOR_A	201	dosing	oral	gram	norfloxacin	hr	4.00e-01	0.00e+00						
-Harder1989	206	D_NOR_B	202	dosing	oral	gram	norfloxacin	hr	4.00e-01	2.40e+01						
-Harder1989	207	D_NOR_C	203	dosing	oral	gram	norfloxacin	hr	4.00e-01	4.80e+01						
-Harder1989	208	D_NOR_D	204	dosing	oral	gram	norfloxacin	hr	4.00e-01	7.20e+01						
-Harder1989	213	D_PPA_A	209	dosing	oral	gram	pipemidic acid	hr	4.00e-01	0.00e+00						
-Harder1989	214	D_PPA_B	210	dosing	oral	gram	pipemidic acid	hr	4.00e-01	2.40e+01						
-Harder1989	215	D_PPA_C	211	dosing	oral	gram	pipemidic acid	hr	4.00e-01	4.80e+01						
-Harder1989	216	D_PPA_D	212	dosing	oral	gram	pipemidic acid	hr	4.00e-01	7.20e+01						
-Harder1989	221	D_CIP1_A	217	dosing	oral	gram	ciprofloxacin	hr	1.00e-01	0.00e+00						
-Harder1989	222	D_CIP1_B	218	dosing	oral	gram	ciprofloxacin	hr	1.00e-01	2.40e+01						
-Harder1989	223	D_CIP1_C	219	dosing	oral	gram	ciprofloxacin	hr	1.00e-01	4.80e+01						
-Harder1989	224	D_CIP1_D	220	dosing	oral	gram	ciprofloxacin	hr	1.00e-01	7.20e+01						
-Harder1989	229	D_CIP2_A	225	dosing	oral	gram	ciprofloxacin	hr	2.50e-01	0.00e+00						
-Harder1989	230	D_CIP2_B	226	dosing	oral	gram	ciprofloxacin	hr	2.50e-01	2.40e+01						
-Harder1989	231	D_CIP2_C	227	dosing	oral	gram	ciprofloxacin	hr	2.50e-01	4.80e+01						
-Harder1989	232	D_CIP2_D	228	dosing	oral	gram	ciprofloxacin	hr	2.50e-01	7.20e+01						
-Harder1989	237	D_CIP3_A	233	dosing	oral	gram	ciprofloxacin	hr	5.00e-01	0.00e+00						
-Harder1989	238	D_CIP3_B	234	dosing	oral	gram	ciprofloxacin	hr	5.00e-01	2.40e+01						
-Harder1989	239	D_CIP3_C	235	dosing	oral	gram	ciprofloxacin	hr	5.00e-01	4.80e+01						
-Harder1989	240	D_CIP3_D	236	dosing	oral	gram	ciprofloxacin	hr	5.00e-01	7.20e+01						
-Harder1989	245	D_ENX1_A	241	dosing	oral	gram	enoxacin	hr	1.00e-01	0.00e+00						
-Harder1989	246	D_ENX1_B	242	dosing	oral	gram	enoxacin	hr	1.00e-01	2.40e+01						
-Harder1989	247	D_ENX1_C	243	dosing	oral	gram	enoxacin	hr	1.00e-01	4.80e+01						
-Harder1989	248	D_ENX1_D	244	dosing	oral	gram	enoxacin	hr	1.00e-01	7.20e+01						
-Harder1989	253	D_ENX2_A	249	dosing	oral	gram	enoxacin	hr	2.00e-01	0.00e+00						
-Harder1989	254	D_ENX2_B	250	dosing	oral	gram	enoxacin	hr	2.00e-01	2.40e+01						
-Harder1989	255	D_ENX2_C	251	dosing	oral	gram	enoxacin	hr	2.00e-01	4.80e+01						
-Harder1989	256	D_ENX2_D	252	dosing	oral	gram	enoxacin	hr	2.00e-01	7.20e+01						
-Harder1989	261	D_ENX3_A	257	dosing	oral	gram	enoxacin	hr	4.00e-01	0.00e+00						
-Harder1989	262	D_ENX3_B	258	dosing	oral	gram	enoxacin	hr	4.00e-01	2.40e+01						
-Harder1989	263	D_ENX3_C	259	dosing	oral	gram	enoxacin	hr	4.00e-01	4.80e+01						
-Harder1989	264	D_ENX3_D	260	dosing	oral	gram	enoxacin	hr	4.00e-01	7.20e+01						
-Healy1989	266	D_CAF	265	dosing	oral	gram	caffeine	hr	1.00e-01	0.00e+00						
-Healy1989	270	D_CIP_A	267	dosing	oral	gram	ciprofloxacin	hr	7.50e-01	2.40e+01	capsule					
-Healy1989	271	D_CIP_B	268	dosing	oral	gram	ciprofloxacin	hr	7.50e-01	3.60e+01	capsule					
-Healy1989	272	D_CIP_C	269	dosing	oral	gram	ciprofloxacin	hr	7.50e-01	4.80e+01	capsule					
-Healy1991	274	Dcaf	273	dosing	oral	gram	caffeine	hr	2.00e-01	0.00e+00	tablet	single dose				
-Healy1991	276	Dlom	275	dosing	oral	gram	lomefloxacin		4.00e-01		capsule	multiple dose				
-Hetzler1990	278	Dcaf	277	dosing	iv	gram / kilogram	caffeine	hr	4.00e-03	0.00e+00	solution	single dose				
-Jeppesen1996	280	Dcaf	279	dosing	oral	gram	caffeine	hr	2.00e-01	0.00e+00		single dose				
-Jeppesen1996	282	Dflu	281	dosing	oral	gram	fluvoxamine		5.00e-02			single dose				
-Joeres1988	284	Dcaf	283	dosing	oral	gram	caffeine	h	3.66e-01	0.00e+00	tablet	single dose				
-Joeres1988	286	smoking abstinence	285	abstinence		day			2.10e+01				smoking			
-Joeres1988	288	no smoking	287	smoking									N			
-Kaplan1997	290	D_CAF250	289	dosing	oral	gram	caffeine	hr	2.50e-01		capsule					
-Kaplan1997	292	D_CAF500	291	dosing	oral	gram	caffeine	hr	5.00e-01		capsule					
-Koch1999	294	Dcaf	293	dosing	oral	gram	caffeine	hr	2.00e-01	0.00e+00	solution	single dose				
-Lelo1986a	296	Dcaf	295	dosing	oral	gram	caffeine	h	2.70e-01	0.00e+00	capsule	single dose				
-Lelo1986a	298	Dpx	297	dosing	oral	gram	paraxanthine	h	2.50e-01	0.00e+00	capsule	single dose				
-Lelo1986a	300	Dtp	299	dosing	oral	gram	theophylline	h	2.50e-01	0.00e+00	tablet	single dose				
-Lelo1986a	302	Dtb	301	dosing	oral	gram	theobromine	h	2.50e-01	0.00e+00	capsule	single dose				
-Levy1983	304	Dcaf	303	dosing	oral	gram	caffeine	hr	3.00e-01	0.00e+00	solution	single dose				
-Magnusson2008	306	Dcaf	305	dosing	oral	gram	caffeine	hr	1.00e-01	0.00e+00		single dose				
-Magnusson2008	308	Dmid	307	dosing	oral	gram	midazolam	hr	2.50e-03	0.00e+00		single dose				
-Magnusson2008	310	Ddig	309	dosing	oral	gram	digoxin	hr	1.30e-04	0.00e+00		single dose				
-May1982	312	Dcaf	311	dosing	oral	gram / kilogram	caffeine	hr	2.00e-03	0.00e+00	solution	single dose				
-May1982	314	Dcim	313	dosing	oral	gram	cimetidine	hr	3.00e-01	0.00e+00	solution	multiple dose				
-McLean2002	316	Dcaf	315	dosing	oral	gram / kilogram	caffeine	hr	6.00e-03	0.00e+00		single dose				
-Murphy1988	318	Dcaf	317	dosing	oral	gram	caffeine	hr	1.11e-01	0.00e+00	solution	single dose				
-Murphy1988	320	Dapy	319	dosing	oral	gram / kilogram	antipyrine	hr	1.00e-02	0.00e+00	solution	single dose				
-Newton1981	326	Dcaf_50	321	dosing	oral	gram	caffeine	hr	5.00e-02	0.00e+00	solution	single dose				
-Newton1981	327	Dcaf_100	322	dosing	oral	gram	caffeine	hr	1.00e-01	0.00e+00	solution	single dose				
-Newton1981	328	Dcaf_300	323	dosing	oral	gram	caffeine	hr	3.00e-01	0.00e+00	solution	single dose				
-Newton1981	329	Dcaf_500	324	dosing	oral	gram	caffeine	hr	5.00e-01	0.00e+00	solution	single dose				
-Newton1981	330	Dcaf_750	325	dosing	oral	gram	caffeine	hr	7.50e-01	0.00e+00	solution	single dose				
-Oh2012	336	Dcaf	331	dosing	oral	gram	caffeine	hr	1.00e-02	0.00e+00		single dose				
-Oh2012	337	Dlos	332	dosing	oral	gram	losartan	hr	2.00e-03	0.00e+00		single dose				
-Oh2012	338	Dome	333	dosing	oral	gram	omeprazole	hr	2.00e-01	0.00e+00		single dose				
-Oh2012	339	Ddex	334	dosing	oral	gram	dextromethorphan	hr	2.00e-03	0.00e+00		single dose				
-Oh2012	340	Dmid	335	dosing	oral	gram	midazolam	hr	1.00e-01	0.00e+00		single dose				
-Park2003	342	Dcaf	341	dosing	oral	gram / kilogram	caffeine	hr	2.00e-03	0.00e+00	solution	single dose				
-Parsons1978	344	Dcaf	343	dosing	oral	gram / kilogram	caffeine	hr	5.00e-03	0.00e+00	solution	single dose				
-Patwardhan1980	346	Dcaf	345	dosing	oral	gram	caffeine	hr	2.50e-01	0.00e+00	capsule	single dose				
-Perera2011	348	Dcaf	347	dosing	oral	gram	caffeine	hr	1.00e-01	0.00e+00	tablet	single dose				
-Renner1984	350	D1	349	dosing	iv	gram	caffeine	hr	1.25e-01	0.00e+00	solution	single dose				
-Seng2009	352	D_CAF3	351	dosing	oral	gram / kilogram	caffeine	hr	3.00e-03	0.00e+00	capsule					
-Seng2009	354	D_CAF5	353	dosing	oral	gram / kilogram	caffeine	hr	5.00e-03	0.00e+00	capsule					
-Spigset1999a	356	Dcaf	355	dosing	oral	gram	caffeine	hr	2.00e-01	0.00e+00	tablet	single dose				
-Stille1987	358	D_CAF	357	dosing	oral	gram	caffeine	hr	2.30e-01	0.00e+00						
-Stille1987	363	D_OFL_A	359	dosing	oral	gram	ofloxacin	hr	2.00e-01	0.00e+00						
-Stille1987	364	D_OFL_B	360	dosing	oral	gram	ofloxacin	hr	2.00e-01	2.40e+01						
-Stille1987	365	D_OFL_C	361	dosing	oral	gram	ofloxacin	hr	2.00e-01	4.80e+01						
-Stille1987	366	D_OFL_D	362	dosing	oral	gram	ofloxacin	hr	2.00e-01	7.20e+01						
-Stille1987	371	D_CIP_A	367	dosing	oral	gram	ciprofloxacin	hr	2.50e-01	0.00e+00						
-Stille1987	372	D_CIP_B	368	dosing	oral	gram	ciprofloxacin	hr	2.50e-01	2.40e+01						
-Stille1987	373	D_CIP_C	369	dosing	oral	gram	ciprofloxacin	hr	2.50e-01	4.80e+01						
-Stille1987	374	D_CIP_D	370	dosing	oral	gram	ciprofloxacin	hr	2.50e-01	7.20e+01						
-Stille1987	379	D_ENX_A	375	dosing	oral	gram	enoxacin	hr	4.00e-01	0.00e+00						
-Stille1987	380	D_ENX_B	376	dosing	oral	gram	enoxacin	hr	4.00e-01	2.40e+01						
-Stille1987	381	D_ENX_C	377	dosing	oral	gram	enoxacin	hr	4.00e-01	4.80e+01						
-Stille1987	382	D_ENX_D	378	dosing	oral	gram	enoxacin	hr	4.00e-01	7.20e+01						
-Test243	384	Dcaf	383	dosing	oral	gram	caffeine	hr	5.00e-02	0.00e+00	tablet	single dose				
-Turpault2009	386	Dcaf	385	dosing	oral	gram	caffeine	hr	1.00e-01	0.00e+00		single dose				
-Turpault2009	388	Dwar	387	dosing	oral	gram	warfarin	hr	1.00e-02	0.00e+00	tablet	single dose				
-Turpault2009	390	Dome	389	dosing	oral	gram	omeprazole	hr	2.00e-02	0.00e+00	capsule	single dose				
-Turpault2009	392	Dmet	391	dosing	oral	gram	metropolol	hr	1.00e-01	0.00e+00	tablet	single dose				
-Turpault2009	394	Dmid	393	dosing	oral	gram / kilogram	midazolam	hr	3.00e-05	0.00e+00		single dose				
-Wang1985	396	Dcaf	395	dosing	oral	gram	caffeine	hr	1.40e-01	0.00e+00		single dose				
-Wang1985	398	Dicg	397	dosing	iv	gram / kilogram	indocyanine green	hr	5.00e-04	0.00e+00	solution	single dose				
-ZylberKatz1984	402	Dcaf_350	399	dosing	oral	gram	caffeine	hr	3.50e-01	0.00e+00	solution	single dose				
-ZylberKatz1984	403	Dcaf_310	400	dosing	oral	gram	caffeine	hr	3.10e-01	0.00e+00	solution	single dose				
-ZylberKatz1984	404	Dcaf_260	401	dosing	oral	gram	caffeine	hr	2.60e-01	0.00e+00	solution	single dose				
-Ammon2002	406	COD	405	dosing	oral	gram	codeine	hr	1.00e-01	0.00e+00	tablet					
-Ammon2002	408	DIC	407	dosing	oral	gram	diclofenac	hr	5.00e-02	0.00e+00	capsule					
-Ammon2002	410	Placebo	409	dosing	oral	gram	diclofenac	hr	0.00e+00	0.00e+00	capsule					
-Caraco1996	412	COD	411	dosing	oral	gram	codeine	hr	1.20e-01	0.00e+00						
-Caraco1996	414	DEB	413	dosing	oral	gram	debrisoquine	hr	1.00e-02	0.00e+00						
-Caraco1996	416	MEP	415	dosing	oral	gram	mephenytoin	hr	1.00e-01	0.00e+00						
-Caraco1996	418	QUI	417	dosing	oral	gram	quinidine	hr	1.00e-01	0.00e+00						
-Chen1991	420	COD	419	dosing	oral	gram	codeine	hr	3.00e-02	0.00e+00	tablet					
-Chen1991	428	COD_M1	421	dosing	oral	gram	codeine	hr	3.00e-02	4.80e+01	tablet					
-Chen1991	429	COD_M2	422	dosing	oral	gram	codeine	hr	3.00e-02	-4.00e+01	tablet					
-Chen1991	430	COD_M3	423	dosing	oral	gram	codeine	hr	3.00e-02	-3.20e+01	tablet					
-Chen1991	431	COD_M4	424	dosing	oral	gram	codeine	hr	3.00e-02	-2.40e+01	tablet					
-Chen1991	432	COD_M5	425	dosing	oral	gram	codeine	hr	3.00e-02	-1.60e+01	tablet					
-Chen1991	433	COD_M6	426	dosing	oral	gram	codeine	hr	3.00e-02	-8.00e+00	tablet					
-Chen1991	434	COD_M7	427	dosing	oral	gram	codeine	hr	3.00e-02	0.00e+00	tablet					
-Hasselstrom1997	436	COD	435	dosing	oral	gram	codeine	hr	5.00e-02	0.00e+00						
-Hasselstrom1997	438	DEB	437	dosing	oral	gram	debrisoquine	hr								
-He2008	440	COD	439	dosing	oral	gram	codeine	hr	3.00e-02	0.00e+00						
-Kim2002	442	COD_low	441	dosing	oral	gram / kilogram	codeine	hr	6.00e-02	0.00e+00						
-Kim2002	444	COD_high	443	dosing	oral	gram / kilogram	codeine	hr	1.20e-01	0.00e+00						
-Kirchner2007	446	COD	445	dosing	oral	gram	codeine	hr	3.00e-02	0.00e+00						
-Kronstrand2001	448	COD	447	dosing	oral	gram	codeine	hr	1.00e-01	0.00e+00						
-Lafolie1996	450	COD25	449	dosing	oral	gram / kilogram	codeine	hr	2.50e-02	0.00e+00						
-Lafolie1996	452	COD50	451	dosing	oral	gram / kilogram	codeine	hr	5.00e-02	0.00e+00						
-Lia2009	454	COD	453	dosing	oral	gram	codeine	hr	3.00e-02	0.00e+00	tablet					
-Loetsch2006	456	COD	455	dosing	oral	gram	codeine	hr	3.00e-02	0.00e+00	tablet					
-Loetsch2006	458	MOR	457	dosing	iv	gram	morphine	hr	3.00e-02	0.00e+00						
-Mikus1997	460	COD	459	dosing	oral	gram	codeine	hr	6.00e-02	0.00e+00						
-Mikus1997	462	SPATA	461	dosing	oral	gram	sparteine	hr	1.00e-01							
-Mikus1997	464	SULFA	463	dosing	oral	gram	sulfasalazine	hr	2.00e-03							
-Mitchell1991	466	MOR	465	dosing	intramuscular	gram	morphine	hr	2.00e-02	0.00e+00						
-Mohammed1993	468	COD	467	dosing	oral	gram	codeine	hr	6.00e-02	0.00e+00						
-Molanaei2010	470	COD	469	dosing	oral	gram	codeine	hr	5.00e-02	0.00e+00						
-Molanaei2010	472	HD	471	medication type				hr		2.40e+01			hemodialysis			
-O'Neal1999	474	COD	473	dosing	oral	gram	codeine	hr	3.00e-02	0.00e+00						
-Shah1990	476	COD	475	dosing	oral	gram	codeine	h	6.00e-02	0.00e+00						
-Shord2009	478	COD	477	dosing	oral	gram	codeine		3.00e-02		tablet					
-Sindrup1996	480	COD	479	dosing	oral	gram	codeine	hr	1.25e-01	0.00e+00	tablet					
-Sindrup1996	482	QUI	481	dosing	oral	gram	quinidine	hr	2.00e-01	-2.00e+00	tablet					
-Somogyi1991	484	COD	483	dosing	oral	gram	codeine	hr	3.00e-02	0.00e+00	tablet					
-Somogyi1991	492	ACE1	485	dosing	oral	gram	paracetamol	hr	3.00e-02	-4.80e+01	tablet					
-Somogyi1991	493	ACE2	486	dosing	oral	gram	paracetamol	hr	3.00e-02	-4.00e+01	tablet					
-Somogyi1991	494	ACE3	487	dosing	oral	gram	paracetamol	hr	3.00e-02	-3.20e+01	tablet					
-Somogyi1991	495	ACE4	488	dosing	oral	gram	paracetamol	hr	3.00e-02	-2.40e+01	tablet					
-Somogyi1991	496	ACE5	489	dosing	oral	gram	paracetamol	hr	3.00e-02	-1.60e+01	tablet					
-Somogyi1991	497	ACE6	490	dosing	oral	gram	paracetamol	hr	3.00e-02	-8.00e+00	tablet					
-Somogyi1991	498	ACE7	491	dosing	oral	gram	paracetamol	hr	3.00e-02	0.00e+00	tablet					
-Vree1992	500	COD	499	dosing	oral	gram	codeine	hr	2.20e-02	0.00e+00						
-Wu2013	502	COD	501	dosing	oral	gram	codeine	hr	3.00e-02	0.00e+00	tablet					
-Wu2014	504	COD	503	dosing	oral	gram	codeine	hr	3.00e-02	0.00e+00	tablet					
-Yue1989-2	506	COD	505	dosing	oral	gram	codeine	hr	2.50e-02	0.00e+00						
-Yue1989-2	508	DEB	507	dosing	oral	gram	debrisoquine	hr	1.00e-02	0.00e+00						
-Yue1989	510	COD	509	dosing	oral	gram	codeine	hr	2.50e-02	0.00e+00						
-Yue1991	512	COD	511	dosing	oral	gram	codeine	hr	5.00e-02	0.00e+00						
-Yue1991	514	DEB	513	dosing	oral	gram	debrisoquine	hr	1.00e-02	0.00e+00						
-Yue1991B	516	COD	515	dosing	oral	gram	codeine	hr	5.00e-02	0.00e+00						
-Yue1991B	518	DEB	517	dosing	oral	gram	debrisoquine	hr	1.00e-02	0.00e+00						
-Yue1991B	528	COD0	519	dosing	oral	gram	codeine	hr	5.00e-02	0.00e+00						
-Yue1991B	529	COD-6	520	dosing	oral	gram	codeine	hr	5.00e-02	-6.00e+00						
-Yue1991B	530	COD-12	521	dosing	oral	gram	codeine	hr	5.00e-02	-1.20e+01						
-Yue1991B	531	COD-18	522	dosing	oral	gram	codeine	hr	5.00e-02	-1.80e+01						
-Yue1991B	532	COD-24	523	dosing	oral	gram	codeine	hr	5.00e-02	-2.40e+01						
-Yue1991B	533	COD-30	524	dosing	oral	gram	codeine	hr	5.00e-02	-3.00e+01						
-Yue1991B	534	COD-36	525	dosing	oral	gram	codeine	hr	5.00e-02	-3.60e+01						
-Yue1991B	535	COD-42	526	dosing	oral	gram	codeine	hr	5.00e-02	-4.20e+01						
-Yue1991B	536	COD-48	527	dosing	oral	gram	codeine	hr	5.00e-02	-4.80e+01						
-Yue1997	538	COD	537	dosing	oral	gram	codeine	hr	2.50e-02	0.00e+00						
-Yue1997	540	DEB	539	dosing	oral	gram	debrisoquine	hr	1.00e-02	0.00e+00						
-Yue1999	542	COD	541	dosing	oral	gram	codeine	hr	5.00e-02	0.00e+00	capsule	single dose				
-Yue1999	544	MEAL	543	metabolic challenge	oral			hr		0.00e+00		single dose	mixed meal			
-Yue1999	546	DEB	545	dosing	oral	gram	debrisoquine	hr								
-	624	hypoclamp	623	metabolic challenge									hypoglycemic clamp			
-	663	hypoclamp	662	metabolic challenge									hypoglycemic clamp			
-Degn2004	758	exenatide	757	dosing	iv	mole / hour / kilogram	exenatide	hr	3.96e-12	0.00e+00	solution	continuous injection				
-Degn2004	756	hypoclamp	755	metabolic challenge	iv			hr		0.00e+00			hypoglycemic clamp			
-Calbet2002	748	Glucose	747	dosing	oral	gram	glucose	h	1.50e+01	0.00e+00						0.00e+00
-Calbet2002	750	PPH	749	metabolic challenge	oral			h		0.00e+00			protein solution			
-Calbet2002	752	WPH	751	metabolic challenge	oral			h		0.00e+00			protein solution			
-Calbet2002	754	MS	753	metabolic challenge	oral			h		0.00e+00			protein solution			
-Bergman1991	744	glciv	743	dosing	iv	gram / kilogram	glucose	h	3.00e-01	0.00e+00	solution	single dose				
-Felig1969	760	glciv	759	dosing	iv	gram / kilogram	glucose	hr	5.00e-01	0.00e+00	solution	single dose				
-Butler1991	746	mixed-meal	745	metabolic challenge	oral			h		0.00e+00			mixed-meal			
-Basu2009	742	mixed-meal	741	metabolic challenge	oral			h		0.00e+00			mixed-meal			
-Israelian2006	774	hypoclamp	773	metabolic challenge									hypoglycemic clamp			
-Israelian2006	776	Dins	775	dosing	iv	milliIU / kilogram	insulin	hr	1.00e+00	0.00e+00	solution	continuous injection				
-Kjems2001	788	cpep_bolus	787	dosing	iv	mole	c-peptide	h	5.00e-08	0.00e+00	solution	single dose				
-Kjems2001	790	IVGTT	789	dosing	iv	gram / kilogram	glucose	h	3.00e-01	0.00e+00	solution	single dose				
-Hovorka2002	772	glciv	771	dosing	iv	gram / kilogram	glucose	min	3.00e-01	1.20e+02	solution	single dose				
-Jones1998	784	daytime	783	circadian									daytime			
-Jones1998	786	nighttime	785	circadian									nighttime			
-Jones1998	778	hypoglycemia	777	metabolic challenge				min		0.00e+00			hypoglycemic clamp			
-Jones1998	780	asleep	779	sleeping									asleep			
-Jones1998	782	awake	781	sleeping									awake			
-Ferrannini1988	764	Dglc	763	dosing	oral	gram / kilogram	glucose	hr	1.00e+00	0.00e+00						
-Ferrannini1979	762	glciv	761	dosing	iv	gram / kilogram	glucose	hr	3.30e-01	0.00e+00						
-Firth1986	768	Dglc	767	dosing	oral	gram	glucose	hr	5.00e+01	0.00e+00						
-Fery1993	766	Dglc	765	dosing	oral	gram	glucose	hr	7.50e+01	0.00e+00						
-Henkel2005	770	LPG drink	769	metabolic challenge									lipid-glucose-protein drink			
-Polonsky1986	802	bolus_injection	801	dosing	iv	mole / kilogram	c-peptide	hr		0.00e+00	solution	single dose				
-Polonsky1986	806	constant_infusion_30	804	dosing	iv	mole / hour / kilogram	c-peptide	min	1.80e-09	1.20e+02	solution	constant infusion				
-Polonsky1986	805	constant_infusion_3	803	dosing	iv	mole / hour / kilogram	c-peptide	min	1.80e-10	0.00e+00	solution	constant infusion				
-Polonsky1986	808	variable_infusion	807	dosing	iv	mole / hour / kilogram	c-peptide	min		0.00e+00	solution	variable infusion				
-Knop2007	792	isoglc	791	metabolic challenge									isoglycemic glucose infusion			
-Knop2007	794	ogtt	793	dosing	oral	gram	glucose	h	5.00e+01	0.00e+00	solution	single dose				
-Baraka1990	822	paracetamol	821	dosing	oral	gram	paracetamol	hr	1.50e+00	0.00e+00		single dose				
-Baraka1990	824	antipyrine	823	dosing	oral	gram	antipyrine	hr	6.00e-01	0.00e+00		single dose				
-Baraka1990	826	propanolol	825	dosing	oral	gram / hour	propanolol	hr	6.67e-03	0.00e+00		single dose				
-Ameer1981	820	apap_iv	818	dosing	iv	gram	paracetamol	hr	6.50e-01	0.00e+00	solution	constant infusion				
-Ameer1981	819	apap_oral	817	dosing	oral	gram	paracetamol	hr	6.50e-01	0.00e+00	tablet	single dose				
-Albert1974	816	B	814	dosing	oral	gram	paracetamol	hr	6.50e-01	0.00e+00	tablet	single dose				
-Albert1974	815	A	813	dosing	oral	gram	paracetamol	hr	6.50e-01	0.00e+00	capsule	single dose				
-Mitrakou1992	800	glc	799	dosing	oral	gram / kilogram	glucose	hr	1.00e+00	0.00e+00	solution	single dose				
-Mitrakou1991	796	hypoglycemic clamp	795	metabolic challenge	iv						solution		hypoglycemic clamp			
-Mitrakou1991	798	euglycemic clamp	797	metabolic challenge	iv						solution		hyperinsulinemic euglycemic clamp			
-Yang2015	812	ogtt	811	dosing	oral	gram	glucose	hr	7.50e+01	0.00e+00		single dose				
-Thomaseth2008	810	Dglc	809	dosing	oral	gram	glucose	h	7.50e+01	0.00e+00						
-Chan1997	828	paracetamol	827	dosing	oral	gram / kilogram	paracetamol	hr	2.00e-02	0.00e+00	solution	single dose				
-Chiew2010	830	paracetamol	829	dosing	oral	gram / kilogram	paracetamol	hr	7.90e-02	0.00e+00	tablet	single dose		7.70e-02	8.30e-02	
-Chiew2010	832	PEx	831	dosing	oral	gram / kilogram	panadol extend	hr	7.88e-02	0.00e+00	tablet	single dose		7.50e-02	8.10e-02	
-Critchley2005	834	paracetamol	833	dosing	oral	gram / kilogram	paracetamol	hr	2.00e-02	0.00e+00	solution	single dose				
-Jensen2004	836	paracetamol	835	dosing	oral	gram	paracetamol	hr	1.00e+00	0.00e+00	tablet	single dose				
-Rawlins1977	838	apap_iv_1000	837	dosing	iv	gram	paracetamol	hr	1.00e+00	0.00e+00	solution	single dose				
-Rawlins1977	844	apap_po_2000	841	dosing	oral	gram	paracetamol	hr	2.00e+00	0.00e+00	tablet	single dose				
-Rawlins1977	843	apap_po_1000	840	dosing	oral	gram	paracetamol	hr	1.00e+00	0.00e+00	tablet	single dose				
-Rawlins1977	842	apap_po_500	839	dosing	oral	gram	paracetamol	hr	5.00e-01	0.00e+00	tablet	single dose				
+study	pk	name	raw_pk	category	route	unit	substance_name	value	application	time	time_unit	form	choice	min	max	se
+Chen1991	1334	COD	1333	dosing	oral	gram	codeine phosphate	3.00e-02	single dose	0.00e+00	hr	tablet				
+Chen1991	1342	COD_M1	1335	dosing	oral	gram	codeine	3.00e-02	single dose	4.80e+01	hr	tablet				
+Chen1991	1343	COD_M2	1336	dosing	oral	gram	codeine	3.00e-02	single dose	-4.00e+01	hr	tablet				
+Chen1991	1344	COD_M3	1337	dosing	oral	gram	codeine	3.00e-02	single dose	-3.20e+01	hr	tablet				
+Chen1991	1345	COD_M4	1338	dosing	oral	gram	codeine	3.00e-02	single dose	-2.40e+01	hr	tablet				
+Chen1991	1346	COD_M5	1339	dosing	oral	gram	codeine	3.00e-02	single dose	-1.60e+01	hr	tablet				
+Chen1991	1347	COD_M6	1340	dosing	oral	gram	codeine	3.00e-02	single dose	-8.00e+00	hr	tablet				
+Chen1991	1348	COD_M7	1341	dosing	oral	gram	codeine	3.00e-02	single dose	0.00e+00	hr	tablet				
+Caraco1996	1326	COD	1325	dosing	oral	gram	codeine phosphate	1.20e-01	single dose	0.00e+00	hr	capsule				
+Caraco1996	1328	DEB	1327	qualitative_dosing	oral	gram	debrisoquine	1.00e-02	single dose							
+Caraco1996	1330	MEP	1329	qualitative_dosing	oral	gram	mephenytoin	1.00e-01	single dose							
+Caraco1996	1332	QUI	1331	qualitative_dosing	oral	gram	quinidine	1.00e-01	single dose			capsule				
+Hasselstrom1997	1350	COD	1349	dosing	oral	gram	codeine phosphate	5.00e-02	single dose	0.00e+00	hr	capsule				
+Hasselstrom1997	1352	DEB	1351	qualitative_dosing	oral	gram	debrisoquine		single dose							
+Kim2002	1356	COD_low	1355	dosing	oral	gram / kilogram	codeine sulphate	6.00e-02	single dose	0.00e+00	hr	capsule				
+Kim2002	1358	COD_high	1357	dosing	oral	gram / kilogram	codeine sulphate	1.20e-01	single dose	0.00e+00	hr	capsule				
+Ammon2002	1322	COD	1321	dosing	oral	gram	codeine phosphate	1.00e-01	single dose	0.00e+00	hr	tablet				
+Ammon2002	1324	DIC	1323	dosing	oral	gram	diclofenac	5.00e-02	single dose	0.00e+00	hr	capsule				
+Lafolie1996	1364	COD25	1363	dosing	oral	gram	codeine phosphate	2.50e-02	single dose	0.00e+00	hr	no info				
+Lafolie1996	1366	COD50	1365	dosing	oral	gram	codeine phosphate	5.00e-02	single dose	0.00e+00	hr	no info				
+Kronstrand2001	1362	COD	1361	dosing	oral	gram	codeine phosphate	1.00e-01	single dose	0.00e+00	hr	no info				
+Kirchner2007	1360	COD	1359	dosing	oral	gram	codeine phosphate	3.00e-02	single dose	0.00e+00	hr	tablet				
+He2008	1354	COD	1353	dosing	oral	gram	codeine	3.00e-02	single dose	0.00e+00	hr	no info				
+Mikus1997	1374	COD	1373	dosing	oral	gram	codeine phosphate	6.00e-02	single dose	0.00e+00	hr	capsule				
+Mikus1997	1376	SPATA	1375	qualitative_dosing	oral	gram	sparteine	1.00e-01								
+Mikus1997	1378	SULFA	1377	qualitative_dosing	oral	gram	sulfasalazine	2.00e-03								
+Molanaei2010	1384	COD	1383	dosing	oral	gram	codeine phosphate	5.00e-02	single dose	0.00e+00	hr	no info				
+Molanaei2010	1386	HD	1385	medication type						2.40e+01	hr		hemodialysis			
+Loetsch2006	1370	COD	1369	dosing	oral	gram	codeine	3.00e-02	single dose	0.00e+00	hr	solution				
+Loetsch2006	1372	MOR	1371	qualitative_dosing	iv	gram	morphine sulfate	3.00e-02	multiple dose	0.00e+00	hr	solution				
+Mitchell1991	1380	MOR	1379	dosing	intramuscular	gram	morphine sulfate	2.00e-02	single dose	0.00e+00	hr	solution				
+O'Neal1999	1388	COD	1387	dosing	oral	gram	codeine phosphate	3.00e-02	single dose	0.00e+00	hr	solution				
+Shord2009	1392	COD	1391	dosing	oral	gram	codeine sulphate	3.00e-02	single dose	0.00e+00	hr	no info				
+Shah1990	1390	COD	1389	dosing	oral	gram	codeine phosphate	6.00e-02	single dose	0.00e+00	h	no info				
+Lia2009	1368	COD	1367	dosing	oral	gram	codeine phosphate	3.00e-02	single dose	0.00e+00	hr	tablet				
+Mohammed1993	1382	COD	1381	dosing	oral	gram	codeine	6.00e-02	single dose	0.00e+00	hr	no info				
+Yue1991B	1430	COD	1429	dosing	oral	gram	codeine phosphate	5.00e-02	single dose	0.00e+00	hr	no info				
+Yue1991B	1432	DEB	1431	qualitative_dosing	oral	gram	debrisoquine	1.00e-02								
+Yue1991B	1442	COD0	1433	dosing	oral	gram	codeine phosphate	5.00e-02	single dose	0.00e+00	hr	no info				
+Yue1991B	1443	COD-6	1434	dosing	oral	gram	codeine phosphate	5.00e-02	single dose	-6.00e+00	hr	no info				
+Yue1991B	1444	COD-12	1435	dosing	oral	gram	codeine phosphate	5.00e-02	single dose	-1.20e+01	hr	no info				
+Yue1991B	1445	COD-18	1436	dosing	oral	gram	codeine phosphate	5.00e-02	single dose	-1.80e+01	hr	no info				
+Yue1991B	1446	COD-24	1437	dosing	oral	gram	codeine phosphate	5.00e-02	single dose	-2.40e+01	hr	no info				
+Yue1991B	1447	COD-30	1438	dosing	oral	gram	codeine phosphate	5.00e-02	single dose	-3.00e+01	hr	no info				
+Yue1991B	1448	COD-36	1439	dosing	oral	gram	codeine phosphate	5.00e-02	single dose	-3.60e+01	hr	no info				
+Yue1991B	1449	COD-42	1440	dosing	oral	gram	codeine phosphate	5.00e-02	single dose	-4.20e+01	hr	no info				
+Yue1991B	1450	COD-48	1441	dosing	oral	gram	codeine phosphate	5.00e-02	single dose	-4.80e+01	hr	no info				
+Somogyi1991	1398	COD	1397	dosing	oral	gram	codeine phosphate	3.00e-02	single dose	0.00e+00	hr	tablet				
+Somogyi1991	1406	ACE1	1399	dosing	oral	gram	paracetamol	3.00e-02	single dose	-4.80e+01	hr	tablet				
+Somogyi1991	1407	ACE2	1400	dosing	oral	gram	paracetamol	3.00e-02	single dose	-4.00e+01	hr	tablet				
+Somogyi1991	1408	ACE3	1401	dosing	oral	gram	paracetamol	3.00e-02	single dose	-3.20e+01	hr	tablet				
+Somogyi1991	1409	ACE4	1402	dosing	oral	gram	paracetamol	3.00e-02	single dose	-2.40e+01	hr	tablet				
+Somogyi1991	1410	ACE5	1403	dosing	oral	gram	paracetamol	3.00e-02	single dose	-1.60e+01	hr	tablet				
+Somogyi1991	1411	ACE6	1404	dosing	oral	gram	paracetamol	3.00e-02	single dose	-8.00e+00	hr	tablet				
+Somogyi1991	1412	ACE7	1405	dosing	oral	gram	paracetamol	3.00e-02	single dose	0.00e+00	hr	tablet				
+Yue1989-2	1420	COD	1419	dosing	oral	gram	codeine phosphate	2.50e-02	single dose	0.00e+00	hr	no info				
+Yue1989-2	1422	DEB	1421	qualitative_dosing	oral	gram	debrisoquine	1.00e-02								
+Yue1991	1426	COD	1425	dosing	oral	gram	codeine phosphate	5.00e-02	single dose	0.00e+00	hr	tablet				
+Yue1991	1428	DEB	1427	qualitative_dosing	oral	gram	debrisoquine	1.00e-02								
+Sindrup1996	1394	COD	1393	dosing	oral	gram	codeine	1.25e-01	single dose	0.00e+00	hr	tablet				
+Sindrup1996	1396	QUI	1395	dosing	oral	gram	quinidine	2.00e-01	single dose	-2.00e+00	hr	tablet				
+Vree1992	1414	COD	1413	dosing	oral	gram	codeine phosphate	3.00e-02	single dose	0.00e+00	hr	tablet				
+Yue1989	1424	COD	1423	dosing	oral	gram	codeine phosphate	2.50e-02	single dose	0.00e+00	hr	no info				
+Wu2013	1416	COD	1415	dosing	oral	gram	codeine	3.00e-02	single dose	0.00e+00	hr	tablet				
+Yue1999	1456	COD	1455	dosing	oral	gram	codeine phosphate	5.00e-02	single dose	0.00e+00	hr	capsule				
+Yue1999	1458	MEAL	1457	metabolic challenge	oral				single dose	0.00e+00	hr		mixed-meal			
+Yue1999	1460	DEB	1459	qualitative_dosing	oral	gram	debrisoquine									
+Calbet2002	1470	Glucose	1469	dosing	oral	gram	glucose	1.50e+01	single dose	0.00e+00	h	solution				0.00e+00
+Calbet2002	1472	PPH	1471	metabolic challenge	oral					0.00e+00	h		protein solution			
+Calbet2002	1474	WPH	1473	metabolic challenge	oral					0.00e+00	h		protein solution			
+Calbet2002	1476	MS	1475	metabolic challenge	oral					0.00e+00	h		protein solution			
+Degn2004	1478	hypoclamp	1477	metabolic challenge	iv					0.00e+00	hr		hypoglycemic clamp			
+Degn2004	1480	exenatide	1479	dosing	iv	mole / hour / kilogram	exenatide	3.96e-12	constant infusion	0.00e+00	hr	solution				
+Yue1997	1452	COD	1451	dosing	oral	gram	codeine phosphate	5.00e-02	single dose	0.00e+00	hr	no info				
+Yue1997	1454	DEB	1453	qualitative_dosing	oral	gram	debrisoquine	1.00e-02								
+Bergman1991	1466	glciv	1465	dosing	iv	gram / kilogram	glucose	3.00e-01	single dose	0.00e+00	h	solution				
+Felig1969	1482	glciv	1481	dosing	iv	gram / kilogram	glucose	5.00e-01	single dose	0.00e+00	hr	solution				
+Arias1988	1462	SPA	1461	qualitative_dosing	oral	gram	sparteine sulfate	5.00e-02	single dose	0.00e+00	hr					
+Butler1991	1468	mixed-meal	1467	metabolic challenge	oral					0.00e+00	h		mixed-meal			
+Basu2009	1464	mixed-meal	1463	metabolic challenge	oral					0.00e+00	h		mixed-meal			
+Israelian2006	1496	hypoclamp	1495	metabolic challenge									hypoglycemic clamp			
+Israelian2006	1498	Dins	1497	dosing	iv	IU / hour / kilogram	insulin	6.00e-02	constant infusion	0.00e+00	hr	solution				
+Kjems2001	1510	cpep_bolus	1509	dosing	iv	mole	c-peptide	5.00e-08	single dose	0.00e+00	h	solution				
+Kjems2001	1512	IVGTT	1511	dosing	iv	gram / kilogram	glucose	3.00e-01	single dose	0.00e+00	h	solution				
+Ferrannini1988	1486	Dglc	1485	dosing	oral	gram / kilogram	glucose	1.00e+00	single dose	0.00e+00	hr	solution				
+Ferrannini1979	1484	glciv	1483	dosing	iv	gram / kilogram	glucose	3.30e-01	single dose	0.00e+00	hr	solution				
+Hovorka2002	1494	glciv	1493	dosing	iv	gram / kilogram	glucose	3.00e-01	single dose	1.20e+02	min	solution				
+Firth1986	1490	Dglc	1489	dosing	oral	gram	glucose	5.00e+01	single dose	0.00e+00	hr	solution				
+Fery1993	1488	Dglc	1487	dosing	oral	gram	glucose	7.50e+01	single dose	0.00e+00	hr	solution				
+Jones1998	1500	hypoglycemia	1499	metabolic challenge						0.00e+00	min		hypoglycemic clamp			
+Jones1998	1502	asleep	1501	sleeping									asleep			
+Jones1998	1504	awake	1503	sleeping									awake			
+Jones1998	1506	daytime	1505	circadian									daytime			
+Jones1998	1508	nighttime	1507	circadian									nighttime			
+Henkel2005	1492	LPG drink	1491	metabolic challenge									lipid-glucose-protein drink			
+Polonsky1986	1524	bolus_injection	1523	dosing	iv	mole / kilogram	c-peptide		single dose	0.00e+00	hr	solution				
+Polonsky1986	1527	constant_infusion_3	1525	dosing	iv	mole / hour / kilogram	c-peptide	1.80e-10	constant infusion	0.00e+00	min	solution				
+Polonsky1986	1528	constant_infusion_30	1526	dosing	iv	mole / hour / kilogram	c-peptide	1.80e-09	constant infusion	1.20e+02	min	solution				
+Polonsky1986	1530	variable_infusion	1529	qualitative_dosing	iv	mole / hour / kilogram	c-peptide		variable infusion	0.00e+00	min	solution				
+Knop2007	1514	isoglc	1513	metabolic challenge									isoglycemic glucose infusion			
+Knop2007	1516	ogtt	1515	dosing	oral	gram	glucose	5.00e+01	single dose	0.00e+00	h	solution				
+Baraka1990	1544	paracetamol	1543	dosing	oral	gram	paracetamol	1.50e+00	single dose	0.00e+00	hr	no info				
+Baraka1990	1546	antipyrine	1545	dosing	oral	gram	antipyrine	6.00e-01	single dose	0.00e+00	hr	no info				
+Baraka1990	1548	propanolol	1547	dosing	oral	gram / hour	propanolol	6.67e-03	single dose	0.00e+00	hr	no info				
+Ameer1981	1542	apap_iv	1540	dosing	iv	gram	paracetamol	6.50e-01	constant infusion	0.00e+00	hr	solution				
+Ameer1981	1541	apap_oral	1539	dosing	oral	gram	paracetamol	6.50e-01	single dose	0.00e+00	hr	tablet				
+Albert1974	1538	B	1536	dosing	oral	gram	paracetamol	6.50e-01	single dose	0.00e+00	hr	tablet				
+Albert1974	1537	A	1535	dosing	oral	gram	paracetamol	6.50e-01	single dose	0.00e+00	hr	capsule				
+Mitrakou1992	1522	glc	1521	dosing	oral	gram / kilogram	glucose	1.00e+00	single dose	0.00e+00	hr	solution				
+Thomaseth2008	1532	Dglc	1531	dosing	oral	gram	glucose	7.50e+01	single dose	0.00e+00	h	solution				
+Yang2015	1534	ogtt	1533	dosing	oral	gram	glucose	7.50e+01	single dose	0.00e+00	hr	solution				
+Mitrakou1991	1518	hypoglycemic clamp	1517	metabolic challenge	iv							solution	hypoglycemic clamp			
+Mitrakou1991	1520	euglycemic clamp	1519	metabolic challenge	iv							solution	hyperinsulinemic euglycemic clamp			
+Rawlins1977	1560	apap_iv_1000	1559	dosing	iv	gram	paracetamol	1.00e+00	single dose	0.00e+00	hr	solution				
+Rawlins1977	1566	apap_po_2000	1563	dosing	oral	gram	paracetamol	2.00e+00	single dose	0.00e+00	hr	tablet				
+Rawlins1977	1565	apap_po_1000	1562	dosing	oral	gram	paracetamol	1.00e+00	single dose	0.00e+00	hr	tablet				
+Rawlins1977	1564	apap_po_500	1561	dosing	oral	gram	paracetamol	5.00e-01	single dose	0.00e+00	hr	tablet				
+Chiew2010	1552	paracetamol	1551	dosing	oral	gram / kilogram	paracetamol	7.90e-02	single dose	0.00e+00	hr	tablet		7.70e-02	8.30e-02	
+Chiew2010	1554	PEx	1553	dosing	oral	gram / kilogram	panadol extend	7.88e-02	single dose	0.00e+00	hr	tablet		7.50e-02	8.10e-02	
+Critchley2005	1556	paracetamol	1555	dosing	oral	gram / kilogram	paracetamol	2.00e-02	single dose	0.00e+00	hr	solution				
+Chan1997	1550	paracetamol	1549	dosing	oral	gram / kilogram	paracetamol	2.00e-02	single dose	0.00e+00	hr	solution				
+Jensen2004	1558	paracetamol	1557	dosing	oral	gram	paracetamol	1.00e+00	single dose	0.00e+00	hr	tablet				
+Akinyinka2000	1570	Dcaf	1569	dosing	oral	gram	caffeine	3.00e-01	single dose	0.00e+00	hr	solution				
+Abernethy1985	1568	D1	1567	dosing	oral	gram	caffeine	1.62e-01	single dose	0.00e+00	h	solution				
+Backman2008	1576	Dcaf	1575	dosing	oral	gram	caffeine	1.00e-01	single dose	0.00e+00	hr	tablet				
+Benowitz2003	1610	Dcaf	1609	dosing	oral	gram	caffeine	2.50e-01	single dose	0.00e+00	hr	no info				
+Benowitz2003	1612	Dchlo	1611	dosing	oral	gram	chlorzoxazone	2.50e-01	single dose	0.00e+00	hr	no info				
+Benowitz2003	1614	Smoking	1613	smoking									Y			
+Benowitz2003	1616	CO	1615	medication type									carbon monoxide			
+Balogh1995	1580	Dcaf	1579	dosing	oral	gram	caffeine	2.00e-01	single dose	0.00e+00	hr	tablet				
+Balogh1995	1582	DA	1581	qualitative_dosing	oral	gram	gestodene	7.50e-05								
+Balogh1995	1584	DB	1583	qualitative_dosing	oral	gram	levonorgestrel	1.25e-04								
+Balogh1995	1586	DEE2	1585	qualitative_dosing	oral	gram	ethinylestradiol	3.00e-05								
+Benowitz1995	1608	Dpx_4mg	1607	dosing	oral	gram / kilogram	paraxanthine	4.00e-03	single dose	0.00e+00	hr	capsule				
+Benowitz1995	1602	Dcaf_2mg	1601	dosing	oral	gram / kilogram	caffeine	2.00e-03	single dose	0.00e+00	hr	capsule				
+Benowitz1995	1604	Dcaf_4mg	1603	dosing	oral	gram / kilogram	caffeine	4.00e-03	single dose	0.00e+00	hr	capsule				
+Benowitz1995	1606	Dpx_2mg	1605	dosing	oral	gram / kilogram	paraxanthine	2.00e-03	single dose	0.00e+00	hr	capsule				
+Blanchard1983a	1618	Dcaf_oral	1617	dosing	oral	gram / kilogram	caffeine	4.94e-03	single dose	0.00e+00	hr	solution		4.84e-03	5.17e-03	3.00e-05
+Blanchard1983a	1620	Dcaf_iv	1619	dosing	iv	gram / kilogram	caffeine	4.85e-03	single dose	0.00e+00	hr	solution		4.64e-03	5.63e-03	9.00e-05
+Barnet1990	1588	Dcaf	1587	dosing	oral	gram	caffeine	3.50e-01	single dose	0.00e+00	hr	no info				
+Barnet1990	1590	Dppa	1589	qualitative_dosing	oral	gram	pipemidic acid	8.00e-01	multiple dose							
+Barnet1990	1592	Dnfc	1591	qualitative_dosing	oral	gram	norfloxacin	8.00e-01	multiple dose							
+Bonati1982	1622	D1	1621	dosing	oral	gram / kilogram	caffeine	2.20e-04	single dose	0.00e+00	hr	solution				
+Bonati1982	1624	D2	1623	dosing	oral	gram / kilogram	caffeine	1.00e-03	single dose	0.00e+00	hr	solution				
+Bonati1982	1626	D3	1625	dosing	oral	gram / kilogram	caffeine	1.54e-03	single dose	0.00e+00	hr	solution				
+Bonati1982	1628	D4	1627	dosing	oral	gram / kilogram	caffeine	5.00e-03	single dose	0.00e+00	hr	solution				
+Bonati1982	1630	D5	1629	dosing	oral	gram / kilogram	caffeine	1.00e-02	single dose	0.00e+00	hr	solution				
+Beach1986	1594	Dcaf	1593	dosing	oral	gram	caffeine	2.00e-01	single dose	0.00e+00	hr	solution				
+Beach1986	1596	Dds250	1595	dosing	oral	gram / hour	disulfiram	1.04e-02	single dose	0.00e+00	hr	no info				
+Beach1986	1598	Dds500	1597	dosing	oral	gram / hour	disulfiram	2.08e-02	single dose	0.00e+00	hr	no info				
+Balogh1992	1578	caf	1577	dosing	oral	gram	caffeine	2.25e-01	single dose	0.00e+00	hr	solution				
+Begas2007	1600	Dcaf	1599	dosing	oral	gram	caffeine	2.00e-01	single dose	0.00e+00	hr	capsule				
+Culm-Merdek2005	1656	Dflux_D	1652	dosing	oral	gram	fluvoxamine	1.00e-01	single dose	8.00e+00	hr	no info				
+Culm-Merdek2005	1655	Dflux_C	1651	dosing	oral	gram	fluvoxamine	1.00e-01	single dose	-2.50e+00	hr	no info				
+Culm-Merdek2005	1654	Dflux_B	1650	dosing	oral	gram	fluvoxamine	1.00e-01	single dose	-1.80e+01	hr	no info				
+Culm-Merdek2005	1653	Dflux_A	1649	dosing	oral	gram	fluvoxamine	1.00e-01	single dose	-2.60e+01	hr	no info				
+Culm-Merdek2005	1648	Dcaf	1647	dosing	oral	gram	caffeine	2.50e-01	single dose	0.00e+00	hr	no info				
+Carbo1989	1634	Dcaf	1633	dosing	oral	gram	caffeine	3.50e-01	single dose	0.00e+00	hr	no info				
+Carbo1989	1636	Dnfc	1635	qualitative_dosing	oral	gram	norfloxacin	8.00e-01	multiple dose							
+Carbo1989	1638	Dppa	1637	qualitative_dosing	oral	gram	pipemidic acid	8.00e-01	multiple dose							
+Fuhr1993a	1662	Dcaf	1661	dosing	oral	gram	caffeine	1.67e-01	single dose	0.00e+00	hr	solution				
+Fuhr1993a	1664	Dgf	1663	dosing	oral	gram	grapefruit juice	1.43e-01	single dose	0.00e+00	hr	solution		1.26e-01	1.59e-01	
+Cheng1990	1646	Dcaf_300	1643	dosing	oral	gram	caffeine	3.00e-01	single dose	0.00e+00	hr	no info				
+Cheng1990	1645	Dcaf_200	1642	dosing	oral	gram	caffeine	2.00e-01	single dose	0.00e+00	hr	no info				
+Cheng1990	1644	Dcaf_70	1641	dosing	oral	gram	caffeine	7.00e-02	single dose	0.00e+00	hr	no info				
+George1986	1666	Dcaf	1665	dosing	oral	gram	caffeine	1.10e-01	single dose	0.00e+00	hr	solution				
+George1986	1668	Dap	1667	dosing	oral	gram / kilogram	antipyrine	1.00e-02	single dose	0.00e+00	hr	solution				
+Campbell1987a	1632	Dcaf	1631	dosing	oral	gram / kilogram	caffeine	4.00e-03	single dose	0.00e+00	h	no info				
+Carrillo2000a	1640	Dcaf	1639	dosing	oral	gram	caffeine	1.00e-01	single dose	0.00e+00	hr	tablet				
+Desmond1980	1658	D1	1657	dosing	oral	gram	caffeine	2.50e-01	single dose	0.00e+00	hr	capsule				
+Faber2004	1660	Dcaf	1659	dosing	oral	gram	caffeine	1.48e-01	single dose	0.00e+00	h	solution				
+Harder1988	1684	D_CAF	1683	dosing	oral	gram	caffeine	2.30e-01	single dose	0.00e+00	hr	solution				
+Harder1988	1692	D_OFL_D	1688	dosing	oral	gram	ofloxacin	2.00e-01	single dose	7.20e+01	hr	no info				
+Harder1988	1691	D_OFL_C	1687	dosing	oral	gram	ofloxacin	2.00e-01	single dose	4.80e+01	hr	no info				
+Harder1988	1690	D_OFL_B	1686	dosing	oral	gram	ofloxacin	2.00e-01	single dose	2.40e+01	hr	no info				
+Harder1988	1689	D_OFL_A	1685	dosing	oral	gram	ofloxacin	2.00e-01	single dose	0.00e+00	hr	no info				
+Harder1988	1700	D_NOR_D	1696	dosing	oral	gram	norfloxacin	4.00e-01	single dose	7.20e+01	hr	no info				
+Harder1988	1699	D_NOR_C	1695	dosing	oral	gram	norfloxacin	4.00e-01	single dose	4.80e+01	hr	no info				
+Harder1988	1698	D_NOR_B	1694	dosing	oral	gram	norfloxacin	4.00e-01	single dose	2.40e+01	hr	no info				
+Harder1988	1697	D_NOR_A	1693	dosing	oral	gram	norfloxacin	4.00e-01	single dose	0.00e+00	hr	no info				
+Harder1988	1708	D_PPA_D	1704	dosing	oral	gram	pipemidic acid	4.00e-01	single dose	7.20e+01	hr	no info				
+Harder1988	1707	D_PPA_C	1703	dosing	oral	gram	pipemidic acid	4.00e-01	single dose	4.80e+01	hr	no info				
+Harder1988	1706	D_PPA_B	1702	dosing	oral	gram	pipemidic acid	4.00e-01	single dose	2.40e+01	hr	no info				
+Harder1988	1705	D_PPA_A	1701	dosing	oral	gram	pipemidic acid	4.00e-01	single dose	0.00e+00	hr	no info				
+Harder1988	1716	D_CIP1_D	1712	dosing	oral	gram	ciprofloxacin	1.00e-01	single dose	7.20e+01	hr	no info				
+Harder1988	1715	D_CIP1_C	1711	dosing	oral	gram	ciprofloxacin	1.00e-01	single dose	4.80e+01	hr	no info				
+Harder1988	1714	D_CIP1_B	1710	dosing	oral	gram	ciprofloxacin	1.00e-01	single dose	2.40e+01	hr	no info				
+Harder1988	1713	D_CIP1_A	1709	dosing	oral	gram	ciprofloxacin	1.00e-01	single dose	0.00e+00	hr	no info				
+Harder1988	1724	D_CIP2_D	1720	dosing	oral	gram	ciprofloxacin	2.50e-01	single dose	7.20e+01	hr	no info				
+Harder1988	1723	D_CIP2_C	1719	dosing	oral	gram	ciprofloxacin	2.50e-01	single dose	4.80e+01	hr	no info				
+Harder1988	1722	D_CIP2_B	1718	dosing	oral	gram	ciprofloxacin	2.50e-01	single dose	2.40e+01	hr	no info				
+Harder1988	1721	D_CIP2_A	1717	dosing	oral	gram	ciprofloxacin	2.50e-01	single dose	0.00e+00	hr	no info				
+Harder1988	1732	D_CIP3_D	1728	dosing	oral	gram	ciprofloxacin	5.00e-01	single dose	7.20e+01	hr	no info				
+Harder1988	1731	D_CIP3_C	1727	dosing	oral	gram	ciprofloxacin	5.00e-01	single dose	4.80e+01	hr	no info				
+Harder1988	1730	D_CIP3_B	1726	dosing	oral	gram	ciprofloxacin	5.00e-01	single dose	2.40e+01	hr	no info				
+Harder1988	1729	D_CIP3_A	1725	dosing	oral	gram	ciprofloxacin	5.00e-01	single dose	0.00e+00	hr	no info				
+Harder1988	1740	D_ENX1_D	1736	dosing	oral	gram	enoxacin	1.00e-01	single dose	7.20e+01	hr	no info				
+Harder1988	1739	D_ENX1_C	1735	dosing	oral	gram	enoxacin	1.00e-01	single dose	4.80e+01	hr	no info				
+Harder1988	1738	D_ENX1_B	1734	dosing	oral	gram	enoxacin	1.00e-01	single dose	2.40e+01	hr	no info				
+Harder1988	1737	D_ENX1_A	1733	dosing	oral	gram	enoxacin	1.00e-01	single dose	0.00e+00	hr	no info				
+Harder1988	1748	D_ENX2_D	1744	dosing	oral	gram	enoxacin	2.00e-01	single dose	7.20e+01	hr	no info				
+Harder1988	1747	D_ENX2_C	1743	dosing	oral	gram	enoxacin	2.00e-01	single dose	4.80e+01	hr	no info				
+Harder1988	1746	D_ENX2_B	1742	dosing	oral	gram	enoxacin	2.00e-01	single dose	2.40e+01	hr	no info				
+Harder1988	1745	D_ENX2_A	1741	dosing	oral	gram	enoxacin	2.00e-01	single dose	0.00e+00	hr	no info				
+Harder1988	1756	D_ENX3_D	1752	dosing	oral	gram	enoxacin	4.00e-01	single dose	7.20e+01	hr	no info				
+Harder1988	1755	D_ENX3_C	1751	dosing	oral	gram	enoxacin	4.00e-01	single dose	4.80e+01	hr	no info				
+Harder1988	1754	D_ENX3_B	1750	dosing	oral	gram	enoxacin	4.00e-01	single dose	2.40e+01	hr	no info				
+Harder1988	1753	D_ENX3_A	1749	dosing	oral	gram	enoxacin	4.00e-01	single dose	0.00e+00	hr	no info				
+Harder1989	1758	D_CAF	1757	dosing	oral	gram	caffeine	2.30e-01	single dose	0.00e+00	hr	solution				
+Harder1989	1766	D_OFL_D	1762	dosing	oral	gram	ofloxacin	2.00e-01	single dose	7.20e+01	hr	no info				
+Harder1989	1765	D_OFL_C	1761	dosing	oral	gram	ofloxacin	2.00e-01	single dose	4.80e+01	hr	no info				
+Harder1989	1764	D_OFL_B	1760	dosing	oral	gram	ofloxacin	2.00e-01	single dose	2.40e+01	hr	no info				
+Harder1989	1763	D_OFL_A	1759	dosing	oral	gram	ofloxacin	2.00e-01	single dose	0.00e+00	hr	no info				
+Harder1989	1774	D_NOR_D	1770	dosing	oral	gram	norfloxacin	4.00e-01	single dose	7.20e+01	hr	no info				
+Harder1989	1773	D_NOR_C	1769	dosing	oral	gram	norfloxacin	4.00e-01	single dose	4.80e+01	hr	no info				
+Harder1989	1772	D_NOR_B	1768	dosing	oral	gram	norfloxacin	4.00e-01	single dose	2.40e+01	hr	no info				
+Harder1989	1771	D_NOR_A	1767	dosing	oral	gram	norfloxacin	4.00e-01	single dose	0.00e+00	hr	no info				
+Harder1989	1782	D_PPA_D	1778	dosing	oral	gram	pipemidic acid	4.00e-01	single dose	7.20e+01	hr	no info				
+Harder1989	1781	D_PPA_C	1777	dosing	oral	gram	pipemidic acid	4.00e-01	single dose	4.80e+01	hr	no info				
+Harder1989	1780	D_PPA_B	1776	dosing	oral	gram	pipemidic acid	4.00e-01	single dose	2.40e+01	hr	no info				
+Harder1989	1779	D_PPA_A	1775	dosing	oral	gram	pipemidic acid	4.00e-01	single dose	0.00e+00	hr	no info				
+Harder1989	1790	D_CIP1_D	1786	dosing	oral	gram	ciprofloxacin	1.00e-01	single dose	7.20e+01	hr	no info				
+Harder1989	1789	D_CIP1_C	1785	dosing	oral	gram	ciprofloxacin	1.00e-01	single dose	4.80e+01	hr	no info				
+Harder1989	1788	D_CIP1_B	1784	dosing	oral	gram	ciprofloxacin	1.00e-01	single dose	2.40e+01	hr	no info				
+Harder1989	1787	D_CIP1_A	1783	dosing	oral	gram	ciprofloxacin	1.00e-01	single dose	0.00e+00	hr	no info				
+Harder1989	1798	D_CIP2_D	1794	dosing	oral	gram	ciprofloxacin	2.50e-01	single dose	7.20e+01	hr	no info				
+Harder1989	1797	D_CIP2_C	1793	dosing	oral	gram	ciprofloxacin	2.50e-01	single dose	4.80e+01	hr	no info				
+Harder1989	1796	D_CIP2_B	1792	dosing	oral	gram	ciprofloxacin	2.50e-01	single dose	2.40e+01	hr	no info				
+Harder1989	1795	D_CIP2_A	1791	dosing	oral	gram	ciprofloxacin	2.50e-01	single dose	0.00e+00	hr	no info				
+Harder1989	1806	D_CIP3_D	1802	dosing	oral	gram	ciprofloxacin	5.00e-01	single dose	7.20e+01	hr	no info				
+Harder1989	1805	D_CIP3_C	1801	dosing	oral	gram	ciprofloxacin	5.00e-01	single dose	4.80e+01	hr	no info				
+Harder1989	1804	D_CIP3_B	1800	dosing	oral	gram	ciprofloxacin	5.00e-01	single dose	2.40e+01	hr	no info				
+Harder1989	1803	D_CIP3_A	1799	dosing	oral	gram	ciprofloxacin	5.00e-01	single dose	0.00e+00	hr	no info				
+Harder1989	1814	D_ENX1_D	1810	dosing	oral	gram	enoxacin	1.00e-01	single dose	7.20e+01	hr	no info				
+Harder1989	1813	D_ENX1_C	1809	dosing	oral	gram	enoxacin	1.00e-01	single dose	4.80e+01	hr	no info				
+Harder1989	1812	D_ENX1_B	1808	dosing	oral	gram	enoxacin	1.00e-01	single dose	2.40e+01	hr	no info				
+Harder1989	1811	D_ENX1_A	1807	dosing	oral	gram	enoxacin	1.00e-01	single dose	0.00e+00	hr	no info				
+Harder1989	1822	D_ENX2_D	1818	dosing	oral	gram	enoxacin	2.00e-01	single dose	7.20e+01	hr	no info				
+Harder1989	1821	D_ENX2_C	1817	dosing	oral	gram	enoxacin	2.00e-01	single dose	4.80e+01	hr	no info				
+Harder1989	1820	D_ENX2_B	1816	dosing	oral	gram	enoxacin	2.00e-01	single dose	2.40e+01	hr	no info				
+Harder1989	1819	D_ENX2_A	1815	dosing	oral	gram	enoxacin	2.00e-01	single dose	0.00e+00	hr	no info				
+Harder1989	1830	D_ENX3_D	1826	dosing	oral	gram	enoxacin	4.00e-01	single dose	7.20e+01	hr	no info				
+Harder1989	1829	D_ENX3_C	1825	dosing	oral	gram	enoxacin	4.00e-01	single dose	4.80e+01	hr	no info				
+Harder1989	1828	D_ENX3_B	1824	dosing	oral	gram	enoxacin	4.00e-01	single dose	2.40e+01	hr	no info				
+Harder1989	1827	D_ENX3_A	1823	dosing	oral	gram	enoxacin	4.00e-01	single dose	0.00e+00	hr	no info				
+Ghassabian2009	1670	Dcaf	1669	dosing	oral	gram	caffeine	1.00e-01	single dose	0.00e+00	hr	solution				
+Ghassabian2009	1672	Dome	1671	dosing	oral	gram	omeprazole	2.00e-02	single dose	0.00e+00	hr	solution				
+Ghassabian2009	1674	Dlos	1673	dosing	oral	gram	losartan	2.50e-02	single dose	0.00e+00	hr	solution				
+Ghassabian2009	1676	Ddex	1675	dosing	oral	gram	dextromethorphan	1.00e-01	single dose	0.00e+00	hr	solution				
+Ghassabian2009	1678	Dmid	1677	dosing	oral	gram	midazolam	2.00e-03	single dose	0.00e+00	hr	solution				
+Healy1989	1832	D_CAF	1831	dosing	oral	gram	caffeine	1.00e-01	single dose	0.00e+00	hr	tablet				
+Healy1989	1838	D_CIP_C	1835	dosing	oral	gram	ciprofloxacin	7.50e-01	single dose	4.80e+01	hr	capsule				
+Healy1989	1837	D_CIP_B	1834	dosing	oral	gram	ciprofloxacin	7.50e-01	single dose	3.60e+01	hr	capsule				
+Healy1989	1836	D_CIP_A	1833	dosing	oral	gram	ciprofloxacin	7.50e-01	single dose	2.40e+01	hr	capsule				
+Healy1991	1840	Dcaf	1839	dosing	oral	gram	caffeine	2.00e-01	single dose	0.00e+00	hr	tablet				
+Healy1991	1842	Dlom	1841	qualitative_dosing	oral	gram	lomefloxacin	4.00e-01	multiple dose			capsule				
+Jeppesen1996	1846	Dcaf	1845	dosing	oral	gram	caffeine	2.00e-01	single dose	0.00e+00	hr	tablet				
+Jeppesen1996	1848	Dflu	1847	qualitative_dosing	oral	gram	fluvoxamine	5.00e-02	multiple dose							
+Hetzler1990	1844	Dcaf	1843	dosing	iv	gram / kilogram	caffeine	4.00e-03	single dose	0.00e+00	hr	solution				
+Granfors2005	1680	Dcaf	1679	dosing	oral	gram	caffeine	1.00e-01	single dose	0.00e+00	hr	tablet				
+Haller2002	1682	Dcaf	1681	dosing	oral	gram	caffeine	1.75e-01	single dose	0.00e+00	hr	capsule				
+Joeres1988	1850	Dcaf	1849	dosing	oral	gram	caffeine	3.66e-01	single dose	0.00e+00	h	tablet				
+Joeres1988	1852	smoking abstinence	1851	abstinence		day		2.10e+01					smoking			
+Joeres1988	1854	no smoking	1853	smoking									N			
+Lelo1986a	1862	Dcaf	1861	dosing	oral	gram	caffeine	2.70e-01	single dose	0.00e+00	h	capsule				
+Lelo1986a	1864	Dpx	1863	dosing	oral	gram	paraxanthine	2.50e-01	single dose	0.00e+00	h	capsule				
+Lelo1986a	1866	Dtp	1865	dosing	oral	gram	theophylline	2.50e-01	single dose	0.00e+00	h	tablet				
+Lelo1986a	1868	Dtb	1867	dosing	oral	gram	theobromine	2.50e-01	single dose	0.00e+00	h	capsule				
+Magnusson2008	1872	Dcaf	1871	dosing	oral	gram	caffeine	1.00e-01	single dose	0.00e+00	hr	tablet				
+Magnusson2008	1874	Dmid	1873	dosing	oral	gram	midazolam	2.50e-03	single dose	0.00e+00	hr	solution				
+Magnusson2008	1876	Ddig	1875	dosing	oral	gram	digoxin	1.30e-04	single dose	0.00e+00	hr	tablet				
+May1982	1878	Dcaf	1877	dosing	oral	gram / kilogram	caffeine	2.00e-03	single dose	0.00e+00	hr	solution				
+May1982	1880	Dcim	1879	qualitative_dosing	oral	gram	cimetidine	3.00e-01	multiple dose	0.00e+00	hr	solution				
+Murphy1988	1884	Dcaf	1883	dosing	oral	gram	caffeine	1.11e-01	single dose	0.00e+00	hr	solution				
+Murphy1988	1886	Dapy	1885	dosing	oral	gram / kilogram	antipyrine	1.00e-02	single dose	0.00e+00	hr	solution				
+Kaplan1997	1856	D_CAF250	1855	dosing	oral	gram	caffeine	2.50e-01	single dose	0.00e+00	hr	capsule				
+Kaplan1997	1858	D_CAF500	1857	dosing	oral	gram	caffeine	5.00e-01	single dose	0.00e+00	hr	capsule				
+McLean2002	1882	Dcaf	1881	dosing	oral	gram / kilogram	caffeine	6.00e-03	single dose	0.00e+00	hr	capsule				
+Koch1999	1860	Dcaf	1859	dosing	oral	gram	caffeine	2.00e-01	single dose	0.00e+00	hr	solution				
+Levy1983	1870	Dcaf	1869	dosing	oral	gram	caffeine	3.00e-01	single dose	0.00e+00	hr	solution				
+Oh2012	1902	Dcaf	1897	dosing	oral	gram	caffeine	1.00e-02	single dose	0.00e+00	hr	no info				
+Oh2012	1903	Dlos	1898	dosing	oral	gram	losartan	2.00e-03	single dose	0.00e+00	hr	no info				
+Oh2012	1904	Dome	1899	dosing	oral	gram	omeprazole	2.00e-01	single dose	0.00e+00	hr	no info				
+Oh2012	1905	Ddex	1900	dosing	oral	gram	dextromethorphan	2.00e-03	single dose	0.00e+00	hr	no info				
+Oh2012	1906	Dmid	1901	dosing	oral	gram	midazolam	1.00e-01	single dose	0.00e+00	hr	no info				
+Newton1981	1892	Dcaf_50	1887	dosing	oral	gram	caffeine	5.00e-02	single dose	0.00e+00	hr	solution				
+Newton1981	1893	Dcaf_100	1888	dosing	oral	gram	caffeine	1.00e-01	single dose	0.00e+00	hr	solution				
+Newton1981	1894	Dcaf_300	1889	dosing	oral	gram	caffeine	3.00e-01	single dose	0.00e+00	hr	solution				
+Newton1981	1895	Dcaf_500	1890	dosing	oral	gram	caffeine	5.00e-01	single dose	0.00e+00	hr	solution				
+Newton1981	1896	Dcaf_750	1891	dosing	oral	gram	caffeine	7.50e-01	single dose	0.00e+00	hr	solution				
+Seng2009	1918	CAF3	1917	dosing	oral	gram / kilogram	caffeine	3.00e-03	single dose	0.00e+00	hr	capsule				
+Seng2009	1920	CAF5	1919	dosing	oral	gram / kilogram	caffeine	5.00e-03	single dose	0.00e+00	hr	capsule				
+Parsons1978	1910	Dcaf	1909	dosing	oral	gram / kilogram	caffeine	5.00e-03	single dose	0.00e+00	hr	solution				
+Park2003	1908	Dcaf	1907	dosing	oral	gram / kilogram	caffeine	2.00e-03	single dose	0.00e+00	hr	solution				
+Patwardhan1980	1912	Dcaf	1911	dosing	oral	gram	caffeine	2.50e-01	single dose	0.00e+00	hr	capsule				
+Spigset1999a	1922	Dcaf	1921	dosing	oral	gram	caffeine	2.00e-01	single dose	0.00e+00	hr	tablet				
+Perera2011	1914	Dcaf	1913	dosing	oral	gram	caffeine	1.00e-01	single dose	0.00e+00	hr	tablet				
+Renner1984	1916	D1	1915	dosing	iv	gram	caffeine	1.25e-01	single dose	0.00e+00	hr	solution				
+Stille1987	1924	D_CAF	1923	dosing	oral	gram	caffeine	2.30e-01	single dose	0.00e+00	hr	solution				
+Stille1987	1929	D_OFL_A	1925	dosing	oral	gram	ofloxacin	2.00e-01	single dose	0.00e+00	hr	no info				
+Stille1987	1930	D_OFL_B	1926	dosing	oral	gram	ofloxacin	2.00e-01	single dose	2.40e+01	hr	no info				
+Stille1987	1931	D_OFL_C	1927	dosing	oral	gram	ofloxacin	2.00e-01	single dose	4.80e+01	hr	no info				
+Stille1987	1932	D_OFL_D	1928	dosing	oral	gram	ofloxacin	2.00e-01	single dose	7.20e+01	hr	no info				
+Stille1987	1937	D_CIP_A	1933	dosing	oral	gram	ciprofloxacin	2.50e-01	single dose	0.00e+00	hr	no info				
+Stille1987	1938	D_CIP_B	1934	dosing	oral	gram	ciprofloxacin	2.50e-01	single dose	2.40e+01	hr	no info				
+Stille1987	1939	D_CIP_C	1935	dosing	oral	gram	ciprofloxacin	2.50e-01	single dose	4.80e+01	hr	no info				
+Stille1987	1940	D_CIP_D	1936	dosing	oral	gram	ciprofloxacin	2.50e-01	single dose	7.20e+01	hr	no info				
+Stille1987	1945	D_ENX_A	1941	dosing	oral	gram	enoxacin	4.00e-01	single dose	0.00e+00	hr	no info				
+Stille1987	1946	D_ENX_B	1942	dosing	oral	gram	enoxacin	4.00e-01	single dose	2.40e+01	hr	no info				
+Stille1987	1947	D_ENX_C	1943	dosing	oral	gram	enoxacin	4.00e-01	single dose	4.80e+01	hr	no info				
+Stille1987	1948	D_ENX_D	1944	dosing	oral	gram	enoxacin	4.00e-01	single dose	7.20e+01	hr	no info				
+Test243	1950	Dcaf	1949	dosing	oral	gram	caffeine	5.00e-02	single dose	0.00e+00	hr	tablet				
+Turpault2009	1954	Dwar	1953	dosing	oral	gram	warfarin	1.00e-02	single dose	0.00e+00	hr	tablet				
+Turpault2009	1952	Dcaf	1951	dosing	oral	gram	caffeine	1.00e-01	single dose	0.00e+00	hr	no info				
+Turpault2009	1956	Dome	1955	dosing	oral	gram	omeprazole	2.00e-02	single dose	0.00e+00	hr	capsule				
+Turpault2009	1958	Dmet	1957	dosing	oral	gram	metropolol	1.00e-01	single dose	0.00e+00	hr	tablet				
+Turpault2009	1960	Dmid	1959	dosing	oral	gram / kilogram	midazolam	3.00e-05	single dose	0.00e+00	hr	solution				
+Wang1985	1962	Dcaf	1961	dosing	oral	gram	caffeine	1.40e-01	single dose	0.00e+00	hr	solution				
+Wang1985	1964	Dicg	1963	dosing	iv	gram / kilogram	indocyanine green	5.00e-04	single dose	0.00e+00	hr	solution				
+ZylberKatz1984	1968	Dcaf_350	1965	dosing	oral	gram	caffeine	3.50e-01	single dose	0.00e+00	hr	solution				
+ZylberKatz1984	1969	Dcaf_310	1966	dosing	oral	gram	caffeine	3.10e-01	single dose	0.00e+00	hr	solution				
+ZylberKatz1984	1970	Dcaf_260	1967	dosing	oral	gram	caffeine	2.60e-01	single dose	0.00e+00	hr	solution				
+Wu2014	1998	COD	1997	dosing	oral	gram	codeine	3.00e-02	single dose	0.00e+00	hr	tablet				
