@@ -66,7 +66,7 @@ def abs_idx(data,unit_field):
     return ~rel_idx(data,unit_field)
 
 def rel_idx(data,unit_field):
-    return data[unit_field].str.contains('kilogram')
+    return data[unit_field].str.contains('kg')
 
 def filter_out(data,unit_field,units):
     return data[~data[unit_field].isin(units)]
@@ -282,12 +282,14 @@ class PkdbModel(object):
 
     def _preprocess_substances(self):
          if self.name in ["substances"]:
-            self.data = self.data[["name","studies","interventions","outputs","timecourses"]]
+            self.data = self.data[["name","studies","interventions","outputs","outputs_calculated","timecourses"]]
             self.data.insert(1,"study_number", self.data["studies"].apply(len))
             self.data = self.data[self.data["study_number"] > 0 ]
             self.data.insert(2,"intervention_number", self.data["interventions"].apply(len))
             self.data.insert(3,"timecourse_number", self.data["timecourses"].apply(len))
             self.data.insert(4,"output_number", self.data["outputs"].apply(len))
+            self.data.insert(5,"output_calculated_number", self.data["outputs_calculated"].apply(len))
+            self.data.insert(6,"output_raw_number", self.data["outputs"].apply(len)-self.data["outputs_calculated"].apply(len))
             self.data.sort_values(by="study_number", ascending=False, inplace=True)
 
     def _preprocess_outputs(self):
