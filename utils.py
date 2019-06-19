@@ -47,26 +47,26 @@ def convert_unit(df, unit_in, unit_out, factor=1.0,
     return df
 
 def caffeine_idx(data):
-    return (data.substance_name_intervention == 'caffeine') \
-           & (data.substance_name == 'caffeine') \
+    return (data.substance_intervention == 'caffeine') \
+           & (data.substance == 'caffeine') \
            & (data[ ('healthy', 'choice')] == 'Y') \
            & (data['tissue'] == 'plasma')
 
 def codeine_idx(data):
-    return (data.substance_name_intervention == 'codeine') \
-           & (data.substance_name == 'codeine') \
+    return (data.substance_intervention == 'codeine') \
+           & (data.substance == 'codeine') \
            & (data['tissue'] == 'plasma')
 
 
-def pktype_data(data,pktype):
-    return data[data.pktype==pktype]
+def measurement_type_data(data,measurement_type):
+    return data[data.measurement_type==measurement_type]
 
 
 def abs_idx(data,unit_field):
     return ~rel_idx(data,unit_field)
 
 def rel_idx(data,unit_field):
-    return data[unit_field].str.contains('kg')
+    return  (data[unit_field].str.endswith("/ kilogram")) | (data[unit_field].str.contains('kg'))
 
 def filter_out(data,unit_field,units):
     return data[~data[unit_field].isin(units)]
@@ -90,19 +90,36 @@ def group_idx(data):
 def individual_idx(data):
     return data["subject_type"] == 'individual'
 
-def get_data(url,**kwargs):
+def get_login_token(user, password):
+    url = "http://0.0.0.0:8000/api-token-auth/"
+    payload = {'username': user, 'password': password}
+    response = requests.post(url, data=payload)
+    print(response.json())
+    return response.json().get("token")
+
+
+def get_headers():
+    user = "admin"
+    password = "pkdb_admin"
+    token = get_login_token(user, password)
+    headers = {'Authorization': f'Token {token}'}
+    return headers
+
+
+def get_data(url,headers,**kwargs):
+
     """
     gets the data from a paginated rest api.
     """
-
     url_params = "?"+urlencode(kwargs)
     acctual_url = urljoin(url,url_params)
-    response = requests.get(acctual_url)
+    from pprint import pprint
+    response = requests.get(acctual_url,headers=headers)
     num_pages = response.json()["last_page"]
     data = []
     for page in range(1,num_pages +1):
         url_current = acctual_url + f"&page={page}"
-        response = requests.get(url_current)
+        response = requests.get(url_current,headers=headers)
         data += response.json()["data"]["data"]
 
     flatten_data = [flatten_json(d) for d in data]
@@ -148,25 +165,29 @@ def curator_parse(x):
 
 def groups_parse(groups_pks, groups):
     this_groups = []
-    for groups_pk in groups_pks:
-        this_group = groups.data.loc[groups_pk]
-        groups_dict  = {}
-        groups_dict["count"] = this_group[("general","group_count")]
-        groups_dict["name"] = this_group["subject_name"]
-        this_groups.append(groups_dict)
+    if isinstance(groups_pks, list):
+        for groups_pk in groups_pks:
+            this_group = groups.data.loc[groups_pk]
+            groups_dict  = {}
+            groups_dict["count"] = this_group[("general","group_count")]
+            groups_dict["name"] = this_group["subject_name"]
+            this_groups.append(groups_dict)
     return this_groups
 
 def groups_all_count(groups_pks,groups):
-    try:
-        for groups_pk in groups_pks["groupset_groups"]:
-            this_group = groups.data.loc[groups_pk]
 
-            if this_group["subject_name"] == "all":
-                return this_group[("general","group_count")]
-    except TypeError:
-        raise TypeError(f"Group is not working: {groups_pks} ,{groups} ")
-    except KeyError:
-        raise KeyError(f"Group is not working: {groups_pks} ,{groups} ")
+    if  groups_pks["group_count"] > 0:
+        try:
+            for groups_pk in groups_pks["groupset_groups"]:
+                this_group = groups.data.loc[groups_pk]
+                if this_group["subject_name"] == "all":
+                        return this_group[("general","group_count")]
+        except TypeError:
+            raise TypeError(f"Group is not working: {groups_pks} ,{groups} ")
+        except KeyError:
+            raise KeyError(f"Group is not working: {groups_pks} ,{groups} ")                      
+    else:
+        return 0
 
 
 
@@ -196,6 +217,7 @@ class PkdbModel(object):
     preprocessed =  attr.ib(default=False)
     saved = attr.ib(default=False)
     destination =  attr.ib(default="0-raw")
+    headers = attr.ib(default=get_headers())
 
     @property
     def path(self):
@@ -220,7 +242,7 @@ class PkdbModel(object):
         self.data = data
 
     def load(self):
-        self.data = get_data(self.url, **self.base_params)
+        self.data = get_data(self.url,self.headers, **self.base_params)
         self.loaded = True
 
     def preprocess(self):
@@ -282,19 +304,20 @@ class PkdbModel(object):
 
     def _preprocess_substances(self):
          if self.name in ["substances"]:
-            self.data = self.data[["name","studies","interventions","outputs","outputs_calculated","timecourses"]]
-            self.data.insert(1,"study_number", self.data["studies"].apply(len))
-            self.data = self.data[self.data["study_number"] > 0 ]
-            self.data.insert(2,"intervention_number", self.data["interventions"].apply(len))
-            self.data.insert(3,"timecourse_number", self.data["timecourses"].apply(len))
-            self.data.insert(4,"output_number", self.data["outputs"].apply(len))
-            self.data.insert(5,"output_calculated_number", self.data["outputs_calculated"].apply(len))
-            self.data.insert(6,"output_raw_number", self.data["outputs"].apply(len)-self.data["outputs_calculated"].apply(len))
-            self.data.sort_values(by="study_number", ascending=False, inplace=True)
+                
+            self.data = self.data[["name","interventions","outputs","outputs_calculated","timecourses"]]
+            #self.data.insert(1,"study_number", self.data["studies"].apply(len))
+            #self.data = self.data[self.data["study_number"] > 0 ]
+            self.data.insert(1,"intervention_number", self.data["interventions"].apply(len))
+            self.data.insert(2,"timecourse_number", self.data["timecourses"].apply(len))
+            self.data.insert(3,"output_number", self.data["outputs"].apply(len))
+            self.data.insert(4,"output_calculated_number", self.data["outputs_calculated"].apply(len))
+            self.data.insert(5,"output_raw_number", self.data["outputs"].apply(len)-self.data["outputs_calculated"].apply(len))
+            #self.data.sort_values(by="study_number", ascending=False, inplace=True)
 
     def _preprocess_outputs(self):
         if self.name in ["outputs","timecourses"]:
-            self.data.drop(["normed","individual_name","group_name"],axis=1, inplace=True)
+            self.data.drop(["normed"],axis=1, inplace=True)
             self.data["interventions"] = self.data["interventions"].apply(lambda interventions: interventions[0]['pk'] if len(interventions) == 1 else np.nan)
             self.data.dropna(subset = ["interventions"], inplace=True)
             self.data.interventions = self.data.interventions.astype(int)
@@ -315,15 +338,15 @@ class PkdbModel(object):
             intermidiate_df = pd.DataFrame({col:np.repeat(self.data[col].values, self.data[lst_col].str.len()) for col in self.data.columns.difference([lst_col])}).assign(**{lst_col:np.concatenate(self.data[lst_col].values)})[self.data.columns.tolist()]
             df = intermidiate_df["characteristica_all_normed"].apply(pd.Series)
             df["study"] = intermidiate_df["study_name"]
-            df.drop(["pk", "ctype"], axis=1,inplace=True)
+            df.drop(["pk"], axis=1,inplace=True)
             df["subject_pk"] = intermidiate_df["pk"]
             df["subject_name"] = intermidiate_df["name"]
             if self.name == "groups" :
                 df["group_count"] = intermidiate_df["count"]
-                df = df.pivot_table(index=["study","subject_pk","subject_name","group_count"], columns=["category"], aggfunc=my_tuple)
+                df = df.pivot_table(index=["study","subject_pk","subject_name","group_count"], columns=["measurement_type"], aggfunc=my_tuple)
                 df.reset_index(level=["group_count"], inplace=True, col_fill='general')
             else:
-                df = df.pivot_table(index=["study","subject_pk","subject_name"], columns=["category"], aggfunc=my_tuple)
+                df = df.pivot_table(index=["study","subject_pk","subject_name"], columns=["measurement_type"], aggfunc=my_tuple)
 
             df.columns = df.columns.swaplevel(0, 1)
             df = df[df.groupby(level=0, axis=0).count().sum().max(level=0).sort_values(ascending=False).index]
@@ -344,6 +367,7 @@ class PkdbModel(object):
             individuals.data.reset_index(level=["study","subject_name"], inplace=True)
             #outputs.read()
             #timecourses.read()
+            
 
             studies_statistics = pd.DataFrame()
             studies_statistics["name"] = self.data["name"]
