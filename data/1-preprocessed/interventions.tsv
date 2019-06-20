@@ -169,7 +169,6 @@ Cheng1990	3485	Dcaf_200	3482	[{'username': 'janekg'}, {'username': 'mkoenig'}]	d
 Cheng1990	3486	Dcaf_300	3483	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	3.00e-01	single dose	0.00e+00	hr	no info					
 George1986	3514	Dap	3513	[{'username': 'mkoenig'}]	dosing	public	oral	antipyrine	gram / kilogram	1.00e-02	single dose	0.00e+00	hr	solution					
 George1986	3512	Dcaf	3511	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.10e-01	single dose	0.00e+00	hr	solution					
-Carrillo2000a	3480	Dcaf	3479	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
 Desmond1980	3504	D1	3503	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.50e-01	single dose	0.00e+00	hr	capsule					
 Cornish1957	3492	caffeine	3491	[{'username': 'mkoenig'}]	qualitative dosing	public	oral	caffeine	gram	1.00e+00		0.00e+00	hr						
 Cornish1957	3490	theophylline	3489	[{'username': 'mkoenig'}]	qualitative dosing	public	oral	theophylline	gram	1.00e+00		0.00e+00	hr						
@@ -402,3 +401,4 @@ Yue1989	3938	COD	3937	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	p
 Wu2013	3930	COD	3929	[{'username': 'janekg'}, {'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
 Wu2014	3932	COD	3931	[{'username': 'janekg'}, {'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
 Arias1988	3976	SPA	3975	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	sparteine sulfate	gram	5.00e-02	single dose	0.00e+00	hr						
+Carrillo2000a	3988	Dcaf	3987	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
