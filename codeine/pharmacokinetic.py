@@ -9,9 +9,22 @@ import numpy as np
 from scipy import stats
 from matplotlib import pyplot as plt
 import warnings
-
+import functools
+import pint
 # TODO: add estimation of confidence intervals (use also the errorbars on the curves)
 # Currently only simple calculation of pharmacokinetic parameters
+
+
+class Pharmacokinetics(object):
+    def __init__(self, t,t_unit, c,c_unit, compound, dose):
+
+        self.t = t
+        self.t_unit = t
+        self.c = c
+        self.c_unit = c_unit
+
+
+
 
 
 def f_pk(
@@ -250,7 +263,8 @@ def _aucinf(t, c, slope=None, intercept=None):
         [slope, intercept, r_value, p_value, std_err, max_index] = _regression(t, c)
 
     auc = _auc(t, c)
-    auc_d = -intercept / slope * np.exp(slope * t[-1])
+    auc_d = -c[-1] / slope * np.exp(-slope * t[-1])
+
     return auc + auc_d
 
 
@@ -357,7 +371,6 @@ def _vd(t, c, dose, intercept=None):
         [slope, intercept, r_value, p_value, std_err,max_index] = _regression(t, c)
     return dose / np.exp(intercept)
 
-
 def _regression(t, c):
     """ Linear regression on the log timecourse after maximal value.
     No check is performed if already in equilibrium distribution !.
@@ -367,12 +380,15 @@ def _regression(t, c):
     """
     # TODO: check for distribution and elimination part of curve.
     max_index = np.argmax(c)
-    # linear regression
-    #x = t[max_index:]
-    #y = np.log(c[max_index:])
-    x = t[-4:]
-    y = np.log(c[-4:])
-    if max_index == (len(c) - 1):
+    # at least two data points after maximum are required for a regression
+    if max_index > (len(c) - 3):
         return [np.nan] * 6
+
+    # linear regression start regression on datapoint after maximum
+    x = t[max_index+1:]
+    y = np.log(c[max_index+1:])
+    # x = t[-4:]
+    # y = np.log(c[-4:])
+
     slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
     return [slope, intercept, r_value, p_value, std_err, max_index]
