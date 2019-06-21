@@ -1,6 +1,5 @@
 import requests
 import numpy as np
-from collections import namedtuple
 from urllib.parse import urljoin, urlencode
 import pandas as pd
 import attr
@@ -28,6 +27,7 @@ def convert_unit(df, unit_in, unit_out, factor=1.0,
     """ Unit conversion in given data frame. """
     if not inplace:
         df = df.copy()
+
     if subset:
         for column in subset:
             is_weightidx = df[column].notnull()
