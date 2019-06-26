@@ -1,409 +1,440 @@
 study	pk	name	raw_pk	allowed_users	measurement_type	access	route	substance	unit	value	application	time	time_unit	form	choice	min	max	se	sd
-Borin1989	16	paracetamol325mg	15	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	3.25e-01	single dose	0.00e+00	hr	tablet					
-Borin1989	18	paracetamol500mg	17	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
-Borin1989	20	paracetamol1000mg	19	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
-Borin1989	22	paracetamol1500mg	21	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.50e+00	single dose	0.00e+00	hr	tablet					
-Borin1989	24	paracetamol2000mg	23	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	2.00e+00	single dose	0.00e+00	hr	tablet					
-Baraka1990	10	paracetamol	9	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	1.50e+00	single dose	0.00e+00	hr	no info					
-Baraka1990	12	antipyrine	11	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	antipyrine	gram	6.00e-01	single dose	0.00e+00	hr	no info					
-Baraka1990	14	propanolol	13	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	propanolol	gram / hour	6.67e-03	single dose	0.00e+00	hr	no info					
-Chiew2010	30	paracetamol	29	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram / kilogram	7.90e-02	single dose	0.00e+00	hr	tablet		7.70e-02	8.30e-02		
-Chiew2010	32	PEx	31	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	panadol extend	gram / kilogram	7.88e-02	single dose	0.00e+00	hr	tablet		7.50e-02	8.10e-02		
-Divoll1982	48	elixir	45	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	0.00e+00	hr	solution					
-Divoll1982	47	tablet	44	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	0.00e+00	hr	tablet					
-Divoll1982	46	iv	43	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	iv	paracetamol	gram	6.50e-01	single dose	0.00e+00	hr	solution					
-Ameer1981	8	apap_iv	6	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	iv	paracetamol	gram	6.50e-01	constant infusion	0.00e+00	hr	solution					
-Ameer1981	7	apap_oral	5	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	0.00e+00	hr	tablet					
-Ganetsky2013	50	solid	49	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram / kilogram	1.50e-02	single dose	0.00e+00	hr	tablet					
-Ganetsky2013	52	liquid	51	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram / kilogram	1.50e-02	single dose	0.00e+00	hr	solution					
-Albert1974	4	B	2	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	0.00e+00	hr	tablet					
-Albert1974	3	A	1	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	0.00e+00	hr	capsule					
-Critchley2005	34	paracetamol	33	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram / kilogram	2.00e-02	single dose	0.00e+00	hr	solution					
-Chan1997	28	paracetamol	27	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram / kilogram	2.00e-02	single dose	0.00e+00	hr	solution					
-Briant1976	26	paracetamol1000mg	25	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
-Sahajwalla1991	119	ACE_325	115	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	qualitative dosing	public	oral	paracetamol	gram	3.25e-01	multiple dose			tablet					
-Sahajwalla1991	120	ACE_650	116	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	qualitative dosing	public	oral	paracetamol	gram	6.50e-01	multiple dose			tablet					
-Sahajwalla1991	121	ACE_825	117	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	qualitative dosing	public	oral	paracetamol	gram	8.25e-01	multiple dose			tablet					
-Sahajwalla1991	122	ACE_1000	118	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	qualitative dosing	public	oral	paracetamol	gram	1.00e+00	multiple dose			tablet					
-Sahajwalla1991	128	ACE_325_t1	123	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.25e-01	single dose	0.00e+00	hr	tablet					
-Sahajwalla1991	129	ACE_325_t2	124	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.25e-01	single dose	6.00e+00	hr	tablet					
-Sahajwalla1991	130	ACE_325_t3	125	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.25e-01	single dose	1.20e+01	hr	tablet					
-Sahajwalla1991	131	ACE_325_t4	126	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.25e-01	single dose	1.80e+01	hr	tablet					
-Sahajwalla1991	132	ACE_325_t5	127	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.25e-01	single dose	2.40e+01	hr	tablet					
-Sahajwalla1991	138	ACE_650_t1	133	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	0.00e+00	hr	tablet					
-Sahajwalla1991	139	ACE_650_t2	134	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	6.00e+00	hr	tablet					
-Sahajwalla1991	140	ACE_650_t3	135	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	1.20e+01	hr	tablet					
-Sahajwalla1991	141	ACE_650_t4	136	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	1.80e+01	hr	tablet					
-Sahajwalla1991	142	ACE_650_t5	137	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	2.40e+01	hr	tablet					
-Sahajwalla1991	148	ACE_825_t1	143	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	8.25e-01	single dose	0.00e+00	hr	tablet					
-Sahajwalla1991	149	ACE_825_t2	144	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	8.25e-01	single dose	6.00e+00	hr	tablet					
-Sahajwalla1991	150	ACE_825_t3	145	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	8.25e-01	single dose	1.20e+01	hr	tablet					
-Sahajwalla1991	151	ACE_825_t4	146	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	8.25e-01	single dose	1.80e+01	hr	tablet					
-Sahajwalla1991	152	ACE_825_t5	147	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	8.25e-01	single dose	2.40e+01	hr	tablet					
-Sahajwalla1991	158	ACE_1000_t1	153	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
-Sahajwalla1991	159	ACE_1000_t2	154	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	6.00e+00	hr	tablet					
-Sahajwalla1991	160	ACE_1000_t3	155	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	1.20e+01	hr	tablet					
-Sahajwalla1991	161	ACE_1000_t4	156	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	1.80e+01	hr	tablet					
-Sahajwalla1991	162	ACE_1000_t5	157	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	2.40e+01	hr	tablet					
-Rawlins1977	104	apap_iv_1000	103	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	iv	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	solution					
-Rawlins1977	108	apap_po_500	105	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
-Rawlins1977	109	apap_po_1000	106	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
-Rawlins1977	110	apap_po_2000	107	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	2.00e+00	single dose	0.00e+00	hr	tablet					
-Shinoda2007	164	paracetamol600mg	163	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	6.00e-01	single dose	0.00e+00	hr	tablet					
-Shinoda2007	166	paracetamol800mg	165	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	8.00e-01	single dose	0.00e+00	hr	tablet					
-Shinoda2007	168	paracetamol1000mg	167	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
-Tan2006	170	APAP-IR	169	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram / kilogram	7.31e-02	single dose	0.00e+00	hr	tablet					2.80e-03
-Tan2006	172	Panadol Extend	171	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram / kilogram	7.45e-02	single dose	0.00e+00	hr	tablet					2.90e-03
-Renner2007	112	acetaminophen	111	[{'username': 'mkoenig'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
-Renner2007	114	caffeine	113	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.30e-01	single dose	0.00e+00	hr	tablet					
-Wynne1990	174	paracetamol500mg	173	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	iv	paracetamol	gram	5.00e-01	constant infusion	1.00e+01	min	solution					
-Prescott1989	102	paracetamol1000mg	101	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
-Yin2001	176	paracetamol500mg	175	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
-Basu2009	178	mixed-meal	177	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	metabolic challenge	public	oral					0.00e+00	hr		mixed meal				
-Benowitz2003	296	Dcaf	295	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram	2.50e-01	single dose	0.00e+00	hr	no info					
-Benowitz2003	298	Dchlo	297	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	chlorzoxazone	gram	2.50e-01	single dose	0.00e+00	hr	no info					
-Benowitz2003	300	Smoking	299	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	smoking	public	inhalation								Y				
-Benowitz2003	302	CO	301	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	qualitative dosing	public	inhalation	carbon monoxide											
-Bonati1982	312	D1	311	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram / kilogram	2.20e-04	single dose	0.00e+00	hr	solution					
-Bonati1982	314	D2	313	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram / kilogram	1.00e-03	single dose	0.00e+00	hr	solution					
-Bonati1982	316	D3	315	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram / kilogram	1.54e-03	single dose	0.00e+00	hr	solution					
-Bonati1982	318	D4	317	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram / kilogram	5.00e-03	single dose	0.00e+00	hr	solution					
-Bonati1982	320	D5	319	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram / kilogram	1.00e-02	single dose	0.00e+00	hr	solution					
-Benowitz1995	288	Dcaf_2mg	287	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram / kilogram	2.00e-03	single dose	0.00e+00	hr	capsule					
-Benowitz1995	290	Dcaf_4mg	289	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram / kilogram	4.00e-03	single dose	0.00e+00	hr	capsule					
-Benowitz1995	292	Dpx_2mg	291	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	paraxanthine	gram / kilogram	2.00e-03	single dose	0.00e+00	hr	capsule					
-Benowitz1995	294	Dpx_4mg	293	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	paraxanthine	gram / kilogram	4.00e-03	single dose	0.00e+00	hr	capsule					
-Blanchard1983a	308	Dcaf_oral	307	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram / kilogram	4.94e-03	single dose	0.00e+00	hr	solution		4.84e-03	5.17e-03	3.00e-05	
-Blanchard1983a	310	Dcaf_iv	309	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	iv	caffeine	gram / kilogram	4.85e-03	single dose	0.00e+00	hr	solution		4.64e-03	5.63e-03	9.00e-05	
-Carbo1989	324	Dcaf	323	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	3.50e-01	single dose	0.00e+00	hr	no info					
-Carbo1989	326	Dnfc	325	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	norfloxacin	gram	8.00e-01	multiple dose								
-Carbo1989	328	Dppa	327	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	pipemidic acid	gram	8.00e-01	multiple dose								
-Beach1986	280	Dcaf	279	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	solution					
-Beach1986	282	Dds250	281	[{'username': 'mkoenig'}]	dosing	public	oral	disulfiram	gram / hour	1.04e-02	single dose	0.00e+00	hr	no info					
-Beach1986	284	Dds500	283	[{'username': 'mkoenig'}]	dosing	public	oral	disulfiram	gram / hour	2.08e-02	single dose	0.00e+00	hr	no info					
-Blanchard1982	304	caffeine oral	303	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram / kilogram	5.00e-03	single dose	0.00e+00	hr	solution					
-Blanchard1982	306	caffeine iv	305	[{'username': 'mkoenig'}]	dosing	public	iv	caffeine	gram / kilogram	5.00e-03	single dose	-5.00e-01	hr	solution					
-Campbell1987a	322	Dcaf	321	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram / kilogram	4.00e-03	single dose	0.00e+00	hr	no info					
-Begas2007	286	Dcaf	285	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	capsule					
-Harder1988	380	D_CAF	379	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.30e-01	single dose	0.00e+00	hr	solution					
-Harder1988	388	D_OFL_D	384	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	7.20e+01	hr	no info					
-Harder1988	387	D_OFL_C	383	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	4.80e+01	hr	no info					
-Harder1988	386	D_OFL_B	382	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	2.40e+01	hr	no info					
-Harder1988	385	D_OFL_A	381	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	0.00e+00	hr	no info					
-Harder1988	396	D_NOR_D	392	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	norfloxacin	gram	4.00e-01	single dose	7.20e+01	hr	no info					
-Harder1988	395	D_NOR_C	391	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	norfloxacin	gram	4.00e-01	single dose	4.80e+01	hr	no info					
-Harder1988	394	D_NOR_B	390	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	norfloxacin	gram	4.00e-01	single dose	2.40e+01	hr	no info					
-Harder1988	393	D_NOR_A	389	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	norfloxacin	gram	4.00e-01	single dose	0.00e+00	hr	no info					
-Harder1988	404	D_PPA_D	400	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	pipemidic acid	gram	4.00e-01	single dose	7.20e+01	hr	no info					
-Harder1988	403	D_PPA_C	399	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	pipemidic acid	gram	4.00e-01	single dose	4.80e+01	hr	no info					
-Harder1988	402	D_PPA_B	398	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	pipemidic acid	gram	4.00e-01	single dose	2.40e+01	hr	no info					
-Harder1988	401	D_PPA_A	397	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	pipemidic acid	gram	4.00e-01	single dose	0.00e+00	hr	no info					
-Harder1988	412	D_CIP1_D	408	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	1.00e-01	single dose	7.20e+01	hr	no info					
-Harder1988	411	D_CIP1_C	407	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	1.00e-01	single dose	4.80e+01	hr	no info					
-Harder1988	410	D_CIP1_B	406	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	1.00e-01	single dose	2.40e+01	hr	no info					
-Harder1988	409	D_CIP1_A	405	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	1.00e-01	single dose	0.00e+00	hr	no info					
-Harder1988	420	D_CIP2_D	416	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	7.20e+01	hr	no info					
-Harder1988	419	D_CIP2_C	415	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	4.80e+01	hr	no info					
-Harder1988	418	D_CIP2_B	414	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	2.40e+01	hr	no info					
-Harder1988	417	D_CIP2_A	413	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	0.00e+00	hr	no info					
-Harder1988	428	D_CIP3_D	424	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	5.00e-01	single dose	7.20e+01	hr	no info					
-Harder1988	427	D_CIP3_C	423	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	5.00e-01	single dose	4.80e+01	hr	no info					
-Harder1988	426	D_CIP3_B	422	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	5.00e-01	single dose	2.40e+01	hr	no info					
-Harder1988	425	D_CIP3_A	421	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	5.00e-01	single dose	0.00e+00	hr	no info					
-Harder1988	436	D_ENX1_D	432	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	1.00e-01	single dose	7.20e+01	hr	no info					
-Harder1988	435	D_ENX1_C	431	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	1.00e-01	single dose	4.80e+01	hr	no info					
-Harder1988	434	D_ENX1_B	430	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	1.00e-01	single dose	2.40e+01	hr	no info					
-Harder1988	433	D_ENX1_A	429	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	1.00e-01	single dose	0.00e+00	hr	no info					
-Harder1988	444	D_ENX2_D	440	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	2.00e-01	single dose	7.20e+01	hr	no info					
-Harder1988	443	D_ENX2_C	439	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	2.00e-01	single dose	4.80e+01	hr	no info					
-Harder1988	442	D_ENX2_B	438	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	2.00e-01	single dose	2.40e+01	hr	no info					
-Harder1988	441	D_ENX2_A	437	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	2.00e-01	single dose	0.00e+00	hr	no info					
-Harder1988	452	D_ENX3_D	448	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	7.20e+01	hr	no info					
-Harder1988	451	D_ENX3_C	447	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	4.80e+01	hr	no info					
-Harder1988	450	D_ENX3_B	446	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	2.40e+01	hr	no info					
-Harder1988	449	D_ENX3_A	445	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	0.00e+00	hr	no info					
-Harder1989	454	D_CAF	453	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.30e-01	single dose	0.00e+00	hr	solution					
-Harder1989	462	D_OFL_D	458	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	7.20e+01	hr	no info					
-Harder1989	461	D_OFL_C	457	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	4.80e+01	hr	no info					
-Harder1989	460	D_OFL_B	456	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	2.40e+01	hr	no info					
-Harder1989	459	D_OFL_A	455	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	0.00e+00	hr	no info					
-Harder1989	470	D_NOR_D	466	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	norfloxacin	gram	4.00e-01	single dose	7.20e+01	hr	no info					
-Harder1989	469	D_NOR_C	465	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	norfloxacin	gram	4.00e-01	single dose	4.80e+01	hr	no info					
-Harder1989	468	D_NOR_B	464	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	norfloxacin	gram	4.00e-01	single dose	2.40e+01	hr	no info					
-Harder1989	467	D_NOR_A	463	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	norfloxacin	gram	4.00e-01	single dose	0.00e+00	hr	no info					
-Harder1989	478	D_PPA_D	474	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	pipemidic acid	gram	4.00e-01	single dose	7.20e+01	hr	no info					
-Harder1989	477	D_PPA_C	473	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	pipemidic acid	gram	4.00e-01	single dose	4.80e+01	hr	no info					
-Harder1989	476	D_PPA_B	472	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	pipemidic acid	gram	4.00e-01	single dose	2.40e+01	hr	no info					
-Harder1989	475	D_PPA_A	471	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	pipemidic acid	gram	4.00e-01	single dose	0.00e+00	hr	no info					
-Harder1989	486	D_CIP1_D	482	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	1.00e-01	single dose	7.20e+01	hr	no info					
-Harder1989	485	D_CIP1_C	481	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	1.00e-01	single dose	4.80e+01	hr	no info					
-Harder1989	484	D_CIP1_B	480	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	1.00e-01	single dose	2.40e+01	hr	no info					
-Harder1989	483	D_CIP1_A	479	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	1.00e-01	single dose	0.00e+00	hr	no info					
-Harder1989	494	D_CIP2_D	490	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	7.20e+01	hr	no info					
-Harder1989	493	D_CIP2_C	489	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	4.80e+01	hr	no info					
-Harder1989	492	D_CIP2_B	488	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	2.40e+01	hr	no info					
-Harder1989	491	D_CIP2_A	487	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	0.00e+00	hr	no info					
-Harder1989	502	D_CIP3_D	498	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	5.00e-01	single dose	7.20e+01	hr	no info					
-Harder1989	501	D_CIP3_C	497	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	5.00e-01	single dose	4.80e+01	hr	no info					
-Harder1989	500	D_CIP3_B	496	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	5.00e-01	single dose	2.40e+01	hr	no info					
-Harder1989	499	D_CIP3_A	495	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	5.00e-01	single dose	0.00e+00	hr	no info					
-Harder1989	510	D_ENX1_D	506	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	1.00e-01	single dose	7.20e+01	hr	no info					
-Harder1989	509	D_ENX1_C	505	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	1.00e-01	single dose	4.80e+01	hr	no info					
-Harder1989	508	D_ENX1_B	504	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	1.00e-01	single dose	2.40e+01	hr	no info					
-Harder1989	507	D_ENX1_A	503	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	1.00e-01	single dose	0.00e+00	hr	no info					
-Harder1989	518	D_ENX2_D	514	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	2.00e-01	single dose	7.20e+01	hr	no info					
-Harder1989	517	D_ENX2_C	513	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	2.00e-01	single dose	4.80e+01	hr	no info					
-Harder1989	516	D_ENX2_B	512	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	2.00e-01	single dose	2.40e+01	hr	no info					
-Harder1989	515	D_ENX2_A	511	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	2.00e-01	single dose	0.00e+00	hr	no info					
-Harder1989	526	D_ENX3_D	522	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	7.20e+01	hr	no info					
-Harder1989	525	D_ENX3_C	521	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	4.80e+01	hr	no info					
-Harder1989	524	D_ENX3_B	520	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	2.40e+01	hr	no info					
-Harder1989	523	D_ENX3_A	519	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	0.00e+00	hr	no info					
-Healy1989	528	D_CAF	527	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
-Healy1989	534	D_CIP_C	531	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	7.50e-01	single dose	4.80e+01	hr	capsule					
-Healy1989	533	D_CIP_B	530	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	7.50e-01	single dose	3.60e+01	hr	capsule					
-Healy1989	532	D_CIP_A	529	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	7.50e-01	single dose	2.40e+01	hr	capsule					
-Jeppesen1996	544	Dcaf	543	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	tablet					
-Jeppesen1996	546	Dflu	545	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	qualitative dosing	public	oral	fluvoxamine	gram	5.00e-02	multiple dose								
-Healy1991	536	Dcaf	535	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	tablet					
-Healy1991	538	Dlom	537	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	lomefloxacin	gram	4.00e-01	multiple dose			capsule					
-Hetzler1990	540	Dcaf	539	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	iv	caffeine	gram / kilogram	4.00e-03	single dose	0.00e+00	hr	solution					
-Haller2002	378	Dcaf	377	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram	1.75e-01	single dose	0.00e+00	hr	capsule					
-Granfors2005	376	Dcaf	375	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
-IKP243	542	Dcaf	541	[{'username': 'mkoenig'}]	dosing	private	oral	caffeine	gram	5.00e-02	single dose	0.00e+00	hr	tablet					
-Mikus1997	738	SULFA	737	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	sulfasalazine	gram	2.00e-03									
-Mikus1997	736	SPATA	735	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	sparteine	gram	1.00e-01									
-Mikus1997	734	COD	733	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	6.00e-02	single dose	0.00e+00	hr	capsule					
-Loetsch2006	732	MOR	731	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	qualitative dosing	public	iv	morphine sulfate	gram	3.00e-02	multiple dose	0.00e+00	hr	solution					
-Loetsch2006	730	COD	729	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	0.00e+00	hr	solution					
-Hasselstrom1997	712	DEB	711	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	debrisoquine	gram		single dose								
-Hasselstrom1997	710	COD	709	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	0.00e+00	hr	capsule					
-Kim2002	718	COD_high	717	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine sulphate	gram / kilogram	1.20e-01	single dose	0.00e+00	hr	capsule					
-Kim2002	716	COD_low	715	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine sulphate	gram / kilogram	6.00e-02	single dose	0.00e+00	hr	capsule					
-Lafolie1996	726	COD50	725	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	0.00e+00	hr	no info					
-Lafolie1996	724	COD25	723	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine phosphate	gram	2.50e-02	single dose	0.00e+00	hr	no info					
-Kircheiner2007	720	COD	719	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine phosphate	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
-Kronstrand2001	722	COD	721	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine phosphate	gram	1.00e-01	single dose	0.00e+00	hr	no info					
-Liao2009	728	COD	727	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine phosphate	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
-He2008	714	COD	713	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	0.00e+00	hr	no info					
-Somogyi1991	776	DMT	775	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	qualitative dosing	public		dextromethorphan				0.00e+00	hr						
-Somogyi1991	774	ACE7	767	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	paracetamol	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
-Somogyi1991	773	ACE6	766	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	paracetamol	gram	3.00e-02	single dose	-8.00e+00	hr	tablet					
-Somogyi1991	772	ACE5	765	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	paracetamol	gram	3.00e-02	single dose	-1.60e+01	hr	tablet					
-Somogyi1991	771	ACE4	764	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	paracetamol	gram	3.00e-02	single dose	-2.40e+01	hr	tablet					
-Somogyi1991	770	ACE3	763	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	paracetamol	gram	3.00e-02	single dose	-3.20e+01	hr	tablet					
-Somogyi1991	769	ACE2	762	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	paracetamol	gram	3.00e-02	single dose	-4.00e+01	hr	tablet					
-Somogyi1991	768	ACE1	761	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	paracetamol	gram	3.00e-02	single dose	-4.80e+01	hr	tablet					
-Somogyi1991	760	COD	759	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine phosphate	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
-Molanaei2010	746	HD	745	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	medical procedure	public						2.40e+01	hr		hemodialysis				
-Molanaei2010	744	COD	743	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	0.00e+00	hr	no info					
-Sindrup1996	758	SPAR	757	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	qualitative dosing	public		sparteine sulfate	gram	1.00e-01	single dose								
-Sindrup1996	756	QUI	755	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	quinidine	gram	2.00e-01	single dose	-2.00e+00	hr	tablet					
-Sindrup1996	754	COD	753	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine	gram	1.25e-01	single dose	0.00e+00	hr	tablet					
-Mitchell1991	740	MOR	739	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	intramuscular	morphine sulfate	gram	2.00e-02	single dose	0.00e+00	hr	solution					
-Shah1990	750	COD	749	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine phosphate	gram	6.00e-02	single dose	0.00e+00	hr	no info					
-Shord2009	752	COD	751	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine sulphate	gram	3.00e-02	single dose	0.00e+00	hr	no info					
-ONeal1999	748	COD	747	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	3.00e-02	single dose	0.00e+00	hr	solution					
-Mohammed1993	742	COD	741	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine	gram	6.00e-02	single dose	0.00e+00	hr	no info					
-Vree1992	778	COD	777	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
-Depre1992	36	propacetamol1000mg_iv	35	[{'username': 'jbrandhorst'}]	dosing	public	iv	propacetamol	gram	1.00e+00	constant infusion	0.00e+00	hr	solution					
-Depre1992	38	paracetamol500mg	37	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
-Depre1992	40	propacetamol2000mg_iv_2min	39	[{'username': 'jbrandhorst'}]	dosing	public	iv	propacetamol	gram	2.00e+00	constant infusion	2.00e+00	min	solution					
-Depre1992	42	propacetamol2000mg_iv_15min	41	[{'username': 'jbrandhorst'}]	dosing	public	iv	paracetamol	gram	2.00e+00	constant infusion	1.50e+01	min	solution					
-Miners1984	88	paracetamol1000mg	87	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
-Miners1984	90	cimetidine	89	[{'username': 'jbrandhorst'}]	dosing	public	oral	cimetidine	gram	2.00e-01	single dose	0.00e+00	hr	tablet					
-Miners1984	92	sulfinpyrazone	91	[{'username': 'jbrandhorst'}]	dosing	public	oral	sulfinpyrazone	gram	2.00e-01	single dose	0.00e+00	hr	tablet					
-Miners1984	94	anticonvulsants	93	[{'username': 'jbrandhorst'}]	qualitative dosing	public	oral	paracetamol			multiple dose	0.00e+00	hr	tablet					
-Grattan2000	54	Formulation A	53	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
-Grattan2000	56	Formulation B	55	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
-Grattan2000	58	Formulation C	57	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
-Grattan2000	60	Formulation D	59	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
-Grattan2000	62	Formulation E	61	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
-Malan1985	82	8.00h	81	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
-Malan1985	84	14.00h	83	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
-Malan1985	86	20.00h	85	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
-Kim2011	76	paracetamol1000mg	75	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
-Kim2011	78	imatinib400mg	77	[{'username': 'jbrandhorst'}]	qualitative dosing	public	oral	imatinib	gram	4.00e-01	single dose	0.00e+00	hr	tablet					
-Iqbal1995	64	paracetamol	63	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
-Iqbal1995	66	caffeine	65	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	caffeine	gram	6.00e-02	single dose	0.00e+00	hr	tablet					
-Perucca1979	98	paracetamol oral	97	[{'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	solution					
-Perucca1979	100	paracetamol iv	99	[{'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	iv	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	solution					
-Miners1988	96	paracetamol1000mg	95	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
-Lau1994	80	paracetamol	79	[{'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	paracetamol	gram / kilogram	2.00e-02	single dose	0.00e+00	hr	solution					
-Jensen2004	74	paracetamol	73	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
-Calbet2002	184	Glucose	183	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	oral	glucose	gram	1.50e+01	single dose	0.00e+00	hr	solution				0.00e+00	
-Calbet2002	186	PPH	185	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	metabolic challenge	public	oral					0.00e+00	hr		protein solution				
-Calbet2002	188	WPH	187	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	metabolic challenge	public	oral					0.00e+00	hr		protein solution				
-Calbet2002	190	MS	189	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	metabolic challenge	public	oral					0.00e+00	hr		protein solution				
-Degn2004	192	hypoclamp	191	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	glucose metabolism challenge	public	iv					0.00e+00	hr		hypoglycemic clamp				
-Degn2004	194	exenatide	193	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	exenatide	mole / hour / kilogram	3.96e-12	constant infusion	0.00e+00	hr	solution					
-Ferrannini1988	200	Dglc	199	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	oral	glucose	gram / kilogram	1.00e+00	single dose	0.00e+00	hr	solution					
-Ferrannini1979	198	glciv	197	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	glucose	gram / kilogram	3.30e-01	single dose	0.00e+00	hr	solution					
-Bergman1991	180	glciv	179	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	glucose	gram / kilogram	3.00e-01	single dose	0.00e+00	hr	solution					
-Felig1969	196	glciv	195	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	glucose	gram / kilogram	5.00e-01	single dose	0.00e+00	hr	solution					
-Firth1986	204	Dglc	203	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	oral	glucose	gram	5.00e+01	single dose	0.00e+00	hr	solution					
-Fery1993	202	Dglc	201	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	oral	glucose	gram	7.50e+01	single dose	0.00e+00	hr	solution					
-Butler1991	182	mixed-meal	181	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	metabolic challenge	public	oral					0.00e+00	hr		mixed meal				
-Polonsky1986	242	bolus_injection	241	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	c-peptide	mole / kilogram		single dose	0.00e+00	hr	solution					
-Polonsky1986	245	constant_infusion_3	243	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	c-peptide	mole / hour / kilogram	1.80e-10	constant infusion	0.00e+00	min	solution					
-Polonsky1986	246	constant_infusion_30	244	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	c-peptide	mole / hour / kilogram	1.80e-09	constant infusion	1.20e+02	min	solution					
-Polonsky1986	248	variable_infusion	247	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	qualitative dosing	public	iv	c-peptide	mole / hour / kilogram		variable infusion	0.00e+00	min	solution					
-Israelian2006	214	hypoclamp	213	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	glucose metabolism challenge	public									hypoglycemic clamp				
-Israelian2006	216	Dins	215	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	insulin	IU / hour / kilogram	6.00e-02	constant infusion	0.00e+00	hr	solution					
-Knop2007	232	isoglc	231	[{'username': 'mkoenig'}]	glucose metabolism challenge	public									isoglycemic glucose infusion				
-Knop2007	234	ogtt	233	[{'username': 'mkoenig'}]	dosing	public	oral	glucose	gram	5.00e+01	single dose	0.00e+00	hr	solution					
-Kjems2001	228	cpep_bolus	227	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	c-peptide	mole	5.00e-08	single dose	0.00e+00	hr	solution					
-Kjems2001	230	IVGTT	229	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	glucose	gram / kilogram	3.00e-01	single dose	0.00e+00	hr	solution					
-Mitrakou1992	240	glc	239	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	oral	glucose	gram / kilogram	1.00e+00	single dose	0.00e+00	hr	solution					
-Hovorka2002	212	glciv	211	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	glucose	gram / kilogram	3.00e-01	single dose	1.20e+02	min	solution					
-Jones1998	218	hypoglycemia	217	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	glucose metabolism challenge	public						0.00e+00	min		hypoglycemic clamp				
-Jones1998	220	asleep	219	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	sleeping status	public									asleep				
-Jones1998	222	awake	221	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	sleeping status	public									awake				
-Jones1998	224	daytime	223	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	circadian status	public									daytime				
-Jones1998	226	nighttime	225	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	circadian status	public									nighttime				
-Mitrakou1991	236	hypoglycemic clamp	235	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	glucose metabolism challenge	public	iv							solution	hypoglycemic clamp				
-Mitrakou1991	238	euglycemic clamp	237	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	glucose metabolism challenge	public	iv							solution	hyperinsulinemic euglycemic clamp				
-Henkel2005	206	LPG drink	205	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	metabolic challenge	public									lipid-glucose-protein challenge				
-Balogh1995	266	Dcaf	265	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	tablet					
-Balogh1995	268	DA	267	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	gestodene	gram	7.50e-05									
-Balogh1995	270	DB	269	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	levonorgestrel	gram	1.25e-04									
-Balogh1995	272	DEE2	271	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	ethinylestradiol	gram	3.00e-05									
-Barnet1990	274	Dcaf	273	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	3.50e-01	single dose	0.00e+00	hr	no info					
-Barnet1990	276	Dppa	275	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	pipemidic acid	gram	8.00e-01	multiple dose								
-Barnet1990	278	Dnfc	277	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	norfloxacin	gram	8.00e-01	multiple dose								
-Amchin1999	258	Dcaf	257	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	tablet					
-Amchin1999	260	Dven	259	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	venlafaxine											
-Akinyinka2000	256	Dcaf	255	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram	3.00e-01	single dose	0.00e+00	hr	solution					
-Abernethy1985	254	D1	253	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.62e-01	single dose	0.00e+00	hr	solution					
-Balogh1992	264	caf	263	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.25e-01	single dose	0.00e+00	hr	solution					
-Backman2008	262	Dcaf	261	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
-Thomaseth2008	250	Dglc	249	[{'username': 'mkoenig'}]	dosing	public	oral	glucose	gram	7.50e+01	single dose	0.00e+00	hr	solution					
-Yang2015	252	ogtt	251	[{'username': 'mkoenig'}]	dosing	public	oral	glucose	gram	7.50e+01	single dose	0.00e+00	hr	solution					
-Ghassabian2009	366	Dcaf	365	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	solution					
-Ghassabian2009	368	Dome	367	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	omeprazole	gram	2.00e-02	single dose	0.00e+00	hr	solution					
-Ghassabian2009	370	Dlos	369	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	losartan	gram	2.50e-02	single dose	0.00e+00	hr	solution					
-Ghassabian2009	372	Ddex	371	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	dextromethorphan	gram	1.00e-01	single dose	0.00e+00	hr	solution					
-Ghassabian2009	374	Dmid	373	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	midazolam	gram	2.00e-03	single dose	0.00e+00	hr	solution					
-Culm-Merdek2005	344	Dcaf	343	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram	2.50e-01	single dose	0.00e+00	hr	no info					
-Culm-Merdek2005	352	Dflux_D	348	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	fluvoxamine	gram	1.00e-01	single dose	8.00e+00	hr	no info					
-Culm-Merdek2005	351	Dflux_C	347	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	fluvoxamine	gram	1.00e-01	single dose	-2.50e+00	hr	no info					
-Culm-Merdek2005	350	Dflux_B	346	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	fluvoxamine	gram	1.00e-01	single dose	-1.80e+01	hr	no info					
-Culm-Merdek2005	349	Dflux_A	345	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	fluvoxamine	gram	1.00e-01	single dose	-2.60e+01	hr	no info					
-Fuhr1993a	358	Dcaf	357	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.67e-01	single dose	0.00e+00	hr	solution					
-Fuhr1993a	360	Dgf	359	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	grapefruit juice	gram	1.43e-01	single dose	0.00e+00	hr	solution		1.26e-01	1.59e-01		
-Cheng1990	336	Dcaf_300	333	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	3.00e-01	single dose	0.00e+00	hr	no info					
-Cheng1990	335	Dcaf_200	332	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	no info					
-Cheng1990	334	Dcaf_70	331	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	7.00e-02	single dose	0.00e+00	hr	no info					
-George1986	362	Dcaf	361	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.10e-01	single dose	0.00e+00	hr	solution					
-George1986	364	Dap	363	[{'username': 'mkoenig'}]	dosing	public	oral	antipyrine	gram / kilogram	1.00e-02	single dose	0.00e+00	hr	solution					
-Desmond1980	354	D1	353	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.50e-01	single dose	0.00e+00	hr	capsule					
-Cornish1957	338	theobromine	337	[{'username': 'mkoenig'}]	qualitative dosing	public	oral	theobromine	gram	1.00e+00		0.00e+00	hr						
-Cornish1957	340	theophylline	339	[{'username': 'mkoenig'}]	qualitative dosing	public	oral	theophylline	gram	1.00e+00		0.00e+00	hr						
-Cornish1957	342	caffeine	341	[{'username': 'mkoenig'}]	qualitative dosing	public	oral	caffeine	gram	1.00e+00		0.00e+00	hr						
-Faber2004	356	Dcaf	355	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.48e-01	single dose	0.00e+00	hr	solution					
-Joeres1988	548	Dcaf	547	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	3.66e-01	single dose	0.00e+00	hr	tablet					
-Joeres1988	550	smoking abstinence	549	[{'username': 'janekg'}, {'username': 'mkoenig'}]	abstinence smoking	public			yr	5.75e-02									
-Joeres1988	552	no smoking	551	[{'username': 'janekg'}, {'username': 'mkoenig'}]	smoking	public									N				
-Lelo1986a	560	Dcaf	559	[{'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram	2.70e-01	single dose	0.00e+00	hr	capsule					
-Lelo1986a	562	Dpx	561	[{'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	paraxanthine	gram	2.50e-01	single dose	0.00e+00	hr	capsule					
-Lelo1986a	564	Dtp	563	[{'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	theophylline	gram	2.50e-01	single dose	0.00e+00	hr	tablet					
-Lelo1986a	566	Dtb	565	[{'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	theobromine	gram	2.50e-01	single dose	0.00e+00	hr	capsule					
-Magnusson2008	570	Dcaf	569	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
-Magnusson2008	572	Dmid	571	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	midazolam	gram	2.50e-03	single dose	0.00e+00	hr	solution					
-Magnusson2008	574	Ddig	573	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	digoxin	gram	1.30e-04	single dose	0.00e+00	hr	tablet					
-May1982	576	Dcaf	575	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram / kilogram	2.00e-03	single dose	0.00e+00	hr	solution					
-May1982	578	Dcim	577	[{'username': 'mkoenig'}]	qualitative dosing	public	oral	cimetidine	gram	3.00e-01	multiple dose	0.00e+00	hr	solution					
-Murphy1988	582	Dcaf	581	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.11e-01	single dose	0.00e+00	hr	solution					
-Murphy1988	584	Dapy	583	[{'username': 'mkoenig'}]	dosing	public	oral	antipyrine	gram / kilogram	1.00e-02	single dose	0.00e+00	hr	solution					
-Kaplan1997	554	D_CAF250	553	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.50e-01	single dose	0.00e+00	hr	capsule					
-Kaplan1997	556	D_CAF500	555	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	5.00e-01	single dose	0.00e+00	hr	capsule					
-McLean2002	580	Dcaf	579	[{'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram / kilogram	6.00e-03	single dose	0.00e+00	hr	capsule					
-Koch1999	558	Dcaf	557	[{'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	solution					
-Levy1983	568	Dcaf	567	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	3.00e-01	single dose	0.00e+00	hr	solution					
-Oh2012	604	Dmid	599	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	midazolam	gram	1.00e-01	single dose	0.00e+00	hr	no info					
-Oh2012	603	Ddex	598	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	dextromethorphan	gram	2.00e-03	single dose	0.00e+00	hr	no info					
-Oh2012	602	Dome	597	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	omeprazole	gram	2.00e-01	single dose	0.00e+00	hr	no info					
-Oh2012	601	Dlos	596	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	losartan	gram	2.00e-03	single dose	0.00e+00	hr	no info					
-Oh2012	600	Dcaf	595	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram	1.00e-02	single dose	0.00e+00	hr	no info					
-Newton1981	594	Dcaf_750	589	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	7.50e-01	single dose	0.00e+00	hr	solution					
-Newton1981	593	Dcaf_500	588	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	5.00e-01	single dose	0.00e+00	hr	solution					
-Newton1981	592	Dcaf_300	587	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	3.00e-01	single dose	0.00e+00	hr	solution					
-Newton1981	591	Dcaf_100	586	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	solution					
-Newton1981	590	Dcaf_50	585	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	5.00e-02	single dose	0.00e+00	hr	solution					
-Seng2009	616	CAF3	615	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram / kilogram	3.00e-03	single dose	0.00e+00	hr	capsule					
-Seng2009	618	CAF5	617	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram / kilogram	5.00e-03	single dose	0.00e+00	hr	capsule					
-Parsons1978	608	Dcaf	607	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram / kilogram	5.00e-03	single dose	0.00e+00	hr	solution					
-Park2003	606	Dcaf	605	[{'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram / kilogram	2.00e-03	single dose	0.00e+00	hr	solution					
-Renner1984	614	D1	613	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	iv	caffeine	gram	1.25e-01	single dose	0.00e+00	hr	solution					
-Spigset1999a	620	Dcaf	619	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	tablet					
-Perera2011	612	Dcaf	611	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
-Patwardhan1980	610	Dcaf	609	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.50e-01	single dose	0.00e+00	hr	capsule					
-Stille1987	622	D_CAF	621	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.30e-01	single dose	0.00e+00	hr	solution					
-Stille1987	630	D_OFL_D	626	[{'username': 'mkoenig'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	7.20e+01	hr	no info					
-Stille1987	629	D_OFL_C	625	[{'username': 'mkoenig'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	4.80e+01	hr	no info					
-Stille1987	628	D_OFL_B	624	[{'username': 'mkoenig'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	2.40e+01	hr	no info					
-Stille1987	627	D_OFL_A	623	[{'username': 'mkoenig'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	0.00e+00	hr	no info					
-Stille1987	638	D_CIP_D	634	[{'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	7.20e+01	hr	no info					
-Stille1987	637	D_CIP_C	633	[{'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	4.80e+01	hr	no info					
-Stille1987	636	D_CIP_B	632	[{'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	2.40e+01	hr	no info					
-Stille1987	635	D_CIP_A	631	[{'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	0.00e+00	hr	no info					
-Stille1987	646	D_ENX_D	642	[{'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	7.20e+01	hr	no info					
-Stille1987	645	D_ENX_C	641	[{'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	4.80e+01	hr	no info					
-Stille1987	644	D_ENX_B	640	[{'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	2.40e+01	hr	no info					
-Stille1987	643	D_ENX_A	639	[{'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	0.00e+00	hr	no info					
-Chen1991	708	COD_M7	701	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
-Chen1991	707	COD_M6	700	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	-8.00e+00	hr	tablet					
-Chen1991	706	COD_M5	699	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	-1.60e+01	hr	tablet					
-Chen1991	705	COD_M4	698	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	-2.40e+01	hr	tablet					
-Chen1991	704	COD_M3	697	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	-3.20e+01	hr	tablet					
-Chen1991	703	COD_M2	696	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	-4.00e+01	hr	tablet					
-Chen1991	702	COD_M1	695	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	4.80e+01	hr	tablet					
-Chen1991	694	COD	693	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine phosphate	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
-Chen1991	692	DMT	691	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	qualitative dosing	public		dextromethorphan				0.00e+00	hr						
-Turpault2009	658	Dcaf	657	[{'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	no info					
-Turpault2009	660	Dwar	659	[{'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	warfarin	gram	1.00e-02	single dose	0.00e+00	hr	tablet					
-Turpault2009	662	Dome	661	[{'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	omeprazole	gram	2.00e-02	single dose	0.00e+00	hr	capsule					
-Turpault2009	664	Dmet	663	[{'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	metropolol	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
-Turpault2009	666	Dmid	665	[{'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	midazolam	gram / kilogram	3.00e-05	single dose	0.00e+00	hr	solution					
-Caraco1996	690	QUI	689	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	quinidine	gram	1.00e-01	single dose			capsule					
-Caraco1996	688	MEP	687	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	mephenytoin	gram	1.00e-01	single dose								
-Caraco1996	686	DEB	685	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	debrisoquine	gram	1.00e-02	single dose								
-Caraco1996	684	COD	683	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	1.20e-01	single dose	0.00e+00	hr	capsule					
-Trang1982	652	caffeine	651	[{'username': 'mkoenig'}]	dosing	public	iv	caffeine	gram / kilogram	4.00e-03	single dose	0.00e+00	hr	solution					
-Trang1982	654	vitamin_c_15mg	653	[{'username': 'mkoenig'}]	qualitative dosing	public	oral	L-ascorbic acid	gram / hour	6.25e-04		0.00e+00	hr						
-Trang1982	656	vitamin_c_500mg	655	[{'username': 'mkoenig'}]	qualitative dosing	public	oral	L-ascorbic acid	gram / hour	4.17e-02	multiple dose	0.00e+00	hr	tablet					
-Ammon2002	682	SPAR	681	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	qualitative dosing	public	oral	sparteine sulfate	gram	1.00e-01	single dose	0.00e+00	hr						
-Ammon2002	680	DIC	679	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	diclofenac	gram	5.00e-02	single dose	0.00e+00	hr	capsule					
-Ammon2002	678	COD	677	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine phosphate	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
-ZylberKatz1984	676	Dcaf_260	673	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.60e-01	single dose	0.00e+00	hr	solution					
-ZylberKatz1984	675	Dcaf_310	672	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	3.10e-01	single dose	0.00e+00	hr	solution					
-ZylberKatz1984	674	Dcaf_350	671	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	3.50e-01	single dose	0.00e+00	hr	solution					
-TangLiu1983	648	caffeine	647	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram / kilogram	7.50e-03	single dose	0.00e+00	hr	solution					
-TangLiu1983	650	theophylline	649	[{'username': 'mkoenig'}]	dosing	public	oral	theophylline	gram / kilogram	7.50e-03	single dose	0.00e+00	hr	solution					
-Wang1985	670	Dicg	669	[{'username': 'mkoenig'}]	dosing	public	iv	indocyanine green	gram / kilogram	5.00e-04	single dose	0.00e+00	hr	solution					
-Wang1985	668	Dcaf	667	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.40e-01	single dose	0.00e+00	hr	solution					
-Yue1991B	814	COD-48	805	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	-4.80e+01	hr	no info					
-Yue1991B	813	COD-42	804	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	-4.20e+01	hr	no info					
-Yue1991B	812	COD-36	803	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	-3.60e+01	hr	no info					
-Yue1991B	811	COD-30	802	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	-3.00e+01	hr	no info					
-Yue1991B	810	COD-24	801	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	-2.40e+01	hr	no info					
-Yue1991B	809	COD-18	800	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	-1.80e+01	hr	no info					
-Yue1991B	808	COD-12	799	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	-1.20e+01	hr	no info					
-Yue1991B	807	COD-6	798	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	-6.00e+00	hr	no info					
-Yue1991B	806	COD0	797	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	0.00e+00	hr	no info					
-Yue1991B	796	DEB	795	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	debrisoquine	gram	1.00e-02									
-Yue1991B	794	COD	793	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	0.00e+00	hr	no info					
-Yue1999	824	DEB	823	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	debrisoquine	gram										
-Yue1999	822	MEAL	821	[{'username': 'janekg'}, {'username': 'mkoenig'}]	metabolic challenge	public	oral				single dose	0.00e+00	hr		mixed meal				
-Yue1999	820	COD	819	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	0.00e+00	hr	capsule					
-Yue1989-2	786	DEB	785	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	debrisoquine	gram	1.00e-02									
-Yue1989-2	784	COD	783	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	2.50e-02	single dose	0.00e+00	hr	no info					
-Yue1991	792	DEB	791	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	debrisoquine	gram	1.00e-02									
-Yue1991	790	COD	789	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	0.00e+00	hr	tablet					
-Yue1997	818	DEB	817	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	debrisoquine	gram	1.00e-02									
-Yue1997	816	COD	815	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	0.00e+00	hr	no info					
-Yue1989	788	COD	787	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	codeine phosphate	gram	2.50e-02	single dose	0.00e+00	hr	no info					
-Wu2014	782	COD	781	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
-Arias1988	826	SPA	825	[{'username': 'janekg'}, {'username': 'mkoenig'}]	qualitative dosing	public	oral	sparteine sulfate	gram	5.00e-02	single dose	0.00e+00	hr						
-Carrillo2000a	852	Dcaf	851	[{'username': 'janekg'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
-Wu2013	854	COD	853	[{'username': 'janekg'}, {'username': 'mkoenig'}, {'username': 'dimitra'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
+Borin1989	60	paracetamol325mg	59	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	3.25e-01	single dose	0.00e+00	hr	tablet					
+Borin1989	62	paracetamol500mg	61	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
+Borin1989	64	paracetamol1000mg	63	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Borin1989	66	paracetamol1500mg	65	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.50e+00	single dose	0.00e+00	hr	tablet					
+Borin1989	68	paracetamol2000mg	67	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	2.00e+00	single dose	0.00e+00	hr	tablet					
+Baraka1990	54	paracetamol	53	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	1.50e+00	single dose	0.00e+00	hr	no info					
+Baraka1990	56	antipyrine	55	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	antipyrine	gram	6.00e-01	single dose	0.00e+00	hr	no info					
+Baraka1990	58	propanolol	57	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	propanolol	gram / hour	6.67e-03	single dose	0.00e+00	hr	no info					
+Chen1996	74	paracetamol1000mg	73	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Chen1996	76	watercress	75	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	watercress	gram	5.00e+01	single dose	2.00e+00	hr	no info					
+Chiew2010	78	paracetamol	77	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram / kilogram	7.90e-02	single dose	0.00e+00	hr	tablet		7.70e-02	8.30e-02		
+Chiew2010	80	PEx	79	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	panadol extend	gram / kilogram	7.88e-02	single dose	0.00e+00	hr	tablet		7.50e-02	8.10e-02		
+Ameer1981	52	apap_iv	50	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	iv	paracetamol	gram	6.50e-01	constant infusion	0.00e+00	hr	solution					
+Ameer1981	51	apap_oral	49	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	0.00e+00	hr	tablet					
+Briant1976	70	paracetamol1000mg	69	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Critchley2005	82	paracetamol	81	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram / kilogram	2.00e-02	single dose	0.00e+00	hr	solution					
+Albert1974	48	B	46	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	0.00e+00	hr	tablet					
+Albert1974	47	A	45	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	0.00e+00	hr	capsule					
+Chan1997	72	paracetamol	71	[{'username': 'mkoenig'}, {'username': 'dimitra'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram / kilogram	2.00e-02	single dose	0.00e+00	hr	solution					
+Depre1992	84	propacetamol1000mg_iv	83	[{'username': 'jbrandhorst'}]	dosing	public	iv	propacetamol	gram	1.00e+00	constant infusion	0.00e+00	hr	solution					
+Depre1992	86	paracetamol500mg	85	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
+Depre1992	88	propacetamol2000mg_iv_2min	87	[{'username': 'jbrandhorst'}]	dosing	public	iv	propacetamol	gram	2.00e+00	constant infusion	2.00e+00	min	solution					
+Depre1992	90	propacetamol2000mg_iv_15min	89	[{'username': 'jbrandhorst'}]	dosing	public	iv	paracetamol	gram	2.00e+00	constant infusion	1.50e+01	min	solution					
+Gwilt1963	112	paracetamol1000mg_whole	111	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Gwilt1963	114	paracetamol1000mg_crushed	113	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Gwilt1963	116	sorbitol100mg	115	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	sorbitol	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
+Itoh2002	122	paracetamol1000mg	121	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Itoh2002	124	nizatidine300mg	123	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	nizatidine	gram	3.00e-01	single dose	0.00e+00	hr	tablet					
+Itoh2002	126	nizatidine150mg	125	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	nizatidine	gram	1.50e-01	single dose	0.00e+00	min	tablet					
+Grattan2000	102	Formulation A	101	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
+Grattan2000	104	Formulation B	103	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
+Grattan2000	106	Formulation C	105	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
+Grattan2000	108	Formulation D	107	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
+Grattan2000	110	Formulation E	109	[{'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
+Kamali1993	130	paracetamol1500mg	129	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.50e+00	single dose	0.00e+00	hr	tablet					
+Kamali1993	132	probenecid1000mg	131	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	probenecid	gram	1.00e+00	single dose	-1.00e+00	hr	tablet					
+Kim2011	134	paracetamol1000mg	133	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Kim2011	136	imatinib400mg	135	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	qualitative dosing	public	oral	imatinib	gram	4.00e-01	single dose	0.00e+00	hr	tablet					
+Divoll1982	94	iv	91	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	iv	paracetamol	gram	6.50e-01	single dose	0.00e+00	hr	solution					
+Divoll1982	95	tablet	92	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	0.00e+00	hr	tablet					
+Divoll1982	96	elixir	93	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	0.00e+00	hr	solution					
+Ganetsky2013	98	solid	97	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram / kilogram	1.50e-02	single dose	0.00e+00	hr	tablet					
+Ganetsky2013	100	liquid	99	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram / kilogram	1.50e-02	single dose	0.00e+00	hr	solution					
+Iqbal1995	118	paracetamol	117	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
+Iqbal1995	120	caffeine	119	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	caffeine	gram	6.00e-02	single dose	0.00e+00	hr	tablet					
+Degn2004	266	hypoclamp	265	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	glucose metabolism challenge	public	iv					0.00e+00	hr		hypoglycemic clamp				
+Degn2004	268	exenatide	267	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	exenatide	mole / hour / kilogram	3.96e-12	constant infusion	0.00e+00	hr	solution					
+Hoogwerf1986	282	C-peptide infusion	281	[{'username': 'mkoenig'}]	dosing	public	iv	c-peptide	mole / hour	1.76e-08	constant infusion	0.00e+00	hr	solution					
+Hoogwerf1986	284	glc100g	283	[{'username': 'mkoenig'}]	dosing	public	oral	glucose	gram	1.00e+02	single dose	1.00e+00	hr	solution					
+Ferrannini1988	274	Dglc	273	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	oral	glucose	gram / kilogram	1.00e+00	single dose	0.00e+00	hr	solution					
+Ferrannini1979	272	glciv	271	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	glucose	gram / kilogram	3.30e-01	single dose	0.00e+00	hr	solution					
+Hovorka2002	286	glciv	285	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	glucose	gram / kilogram	3.00e-01	single dose	1.20e+02	min	solution					
+Felig1969	270	glciv	269	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	glucose	gram / kilogram	5.00e-01	single dose	0.00e+00	hr	solution					
+Firth1986	278	Dglc	277	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	oral	glucose	gram	5.00e+01	single dose	0.00e+00	hr	solution					
+Fery1993	276	Dglc	275	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	oral	glucose	gram	7.50e+01	single dose	0.00e+00	hr	solution					
+Henkel2005	280	LPG drink	279	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	metabolic challenge	public									lipid-glucose-protein challenge				
+Balogh1995	340	Dcaf	339	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	tablet					
+Balogh1995	342	DA	341	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	gestodene	gram	7.50e-05									
+Balogh1995	344	DB	343	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	levonorgestrel	gram	1.25e-04									
+Balogh1995	346	DEE2	345	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	ethinylestradiol	gram	3.00e-05									
+Barnet1990	348	Dcaf	347	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	3.50e-01	single dose	0.00e+00	hr	no info					
+Barnet1990	350	Dppa	349	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	pipemidic acid	gram	8.00e-01	multiple dose								
+Barnet1990	352	Dnfc	351	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	norfloxacin	gram	8.00e-01	multiple dose								
+Beach1986	354	Dcaf	353	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	solution					
+Beach1986	356	Dds250	355	[{'username': 'mkoenig'}]	dosing	public	oral	disulfiram	gram / hour	1.04e-02	single dose	0.00e+00	hr	no info					
+Beach1986	358	Dds500	357	[{'username': 'mkoenig'}]	dosing	public	oral	disulfiram	gram / hour	2.08e-02	single dose	0.00e+00	hr	no info					
+Amchin1999	332	Dcaf	331	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	tablet					
+Amchin1999	334	Dven	333	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	venlafaxine											
+Akinyinka2000	330	Dcaf	329	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	3.00e-01	single dose	0.00e+00	hr	solution					
+Abernethy1985	328	D1	327	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	1.62e-01	single dose	0.00e+00	hr	solution					
+Begas2007	360	Dcaf	359	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	capsule					
+Backman2008	336	Dcaf	335	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
+Balogh1992	338	caf	337	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	2.25e-01	single dose	0.00e+00	hr	solution					
+Benowitz2003	370	Dcaf	369	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	2.50e-01	single dose	0.00e+00	hr	no info					
+Benowitz2003	372	Dchlo	371	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	chlorzoxazone	gram	2.50e-01	single dose	0.00e+00	hr	no info					
+Benowitz2003	374	Smoking	373	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	smoking	public	inhalation								Y				
+Benowitz2003	376	CO	375	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	inhalation	carbon monoxide											
+Benowitz1995	362	Dcaf_2mg	361	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram / kilogram	2.00e-03	single dose	0.00e+00	hr	capsule					
+Benowitz1995	364	Dcaf_4mg	363	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram / kilogram	4.00e-03	single dose	0.00e+00	hr	capsule					
+Benowitz1995	366	Dpx_2mg	365	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	paraxanthine	gram / kilogram	2.00e-03	single dose	0.00e+00	hr	capsule					
+Benowitz1995	368	Dpx_4mg	367	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	paraxanthine	gram / kilogram	4.00e-03	single dose	0.00e+00	hr	capsule					
+Bonati1982	386	D1	385	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram / kilogram	2.20e-04	single dose	0.00e+00	hr	solution					
+Bonati1982	388	D2	387	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram / kilogram	1.00e-03	single dose	0.00e+00	hr	solution					
+Bonati1982	390	D3	389	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram / kilogram	1.54e-03	single dose	0.00e+00	hr	solution					
+Bonati1982	392	D4	391	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram / kilogram	5.00e-03	single dose	0.00e+00	hr	solution					
+Bonati1982	394	D5	393	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram / kilogram	1.00e-02	single dose	0.00e+00	hr	solution					
+Blanchard1983a	382	Dcaf_oral	381	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram / kilogram	4.94e-03	single dose	0.00e+00	hr	solution		4.84e-03	5.17e-03	3.00e-05	
+Blanchard1983a	384	Dcaf_iv	383	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	iv	caffeine	gram / kilogram	4.85e-03	single dose	0.00e+00	hr	solution		4.64e-03	5.63e-03	9.00e-05	
+Cornish1957	412	theobromine	411	[{'username': 'mkoenig'}]	qualitative dosing	public	oral	theobromine	gram	1.00e+00		0.00e+00	hr						
+Cornish1957	414	theophylline	413	[{'username': 'mkoenig'}]	qualitative dosing	public	oral	theophylline	gram	1.00e+00		0.00e+00	hr						
+Cornish1957	416	caffeine	415	[{'username': 'mkoenig'}]	qualitative dosing	public	oral	caffeine	gram	1.00e+00		0.00e+00	hr						
+Blanchard1982	378	caffeine oral	377	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram / kilogram	5.00e-03	single dose	0.00e+00	hr	solution					
+Blanchard1982	380	caffeine iv	379	[{'username': 'mkoenig'}]	dosing	public	iv	caffeine	gram / kilogram	5.00e-03	single dose	-5.00e-01	hr	solution					
+Cheng1990	410	Dcaf_300	407	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	3.00e-01	single dose	0.00e+00	hr	no info					
+Cheng1990	409	Dcaf_200	406	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	no info					
+Cheng1990	408	Dcaf_70	405	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	7.00e-02	single dose	0.00e+00	hr	no info					
+Campbell1987a	396	Dcaf	395	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram / kilogram	4.00e-03	single dose	0.00e+00	hr	no info					
+Harder1989	540	D_CAF	539	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	2.30e-01	single dose	0.00e+00	hr	solution					
+Harder1989	548	D_OFL_D	544	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	7.20e+01	hr	no info					
+Harder1989	547	D_OFL_C	543	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	4.80e+01	hr	no info					
+Harder1989	546	D_OFL_B	542	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	2.40e+01	hr	no info					
+Harder1989	545	D_OFL_A	541	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	0.00e+00	hr	no info					
+Harder1989	556	D_NOR_D	552	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	norfloxacin	gram	4.00e-01	single dose	7.20e+01	hr	no info					
+Harder1989	555	D_NOR_C	551	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	norfloxacin	gram	4.00e-01	single dose	4.80e+01	hr	no info					
+Harder1989	554	D_NOR_B	550	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	norfloxacin	gram	4.00e-01	single dose	2.40e+01	hr	no info					
+Harder1989	553	D_NOR_A	549	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	norfloxacin	gram	4.00e-01	single dose	0.00e+00	hr	no info					
+Harder1989	564	D_PPA_D	560	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	pipemidic acid	gram	4.00e-01	single dose	7.20e+01	hr	no info					
+Harder1989	563	D_PPA_C	559	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	pipemidic acid	gram	4.00e-01	single dose	4.80e+01	hr	no info					
+Harder1989	562	D_PPA_B	558	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	pipemidic acid	gram	4.00e-01	single dose	2.40e+01	hr	no info					
+Harder1989	561	D_PPA_A	557	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	pipemidic acid	gram	4.00e-01	single dose	0.00e+00	hr	no info					
+Harder1989	572	D_CIP1_D	568	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	1.00e-01	single dose	7.20e+01	hr	no info					
+Harder1989	571	D_CIP1_C	567	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	1.00e-01	single dose	4.80e+01	hr	no info					
+Harder1989	570	D_CIP1_B	566	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	1.00e-01	single dose	2.40e+01	hr	no info					
+Harder1989	569	D_CIP1_A	565	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	1.00e-01	single dose	0.00e+00	hr	no info					
+Harder1989	580	D_CIP2_D	576	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	7.20e+01	hr	no info					
+Harder1989	579	D_CIP2_C	575	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	4.80e+01	hr	no info					
+Harder1989	578	D_CIP2_B	574	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	2.40e+01	hr	no info					
+Harder1989	577	D_CIP2_A	573	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	0.00e+00	hr	no info					
+Harder1989	588	D_CIP3_D	584	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	5.00e-01	single dose	7.20e+01	hr	no info					
+Harder1989	587	D_CIP3_C	583	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	5.00e-01	single dose	4.80e+01	hr	no info					
+Harder1989	586	D_CIP3_B	582	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	5.00e-01	single dose	2.40e+01	hr	no info					
+Harder1989	585	D_CIP3_A	581	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	5.00e-01	single dose	0.00e+00	hr	no info					
+Harder1989	596	D_ENX1_D	592	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	1.00e-01	single dose	7.20e+01	hr	no info					
+Harder1989	595	D_ENX1_C	591	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	1.00e-01	single dose	4.80e+01	hr	no info					
+Harder1989	594	D_ENX1_B	590	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	1.00e-01	single dose	2.40e+01	hr	no info					
+Harder1989	593	D_ENX1_A	589	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	1.00e-01	single dose	0.00e+00	hr	no info					
+Harder1989	604	D_ENX2_D	600	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	2.00e-01	single dose	7.20e+01	hr	no info					
+Harder1989	603	D_ENX2_C	599	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	2.00e-01	single dose	4.80e+01	hr	no info					
+Harder1989	602	D_ENX2_B	598	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	2.00e-01	single dose	2.40e+01	hr	no info					
+Harder1989	601	D_ENX2_A	597	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	2.00e-01	single dose	0.00e+00	hr	no info					
+Harder1989	612	D_ENX3_D	608	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	7.20e+01	hr	no info					
+Harder1989	611	D_ENX3_C	607	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	4.80e+01	hr	no info					
+Harder1989	610	D_ENX3_B	606	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	2.40e+01	hr	no info					
+Harder1989	609	D_ENX3_A	605	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	0.00e+00	hr	no info					
+Harder1988	466	D_CAF	465	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	2.30e-01	single dose	0.00e+00	hr	solution					
+Harder1988	474	D_OFL_D	470	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	7.20e+01	hr	no info					
+Harder1988	473	D_OFL_C	469	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	4.80e+01	hr	no info					
+Harder1988	472	D_OFL_B	468	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	2.40e+01	hr	no info					
+Harder1988	471	D_OFL_A	467	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	0.00e+00	hr	no info					
+Harder1988	482	D_NOR_D	478	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	norfloxacin	gram	4.00e-01	single dose	7.20e+01	hr	no info					
+Harder1988	481	D_NOR_C	477	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	norfloxacin	gram	4.00e-01	single dose	4.80e+01	hr	no info					
+Harder1988	480	D_NOR_B	476	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	norfloxacin	gram	4.00e-01	single dose	2.40e+01	hr	no info					
+Harder1988	479	D_NOR_A	475	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	norfloxacin	gram	4.00e-01	single dose	0.00e+00	hr	no info					
+Harder1988	490	D_PPA_D	486	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	pipemidic acid	gram	4.00e-01	single dose	7.20e+01	hr	no info					
+Harder1988	489	D_PPA_C	485	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	pipemidic acid	gram	4.00e-01	single dose	4.80e+01	hr	no info					
+Harder1988	488	D_PPA_B	484	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	pipemidic acid	gram	4.00e-01	single dose	2.40e+01	hr	no info					
+Harder1988	487	D_PPA_A	483	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	pipemidic acid	gram	4.00e-01	single dose	0.00e+00	hr	no info					
+Harder1988	498	D_CIP1_D	494	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	1.00e-01	single dose	7.20e+01	hr	no info					
+Harder1988	497	D_CIP1_C	493	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	1.00e-01	single dose	4.80e+01	hr	no info					
+Harder1988	496	D_CIP1_B	492	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	1.00e-01	single dose	2.40e+01	hr	no info					
+Harder1988	495	D_CIP1_A	491	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	1.00e-01	single dose	0.00e+00	hr	no info					
+Harder1988	506	D_CIP2_D	502	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	7.20e+01	hr	no info					
+Harder1988	505	D_CIP2_C	501	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	4.80e+01	hr	no info					
+Harder1988	504	D_CIP2_B	500	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	2.40e+01	hr	no info					
+Harder1988	503	D_CIP2_A	499	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	0.00e+00	hr	no info					
+Harder1988	514	D_CIP3_D	510	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	5.00e-01	single dose	7.20e+01	hr	no info					
+Harder1988	513	D_CIP3_C	509	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	5.00e-01	single dose	4.80e+01	hr	no info					
+Harder1988	512	D_CIP3_B	508	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	5.00e-01	single dose	2.40e+01	hr	no info					
+Harder1988	511	D_CIP3_A	507	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	5.00e-01	single dose	0.00e+00	hr	no info					
+Harder1988	522	D_ENX1_D	518	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	1.00e-01	single dose	7.20e+01	hr	no info					
+Harder1988	521	D_ENX1_C	517	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	1.00e-01	single dose	4.80e+01	hr	no info					
+Harder1988	520	D_ENX1_B	516	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	1.00e-01	single dose	2.40e+01	hr	no info					
+Harder1988	519	D_ENX1_A	515	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	1.00e-01	single dose	0.00e+00	hr	no info					
+Harder1988	530	D_ENX2_D	526	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	2.00e-01	single dose	7.20e+01	hr	no info					
+Harder1988	529	D_ENX2_C	525	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	2.00e-01	single dose	4.80e+01	hr	no info					
+Harder1988	528	D_ENX2_B	524	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	2.00e-01	single dose	2.40e+01	hr	no info					
+Harder1988	527	D_ENX2_A	523	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	2.00e-01	single dose	0.00e+00	hr	no info					
+Harder1988	538	D_ENX3_D	534	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	7.20e+01	hr	no info					
+Harder1988	537	D_ENX3_C	533	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	4.80e+01	hr	no info					
+Harder1988	536	D_ENX3_B	532	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	2.40e+01	hr	no info					
+Harder1988	535	D_ENX3_A	531	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	0.00e+00	hr	no info					
+Kakuda2014	648	warfarin10mg	647	[{'username': 'mkoenig'}]	dosing	public	oral	warfarin	gram	1.00e-02	single dose	0.00e+00	hr	solution					
+Kakuda2014	646	omeprazole40mg	645	[{'username': 'mkoenig'}]	dosing	public	oral	omeprazole	gram	4.00e-02	single dose	0.00e+00	hr	solution					
+Kakuda2014	644	caffeine150mg	643	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.50e-01	single dose	0.00e+00	hr	solution					
+Kakuda2014	642	dextromethorphan30mg	641	[{'username': 'mkoenig'}]	dosing	public	oral	dextromethorphan	gram	3.00e-02	single dose	0.00e+00	hr	solution					
+Kakuda2014	640	midazolam	639	[{'username': 'mkoenig'}]	dosing	public	iv	midazolam	gram / kilogram	2.50e-05	single dose	0.00e+00	hr	solution					
+Healy1989	614	D_CAF	613	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
+Healy1989	620	D_CIP_C	617	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	7.50e-01	single dose	4.80e+01	hr	capsule					
+Healy1989	619	D_CIP_B	616	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	7.50e-01	single dose	3.60e+01	hr	capsule					
+Healy1989	618	D_CIP_A	615	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	ciprofloxacin	gram	7.50e-01	single dose	2.40e+01	hr	capsule					
+Joeres1988	634	Dcaf	633	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	3.66e-01	single dose	0.00e+00	hr	tablet					
+Joeres1988	636	smoking abstinence	635	[{'username': 'mkoenig'}, {'username': 'janekg'}]	abstinence smoking	public			yr	5.75e-02									
+Joeres1988	638	no smoking	637	[{'username': 'mkoenig'}, {'username': 'janekg'}]	smoking	public									N				
+Jeppesen1996	630	Dcaf	629	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	tablet					
+Jeppesen1996	632	Dflu	631	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	fluvoxamine	gram	5.00e-02	multiple dose								
+Healy1991	622	Dcaf	621	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	tablet					
+Healy1991	624	Dlom	623	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	lomefloxacin	gram	4.00e-01	multiple dose			capsule					
+Hetzler1990	626	Dcaf	625	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	iv	caffeine	gram / kilogram	4.00e-03	single dose	0.00e+00	hr	solution					
+IKP243	628	Dcaf	627	[{'username': 'mkoenig'}]	dosing	private	oral	caffeine	gram	5.00e-02	single dose	0.00e+00	hr	tablet					
+Mikus1997	844	SULFA	843	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	sulfasalazine	gram	2.00e-03									
+Mikus1997	842	SPATA	841	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	sparteine	gram	1.00e-01									
+Mikus1997	840	COD	839	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	6.00e-02	single dose	0.00e+00	hr	capsule					
+Hasselstrom1997	818	DEB	817	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	debrisoquine	gram		single dose								
+Hasselstrom1997	816	COD	815	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	0.00e+00	hr	capsule					
+Loetsch2006	838	MOR	837	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	iv	morphine sulfate	gram	3.00e-02	multiple dose	0.00e+00	hr	solution					
+Loetsch2006	836	COD	835	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	0.00e+00	hr	solution					
+Lafolie1996	832	COD50	831	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	0.00e+00	hr	no info					
+Lafolie1996	830	COD25	829	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	2.50e-02	single dose	0.00e+00	hr	no info					
+Kim2002	824	COD_high	823	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine sulphate	gram / kilogram	1.20e-01	single dose	0.00e+00	hr	capsule					
+Kim2002	822	COD_low	821	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine sulphate	gram / kilogram	6.00e-02	single dose	0.00e+00	hr	capsule					
+Kircheiner2007	826	COD	825	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
+Kronstrand2001	828	COD	827	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	1.00e-01	single dose	0.00e+00	hr	no info					
+Liao2009	834	COD	833	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
+He2008	820	COD	819	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	0.00e+00	hr	no info					
+Yue1991B	920	COD-48	911	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	-4.80e+01	hr	no info					
+Yue1991B	919	COD-42	910	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	-4.20e+01	hr	no info					
+Yue1991B	918	COD-36	909	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	-3.60e+01	hr	no info					
+Yue1991B	917	COD-30	908	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	-3.00e+01	hr	no info					
+Yue1991B	916	COD-24	907	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	-2.40e+01	hr	no info					
+Yue1991B	915	COD-18	906	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	-1.80e+01	hr	no info					
+Yue1991B	914	COD-12	905	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	-1.20e+01	hr	no info					
+Yue1991B	913	COD-6	904	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	-6.00e+00	hr	no info					
+Yue1991B	912	COD0	903	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	0.00e+00	hr	no info					
+Yue1991B	902	DEB	901	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	debrisoquine	gram	1.00e-02									
+Yue1991B	900	COD	899	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	0.00e+00	hr	no info					
+Yue1999	930	DEB	929	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	debrisoquine	gram										
+Yue1999	928	MEAL	927	[{'username': 'mkoenig'}, {'username': 'janekg'}]	metabolic challenge	public	oral				single dose	0.00e+00	hr		mixed meal				
+Yue1999	926	COD	925	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	0.00e+00	hr	capsule					
+Yue1991	898	DEB	897	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	debrisoquine	gram	1.00e-02									
+Yue1991	896	COD	895	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	0.00e+00	hr	tablet					
+Yue1989-2	892	DEB	891	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	debrisoquine	gram	1.00e-02									
+Yue1989-2	890	COD	889	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	2.50e-02	single dose	0.00e+00	hr	no info					
+Yue1997	924	DEB	923	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	debrisoquine	gram	1.00e-02									
+Yue1997	922	COD	921	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	0.00e+00	hr	no info					
+Yue1989	894	COD	893	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	2.50e-02	single dose	0.00e+00	hr	no info					
+Wu2013	886	COD	885	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
+Wu2014	888	COD	887	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
+Arias1988	932	SPA	931	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	sparteine sulfate	gram	5.00e-02	single dose	0.00e+00	hr						
+Sahajwalla1991	177	ACE_325	173	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	qualitative dosing	public	oral	paracetamol	gram	3.25e-01	multiple dose			tablet					
+Sahajwalla1991	178	ACE_650	174	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	qualitative dosing	public	oral	paracetamol	gram	6.50e-01	multiple dose			tablet					
+Sahajwalla1991	179	ACE_825	175	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	qualitative dosing	public	oral	paracetamol	gram	8.25e-01	multiple dose			tablet					
+Sahajwalla1991	180	ACE_1000	176	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	qualitative dosing	public	oral	paracetamol	gram	1.00e+00	multiple dose			tablet					
+Sahajwalla1991	186	ACE_325_t1	181	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.25e-01	single dose	0.00e+00	hr	tablet					
+Sahajwalla1991	187	ACE_325_t2	182	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.25e-01	single dose	6.00e+00	hr	tablet					
+Sahajwalla1991	188	ACE_325_t3	183	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.25e-01	single dose	1.20e+01	hr	tablet					
+Sahajwalla1991	189	ACE_325_t4	184	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.25e-01	single dose	1.80e+01	hr	tablet					
+Sahajwalla1991	190	ACE_325_t5	185	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.25e-01	single dose	2.40e+01	hr	tablet					
+Sahajwalla1991	196	ACE_650_t1	191	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	0.00e+00	hr	tablet					
+Sahajwalla1991	197	ACE_650_t2	192	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	6.00e+00	hr	tablet					
+Sahajwalla1991	198	ACE_650_t3	193	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	1.20e+01	hr	tablet					
+Sahajwalla1991	199	ACE_650_t4	194	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	1.80e+01	hr	tablet					
+Sahajwalla1991	200	ACE_650_t5	195	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	6.50e-01	single dose	2.40e+01	hr	tablet					
+Sahajwalla1991	206	ACE_825_t1	201	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	8.25e-01	single dose	0.00e+00	hr	tablet					
+Sahajwalla1991	207	ACE_825_t2	202	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	8.25e-01	single dose	6.00e+00	hr	tablet					
+Sahajwalla1991	208	ACE_825_t3	203	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	8.25e-01	single dose	1.20e+01	hr	tablet					
+Sahajwalla1991	209	ACE_825_t4	204	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	8.25e-01	single dose	1.80e+01	hr	tablet					
+Sahajwalla1991	210	ACE_825_t5	205	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	8.25e-01	single dose	2.40e+01	hr	tablet					
+Sahajwalla1991	216	ACE_1000_t1	211	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Sahajwalla1991	217	ACE_1000_t2	212	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	6.00e+00	hr	tablet					
+Sahajwalla1991	218	ACE_1000_t3	213	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	1.20e+01	hr	tablet					
+Sahajwalla1991	219	ACE_1000_t4	214	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	1.80e+01	hr	tablet					
+Sahajwalla1991	220	ACE_1000_t5	215	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	2.40e+01	hr	tablet					
+Miners1984	146	paracetamol1000mg	145	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Miners1984	148	cimetidine	147	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	cimetidine	gram	2.00e-01	single dose	0.00e+00	hr	tablet					
+Miners1984	150	sulfinpyrazone	149	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	sulfinpyrazone	gram	2.00e-01	single dose	0.00e+00	hr	tablet					
+Miners1984	152	anticonvulsants	151	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	qualitative dosing	public	oral	paracetamol			multiple dose	0.00e+00	hr	tablet					
+Rawlins1977	162	apap_iv_1000	161	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	iv	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	solution					
+Rawlins1977	166	apap_po_500	163	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
+Rawlins1977	167	apap_po_1000	164	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Rawlins1977	168	apap_po_2000	165	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	2.00e+00	single dose	0.00e+00	hr	tablet					
+Malan1985	140	8.00h	139	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Malan1985	142	14.00h	141	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Malan1985	144	20.00h	143	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Prescott1989	160	paracetamol1000mg	159	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Perucca1979	156	paracetamol oral	155	[{'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	solution					
+Perucca1979	158	paracetamol iv	157	[{'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	iv	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	solution					
+Miners1988	154	paracetamol1000mg	153	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Renner2007	170	acetaminophen	169	[{'username': 'mkoenig'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Renner2007	172	caffeine	171	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.30e-01	single dose	0.00e+00	hr	tablet					
+Jensen2004	128	paracetamol	127	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Lau1994	138	paracetamol	137	[{'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	oral	paracetamol	gram / kilogram	2.00e-02	single dose	0.00e+00	hr	solution					
+Shinoda2007	222	paracetamol600mg	221	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	6.00e-01	single dose	0.00e+00	hr	tablet					
+Shinoda2007	224	paracetamol800mg	223	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	8.00e-01	single dose	0.00e+00	hr	tablet					
+Shinoda2007	226	paracetamol1000mg	225	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	1.00e+00	single dose	0.00e+00	hr	tablet					
+Souliman2006	228	paracetamol500mg	227	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
+Souliman2006	230	fasted	229	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	overnight fast	public									Y				
+Souliman2006	232	fed	231	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	metabolic challenge	public									mixed meal				
+Calbet2002	258	Glucose	257	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	oral	glucose	gram	1.50e+01	single dose	0.00e+00	hr	solution				0.00e+00	
+Calbet2002	260	PPH	259	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	metabolic challenge	public	oral					0.00e+00	hr		protein solution				
+Calbet2002	262	WPH	261	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	metabolic challenge	public	oral					0.00e+00	hr		protein solution				
+Calbet2002	264	MS	263	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	metabolic challenge	public	oral					0.00e+00	hr		protein solution				
+Wynne1990	248	paracetamol500mg	247	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	iv	paracetamol	gram	5.00e-01	constant infusion	1.00e+01	min	solution					
+Tan2006	234	APAP-IR	233	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram / kilogram	7.31e-02	single dose	0.00e+00	hr	tablet					2.80e-03
+Tan2006	236	Panadol Extend	235	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram / kilogram	7.45e-02	single dose	0.00e+00	hr	tablet					2.90e-03
+Yin2001	250	paracetamol500mg	249	[{'username': 'mkoenig'}, {'username': 'jbrandhorst'}]	dosing	public	oral	paracetamol	gram	5.00e-01	single dose	0.00e+00	hr	tablet					
+Bergman1991	254	glciv	253	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	glucose	gram / kilogram	3.00e-01	single dose	0.00e+00	hr	solution					
+Butler1991	256	mixed-meal	255	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	metabolic challenge	public	oral					0.00e+00	hr		mixed meal				
+Basu2009	252	mixed-meal	251	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	metabolic challenge	public	oral					0.00e+00	hr		mixed meal				
+Polonsky1986	316	bolus_injection	315	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	c-peptide	mole / kilogram		single dose	0.00e+00	hr	solution					
+Polonsky1986	320	constant_infusion_30	318	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	c-peptide	mole / hour / kilogram	1.80e-09	constant infusion	1.20e+02	min	solution					
+Polonsky1986	319	constant_infusion_3	317	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	c-peptide	mole / hour / kilogram	1.80e-10	constant infusion	0.00e+00	min	solution					
+Polonsky1986	322	variable_infusion	321	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	qualitative dosing	public	iv	c-peptide	mole / hour / kilogram		variable infusion	0.00e+00	min	solution					
+Israelian2006	288	hypoclamp	287	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	glucose metabolism challenge	public									hypoglycemic clamp				
+Israelian2006	290	Dins	289	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	insulin	IU / hour / kilogram	6.00e-02	constant infusion	0.00e+00	hr	solution					
+Mitrakou1991	310	hypoglycemic clamp	309	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	glucose metabolism challenge	public	iv							solution	hypoglycemic clamp				
+Mitrakou1991	312	euglycemic clamp	311	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	glucose metabolism challenge	public	iv							solution	hyperinsulinemic euglycemic clamp				
+Jones1998	292	hypoglycemia	291	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	glucose metabolism challenge	public						0.00e+00	min		hypoglycemic clamp				
+Jones1998	294	asleep	293	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	sleeping status	public									asleep				
+Jones1998	296	awake	295	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	sleeping status	public									awake				
+Jones1998	298	daytime	297	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	circadian status	public									daytime				
+Jones1998	300	nighttime	299	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	circadian status	public									nighttime				
+Knop2007	306	isoglc	305	[{'username': 'mkoenig'}]	glucose metabolism challenge	public									isoglycemic glucose infusion				
+Knop2007	308	ogtt	307	[{'username': 'mkoenig'}]	dosing	public	oral	glucose	gram	5.00e+01	single dose	0.00e+00	hr	solution					
+Kjems2001	302	cpep_bolus	301	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	c-peptide	mole	5.00e-08	single dose	0.00e+00	hr	solution					
+Kjems2001	304	IVGTT	303	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	iv	glucose	gram / kilogram	3.00e-01	single dose	0.00e+00	hr	solution					
+Mitrakou1992	314	glc	313	[{'username': 'mkoenig'}, {'username': 'kgreen'}]	dosing	public	oral	glucose	gram / kilogram	1.00e+00	single dose	0.00e+00	hr	solution					
+Thomaseth2008	324	Dglc	323	[{'username': 'mkoenig'}]	dosing	public	oral	glucose	gram	7.50e+01	single dose	0.00e+00	hr	solution					
+Yang2015	326	ogtt	325	[{'username': 'mkoenig'}]	dosing	public	oral	glucose	gram	7.50e+01	single dose	0.00e+00	hr	solution					
+Doroshyenko2013	430	caffeine150mg	429	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.50e-01	single dose	0.00e+00	hr	tablet					
+Doroshyenko2013	432	tolbutamide125mg	431	[{'username': 'mkoenig'}]	dosing	public	oral	tolbutamide	gram	1.25e-01	single dose	0.00e+00	hr	tablet					
+Doroshyenko2013	434	omeprazole20mg	433	[{'username': 'mkoenig'}]	dosing	public	oral	omeprazole	gram	2.00e-02	single dose	0.00e+00	hr	tablet					
+Doroshyenko2013	436	dextromethorphan30mg	435	[{'username': 'mkoenig'}]	dosing	public	oral	dextromethorphan	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
+Doroshyenko2013	438	midazolam2mg	437	[{'username': 'mkoenig'}]	dosing	public	oral	midazolam	gram	2.00e-03	single dose	0.00e+00	hr	solution					
+Doroshyenko2013	440	silexan	439	[{'username': 'mkoenig'}]	qualitative dosing	public	oral	silexan	gram / hour	6.67e-03	multiple dose	-1.10e+01	day	capsule					
+Ghassabian2009	452	Dcaf	451	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	solution					
+Ghassabian2009	454	Dome	453	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	omeprazole	gram	2.00e-02	single dose	0.00e+00	hr	solution					
+Ghassabian2009	456	Dlos	455	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	losartan	gram	2.50e-02	single dose	0.00e+00	hr	solution					
+Ghassabian2009	458	Ddex	457	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	dextromethorphan	gram	1.00e-01	single dose	0.00e+00	hr	solution					
+Ghassabian2009	460	Dmid	459	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	midazolam	gram	2.00e-03	single dose	0.00e+00	hr	solution					
+Culm-Merdek2005	418	Dcaf	417	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	2.50e-01	single dose	0.00e+00	hr	no info					
+Culm-Merdek2005	426	Dflux_D	422	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	fluvoxamine	gram	1.00e-01	single dose	8.00e+00	hr	no info					
+Culm-Merdek2005	425	Dflux_C	421	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	fluvoxamine	gram	1.00e-01	single dose	-2.50e+00	hr	no info					
+Culm-Merdek2005	424	Dflux_B	420	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	fluvoxamine	gram	1.00e-01	single dose	-1.80e+01	hr	no info					
+Culm-Merdek2005	423	Dflux_A	419	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	fluvoxamine	gram	1.00e-01	single dose	-2.60e+01	hr	no info					
+Fuhr1993a	444	Dcaf	443	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	1.67e-01	single dose	0.00e+00	hr	solution					
+Fuhr1993a	446	Dgf	445	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	grapefruit juice	gram	1.43e-01	single dose	0.00e+00	hr	solution		1.26e-01	1.59e-01		
+George1986	448	Dcaf	447	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.10e-01	single dose	0.00e+00	hr	solution					
+George1986	450	Dap	449	[{'username': 'mkoenig'}]	dosing	public	oral	antipyrine	gram / kilogram	1.00e-02	single dose	0.00e+00	hr	solution					
+Haller2002	464	Dcaf	463	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	1.75e-01	single dose	0.00e+00	hr	capsule					
+Granfors2005	462	Dcaf	461	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
+Desmond1980	428	D1	427	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	2.50e-01	single dose	0.00e+00	hr	capsule					
+Faber2004	442	Dcaf	441	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.48e-01	single dose	0.00e+00	hr	solution					
+Lelo1986a	662	Dtb	661	[{'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	oral	theobromine	gram	2.50e-01	single dose	0.00e+00	hr	capsule					
+Lelo1986a	660	Dtp	659	[{'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	oral	theophylline	gram	2.50e-01	single dose	0.00e+00	hr	tablet					
+Lelo1986a	658	Dpx	657	[{'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	oral	paraxanthine	gram	2.50e-01	single dose	0.00e+00	hr	capsule					
+Lelo1986a	656	Dcaf	655	[{'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.70e-01	single dose	0.00e+00	hr	capsule					
+Newton1981	690	Dcaf_750	685	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	7.50e-01	single dose	0.00e+00	hr	solution					
+Newton1981	689	Dcaf_500	684	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	5.00e-01	single dose	0.00e+00	hr	solution					
+Newton1981	688	Dcaf_300	683	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	3.00e-01	single dose	0.00e+00	hr	solution					
+Newton1981	687	Dcaf_100	682	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	solution					
+Newton1981	686	Dcaf_50	681	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	5.00e-02	single dose	0.00e+00	hr	solution					
+Magnusson2008	670	Ddig	669	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	digoxin	gram	1.30e-04	single dose	0.00e+00	hr	tablet					
+Magnusson2008	668	Dmid	667	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	midazolam	gram	2.50e-03	single dose	0.00e+00	hr	solution					
+Magnusson2008	666	Dcaf	665	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
+Murphy1988	680	Dapy	679	[{'username': 'mkoenig'}]	dosing	public	oral	antipyrine	gram / kilogram	1.00e-02	single dose	0.00e+00	hr	solution					
+Murphy1988	678	Dcaf	677	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.11e-01	single dose	0.00e+00	hr	solution					
+May1982	674	Dcim	673	[{'username': 'mkoenig'}]	qualitative dosing	public	oral	cimetidine	gram	3.00e-01	multiple dose	0.00e+00	hr	solution					
+May1982	672	Dcaf	671	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram / kilogram	2.00e-03	single dose	0.00e+00	hr	solution					
+Kaplan1997	652	D_CAF500	651	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	5.00e-01	single dose	0.00e+00	hr	capsule					
+Kaplan1997	650	D_CAF250	649	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	2.50e-01	single dose	0.00e+00	hr	capsule					
+Koch1999	654	Dcaf	653	[{'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	solution					
+Levy1983	664	Dcaf	663	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	3.00e-01	single dose	0.00e+00	hr	solution					
+Stille1987	742	D_ENX_D	738	[{'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	7.20e+01	hr	no info					
+Stille1987	741	D_ENX_C	737	[{'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	4.80e+01	hr	no info					
+Stille1987	740	D_ENX_B	736	[{'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	2.40e+01	hr	no info					
+Stille1987	739	D_ENX_A	735	[{'username': 'mkoenig'}]	dosing	public	oral	enoxacin	gram	4.00e-01	single dose	0.00e+00	hr	no info					
+Stille1987	734	D_CIP_D	730	[{'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	7.20e+01	hr	no info					
+Stille1987	733	D_CIP_C	729	[{'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	4.80e+01	hr	no info					
+Stille1987	732	D_CIP_B	728	[{'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	2.40e+01	hr	no info					
+Stille1987	731	D_CIP_A	727	[{'username': 'mkoenig'}]	dosing	public	oral	ciprofloxacin	gram	2.50e-01	single dose	0.00e+00	hr	no info					
+Stille1987	726	D_OFL_D	722	[{'username': 'mkoenig'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	7.20e+01	hr	no info					
+Stille1987	725	D_OFL_C	721	[{'username': 'mkoenig'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	4.80e+01	hr	no info					
+Stille1987	724	D_OFL_B	720	[{'username': 'mkoenig'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	2.40e+01	hr	no info					
+Stille1987	723	D_OFL_A	719	[{'username': 'mkoenig'}]	dosing	public	oral	ofloxacin	gram	2.00e-01	single dose	0.00e+00	hr	no info					
+Stille1987	718	D_CAF	717	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.30e-01	single dose	0.00e+00	hr	solution					
+Oh2012	700	Dmid	695	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	midazolam	gram	1.00e-01	single dose	0.00e+00	hr	no info					
+Oh2012	699	Ddex	694	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	dextromethorphan	gram	2.00e-03	single dose	0.00e+00	hr	no info					
+Oh2012	698	Dome	693	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	omeprazole	gram	2.00e-01	single dose	0.00e+00	hr	no info					
+Oh2012	697	Dlos	692	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	losartan	gram	2.00e-03	single dose	0.00e+00	hr	no info					
+Oh2012	696	Dcaf	691	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	1.00e-02	single dose	0.00e+00	hr	no info					
+Seng2009	714	CAF5	713	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram / kilogram	5.00e-03	single dose	0.00e+00	hr	capsule					
+Seng2009	712	CAF3	711	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram / kilogram	3.00e-03	single dose	0.00e+00	hr	capsule					
+Parsons1978	704	Dcaf	703	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram / kilogram	5.00e-03	single dose	0.00e+00	hr	solution					
+Patwardhan1980	706	Dcaf	705	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	2.50e-01	single dose	0.00e+00	hr	capsule					
+Renner1984	710	D1	709	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	iv	caffeine	gram	1.25e-01	single dose	0.00e+00	hr	solution					
+Park2003	702	Dcaf	701	[{'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram / kilogram	2.00e-03	single dose	0.00e+00	hr	solution					
+Spigset1999a	716	Dcaf	715	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	2.00e-01	single dose	0.00e+00	hr	tablet					
+Perera2011	708	Dcaf	707	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
+Tanaka2014	752	midazolam1mg	751	[{'username': 'mkoenig'}]	dosing	public	oral	midazolam	gram	1.00e-03	single dose	0.00e+00	hr	tablet					
+Tanaka2014	750	dextromethorphan30mg	749	[{'username': 'mkoenig'}]	dosing	public	oral	dextromethorphan	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
+Tanaka2014	748	omeprazole20mg	747	[{'username': 'mkoenig'}]	dosing	public	oral	omeprazole	gram	2.00e-02	single dose	0.00e+00	hr	tablet					
+Tanaka2014	746	losartan50mg	745	[{'username': 'mkoenig'}]	dosing	public	oral	losartan	gram	5.00e-02	single dose	0.00e+00	hr	tablet					
+Tanaka2014	744	caffeine100mg	743	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
+Chen1991	814	COD_M7	807	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
+Chen1991	813	COD_M6	806	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	-8.00e+00	hr	tablet					
+Chen1991	812	COD_M5	805	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	-1.60e+01	hr	tablet					
+Chen1991	811	COD_M4	804	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	-2.40e+01	hr	tablet					
+Chen1991	810	COD_M3	803	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	-3.20e+01	hr	tablet					
+Chen1991	809	COD_M2	802	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	-4.00e+01	hr	tablet					
+Chen1991	808	COD_M1	801	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine	gram	3.00e-02	single dose	4.80e+01	hr	tablet					
+Chen1991	800	COD	799	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
+Chen1991	798	DMT	797	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public		dextromethorphan				0.00e+00	hr						
+Turpault2009	772	Dmid	771	[{'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	oral	midazolam	gram / kilogram	3.00e-05	single dose	0.00e+00	hr	solution					
+Turpault2009	770	Dmet	769	[{'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	oral	metropolol	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
+Turpault2009	768	Dome	767	[{'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	oral	omeprazole	gram	2.00e-02	single dose	0.00e+00	hr	capsule					
+Turpault2009	766	Dwar	765	[{'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	oral	warfarin	gram	1.00e-02	single dose	0.00e+00	hr	tablet					
+Turpault2009	764	Dcaf	763	[{'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	no info					
+Trang1982	762	vitamin_c_500mg	761	[{'username': 'mkoenig'}]	qualitative dosing	public	oral	L-ascorbic acid	gram / hour	4.17e-02	multiple dose	0.00e+00	hr	tablet					
+Trang1982	760	vitamin_c_15mg	759	[{'username': 'mkoenig'}]	qualitative dosing	public	oral	L-ascorbic acid	gram / hour	6.25e-04		0.00e+00	hr						
+Trang1982	758	caffeine	757	[{'username': 'mkoenig'}]	dosing	public	iv	caffeine	gram / kilogram	4.00e-03	single dose	0.00e+00	hr	solution					
+Caraco1996	796	QUI	795	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	quinidine	gram	1.00e-01	single dose			capsule					
+Caraco1996	794	MEP	793	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	mephenytoin	gram	1.00e-01	single dose								
+Caraco1996	792	DEB	791	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	debrisoquine	gram	1.00e-02	single dose								
+Caraco1996	790	COD	789	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	1.20e-01	single dose	0.00e+00	hr	capsule					
+Ammon2002	788	SPAR	787	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	sparteine sulfate	gram	1.00e-01	single dose	0.00e+00	hr						
+Ammon2002	786	DIC	785	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	diclofenac	gram	5.00e-02	single dose	0.00e+00	hr	capsule					
+Ammon2002	784	COD	783	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
+ZylberKatz1984	782	Dcaf_260	779	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	2.60e-01	single dose	0.00e+00	hr	solution					
+ZylberKatz1984	781	Dcaf_310	778	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	3.10e-01	single dose	0.00e+00	hr	solution					
+ZylberKatz1984	780	Dcaf_350	777	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	3.50e-01	single dose	0.00e+00	hr	solution					
+TangLiu1983	756	theophylline	755	[{'username': 'mkoenig'}]	dosing	public	oral	theophylline	gram / kilogram	7.50e-03	single dose	0.00e+00	hr	solution					
+TangLiu1983	754	caffeine	753	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram / kilogram	7.50e-03	single dose	0.00e+00	hr	solution					
+Somogyi1991	882	DMT	881	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public		dextromethorphan				0.00e+00	hr						
+Somogyi1991	880	ACE7	873	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
+Somogyi1991	879	ACE6	872	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.00e-02	single dose	-8.00e+00	hr	tablet					
+Somogyi1991	878	ACE5	871	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.00e-02	single dose	-1.60e+01	hr	tablet					
+Somogyi1991	877	ACE4	870	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.00e-02	single dose	-2.40e+01	hr	tablet					
+Somogyi1991	876	ACE3	869	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.00e-02	single dose	-3.20e+01	hr	tablet					
+Somogyi1991	875	ACE2	868	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.00e-02	single dose	-4.00e+01	hr	tablet					
+Somogyi1991	874	ACE1	867	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	paracetamol	gram	3.00e-02	single dose	-4.80e+01	hr	tablet					
+Somogyi1991	866	COD	865	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
+Sindrup1996	864	SPAR	863	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public		sparteine sulfate	gram	1.00e-01	single dose								
+Sindrup1996	862	QUI	861	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	quinidine	gram	2.00e-01	single dose	-2.00e+00	hr	tablet					
+Sindrup1996	860	COD	859	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine	gram	1.25e-01	single dose	0.00e+00	hr	tablet					
+Molanaei2010	852	HD	851	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	medical procedure	public						2.40e+01	hr		hemodialysis				
+Molanaei2010	850	COD	849	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	5.00e-02	single dose	0.00e+00	hr	no info					
+Mitchell1991	846	MOR	845	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	intramuscular	morphine sulfate	gram	2.00e-02	single dose	0.00e+00	hr	solution					
+ONeal1999	854	COD	853	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	3.00e-02	single dose	0.00e+00	hr	solution					
+Mohammed1993	848	COD	847	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine	gram	6.00e-02	single dose	0.00e+00	hr	no info					
+Shord2009	858	COD	857	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine sulphate	gram	3.00e-02	single dose	0.00e+00	hr	no info					
+Shah1990	856	COD	855	[{'username': 'dimitra'}, {'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	6.00e-02	single dose	0.00e+00	hr	no info					
+Vree1992	884	COD	883	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	codeine phosphate	gram	3.00e-02	single dose	0.00e+00	hr	tablet					
+Carbo1989	944	Dppa	943	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	pipemidic acid	gram	8.00e-01	multiple dose								
+Carbo1989	942	Dnfc	941	[{'username': 'mkoenig'}, {'username': 'janekg'}]	qualitative dosing	public	oral	norfloxacin	gram	8.00e-01	multiple dose								
+Carbo1989	940	Dcaf	939	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	3.50e-01	single dose	0.00e+00	hr	no info					
+McLean2002	958	Dcaf	957	[{'username': 'dimitra'}, {'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram / kilogram	6.00e-03	single dose	0.00e+00	hr	capsule					
+Carrillo2000a	960	Dcaf	959	[{'username': 'mkoenig'}, {'username': 'janekg'}]	dosing	public	oral	caffeine	gram	1.00e-01	single dose	0.00e+00	hr	tablet					
+Wang1985	964	Dicg	963	[{'username': 'mkoenig'}]	dosing	public	iv	indocyanine green	gram / kilogram	5.00e-04	single dose	0.00e+00	hr	solution					
+Wang1985	962	Dcaf	961	[{'username': 'mkoenig'}]	dosing	public	oral	caffeine	gram	1.40e-01	single dose	0.00e+00	hr	solution					
