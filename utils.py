@@ -337,7 +337,7 @@ class PkdbModel(object):
             lst_col = 'characteristica_all_normed'
             intermidiate_df = pd.DataFrame({col:np.repeat(self.data[col].values, self.data[lst_col].str.len()) for col in self.data.columns.difference([lst_col])}).assign(**{lst_col:np.concatenate(self.data[lst_col].values)})[self.data.columns.tolist()]
             df = intermidiate_df["characteristica_all_normed"].apply(pd.Series)
-            df["study"] = intermidiate_df["study_name"]
+            df["study"] = intermidiate_df["study"]
             df.drop(["pk"], axis=1,inplace=True)
             df["subject_pk"] = intermidiate_df["pk"]
             df["subject_name"] = intermidiate_df["name"]
