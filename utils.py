@@ -5,6 +5,8 @@ import pandas as pd
 import attr
 from pathlib import Path
 import os
+import pint
+ureg = pint.UnitRegistry()
 
 FPATH = os.path.realpath(__file__)
 
@@ -21,14 +23,29 @@ def array_from_string(value):
     except SyntaxError:
         return np.fromstring(value.strip('[]') ,dtype=float, sep=" ")
 
+def to_numeric(data_row):
+    potential_array_fields =["median","mean","value","se","sd","sd","cv"]
+    value_fields = [("weight", "value"), ("weight", "mean"),"value_intervention"]
+    for field in value_fields:
+        data_row[field] = pd.to_numeric(data_row[field])
 
-def convert_unit(df, unit_in, unit_out, factor=1.0,
-                 unit_field="unit", data_fields=['mean','median','value', 'sd', 'se', 'min', 'max'], inplace=True, subset=False):
+    for field in potential_array_fields:
+            if data_row["output_type"] == "timecourses":
+                data_row[field] = array_from_string(data_row[field])
+            else:
+                data_row[field] = pd.to_numeric(data_row[field])
+    return data_row
+
+
+def convert_unit(df, unit_in, unit_out, factor=None, unit_field="unit", data_fields=['mean','median','value', 'sd', 'se', 'min', 'max'], inplace=True, subset=None):
     """ Unit conversion in given data frame. """
+
     if not inplace:
         df = df.copy()
+    if factor is None:
+        factor = 1*ureg(unit_in).to(unit_out).m
 
-    if subset:
+    if subset is not None:
         for column in subset:
             is_weightidx = df[column].notnull()
             df = df[is_weightidx]
@@ -41,10 +58,17 @@ def convert_unit(df, unit_in, unit_out, factor=1.0,
         df.loc[idx, key] = df.loc[idx, key]*factor
     df.loc[idx, unit_field] = unit_out
 
-    if subset:
+    if subset is not None:
         return df[idx]
 
     return df
+
+
+def paracetamol_idx(data):
+    return (data.substance_intervention == 'paracetamol') \
+           & (data.substance == 'paracetamol') \
+           & (data[ ('healthy', 'choice')] == 'Y') \
+           & (data['tissue'] == 'plasma')
 
 def caffeine_idx(data):
     return (data.substance_intervention == 'caffeine') \
@@ -52,9 +76,30 @@ def caffeine_idx(data):
            & (data[ ('healthy', 'choice')] == 'Y') \
            & (data['tissue'] == 'plasma')
 
-def codeine_idx(data):
-    return (data.substance_intervention == 'codeine') \
-           & (data.substance == 'codeine') \
+
+def paraxanthine_idx(data):
+    return (data.substance_intervention == 'caffeine') \
+           & (data.substance == 'paraxanthine') \
+           & (data[ ('healthy', 'choice')] == 'Y') \
+           & (data['tissue'] == 'plasma')
+
+def theobromine_idx(data):
+    return (data.substance_intervention == 'caffeine') \
+           & (data.substance == 'theobromine') \
+           & (data[ ('healthy', 'choice')] == 'Y') \
+           & (data['tissue'] == 'plasma')
+
+
+
+
+def paraxanthine_idx_n(data):
+    return (data.substance_intervention == 'caffeine') \
+           & (data.substance == 'paraxanthine') \
+           & (data['tissue'] == 'plasma')
+
+def caffeine_idx_n(data):
+    return (data.substance_intervention == 'caffeine') \
+           & (data.substance == 'caffeine') \
            & (data['tissue'] == 'plasma')
 
 
@@ -66,7 +111,20 @@ def abs_idx(data,unit_field):
     return ~rel_idx(data,unit_field)
 
 def rel_idx(data,unit_field):
-    return  (data[unit_field].str.endswith("/ kilogram")) | (data[unit_field].str.contains('kg'))
+    if unit_field == "unit":
+        if data["measurement_type"][0] in ["auc_inf","auc_end","concentration"]:
+            return data.apply(lambda x: ureg(x[unit_field]).dimensionality.get('[mass]') == 0, axis=1)
+
+        return data.apply(lambda x: ureg(x[unit_field]).dimensionality.get('[mass]') == -1 , axis=1)
+    if unit_field == "unit_intervention":
+        return data.apply(lambda x: ureg(x[unit_field]).dimensionality.get('[mass]') == 0 , axis=1)
+
+
+    #return  (data[unit_field].str.endswith("/ kilogram")) | (data[unit_field].str.contains('kg'))
+
+
+
+
 
 def filter_out(data,unit_field,units):
     return data[~data[unit_field].isin(units)]
@@ -146,6 +204,11 @@ def flatten_json(y):
     flatten(y)
     return out
 
+def assert_len_units(units):
+    assert not len(units) > 2, f"to many intervention units in data set: <{units}>."
+    assert len(units) != 0, f"no units : <{units}>."
+
+
 def my_tuple(data):
 
     if any(data):
@@ -208,6 +271,7 @@ def interventions_parse(interventions_pks,interventions):
             result = None
     return result
 
+
 @attr.s
 class PkdbModel(object):
 
@@ -256,6 +320,135 @@ class PkdbModel(object):
         self.preprocessed = True
         self.destination = "1-preprocessed"
 
+    def filter_out(self, unit_field, units):
+        self.data = filter_out(self.data, unit_field, units)
+
+    def infer_from_interventions(self):
+        units = self.data["unit_intervention"].unique()
+        assert_len_units(units)
+
+        unit_rel = "g/kg"
+        unit_abs = "g"
+
+
+        for unit in units:
+            dim_of_mass = ureg(unit).dimensionality.get('[mass]')
+            if dim_of_mass == 0:
+                unit_rel = unit
+            elif dim_of_mass == 1:
+                unit_abs = unit
+
+        data_rel = convert_unit(self.data,
+                                unit_in=unit_abs,
+                                unit_out=unit_rel,
+                                factor=1.0 / self.data[("weight", "value")],
+                                unit_field="unit_intervention",
+                                data_fields=['value_intervention'],
+                                subset=[("weight", "value"), "value"])
+
+
+        data_abs = convert_unit(self.data,
+                                unit_in=unit_rel,
+                                unit_out=unit_abs,
+                                factor=self.data[("weight", "value")],
+                                unit_field="unit_intervention",
+                                data_fields=['value_intervention'],
+                                subset=[("weight", "value"), "value"])
+        data_rel["inferred"] = True
+        data_abs["inferred"] = True
+
+        self.data = pd.concat([self.data, data_rel, data_abs], ignore_index=True)
+
+        data_rel = convert_unit(self.data,
+                                unit_in=unit_abs,
+                                unit_out=unit_rel,
+                                factor=1.0 / self.data[("weight", "mean")],
+                                unit_field="unit_intervention",
+                                data_fields=['value_intervention'],
+                                subset=[("weight", "mean"), "mean"])
+
+        data_abs = convert_unit(self.data,
+                                unit_in=unit_rel,
+                                unit_out=unit_abs,
+                                factor=self.data[("weight", "mean")],
+                                unit_field="unit_intervention",
+                                data_fields=['value_intervention'],
+                                subset=[("weight", "mean"), "mean"])
+        data_rel["inferred"] = True
+        data_abs["inferred"] = True
+
+        self.data = pd.concat([self.data, data_rel, data_abs], ignore_index=True)
+
+
+    def infer_from_outputs(self):
+
+        units = self.data["unit"].unique()
+        assert_len_units(units)
+
+        unit_rel = None
+        unit_abs = None
+
+        for unit in units:
+            dim_of_mass = ureg(unit).dimensionality.get('[mass]')
+            if self.data["measurement_type"].unique()[0] in ["auc_inf","auc_end","concentration"]:
+                if dim_of_mass == 0:
+                    unit_rel = unit
+                elif dim_of_mass == 1:
+                    unit_abs = unit
+            else:
+                if dim_of_mass == -1:
+                    unit_rel = unit
+                elif dim_of_mass == 0:
+                    unit_abs = unit
+
+        if unit_rel is None and unit_abs is not None:
+            unit_rel = (ureg(unit_abs)/ureg("kg")).u
+
+        if unit_rel is not None and unit_abs is None:
+            unit_rel = (ureg(unit_rel)*ureg("kg")).u
+
+
+        data_rel = convert_unit(self.data,
+                                unit_in=unit_abs,
+                                unit_out=unit_rel,
+                                factor=1.0 / self.data[("weight", "value")],
+                                unit_field="unit",
+                                data_fields=['value'],
+                                subset=[("weight", "value"), "value"])
+
+        data_abs_i = convert_unit(self.data,
+                                  unit_in=unit_rel,
+                                  unit_out=unit_abs,
+                                  factor=self.data[("weight", "value")],
+                                  unit_field="unit",
+                                  data_fields=['value'],
+                                  subset=[("weight", "value"), "value"])
+        data_rel["inferred"] = True
+        data_abs_i["inferred"] = True
+
+        self.data = pd.concat([self.data, data_rel, data_abs_i], ignore_index=True)
+
+        data_rel = convert_unit(self.data,
+                                unit_in=unit_abs,
+                                unit_out=unit_rel,
+                                factor=1.0 / self.data[("weight", "mean")],
+                                unit_field="unit",
+                                data_fields=['mean', 'median', 'sd', 'se'],
+                                subset=[("weight", "mean"), "mean"])
+
+        data_abs = convert_unit(self.data,
+                                unit_in=unit_rel,
+                                unit_out=unit_abs,
+                                factor=self.data[("weight", "mean")],
+                                unit_field="unit",
+                                data_fields=['mean', 'median', 'sd', 'se'],
+                                subset=[("weight", "mean"), "mean"])
+
+        data_rel["inferred"] = True
+        data_abs["inferred"] = True
+
+        self.data = pd.concat([self.data, data_rel, data_abs], ignore_index=True)
+
 
     @property
     def read_kwargs(self):
@@ -267,12 +460,10 @@ class PkdbModel(object):
              return {'header' :[0,1],'index_col': [0,1,2]}
         elif self.name in ["all_subjects"]:
             return {'header':[0,1], "index_col":[0,1,2,3]}
-        elif self.name in ["all_complete","groups_complete","individuals_complete","caffeine_timecourse","caffeine_clearance","studies","substances","caffeine_thalf","caffeine_tmax","caffeine_vd","caffeine_auc_inf","caffeine_kel"]:
-            return {'header':[0], "index_col":[0]}
         elif self.name in ["all_results"]:
             return {'header':[0]}
-
-
+        else:
+            return {'header':[0], "index_col":[0]}
 
     def save(self):
         self.data.to_csv(self.path, sep="\t")
@@ -280,13 +471,14 @@ class PkdbModel(object):
 
     def read(self):
         self.data = pd.read_csv(self.path, sep="\t",**self.read_kwargs)
-        self.data.columns = [eval(c) if "," in c else c for c in list(self.data.columns) ]
+        self.data.columns = [eval(c) if "," in c else c for c in list(self.data.columns)]
+
+    def to_numeric(self):
+            self.data = self.data.apply(to_numeric, axis=1)
 
     def to_array(self):
         for value in ["mean","median","sd","se","cv","value","time"]:
             self.data[value] = self.data[value].apply(lambda x :array_from_string(x))
-
-
 
 
     def report(self):
@@ -298,9 +490,6 @@ class PkdbModel(object):
         if all([self.loaded,self.preprocessed,self.saved]):
             print(f"{self.name} were succsesfully saved to <{self.path}>")
 
-    @property
-    def select_output(output):
-        return
 
     def _preprocess_substances(self):
          if self.name in ["substances"]:
@@ -358,16 +547,14 @@ class PkdbModel(object):
             groups = PkdbModel("groups", destination="1-preprocessed")
             individuals = PkdbModel("individuals", destination="1-preprocessed")
             interventions = PkdbModel("interventions", destination="1-preprocessed")
-            #outputs = PkdbModel("outputs", destination="1-preprocessed")
-            #timecourses = PkdbModel("timecourses", destination="1-preprocessed")
+
             groups.read()
             individuals.read()
             interventions.read()
+
             groups.data.reset_index(level=["study","subject_name"], inplace=True)
             individuals.data.reset_index(level=["study","subject_name"], inplace=True)
-            #outputs.read()
-            #timecourses.read()
-            
+
 
             studies_statistics = pd.DataFrame()
             studies_statistics["name"] = self.data["name"]
@@ -400,9 +587,6 @@ class Preprocessed(object):
             setattr(self,field,pkdb_model)
 
     def merge(self):
-        #self.interventions.data = add_level_to_df(self.interventions.data,"intervention")
-        #self.timecourses.data = add_level_to_df(self.timecourses.data,"timecourse")
-        #self.outputs.data = add_level_to_df(self.outputs.data,"output")
 
         self._merge_groups_individuals()
         self._merge_outputs_timecourses()
@@ -446,9 +630,6 @@ class Preprocessed(object):
         self.all_results = all_results
 
     def _merge_individuals_interventions_all_results(self):
-        #all_results = add_level_to_df(self.interventions.data,"intervention")
-        #intervention = add_level_to_df(self.timeocourses.data,"timecourse")
-        #self.outputs.data = add_level_to_df(self.interventions.data,"output")
 
         individuals_complete_intermediate = pd.merge(left=self.all_results.data, right=self.interventions.data,  how='inner', suffixes=('','_intervention'),left_on='interventions', right_on="pk")
         individuals_complete_df = pd.merge(individuals_complete_intermediate,self.individuals.data.reset_index(),  how='inner', suffixes=('','subject'),left_on='individual_pk', right_on="subject_pk")
@@ -480,6 +661,7 @@ class Preprocessed(object):
         all_complete_intermediate.loc[group_idx,"subject_pk"] = all_complete_intermediate[group_idx]["group_pk"]
         all_complete_intermediate.loc[individual_idx,"subject_pk"] = all_complete_intermediate[individual_idx]["individual_pk"]
         all_complete_df = pd.merge(all_complete_intermediate,self.all_subjects.data.reset_index(),  how='inner', suffixes=('','subject'), on=["subject_pk","subject_type"] )
+        all_complete_df["inferred"] = False
         all_complete = PkdbModel(name="all_complete", destination=self.destination)
         all_complete.add_data(all_complete_df)
         self.all_complete = all_complete
