@@ -143,10 +143,10 @@ def filter_df(filter_dict, df):
     return df.drop_duplicates()
 
 def group_idx(data):
-    return data["subject_type"] == 'group'
+    return (data["subject_type"] == 'group')
 
 def individual_idx(data):
-    return data["subject_type"] == 'individual'
+    return (data["subject_type"] == 'individual')
 
 def get_login_token(user, password):
     url = "http://0.0.0.0:8000/api-token-auth/"

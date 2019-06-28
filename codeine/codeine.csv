@@ -1,6 +1,4 @@
-,,,$Pk_{original}$,$Pk_{timecourse}$,o-t,$\frac{o - t}{o}$
-calculated,,,,,,
-Measurement Type,Unit,${CYP}_{G}$,,,,
+Measurement Type,Unit,${CYP}_{G}$,$Pk_{original}$,$Pk_{timecourse}$,o-t,$\frac{o - t}{o}$
 $AUC_{end}$,ng/µl*hr,${^*}1/ {^*}1$,$6.63 \pm 2.07$,6.24,0.39,5.88
 $AUC_{end}$,ng/µl*hr,${^*}1/ {^*}10$,$3.77 \pm 1.93$,3.8,-0.03,-0.8
 $AUC_{end}$,ng/µl*hr,${^*}10/ {^*}10$,$2.65 \pm 1.95$,2.59,0.06,2.26
