@@ -462,6 +462,9 @@ class PkdbModel(object):
             return {'header':[0,1], "index_col":[0,1,2,3]}
         elif self.name in ["all_results"]:
             return {'header':[0]}
+        elif self.name in ["all_complete"]:
+             return {'header':[0], 'low_memory':False}
+        
         else:
             return {'header':[0], "index_col":[0]}
 
@@ -608,7 +611,9 @@ class Preprocessed(object):
         return ["all_subjects", "all_results", "individuals_complete", "groups_complete","all_complete"]
 
     def _merge_groups_individuals(self):
-        df = pd.concat([self.individuals.data,self.groups.data], keys=["individual","group"])
+        df = pd.concat([self.individuals.data,self.groups.data], 
+                       keys=["individual","group"],
+                      sort=False)
         df.reset_index(inplace=True)
         df.rename(columns={"level_0":"subject_type"},inplace=True)
         df.set_index(["study","subject_type","subject_pk","subject_name"], inplace=True)
@@ -619,7 +624,8 @@ class Preprocessed(object):
         self.all_subjects = all_subjects
 
     def _merge_outputs_timecourses(self):
-        df = pd.concat([self.outputs.data,self.timecourses.data], keys=["outputs","timecourses"])
+        df = pd.concat([self.outputs.data,self.timecourses.data], keys=["outputs","timecourses"],
+                      sort=False)
         df.reset_index(inplace=True)
         df.rename(columns={"level_0":"output_type"},inplace=True)
         df.set_index(["study","output_type","pk"], inplace=True)
