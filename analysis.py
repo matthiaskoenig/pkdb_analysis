@@ -98,8 +98,8 @@ def create_plots(df_data, categories, fig_path, log_y=False):
 
             df_figure_min = min([df_figure["value"].min(), df_figure["mean"].min()]) / 1.05
 
-            df_individual = df_figure[individual_idx(df_data)]
-            df_group = df_figure[group_idx(df_data)]
+            df_individual = df_figure[individual_idx(df_figure)]
+            df_group = df_figure[group_idx(df_figure)]
 
             legend_elements = []
 
@@ -201,7 +201,7 @@ def create_plots(df_data, categories, fig_path, log_y=False):
             # figure.ax.yaxis.set_major_locator(MaxNLocator(integer=True))
             figure.ax.yaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
 
-            leg1 = figure.ax.legend(handles=legend_elements, prop=font)
+            leg1 = figure.ax.legend(handles=legend_elements, prop=font, loc="upper right")
 
             leg2 = figure.ax.legend(handles=legend2_elements, prop=font, loc="upper left")
             leg3 = figure.ax.legend(handles=legend3_elements, prop=font, labelspacing=1.3, loc=("center right"))
@@ -216,8 +216,8 @@ def create_plots(df_data, categories, fig_path, log_y=False):
                 figure.ax.set_ylim(bottom=0, top=df_figure_max)
 
             figure.figure.savefig(
-                os.path.join(fig_path, f"{measurement_type}_{figure.output_type}-vs-dosing_{figure.intervention_type}.svg"),
-                bbox_inches="tight")
+                os.path.join(fig_path, f"{measurement_type}_{figure.output_type}-vs-dosing_{figure.intervention_type}.png"),
+                bbox_inches="tight", dpi=300)
 
 
 
