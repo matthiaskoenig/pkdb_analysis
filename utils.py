@@ -683,3 +683,7 @@ class Result(object):
 
     def plot(self):
         return None
+
+        
+
+            
