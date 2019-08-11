@@ -148,12 +148,7 @@ def group_idx(data):
 def individual_idx(data):
     return (data["subject_type"] == 'individual')
 
-def get_login_token(user, password):
-    url = "http://0.0.0.0:8000/api-token-auth/"
-    payload = {'username': user, 'password': password}
-    response = requests.post(url, data=payload)
-    print(response.json())
-    return response.json().get("token")
+
 
 
 def get_headers():
@@ -527,7 +522,10 @@ class PkdbModel(object):
     def _preprocess_characteristica(self):
         if self.name in ["individuals", "groups"]:
             lst_col = 'characteristica_all_normed'
-            intermidiate_df = pd.DataFrame({col:np.repeat(self.data[col].values, self.data[lst_col].str.len()) for col in self.data.columns.difference([lst_col])}).assign(**{lst_col:np.concatenate(self.data[lst_col].values)})[self.data.columns.tolist()]
+            intermidiate_df = pd.DataFrame(
+                {col:np.repeat(
+                    self.data[col].values, 
+                    self.data[lst_col].str.len()) for col in self.data.columns.difference([lst_col])}).assign(**{lst_col:np.concatenate(self.data[lst_col].values)})[self.data.columns.tolist()]
             df = intermidiate_df["characteristica_all_normed"].apply(pd.Series)
             df["study"] = intermidiate_df["study"]
             df.drop(["pk"], axis=1,inplace=True)
