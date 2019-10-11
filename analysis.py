@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from collections import namedtuple
 from matplotlib.ticker import FormatStrFormatter
 from matplotlib.lines import Line2D
+import numpy as np
 from utils import abs_idx,rel_idx,group_idx,individual_idx
 import os
 plt.style.use('seaborn-white')
@@ -45,11 +46,13 @@ PlotCategory =  namedtuple('PlotCategory', ['name','color', 'marker','data_idx']
 
 
 def create_figures(df_data):
-    figure_templates = [FigureTemplate(
+
+    figure_templates = [
+        FigureTemplate(
         data_idx=abs_idx(df_data, "unit_intervention") & abs_idx(df_data, "unit"),
         intervention_type="abs",
         output_type="abs"
-    ),
+        ),
         FigureTemplate(
             data_idx=rel_idx(df_data, "unit_intervention") & abs_idx(df_data, "unit"),
             intervention_type="rel",
@@ -66,9 +69,13 @@ def create_figures(df_data):
             output_type="rel"
         )
     ]
+    figure, axes = plt.subplots(nrows=2, ncols=2, figsize=(30, 30))
+    axes
+    for n, figure_template in enumerate(figure_templates):
+        figure_template.figure = figure
+        figure_template.ax = axes.flatten()[n]
+        #figure_template.create_figure(df_data)
 
-    for figure_template in figure_templates:
-        figure_template.create_figure(df_data)
     return figure_templates
 
 
@@ -86,14 +93,17 @@ pk_name = {
 
 def create_plots(df_data, categories, fig_path, log_y=False):
     measurement_type = df_data["measurement_type"].unique()[0]
+    substance = df_data["substance"].unique()[0]
     figures = create_figures(df_data)
 
 
     for figure in figures:
         if figure.ax:
             df_figure = figure.data_subset(df_data)
+            max_values = np.array([df_figure["value"].max(), df_figure["mean"].max()])
+            max_values = max_values[~np.isnan(max_values)]
+            df_figure_max = np.max(max_values) * 1.05
 
-            df_figure_max = max([df_figure["value"].max(), df_figure["mean"].max()]) * 1.05
             df_figure_x_max = df_figure["value_intervention"].max() * 1.05
 
             df_figure_min = min([df_figure["value"].min(), df_figure["mean"].min()]) / 1.05
@@ -116,7 +126,7 @@ def create_plots(df_data, categories, fig_path, log_y=False):
                     unit_intervention = units_intervention[0]
                     u_unit_intervention = ureg(unit_intervention)
 
-                    y_axis_label = pk_name.get(measurement_type, measurement_type)
+                    y_axis_label = f"{substance} {pk_name.get(measurement_type, measurement_type)}"
 
                     figure.ax.set_ylabel(f'{y_axis_label} [{u_unit.u :~P}]')
                     substance_internvetion = df_category["substance_intervention"].unique()[0]
@@ -196,7 +206,7 @@ def create_plots(df_data, categories, fig_path, log_y=False):
                 Line2D([0], [50], marker='o', color='w', label="30", markerfacecolor="black", markersize=5 + 30),
             ]
 
-            # figure.ax.set_title(measurement_type.capitalize())
+            figure.ax.set_title(f"{figure.output_type}-vs-dosing_{figure.intervention_type}")
             figure.ax.set_xlim(left=0, right=df_figure_x_max)
             # figure.ax.yaxis.set_major_locator(MaxNLocator(integer=True))
             figure.ax.yaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
@@ -215,9 +225,9 @@ def create_plots(df_data, categories, fig_path, log_y=False):
             else:
                 figure.ax.set_ylim(bottom=0, top=df_figure_max)
 
-            figure.figure.savefig(
-                os.path.join(fig_path, f"{measurement_type}_{figure.output_type}-vs-dosing_{figure.intervention_type}.png"),
-                bbox_inches="tight", dpi=300)
+    figures[0].figure.savefig(
+        os.path.join(fig_path, f"{substance}_{measurement_type}.png"),
+        bbox_inches="tight", dpi=72)
 
 
 

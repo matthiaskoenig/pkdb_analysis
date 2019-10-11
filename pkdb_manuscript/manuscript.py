@@ -154,6 +154,8 @@ class PKData(object):
     def _format_interventions(self):
         self.interventions.drop("normed",axis=1, inplace=True)
         self.interventions = to_numeric(self.interventions)
+        
+        
     def _format_outputs(self):
         self.outputs.drop(["normed"],axis=1, inplace=True)
         self.outputs = to_numeric(self.outputs)
@@ -388,8 +390,18 @@ class PKData(object):
                                 subset=[("weight", "mean"), "mean"])
         data_rel["inferred"] = True
         data_abs["inferred"] = True
+        
+        
+
 
         self.outputs_m = pd.concat([self.outputs_m, data_rel, data_abs], ignore_index=True)
+        # change unit of intervention
+        self.outputs_m = convert_unit(self.outputs_m,
+                                unit_in="gram / kilogram",
+                                unit_out="mg/kg",
+                                factor=ureg("g/kg").to("mg/kg"),
+                                unit_field="unit_intervention",
+                                data_fields=['value_intervention'])
 
             
 
