@@ -1,10 +1,12 @@
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+
 from collections import namedtuple
 from matplotlib.ticker import FormatStrFormatter
 from matplotlib.lines import Line2D
 from utils import abs_idx,rel_idx,group_idx,individual_idx
 import os
-plt.style.use('seaborn-white')
+plt.style.use('seaborn-ticks')
 import matplotlib.ticker as ticker
 import pint
 ureg = pint.UnitRegistry()
@@ -20,11 +22,23 @@ plt.rcParams.update({
         'figure.facecolor': '1.00'
     })
 
+mpl.rcParams['text.latex.preamble'] = [
+       r'\usepackage{siunitx}',   # i need upright \micro symbols, but you need...
+       r'\usepackage{sansmath}',  # load up the sansmath so that math -> helvet
+       r"\usepackage[sfdefault, bold]{roboto}"
+
+       r'\sansmath'               # <- tricky! -- gotta actually tell tex to use!
+]
+plt.rcParams["mathtext.default"] = "regular"
+
+
 import matplotlib.font_manager as font_manager
 font = font_manager.FontProperties(family='Roboto Mono',
                                    weight='normal',
-                                   style='normal', size=16,)
-
+                                   style='normal', size=18,)
+font2 = font_manager.FontProperties(family='Roboto',
+                                   weight='normal',
+                                   style='normal', size=18,)
 
 class FigureTemplate(object):
     def __init__(self, data_idx, intervention_type, output_type):
@@ -45,26 +59,12 @@ PlotCategory =  namedtuple('PlotCategory', ['name','color', 'marker','data_idx']
 
 
 def create_figures(df_data):
-    figure_templates = [FigureTemplate(
-        data_idx=abs_idx(df_data, "unit_intervention") & abs_idx(df_data, "unit"),
-        intervention_type="abs",
-        output_type="abs"
-    ),
+    figure_templates = [
         FigureTemplate(
             data_idx=rel_idx(df_data, "unit_intervention") & abs_idx(df_data, "unit"),
             intervention_type="rel",
             output_type="abs"
         ),
-        FigureTemplate(
-            data_idx=abs_idx(df_data, "unit_intervention") & rel_idx(df_data, "unit"),
-            intervention_type="abs",
-            output_type="rel"
-        ),
-        FigureTemplate(
-            data_idx=rel_idx(df_data, "unit_intervention") & rel_idx(df_data, "unit"),
-            intervention_type="rel",
-            output_type="rel"
-        )
     ]
 
     for figure_template in figure_templates:
@@ -75,7 +75,7 @@ def create_figures(df_data):
 pk_name = {
     "auc_end": "$AUC_{end}$",
     "auc_inf": "$AUC_{\infty}$",
-    "clearance": "$Clearance$",
+    "clearance": "Caffeine clearance",
     "cmax": "$C_{max}$",
     "kel": "$k_{el}$",
     "thalf": "$t_{half}$",
@@ -93,7 +93,7 @@ def create_plots(df_data, categories, fig_path, log_y=False):
         if figure.ax:
             df_figure = figure.data_subset(df_data)
 
-            df_figure_max = max([df_figure["value"].max(), df_figure["mean"].max()]) * 1.05
+            df_figure_max = max([df_figure["value"].max(), df_figure["mean"].max()]) * 0.95
             df_figure_x_max = df_figure["value_intervention"].max() * 1.05
 
             df_figure_min = min([df_figure["value"].min(), df_figure["mean"].min()]) / 1.05
@@ -120,7 +120,7 @@ def create_plots(df_data, categories, fig_path, log_y=False):
 
                     figure.ax.set_ylabel(f'{y_axis_label} [{u_unit.u :~P}]')
                     substance_internvetion = df_category["substance_intervention"].unique()[0]
-                    x_label = '$Dose_{'+substance_internvetion+'}$'
+                    x_label = 'Caffeine dose'
                     figure.ax.set_xlabel(f'{x_label} [{u_unit_intervention.u :~P}]')
                     figure.ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
 
@@ -175,17 +175,16 @@ def create_plots(df_data, categories, fig_path, log_y=False):
                                              y_group + (0.01 * y_group_max)), alpha=0.7)
 
                 label_text = f"{plot_category.name:<10} I: {individuals_number:<3} G: {group_number:<2} TI: {int(total_group_individuals + individuals_number):<3}"
-                print(label_text)
                 # "
                 label = Line2D([0], [0], marker='o', color='w', label=label_text, markerfacecolor=plot_category.color,
                                markersize=10)
                 legend_elements.append(label)
 
             legend2_elements = [
-                Line2D([0], [0], marker='o', color='w', label="PK DATA", markerfacecolor="black", markersize=10),
-                Line2D([0], [0], marker='s', color='w', label="PK FROM TIME COURSE", markerfacecolor="black",
+                Line2D([0], [0], marker='o', color='w', label="PK data", markerfacecolor="black", markersize=10),
+                Line2D([0], [0], marker='s', color='w', label="PK from time-course", markerfacecolor="black",
                        markersize=10),
-                Line2D([0], [0], marker='v', color='w', label="PK FROM BODY WEIGHT", markerfacecolor="black",
+                Line2D([0], [0], marker='v', color='w', label="PK from body-weight", markerfacecolor="black",
                        markersize=10)
 
             ]
@@ -202,10 +201,10 @@ def create_plots(df_data, categories, fig_path, log_y=False):
             figure.ax.yaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
 
             leg1 = figure.ax.legend(handles=legend_elements, prop=font, loc="upper right")
-
-            leg2 = figure.ax.legend(handles=legend2_elements, prop=font, loc="upper left")
-            leg3 = figure.ax.legend(handles=legend3_elements, prop=font, labelspacing=1.3, loc=("center right"))
-            leg3.set_title(title="GROUP SIZE", prop=font)
+            leg2 = figure.ax.legend(handles=legend2_elements, prop=font, bbox_to_anchor=(0.85, 0.8))
+            leg3 = figure.ax.legend(handles=legend3_elements, prop=font, labelspacing=1.3, bbox_to_anchor=(0.95, 0.65))
+            
+            leg3.set_title(title="Group size", prop=font)
             figure.ax.add_artist(leg2)
             figure.ax.add_artist(leg1)
 
@@ -216,10 +215,5 @@ def create_plots(df_data, categories, fig_path, log_y=False):
                 figure.ax.set_ylim(bottom=0, top=df_figure_max)
 
             figure.figure.savefig(
-                os.path.join(fig_path, f"{measurement_type}_{figure.output_type}-vs-dosing_{figure.intervention_type}.png"),
+                os.path.join(fig_path, f"{measurement_type}_{figure.output_type}-vs-dosing_{figure.intervention_type}.svg"),
                 bbox_inches="tight", dpi=300)
-
-
-
-
-
