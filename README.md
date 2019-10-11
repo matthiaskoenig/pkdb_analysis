@@ -11,6 +11,33 @@ mkvirtualenv pkdb_analysis --python=python3
 ```
 Subsequently the virtualenv must be registered as jupyter kernel to use it for the analysis.-
 
+### Install Circos
+follow instructions on 
+`http://circos.ca/documentation/tutorials/configuration/distribution_and_installation/`.
+and install Circos 
+ 
+Install missing perl modules:
+
+`http://www.circos.ca/documentation/tutorials/configuration/perl_and_modules/`
+Check which modules are missing
+```
+circos -modules
+```
+Install them
+```
+sudo apt-get install libgd-gd2-perl
+
+```
+```
+sudo perl -MCPAN -e shell
+...
+cpan[1]>install Math::Bezier
+...
+```
+
+- download Circos
+-
+
 ### Start pkdb backend
 The scripts use the REST API of PKDB. Consequently, a running REST endpoint is required.
 This can either be the online database at `pk-db.com` or a locally running instance of 
