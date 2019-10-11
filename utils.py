@@ -508,7 +508,7 @@ class PkdbModel(object):
     def _preprocess_outputs(self):
         if self.name in ["outputs","timecourses"]:
             self.data.drop(["normed"],axis=1, inplace=True)
-            self.data["interventions"] = self.data["interventions"].apply(lambda interventions: interventions[0]['pk'] if len(interventions) == 1 else np.nan)
+            self.data["interventions"] = self.data["interventions"].apply(lambda interventions: interventions[0]['pk'] if len(interventions) == 1 else np.nan) #fixme
             self.data.dropna(subset = ["interventions"], inplace=True)
             self.data.interventions = self.data.interventions.astype(int)
             # sort columns by number of not nan values
