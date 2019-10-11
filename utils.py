@@ -64,11 +64,6 @@ def convert_unit(df, unit_in, unit_out, factor=None, unit_field="unit", data_fie
     return df
 
 
-def paracetamol_idx(data):
-    return (data.substance_intervention == 'paracetamol') \
-           & (data.substance == 'paracetamol') \
-           & (data[ ('healthy', 'choice')] == 'Y') \
-           & (data['tissue'] == 'plasma')
 
 def caffeine_idx(data):
     return (data.substance_intervention == 'caffeine') \
@@ -148,7 +143,11 @@ def group_idx(data):
 def individual_idx(data):
     return (data["subject_type"] == 'individual')
 
-
+def get_login_token(user, password):
+    url = "http://0.0.0.0:8000/api-token-auth/"
+    payload = {'username': user, 'password': password}
+    response = requests.post(url, data=payload)
+    return response.json().get("token")
 
 
 def get_headers():
@@ -229,6 +228,8 @@ def groups_parse(groups_pks, groups):
             groups_dict  = {}
             groups_dict["count"] = this_group[("general","group_count")]
             groups_dict["name"] = this_group["subject_name"]
+            #groups_dict["parent"] = this_group[("general","parent")]
+
             this_groups.append(groups_dict)
     return this_groups
 
@@ -533,10 +534,15 @@ class PkdbModel(object):
             df["subject_name"] = intermidiate_df["name"]
             if self.name == "groups" :
                 df["group_count"] = intermidiate_df["count"]
-                df = df.pivot_table(index=["study","subject_pk","subject_name","group_count"], columns=["measurement_type"], aggfunc=my_tuple)
-                df.reset_index(level=["group_count"], inplace=True, col_fill='general')
+                df["parent_pk"] = intermidiate_df["parent_pk"].fillna("None")
+
+                df = df.pivot_table(index=["study","subject_pk","subject_name","group_count","parent_pk"], columns=["measurement_type"], aggfunc=my_tuple)
+                df.reset_index(level=["group_count","parent_pk"], inplace=True, col_fill='general')
             else:
-                df = df.pivot_table(index=["study","subject_pk","subject_name"], columns=["measurement_type"], aggfunc=my_tuple)
+                df["group_pk"] = intermidiate_df["group_pk"]
+                df = df.pivot_table(index=["study","subject_pk","subject_name","group_pk"], columns=["measurement_type"], aggfunc=my_tuple)
+                df.reset_index(level=["group_pk"], inplace=True, col_fill='general')
+
 
             df.columns = df.columns.swaplevel(0, 1)
             df = df[df.groupby(level=0, axis=0).count().sum().max(level=0).sort_values(ascending=False).index]
