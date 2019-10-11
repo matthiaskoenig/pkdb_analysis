@@ -17,11 +17,13 @@ def unstring(value):
     else:
         return value
 
+
 def array_from_string(value):
     try:
         return np.array(unstring(value)).astype('float32')
     except SyntaxError:
         return np.fromstring(value.strip('[]') ,dtype=float, sep=" ")
+
 
 def to_numeric(data_row):
     potential_array_fields =["median","mean","value","se","sd","sd","cv"]
@@ -37,9 +39,10 @@ def to_numeric(data_row):
     return data_row
 
 
-def convert_unit(df, unit_in, unit_out, factor=None, unit_field="unit", data_fields=['mean','median','value', 'sd', 'se', 'min', 'max'], inplace=True, subset=None):
+def convert_unit(df, unit_in, unit_out, factor=None, unit_field="unit",
+                 data_fields=['mean', 'median', 'value', 'sd', 'se', 'min', 'max'],
+                 inplace=True, subset=None):
     """ Unit conversion in given data frame. """
-
     if not inplace:
         df = df.copy()
     if factor is None:
@@ -64,11 +67,10 @@ def convert_unit(df, unit_in, unit_out, factor=None, unit_field="unit", data_fie
     return df
 
 
-
 def caffeine_idx(data):
     return (data.substance_intervention == 'caffeine') \
            & (data.substance == 'caffeine') \
-           & (data[ ('healthy', 'choice')] == 'Y') \
+           & (data[('healthy', 'choice')] == 'Y') \
            & (data['tissue'] == 'plasma')
 
 
