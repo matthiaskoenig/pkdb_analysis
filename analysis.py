@@ -106,7 +106,7 @@ def create_plots(df_data, categories, fig_path, log_y=False):
 
             df_figure_x_max = df_figure["value_intervention"].max() * 1.05
 
-            df_figure_min = min([df_figure["value"].min(), df_figure["mean"].min()]) / 1.05
+            df_figure_min = 0  # min([df_figure["value"].min(), df_figure["mean"].min()]) / 1.05
 
             df_individual = df_figure[individual_idx(df_figure)]
             df_group = df_figure[group_idx(df_figure)]
