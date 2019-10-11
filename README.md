@@ -9,7 +9,7 @@ mkvirtualenv pkdb_analysis --python=python3
 (pkdb_analysis) pip install -e .
 (pkdb_analysis) ipython kernel install --user --name pkdb_analysis
 ```
-Subsequently the virtualenv must be registered as jupyter kernel to use it for the analysis.-
+Subsequently the virtualenv must be registered as jupyter kernel to use it for the analysis.
 
 ### Install Circos
 follow instructions on 
