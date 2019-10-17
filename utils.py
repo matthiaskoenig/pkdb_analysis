@@ -160,14 +160,12 @@ def get_headers():
     return headers
 
 
-def get_data(url,headers,**kwargs):
-
+def get_data(url,headers,timecourse=False,**kwargs):
     """
     gets the data from a paginated rest api.
     """
     url_params = "?"+urlencode(kwargs)
     acctual_url = urljoin(url,url_params)
-    from pprint import pprint
     response = requests.get(acctual_url,headers=headers)
     num_pages = response.json()["last_page"]
     data = []
@@ -176,8 +174,17 @@ def get_data(url,headers,**kwargs):
         response = requests.get(url_current,headers=headers)
         data += response.json()["data"]["data"]
 
-    flatten_data = [flatten_json(d) for d in data]
-    return pd.DataFrame(flatten_data)
+
+    df = pd.DataFrame(data)
+    float_columns = ["mean","median","value","sd","se","cv","min","max","time"]
+    for column in float_columns:
+        if column in df.columns:
+            if timecourse:
+                pass
+            else:
+                df[column] = df[column].astype(float)
+
+    return df
 
 def flatten_json(y):
     """
