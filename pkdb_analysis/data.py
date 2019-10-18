@@ -1,10 +1,17 @@
 """
 Functions for working with PKDB data.
+
+# TODO: Fix the columns data type, use basic data types for everything
+# TODO: study endpoint and add to PKDBData
+# TODO: reorder fields in order of importance
+# TODO: consistent naming of endpoints
+# TODO: consistent naming of fields, e.g. pk, study_sid
+# TODO: split groups and individuals (?!)
 """
 import requests
 import pandas as pd
 from urllib import parse as urlparse
-from typing import List
+from typing import List, Dict
 import logging
 
 
@@ -24,7 +31,8 @@ class PKDBData(object):
     def __init__(self,
                  studies: pd.DataFrame = None,
                  interventions: pd.DataFrame = None,
-                 characteristica: pd.DataFrame = None,
+                 groups: pd.DataFrame = None,
+                 individuals: pd.DataFrame = None,
                  outputs: pd.DataFrame = None,
                  timecourses: pd.DataFrame = None
                  ):
@@ -32,13 +40,15 @@ class PKDBData(object):
 
         :param studies:
         :param interventions:
-        :param characteristica:
+        :param individuals:
+        :param groups:
         :param outputs:
         :param timecourses:
         """
         self.studies = studies
         self.interventions = interventions
-        self.characteristica = characteristica
+        self.individuals = individuals
+        self.groups = groups
         self.outputs = outputs
         self.timecourses = timecourses
 
@@ -46,25 +56,28 @@ class PKDBData(object):
         return type(self)
 
     @staticmethod
-    def from_db(filters: List[PKDBFilter] = None, page_size: int = 2000):
+    def from_db(filters: Dict[str, Dict[str,str]] = None, page_size: int = 2000):
         """ Create a PKDBData representation and gets the data for the provided filters.
         If no filters are given the complete data is retrieved.
 
         :param pkdb_url:
         :param page_size:
         """
-        if filters is not None:
-            # TODO: implement filters on creation (see filters below)
-            raise NotImplementedError("Filters are not supported yet.")
+        #if filters is not None:
+        #    for key in ["interventions", "individuals", "groups", "outputs", "timecourses"]:
+        #        keyfilters.get(key, {})
+        #    # TODO: implement filters on creation (see filters below)
+        #    raise NotImplementedError("Filters are not supported yet.")
 
         parameters = {"format": "json", 'page_size': page_size}
         logging.warning("*** Querying data ***")
         return PKDBData(
-            studies = None,  # FIXME
-            interventions = PKDBData._get_subset("interventions_elastic", **parameters),
-            characteristica = PKDBData._get_subset("characteristica_elastic", **parameters),
-            outputs = PKDBData._get_subset("output_intervention", **parameters),
-            timecourses = PKDBData._get_subset("timecourse_intervention", **parameters)
+            #studies = None,  # FIXME
+            interventions = PKDBData._get_subset("interventions_elastic", **{**parameters,**filters.get("interventions",{})}),
+            individuals=PKDBData._get_subset("characteristica_individuals", **{**parameters,**filters.get("individuals",{})}),
+            groups=PKDBData._get_subset("characteristica_groups", **{**parameters,**filters.get("groups",{})}),
+            outputs = PKDBData._get_subset("output_intervention", **{**parameters,**filters.get("outputs",{})}),
+            timecourses = PKDBData._get_subset("timecourse_intervention", **{**parameters,**filters.get("timecourses",{})})
         )
 
     @staticmethod
@@ -88,14 +101,31 @@ class PKDBData(object):
         """ Store data as HDF5 serialization. """
         store = pd.HDFStore(path)
         # FIXME studies
-        for key in ["interventions", "characteristica", "outputs", "timecourses"]:
+        for key in ["interventions", "individuals", "groups", "outputs", "timecourses"]:
             logging.warning(key)
             df = getattr(self, key)
             store[key] = df
         store.close()
 
-    def merge(self) -> pd.DataFrame:
-        """ Merges all dataframes in single dataframe based on pks.
+    def combine(self) -> pd.DataFrame:
+        """ Combines multiple PKDBData into a single PKData object based on given strategy
+
+        strategies:
+            union
+            diff
+            ...
+
+        """
+
+        # TODO: implement
+
+
+        raise NotImplementedError
+
+
+    def reduce_dfs(self) -> pd.DataFrame:
+        """ Reduces all dataframes in a single dataframe based on merging pks.
+        ! Make sure right kind of join
 
         :return:
         """
@@ -113,10 +143,12 @@ class PKDBData(object):
         if not name in [
             # FIXME: unify names
             # "studies_elastic",  # studies FIXME: not working
-            "characteristica_elastic",  # groups and individuals
+            "characteristica_individuals",  # individuals
+            "characteristica_groups",  # groups
             "interventions_elastic",  # interventions FIXME: why plural
             "output_intervention",  # outputs
             "timecourse_intervention",  # timecourses
+
         ]:
             raise ValueError(f"{name} not supported")
 
@@ -175,6 +207,18 @@ class PKDBData(object):
             for column in float_columns:
                 if column in df.columns:
                     df[column] = df[column].astype(float)
+
+        int_columns = [
+            "timecourse_pk",
+            "intervention_pk",
+            "group_pk",
+            "individual_pk",
+            "group_parent_pk",
+            "raw_pk",
+        ]
+        for column in int_columns:
+            if column in df.columns:
+                df[column] = df[column].replace({pd.np.nan:-1}).astype(int)
 
         return df
 
