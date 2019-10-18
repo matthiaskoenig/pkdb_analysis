@@ -13,6 +13,7 @@ import pandas as pd
 from urllib import parse as urlparse
 from typing import List, Dict
 import logging
+from collections import OrderedDict
 
 
 class PKDBFilter(object):
@@ -27,6 +28,8 @@ class PKDBData(object):
     PKDB_USERNAME = "admin"
     PKDB_PASSWORD = "pkdb_admin"
     URL_BASE = urlparse.urljoin(PKDB_URL, '/api/v1/')
+
+    KEYS = ["interventions", "individuals", "groups", "outputs", "timecourses"]
 
     def __init__(self,
                  studies: pd.DataFrame = None,
@@ -52,8 +55,75 @@ class PKDBData(object):
         self.outputs = outputs
         self.timecourses = timecourses
 
+        self.individuals.substance = self.individuals.substance.astype(str)
+        self.groups.substance = self.individuals.substance.astype(str)
+
+        self.choices = self.get_choices()
+
+
     def __str__(self):
-        return type(self)
+        """ Overview of content.
+
+        :return:
+        """
+
+        lines = [str(type(self))]
+        for key in self.KEYS:
+            lines.append(f"\t{key}: {len(getattr(self, key))}")
+        return "\n".join(lines)
+
+    def get_choices(self):
+        """ This is experimental.
+        returns choices
+
+        :return:
+        """
+        logging.warning("Calculating choices")
+        all_choices = OrderedDict()
+        for df_key in self.KEYS:
+            df = getattr(self, df_key)
+            choices = OrderedDict()
+            for key in df.columns:
+                if df[key].dtype in ['bool', 'object']:
+                    if df_key == "timecourses":
+                        if key in ["time", "value", "mean", "median", "sd", "se", "min", "max", "cv"]:
+                            continue
+
+                    # remove None so sorting is working
+                    values = [c for c in df[key].unique() if c is not None]
+                    choices[key] = sorted(values)
+
+            all_choices[df_key] = choices
+        return all_choices
+
+    def print_choices(self, key=None, field=None):
+        """ Prints the choices
+
+        :param key: key of dataframe
+        :param field: header field
+        :return:
+        """
+        if key == None:
+            df_keys = self.KEYS
+        else:
+            if key not in self.KEYS:
+                raise ValueError(f"Unsupported key '{key}', key must be in '{self.keys}'")
+            df_keys = [key]
+
+        all_choices = self.choices
+        for df_key in df_keys:
+            choices = all_choices[df_key]
+            if field is not None:
+                if field not in choices.keys():
+                    raise ValueError(f"Unsupported field '{field}', field must be in '{choices.keys()}'")
+                fields = [field]
+            else:
+                fields = choices.keys()
+
+            for field in fields:
+                print(f"*** {field} ***")
+                print(choices[field])
+
 
     @staticmethod
     def from_db(filters: Dict[str, Dict[str,str]] = None, page_size: int = 2000):
@@ -69,11 +139,16 @@ class PKDBData(object):
         #    # TODO: implement filters on creation (see filters below)
         #    raise NotImplementedError("Filters are not supported yet.")
 
+        if filters is None:
+            filters = dict()
+
+        # TODO: select correct subset based on filters
+
         parameters = {"format": "json", 'page_size': page_size}
         logging.warning("*** Querying data ***")
         return PKDBData(
             #studies = None,  # FIXME
-            interventions = PKDBData._get_subset("interventions_elastic", **{**parameters,**filters.get("interventions",{})}),
+            interventions=PKDBData._get_subset("interventions_elastic", **{**parameters,**filters.get("interventions",{})}),
             individuals=PKDBData._get_subset("characteristica_individuals", **{**parameters,**filters.get("individuals",{})}),
             groups=PKDBData._get_subset("characteristica_groups", **{**parameters,**filters.get("groups",{})}),
             outputs = PKDBData._get_subset("output_intervention", **{**parameters,**filters.get("outputs",{})}),
