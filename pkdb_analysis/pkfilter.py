@@ -1,12 +1,15 @@
 """
-Helpers for filtering PKDB data
+Helpers for filtering PKData
 """
 from copy import deepcopy
 
+# TODO: combine filters additive, i.e., everything in both filters is returned
+# TODO: combine filters restrictive, i.e. filters are combined to one more restrictive filters
 
-class Filter(object):
+
+class PKFilter(object):
     """
-    Filter objects for PKDBData
+    Filter objects for PKData
     """
     KEYS = ['groups', 'individuals', "interventions", "outputs", "timecourses"]
 
@@ -45,42 +48,42 @@ class Filter(object):
         return str(self.to_dict())
 
     def to_dict(self):
-        return {filter_key: deepcopy(getattr(self, filter_key)) for filter_key in Filter.KEYS}
+        return {filter_key: deepcopy(getattr(self, filter_key)) for filter_key in PKFilter.KEYS}
 
     def add_to_all(self, key, value):
         """ Adds entry (key, value) to all KEY dictionaries
 
         :return: None
         """
-        for filter_key in Filter.KEYS:
+        for filter_key in PKFilter.KEYS:
             getattr(self, filter_key)[key] = value
 
     @staticmethod
-    def combine_filters(**filters):
+    def combine_pkfilters(**pkfilters):
         """ Combie multiple filters
 
-        :param filters:
+        :param pkfilters:
         :return:
         """
         pass
 
 
-class FilterFactory(object):
+class PKFilterFactory(object):
 
     @staticmethod
-    def by_study_sid(study_sid: str) -> Filter:
+    def by_study_sid(study_sid: str) -> PKFilter:
         """ Creates filter based on study_sid.
         Only data for the given study_sid is returned.
         """
-        filter = Filter()
-        filter.add_to_all("study_sid", study_sid)
-        return filter
+        pkfilter = PKFilter()
+        pkfilter.add_to_all("study_sid", study_sid)
+        return pkfilter
 
     @staticmethod
-    def by_study_name(study_name: str) -> Filter:
+    def by_study_name(study_name: str) -> PKFilter:
         """ Creates filter based on study_name.
         Only data for the given study_name is returned.
         """
-        filter = Filter()
-        filter.add_to_all("study_name", study_name)
-        return filter
+        pkfilter = PKFilter()
+        pkfilter.add_to_all("study_name", study_name)
+        return pkfilter

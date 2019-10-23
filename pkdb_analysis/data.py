@@ -15,10 +15,10 @@ from typing import List, Dict
 import logging
 from collections import OrderedDict
 
-from pkdb_analysis.filter import Filter
+from pkdb_analysis.pkfilter import PKFilter
 
 
-class PKDBData(object):
+class PKData(object):
     """ Abstraction of subset of pkdb data.
     """
     PKDB_URL = "http://0.0.0.0:8000"
@@ -26,7 +26,7 @@ class PKDBData(object):
     PKDB_PASSWORD = "pkdb_admin"
     URL_BASE = urlparse.urljoin(PKDB_URL, '/api/v1/')
 
-    KEYS = ["interventions", "individuals", "groups", "outputs", "timecourses"]
+    KEYS = ["individuals", "groups", "interventions", "outputs", "timecourses"]
 
     def __init__(self,
                  studies: pd.DataFrame = None,
@@ -52,8 +52,10 @@ class PKDBData(object):
         self.outputs = outputs
         self.timecourses = timecourses
 
-        self.individuals.substance = self.individuals.substance.astype(str)
-        self.groups.substance = self.individuals.substance.astype(str)
+        if not self.individuals.empty:
+            self.individuals.substance = self.individuals.substance.astype(str)
+        if not self.groups.empty:
+            self.groups.substance = self.individuals.substance.astype(str)
 
         self.choices = self.get_choices()
 
@@ -62,7 +64,6 @@ class PKDBData(object):
 
         :return:
         """
-
         lines = [str(type(self))]
         for key in self.KEYS:
             lines.append(f"\t{key}: {len(getattr(self, key))}")
@@ -122,23 +123,23 @@ class PKDBData(object):
 
 
     @staticmethod
-    def from_db(filter: Filter = Filter(), page_size: int = 2000):
+    def from_db(pkfilter: PKFilter = PKFilter(), page_size: int = 2000):
         """ Create a PKDBData representation and gets the data for the provided filters.
         If no filters are given the complete data is retrieved.
 
-        :param filter: Filter object to select subset of data, if no Filter is provided the complete data is returned
+        :param pkfilter: Filter object to select subset of data, if no Filter is provided the complete data is returned
         :param page_size: number of entries per query
         """
-        filter = filter.to_dict()
+        pkfilter = pkfilter.to_dict()
 
         parameters = {"format": "json", 'page_size': page_size}
         logging.warning("*** Querying data ***")
-        return PKDBData(
-            interventions=PKDBData._get_subset("interventions_elastic", **{**parameters, **filter.get("interventions", {})}),
-            individuals=PKDBData._get_subset("characteristica_individuals", **{**parameters, **filter.get("individuals", {})}),
-            groups=PKDBData._get_subset("characteristica_groups", **{**parameters, **filter.get("groups", {})}),
-            outputs = PKDBData._get_subset("output_intervention", **{**parameters, **filter.get("outputs", {})}),
-            timecourses = PKDBData._get_subset("timecourse_intervention", **{**parameters, **filter.get("timecourses", {})})
+        return PKData(
+            interventions=PKData._get_subset("interventions_elastic", **{**parameters, **pkfilter.get("interventions", {})}),
+            individuals=PKData._get_subset("characteristica_individuals", **{**parameters, **pkfilter.get("individuals", {})}),
+            groups=PKData._get_subset("characteristica_groups", **{**parameters, **pkfilter.get("groups", {})}),
+            outputs = PKData._get_subset("output_intervention", **{**parameters, **pkfilter.get("outputs", {})}),
+            timecourses = PKData._get_subset("timecourse_intervention", **{**parameters, **pkfilter.get("timecourses", {})})
         )
 
     @staticmethod
@@ -156,7 +157,7 @@ class PKDBData(object):
             data_dict[key[1:]] = store[key]
         store.close()
 
-        return PKDBData(**data_dict)
+        return PKData(**data_dict)
 
     def to_hdf5(self, path):
         """ Store data as HDF5 serialization. """
@@ -179,10 +180,7 @@ class PKDBData(object):
         """
 
         # TODO: implement
-
-
         raise NotImplementedError
-
 
     def reduce_dfs(self) -> pd.DataFrame:
         """ Reduces all dataframes in a single dataframe based on merging pks.
@@ -283,10 +281,11 @@ class PKDBData(object):
 
         return df
 
+
 if __name__ == "__main__":
     from pathlib import Path
-    data = PKDBData.from_db()
+    data = PKData.from_db()
     h5_path = Path("../results/") / "test.h5"
 
     data.to_hdf5(h5_path)
-    data2 = PKDBData.from_hdf5(h5_path)
+    data2 = PKData.from_hdf5(h5_path)
