@@ -30,7 +30,7 @@ def _check_data_empty(data):
 
 def test_data_by_study_name():
     # check existing study
-    pkfilter = PKFilterFactory.by_study_name("Allonen1981")
+    pkfilter = PKFilterFactory.by_study_name("Test1")
     data = PKData.from_db(pkfilter=pkfilter)
     _check_data(data)
 
@@ -38,7 +38,7 @@ def test_data_by_study_name():
         df = getattr(data, key)
         study_names = df.study_name.unique()
         assert len(study_names) == 1
-        assert "Allonen1981" in study_names
+        assert "Test1" in study_names
 
 
 def test_data_by_study_name_empty():
@@ -47,9 +47,26 @@ def test_data_by_study_name_empty():
     data = PKData.from_db(pkfilter=pkfilter)
     _check_data_empty(data)
 
+
+def test_data_by_study_sid():
+    # check existing study
+    pkfilter = PKFilterFactory.by_study_sid("PKDB99999")
+    data = PKData.from_db(pkfilter=pkfilter)
+
+    _check_data(data)
+
     for key in PKData.KEYS:
         df = getattr(data, key)
-        assert len(df) == 0
+        study_sids = df.study_sid.unique()
+        assert len(study_sids) == 1
+        assert "PKDB99999" in study_sids
+
+
+def test_data_by_study_sid_empty():
+    # check non-existing study
+    pkfilter = PKFilterFactory.by_study_sid("xyzfasdfs")
+    data = PKData.from_db(pkfilter=pkfilter)
+    _check_data_empty(data)
 
 
 def test_data_hdf5(tmp_path):
@@ -63,3 +80,13 @@ def test_data_hdf5(tmp_path):
 
     for key in PKData.KEYS:
         assert len(getattr(data, key)) == len(getattr(data2, key))
+
+
+
+def test_data_test1():
+    # check non-existing study
+    pkfilter = PKFilterFactory.by_study_name("Test1")
+    data = PKData.from_db(pkfilter=pkfilter)
+    _check_data(data)
+
+    assert len(data.groups) == 6

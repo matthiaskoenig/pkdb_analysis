@@ -101,9 +101,9 @@ class PKData(object):
         :return:
         """
         if key == None:
-            df_keys = self.KEYS
+            df_keys = PKData.KEYS
         else:
-            if key not in self.KEYS:
+            if key not in PKData.KEYS:
                 raise ValueError(f"Unsupported key '{key}', key must be in '{self.keys}'")
             df_keys = [key]
 
