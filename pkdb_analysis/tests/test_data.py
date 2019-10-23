@@ -17,13 +17,13 @@ def _check_data(data):
 
 def test_all_data():
     """ Test database requests."""
-    data = PKDBData.from_db(filters=None)
+    data = PKDBData.from_db(filter=None)
     _check_data(data)
 
 
 def test_data_hdf5(tmp_path):
     """ Test HDF io"""
-    data = PKDBData.from_db(filters=None)
+    data = PKDBData.from_db(filter=None)
 
     h5_path = tmp_path / "test.h5"
     data.to_hdf5(h5_path)

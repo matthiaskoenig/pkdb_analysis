@@ -15,10 +15,7 @@ from typing import List, Dict
 import logging
 from collections import OrderedDict
 
-
-class PKDBFilter(object):
-    # TODO: general filtering of datasets
-    pass
+from pkdb_analysis.filter import Filter
 
 
 class PKDBData(object):
@@ -59,7 +56,6 @@ class PKDBData(object):
         self.groups.substance = self.individuals.substance.astype(str)
 
         self.choices = self.get_choices()
-
 
     def __str__(self):
         """ Overview of content.
@@ -126,33 +122,23 @@ class PKDBData(object):
 
 
     @staticmethod
-    def from_db(filters: Dict[str, Dict[str,str]] = None, page_size: int = 2000):
+    def from_db(filter: Filter = Filter(), page_size: int = 2000):
         """ Create a PKDBData representation and gets the data for the provided filters.
         If no filters are given the complete data is retrieved.
 
-        :param pkdb_url:
-        :param page_size:
+        :param filter: Filter object to select subset of data, if no Filter is provided the complete data is returned
+        :param page_size: number of entries per query
         """
-        #if filters is not None:
-        #    for key in ["interventions", "individuals", "groups", "outputs", "timecourses"]:
-        #        keyfilters.get(key, {})
-        #    # TODO: implement filters on creation (see filters below)
-        #    raise NotImplementedError("Filters are not supported yet.")
-
-        if filters is None:
-            filters = dict()
-
-        # TODO: select correct subset based on filters
+        filter = filter.to_dict()
 
         parameters = {"format": "json", 'page_size': page_size}
         logging.warning("*** Querying data ***")
         return PKDBData(
-            #studies = None,  # FIXME
-            interventions=PKDBData._get_subset("interventions_elastic", **{**parameters,**filters.get("interventions",{})}),
-            individuals=PKDBData._get_subset("characteristica_individuals", **{**parameters,**filters.get("individuals",{})}),
-            groups=PKDBData._get_subset("characteristica_groups", **{**parameters,**filters.get("groups",{})}),
-            outputs = PKDBData._get_subset("output_intervention", **{**parameters,**filters.get("outputs",{})}),
-            timecourses = PKDBData._get_subset("timecourse_intervention", **{**parameters,**filters.get("timecourses",{})})
+            interventions=PKDBData._get_subset("interventions_elastic", **{**parameters, **filter.get("interventions", {})}),
+            individuals=PKDBData._get_subset("characteristica_individuals", **{**parameters, **filter.get("individuals", {})}),
+            groups=PKDBData._get_subset("characteristica_groups", **{**parameters, **filter.get("groups", {})}),
+            outputs = PKDBData._get_subset("output_intervention", **{**parameters, **filter.get("outputs", {})}),
+            timecourses = PKDBData._get_subset("timecourse_intervention", **{**parameters, **filter.get("timecourses", {})})
         )
 
     @staticmethod
