@@ -8,15 +8,15 @@ Functions for working with PKDB data.
 # TODO: consistent naming of fields, e.g. pk, study_sid
 # TODO: split groups and individuals (?!)
 """
+import numpy as np
 import requests
 import pandas as pd
 from urllib import parse as urlparse
-from typing import List, Dict
+from copy import copy
 import logging
 from collections import OrderedDict
 
 from pkdb_analysis.pkfilter import PKFilter
-
 
 class PKData(object):
     """ Abstraction of subset of pkdb data.
@@ -27,6 +27,13 @@ class PKData(object):
     URL_BASE = urlparse.urljoin(PKDB_URL, '/api/v1/')
 
     KEYS = ["individuals", "groups", "interventions", "outputs", "timecourses"]
+    PK_COLUMNS = {
+        "interventions": "pk",
+        "individuals": "individual_pk",
+        "groups": "group_pk",
+        "outputs": "output_pk",
+        "timecourses": "timecourse_pk"
+        }
 
     def __init__(self,
                  studies: pd.DataFrame = None,
@@ -69,6 +76,108 @@ class PKData(object):
             lines.append(f"\t{key}: {len(getattr(self, key))}")
         return "\n".join(lines)
 
+    def __or__(self, other: 'PKData') -> 'PKData':
+        """ combines two PKData instances
+        :param other: other PkData instance
+        :return: PKData
+        """
+
+        resulting_kwargs = dict()
+
+        for df_key in self.KEYS:
+            df = getattr(self, df_key)
+            other_df = getattr(other, df_key)
+            resulting_df = df.append(other_df)
+            resulting_df = resulting_df.loc[~resulting_df.index.duplicated(keep='first')]
+
+            resulting_kwargs[df_key] = resulting_df
+
+
+        return PKData(**resulting_kwargs)
+
+    def __and__(self, other: 'PKData') -> 'PKData':
+        """ combines instances were instances have to
+
+        param other: other PkData instance
+        :return: PKData
+        """
+
+        resulting_kwargs = dict()
+        for df_key in PKData.KEYS:
+            df = getattr(self,df_key)
+            other_df = getattr(other,df_key)
+
+            pk = PKData.PK_COLUMNS
+            pks = set(df[pk])
+            other_pks =  set(other_df[pk])
+
+            intersection_pks = pks.intersection(other_pks)
+            df = df[df[pk].isin(intersection_pks)]
+            other_df = other_df[other_df[pk].isin(intersection_pks)]
+
+            resulting_df = df.append(other_df)
+            resulting_df = resulting_df.loc[~resulting_df.index.duplicated(keep='first')]
+            resulting_kwargs[df_key] = resulting_df
+
+        return PKData(**resulting_kwargs)
+
+
+    @staticmethod
+    def _validate_df_key(df_key):
+        if df_key not in PKData.KEYS:
+            raise ValueError(f"Unsupported key '{df_key}', key must be in '{PKData.KEYS}'")
+
+    @property
+    def _len(self):
+        return sum([len(getattr(self, df_key)) for df_key in PKData.KEYS])
+
+
+    def concise(self):
+        previous_len = np.inf
+        logging.warning("Consice DataFrames")
+        while previous_len > self._len:
+            previous_len = copy(self._len)
+
+            # concise based on interventions
+            intervention_pks = set(self.interventions["pk"])
+            outputs_intervention_pks = set(self.outputs["intervention_pk"])
+            timecourses_intervention_pks = set(self.timecourses["intervention_pk"])
+
+            current_intervention_pks = (intervention_pks.intersection(outputs_intervention_pks)) or \
+                                       (intervention_pks.intersection(timecourses_intervention_pks))
+
+            self.interventions = self.interventions[self.interventions["pk"].isin(current_intervention_pks)]
+            self.timecourses = self.timecourses[self.timecourses["intervention_pk"].isin(current_intervention_pks)]
+            self.outputs = self.outputs[self.outputs["intervention_pk"].isin(current_intervention_pks)]
+
+            # concise based on individuals
+            individual_pks = set(self.individuals["individual_pk"])
+            outputs_individual_pks = set(self.outputs["individual_pk"])
+            timecourses_individual_pks = set(self.timecourses["individual_pk"])
+
+            current_individual_pks = (individual_pks.intersection(outputs_individual_pks)) or \
+                                     (individual_pks.intersection(timecourses_individual_pks))
+            current_individual_pks.add(-1)
+
+            for df_key in ["individuals", "timecourses", "outputs"]:
+                df = getattr(self,df_key)
+                setattr(self, df_key, df[df["individual_pk"].isin(current_individual_pks)])
+
+            # concise based on groups
+            group_pks = set(self.groups["group_pk"])
+            outputs_group_pks = set(self.outputs["group_pk"])
+            timecourses_group_pks = set(self.timecourses["group_pk"])
+
+            current_group_pks = (group_pks.intersection(outputs_group_pks)) or \
+                                (group_pks.intersection(timecourses_group_pks))
+
+            current_group_pks.add(-1)
+
+            for df_key in ["groups", "timecourses", "outputs"]:
+                df = getattr(self,df_key)
+                setattr(self, df_key, df[df["group_pk"].isin(current_group_pks)])
+
+
     def get_choices(self):
         """ This is experimental.
         returns choices
@@ -103,8 +212,7 @@ class PKData(object):
         if key == None:
             df_keys = PKData.KEYS
         else:
-            if key not in PKData.KEYS:
-                raise ValueError(f"Unsupported key '{key}', key must be in '{self.keys}'")
+            self._validate_df_key(key)
             df_keys = [key]
 
         all_choices = self.choices
@@ -123,7 +231,7 @@ class PKData(object):
 
 
     @staticmethod
-    def from_db(pkfilter: PKFilter = PKFilter(), page_size: int = 2000):
+    def from_db(pkfilter: PKFilter = PKFilter(), page_size: int = 2000) -> "PKData":
         """ Create a PKDBData representation and gets the data for the provided filters.
         If no filters are given the complete data is retrieved.
 
@@ -141,6 +249,28 @@ class PKData(object):
             outputs = PKData._get_subset("output_intervention", **{**parameters, **pkfilter.get("outputs", {})}),
             timecourses = PKData._get_subset("timecourse_intervention", **{**parameters, **pkfilter.get("timecourses", {})})
         )
+
+    def from_db_missing(self) -> "PKData":
+        """
+        Each DataFrame of PKData has a pk column (e.g. groups -> group_pk). The value on the pk column must not be unique
+        on each row. Hence, the database may contain further rows with same value in the pk_column (e.g. each row of the
+        groups DataFrame contains a characteristica related to a group_pk. The database maybe contain further
+        characteristica for the same group_pks which are in the groups DataFrame). This functions queries all missing
+        related rows.
+        :return: PKData instance
+        """
+        pkfilter = PKFilter()
+
+        for df_key, pk in PKData.PK_COLUMNS.items():
+            df = getattr(self, df_key)
+            pks_url = "__".join([str(pk) for pk in df[pk].unique()])
+
+            key_filter = getattr(pkfilter, df_key)
+            key_filter[f"{pk}__in"] = pks_url
+
+        return self.from_db(pkfilter)
+
+
 
     @staticmethod
     def from_hdf5(path):
@@ -249,6 +379,8 @@ class PKData(object):
             data += response.json()["data"]["data"]
 
         df = pd.DataFrame(data)
+
+
 
         # convert columns to float columns
         if "timecourse" not in url:
