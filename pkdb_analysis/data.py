@@ -92,7 +92,6 @@ class PKData(object):
 
             resulting_kwargs[df_key] = resulting_df
 
-
         return PKData(**resulting_kwargs)
 
     def __and__(self, other: 'PKData') -> 'PKData':
@@ -104,8 +103,8 @@ class PKData(object):
 
         resulting_kwargs = dict()
         for df_key in PKData.KEYS:
-            df = getattr(self,df_key)
-            other_df = getattr(other,df_key)
+            df = getattr(self, df_key)
+            other_df = getattr(other, df_key)
 
             pk = PKData.PK_COLUMNS
             pks = set(df[pk])
