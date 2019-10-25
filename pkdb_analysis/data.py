@@ -64,7 +64,7 @@ class PKData(object):
         if not self.individuals.empty:
             self.individuals.substance = self.individuals.substance.astype(str)
         if not self.groups.empty:
-            self.groups.substance = self.individuals.substance.astype(str)
+            self.groups.substance = self.groups.substance.astype(str)
 
         self.choices = self.get_choices()
 
