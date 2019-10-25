@@ -277,9 +277,9 @@ class PKData(object):
         :param page_size: number of entries per query
         """
         pkdata = PKData._from_db(pkfilter, page_size)
-        pkdata._concise()
-        return pkdata._from_db_missing()
-
+        #pkdata._concise()
+        #pkdata = pkdata._from_db_missing()
+        return pkdata
 
 
 
