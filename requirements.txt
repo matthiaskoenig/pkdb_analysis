@@ -4,3 +4,5 @@ pandas>=0.25.1
 tables>=3.6.0
 pint>=0.9
 pytest
+
+matplotlib>3.0
