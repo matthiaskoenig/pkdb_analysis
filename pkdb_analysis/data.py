@@ -8,6 +8,8 @@ Functions for working with PKDB data.
 # TODO: consistent naming of fields, e.g. pk, study_sid
 # TODO: split groups and individuals (?!)
 """
+from json import JSONDecodeError
+
 import numpy as np
 import requests
 import pandas as pd
@@ -132,7 +134,7 @@ class PKData(object):
         return sum([len(getattr(self, df_key)) for df_key in PKData.KEYS])
 
 
-    def concise(self):
+    def _concise(self):
         previous_len = np.inf
         logging.warning("Consice DataFrames")
         while previous_len > self._len:
@@ -229,28 +231,24 @@ class PKData(object):
                 print(f"*** {field} ***")
                 print(choices[field])
 
-
     @staticmethod
-    def from_db(pkfilter: PKFilter = PKFilter(), page_size: int = 2000) -> "PKData":
-        """ Create a PKDBData representation and gets the data for the provided filters.
-        If no filters are given the complete data is retrieved.
+    def _from_db(pkfilter: PKFilter = PKFilter(), page_size: int = 2000) -> "PKData":
 
-        :param pkfilter: Filter object to select subset of data, if no Filter is provided the complete data is returned
-        :param page_size: number of entries per query
-        """
         pkfilter = pkfilter.to_dict()
-
         parameters = {"format": "json", 'page_size': page_size}
         logging.warning("*** Querying data ***")
         return PKData(
-            interventions=PKData._get_subset("interventions_elastic", **{**parameters, **pkfilter.get("interventions", {})}),
-            individuals=PKData._get_subset("characteristica_individuals", **{**parameters, **pkfilter.get("individuals", {})}),
+            interventions=PKData._get_subset("interventions_elastic",
+                                             **{**parameters, **pkfilter.get("interventions", {})}),
+            individuals=PKData._get_subset("characteristica_individuals",
+                                           **{**parameters, **pkfilter.get("individuals", {})}),
             groups=PKData._get_subset("characteristica_groups", **{**parameters, **pkfilter.get("groups", {})}),
-            outputs = PKData._get_subset("output_intervention", **{**parameters, **pkfilter.get("outputs", {})}),
-            timecourses = PKData._get_subset("timecourse_intervention", **{**parameters, **pkfilter.get("timecourses", {})})
+            outputs=PKData._get_subset("output_intervention", **{**parameters, **pkfilter.get("outputs", {})}),
+            timecourses=PKData._get_subset("timecourse_intervention",
+                                           **{**parameters, **pkfilter.get("timecourses", {})})
         )
 
-    def from_db_missing(self) -> "PKData":
+    def _from_db_missing(self) -> "PKData":
         """
         Each DataFrame of PKData has a pk column (e.g. groups -> group_pk). The value on the pk column must not be unique
         on each row. Hence, the database may contain further rows with same value in the pk_column (e.g. each row of the
@@ -268,7 +266,21 @@ class PKData(object):
             key_filter = getattr(pkfilter, df_key)
             key_filter[f"{pk}__in"] = pks_url
 
-        return self.from_db(pkfilter)
+        return PKData._from_db(pkfilter)
+
+
+    @staticmethod
+    def from_db(pkfilter: PKFilter = PKFilter(), page_size: int = 2000) -> "PKData":
+        """ Create a PKDBData representation and gets the data for the provided filters.
+        If no filters are given the complete data is retrieved.
+
+        :param pkfilter: Filter object to select subset of data, if no Filter is provided the complete data is returned
+        :param page_size: number of entries per query
+        """
+        pkdata = PKData._from_db(pkfilter, page_size)
+        pkdata._concise()
+        return pkdata._from_db_missing()
+
 
 
 
@@ -368,7 +380,12 @@ class PKData(object):
 
         # FIXME: make first request fast
         response = requests.get(actual_url, headers=headers)
-        num_pages = response.json()["last_page"]
+        try:
+            response.raise_for_status()
+            num_pages = response.json()["last_page"]
+
+        except requests.exceptions.HTTPError as err:
+            raise err
 
         data = []
         for page in range(1, num_pages + 1):
