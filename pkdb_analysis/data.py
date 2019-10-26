@@ -100,14 +100,43 @@ class PKData(object):
     def timecourses_count(self) -> int:
         return self._count('timecourses')
 
+    @property
+    def groups_pks(self) -> set:
+        return self._pks('groups')
+
+    @property
+    def individuals_pks(self) -> set:
+        return self._pks('individuals')
+
+    @property
+    def interventions_pks(self) -> set:
+        return self._pks('interventions')
+
+    @property
+    def outputs_pks(self) -> set:
+        return self._pks('outputs')
+
+    @property
+    def timecourses_pks(self) -> set:
+        return self._pks('timecourses')
+
     def _count(self, field: str) -> int:
         """ Returns the unique pk count for given field"""
+        return len(self._pks(field))
+
+    def _pks(self, field: str) -> set:
+        """ Get set of pks.
+        Returns set for O(1) lookup.
+        """
         df = getattr(self, field)
         pk_key = PKData.PK_COLUMNS[field]
         # FIXME: bugfix remove after fixing https://github.com/matthiaskoenig/pkdb/issues/452
         if field == "interventions":
             pk_key = "pk"
-        return 0 if df.empty else df[pk_key].unique().size
+        if df.empty:
+            return set()
+        else:
+            return {pk for pk in df[pk_key].unique()}
 
     def __or__(self, other: 'PKData') -> 'PKData':
         """ combines two PKData instances
