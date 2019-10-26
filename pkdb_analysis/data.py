@@ -28,14 +28,8 @@ class PKData(object):
     PKDB_PASSWORD = "pkdb_admin"
     URL_BASE = urlparse.urljoin(PKDB_URL, '/api/v1/')
 
-    KEYS = ["individuals", "groups", "interventions", "outputs", "timecourses"]
-    PK_COLUMNS = {
-        "interventions": "pk",
-        "individuals": "individual_pk",
-        "groups": "group_pk",
-        "outputs": "output_pk",
-        "timecourses": "timecourse_pk"
-        }
+    KEYS = ["groups", "individuals", "interventions", "outputs", "timecourses"]
+    PK_COLUMNS = {key: f"{key[:-1]}_pk" for key in KEYS}
 
     def __init__(self,
                  studies: pd.DataFrame = None,
@@ -55,9 +49,9 @@ class PKData(object):
         :param timecourses:
         """
         self.studies = studies
-        self.interventions = interventions
-        self.individuals = individuals
         self.groups = groups
+        self.individuals = individuals
+        self.interventions = interventions
         self.outputs = outputs
         self.timecourses = timecourses
 
@@ -73,10 +67,47 @@ class PKData(object):
 
         :return:
         """
-        lines = [str(type(self))]
+        lines = [
+            "-" * 30,
+            f"{self.__class__.__name__ } ({id(self)})",
+            "-" * 30
+        ]
         for key in self.KEYS:
-            lines.append(f"\t{key}: {len(getattr(self, key))}")
+            nrows = len(getattr(self, key))
+            count = self._count(key)
+
+            lines.append(f"{key:<15} {count:>5}  ({nrows:>5})")
+        lines.append("-" * 30)
         return "\n".join(lines)
+
+    @property
+    def groups_count(self) -> int:
+        return self._count('groups')
+
+    @property
+    def individuals_count(self) -> int:
+        return self._count('individuals')
+
+    @property
+    def interventions_count(self) -> int:
+        return self._count('interventions')
+
+    @property
+    def outputs_count(self) -> int:
+        return self._count('outputs')
+
+    @property
+    def timecourses_count(self) -> int:
+        return self._count('timecourses')
+
+    def _count(self, field: str) -> int:
+        """ Returns the unique pk count for given field"""
+        df = getattr(self, field)
+        pk_key = PKData.PK_COLUMNS[field]
+        # FIXME: bugfix remove after fixing https://github.com/matthiaskoenig/pkdb/issues/452
+        if field == "interventions":
+            pk_key = "pk"
+        return 0 if df.empty else df[pk_key].unique().size
 
     def __or__(self, other: 'PKData') -> 'PKData':
         """ combines two PKData instances
@@ -110,7 +141,7 @@ class PKData(object):
 
             pk = PKData.PK_COLUMNS
             pks = set(df[pk])
-            other_pks =  set(other_df[pk])
+            other_pks = set(other_df[pk])
 
             intersection_pks = pks.intersection(other_pks)
             df = df[df[pk].isin(intersection_pks)]
@@ -140,6 +171,7 @@ class PKData(object):
             previous_len = copy(self._len)
 
             # concise based on interventions
+            # FIXME: this must be intervention_pk: https://github.com/matthiaskoenig/pkdb/issues/452
             intervention_pks = set(self.interventions["pk"])
             outputs_intervention_pks = set(self.outputs["intervention_pk"])
             timecourses_intervention_pks = set(self.timecourses["intervention_pk"])
