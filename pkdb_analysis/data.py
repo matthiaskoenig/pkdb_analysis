@@ -17,6 +17,8 @@ from urllib import parse as urlparse
 from copy import copy
 import logging
 from collections import OrderedDict
+from typing import List
+
 
 from pkdb_analysis.pkfilter import PKFilter
 
@@ -137,6 +139,50 @@ class PKData(object):
             return set()
         else:
             return {pk for pk in df[pk_key].unique()}
+
+    def _df_mi(self, field: str, index_fields: List[str]) -> pd.DataFrame:
+        """ Create multi-index DataFrame
+
+        :param field:
+        :param index_fields:
+        :return:
+        """
+        df = getattr(self, field)
+        if df.empty:
+            return pd.DataFrame()  # new empty DataFrame
+        # create multi-index DataFrame
+        df_mi = df.sort_values(index_fields, ascending=True, inplace=False)
+        df_mi.set_index(index_fields, inplace=True)
+        return df_mi
+
+    @property
+    def groups_mi(self) -> pd.DataFrame:
+        """ Multi-index data frame. """
+        return self._df_mi('groups', ['group_pk', 'characteristica_pk'])
+
+    @property
+    def individuals_mi(self) -> pd.DataFrame:
+        """ Multi-index data frame. """
+        return self._df_mi('individuals', ['individual_pk', 'characteristica_pk'])
+
+    @property
+    def interventions_mi(self) -> pd.DataFrame:
+        """ Multi-index data frame. """
+        # FIXME: bugfix change after fixing https://github.com/matthiaskoenig/pkdb/issues/452
+        return self._df_mi('interventions', ['pk'])
+
+    @property
+    def outputs_mi(self) -> pd.DataFrame:
+        """ Multi-index data frame. """
+        return self._df_mi('outputs',
+                           ['output_pk', 'intervention_pk', 'group_pk', 'individual_pk'])
+
+    @property
+    def timecourses_mi(self) -> pd.DataFrame:
+        """ Multi-index data frame. """
+        return self._df_mi('timecourses',
+                           ['timecourse_pk', 'intervention_pk', 'group_pk', 'individual_pk'])
+
 
     def __or__(self, other: 'PKData') -> 'PKData':
         """ combines two PKData instances
@@ -431,9 +477,7 @@ class PKData(object):
 
     @staticmethod
     def _get_data(url, headers, **parameters) -> pd.DataFrame:
-        """
-        gets the data from a paginated rest api.
-        """
+        """Gets data from a paginated rest API."""
         url_params = "?" + urlparse.urlencode(parameters)
         actual_url = urlparse.urljoin(url, url_params)
         logging.warning(actual_url)
@@ -452,30 +496,39 @@ class PKData(object):
             url_current = actual_url + f"&page={page}"
             logging.warning(url_current)
 
-            response = requests.get(url_current,headers=headers)
+            response = requests.get(url_current, headers=headers)
             data += response.json()["data"]["data"]
 
+        # convert to data frame
         df = pd.DataFrame(data)
 
-
-
         # convert columns to float columns
+        float_columns = [
+            "mean",
+            "median",
+            "value",
+            "sd",
+            "se",
+            "cv",
+            "min",
+            "max",
+            "time"
+        ]
         if "timecourse" not in url:
-            float_columns = [
-                "mean",
-                "median",
-                "value",
-                "sd",
-                "se",
-                "cv",
-                "min",
-                "max",
-                "time"
-            ]
             for column in float_columns:
                 if column in df.columns:
                     df[column] = df[column].astype(float)
+        else:
+            # every element must be converted individually
+            for column in float_columns:
+                if column in df:
+                    col_loc = df.columns.get_loc(column)
+                    for k in range(len(df)):
+                        value = df.iloc[k, col_loc]
+                        if value is not None:
+                            df.at[k, column] = np.array(value).astype(float)
 
+        # convert columns to int columns
         int_columns = [
             "timecourse_pk",
             "intervention_pk",

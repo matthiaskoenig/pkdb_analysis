@@ -92,6 +92,19 @@ def test_data_counts():
     assert data.timecourses_count == 2
 
 
+def test_data_mi():
+    pkfilter = PKFilterFactory.by_study_name("Test1")
+    data = PKData.from_db(pkfilter=pkfilter)
+    for field in PKData.KEYS:
+        print(field)
+        df = getattr(data, f"{field}_mi")
+        assert df is not None
+        assert not df.empty
+        # number of entries should not change
+        assert len(df) == len(getattr(data, f"{field}"))
+
+
+
 def test_data_test1():
     # check non-existing study
     pkfilter = PKFilterFactory.by_study_name("Test1")
