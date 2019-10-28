@@ -30,7 +30,7 @@ class PKData(object):
 
     KEYS = ["individuals", "groups", "interventions", "outputs", "timecourses"]
     PK_COLUMNS = {
-        "interventions": "pk",
+        "interventions": "internvetion_pk",
         "individuals": "individual_pk",
         "groups": "group_pk",
         "outputs": "output_pk",
@@ -140,7 +140,7 @@ class PKData(object):
             previous_len = copy(self._len)
 
             # concise based on interventions
-            intervention_pks = set(self.interventions["pk"])
+            intervention_pks = set(self.interventions["intervention_pk"])
             outputs_intervention_pks = set(self.outputs["intervention_pk"])
             timecourses_intervention_pks = set(self.timecourses["intervention_pk"])
 
