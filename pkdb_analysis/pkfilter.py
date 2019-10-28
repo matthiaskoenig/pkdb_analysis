@@ -58,16 +58,6 @@ class PKFilter(object):
         for filter_key in PKFilter.KEYS:
             getattr(self, filter_key)[key] = value
 
-    @staticmethod
-    def combine_pkfilters(**pkfilters):
-        """ Combie multiple filters
-
-        :param pkfilters:
-        :return:
-        """
-        pass
-
-
 class PKFilterFactory(object):
 
     @staticmethod
