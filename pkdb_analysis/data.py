@@ -14,7 +14,7 @@ import numpy as np
 import requests
 import pandas as pd
 from urllib import parse as urlparse
-from copy import copy, deepcopy
+from copy import copy
 import logging
 from collections import OrderedDict
 from typing import List
@@ -22,7 +22,6 @@ from typing import List
 
 from pkdb_analysis.pkfilter import PKFilter
 
-import pandas as pd
 
 class PKDataFrame(pd.DataFrame):
 
@@ -76,7 +75,7 @@ class PKDataFrame(pd.DataFrame):
 
     @property
     def df(self):
-        df = deepcopy(self)
+        df = self.copy()
         del df.pk
         return pd.DataFrame(self)
 
@@ -417,28 +416,6 @@ class PKData(object):
         #pkdata._concise()
         #pkdata = pkdata._from_db_missing()
         return pkdata
-
-
-    def filter_by_f_idx(self,df_key,f_idx, concise=True):
-        """
-
-        :param key:
-        :param f_idx:
-        :return:
-        """
-
-        PKData._validate_df_key(df_key)
-        pk_key = PKData.PK_COLUMNS[df_key]
-        pkdata = deepcopy(self)
-
-        df = getattr(pkdata,df_key)
-        df_pks = df[f_idx][pk_key].unique()
-        df_filtered = df[df[pk_key].isin(df_pks)]
-        setattr(pkdata,df_key,df_filtered)
-        if concise:
-            pkdata._concise()
-        return pkdata
-
 
 
     @staticmethod
