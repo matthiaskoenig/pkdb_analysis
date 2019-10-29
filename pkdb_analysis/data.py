@@ -89,6 +89,11 @@ class PKDataFrame(pd.DataFrame):
     def study_sids(self):
         return set(self.study_sid.unique())
 
+    def emptify(self):
+        empty_df = pd.DataFrame([],columns=self.columns)
+        return PKDataFrame(empty_df, pk=self.pk)
+
+
 
 
 class PKData(object):
@@ -224,11 +229,17 @@ class PKData(object):
         group_filtered_data = self.group_pk_filter( f_idx, concise=False)
         return group_filtered_data.individual_pk_filter(f_idx, concise=concise)
 
-    def output_pk_filter(self, f_idx, concise=True):
-        return self._pk_filter("outputs", f_idx, concise)
+    def output_pk_filter(self, f_idx, concise=True, keep_timecourses=True):
+        pkdata = self
+        if not keep_timecourses:
+            pkdata = pkdata.emptify("timecourses", concise=False)
+        return pkdata._pk_filter("outputs", f_idx, concise)
 
-    def timecourses_pk_filter(self, f_idx, concise=True):
-        return self._pk_filter("individuals", f_idx, concise)
+    def timecourses_pk_filter(self, f_idx, concise=True, keep_outputs=True):
+        pkdata = self
+        if not keep_outputs:
+            pkdata = pkdata.emptify("outputs", concise=False)
+        return pkdata._pk_filter("timecourses", f_idx, concise)
 
     @property
     def study_sids(self):
@@ -239,6 +250,21 @@ class PKData(object):
 
         return study_sids
 
+    def emptify(self,df_key, concise=True):
+        """
+
+        :param df_key:
+        :return:
+        """
+        self._validate_df_key(df_key)
+
+        dict_pkdata = self.as_dict()
+        dict_pkdata[df_key] = getattr(self, df_key).emptify()
+
+        pkdata = PKData(**dict_pkdata)
+        if concise:
+            pkdata._concise()
+        return pkdata
 
 
     def _df_mi(self, field: str, index_fields: List[str]) -> pd.DataFrame:
