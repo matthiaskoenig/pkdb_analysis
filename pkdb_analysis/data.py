@@ -67,6 +67,17 @@ class PKDataFrame(pd.DataFrame):
         df_filtered = self[self[self.pk].isin(df_pks)]
         return PKDataFrame(df_filtered, pk=self.pk)
 
+    def pk_exclude(self, f_idx) -> 'PKDataFrame':
+        if isinstance(f_idx, list):
+            pk_df = self
+            for f_idx_single in f_idx:
+                pk_df = pk_df.pk_exclude(f_idx_single)
+            return pk_df
+
+        df_pks = self[f_idx][self.pk].unique()
+        df_excluded = self[~self[self.pk].isin(df_pks)]
+        return PKDataFrame(df_excluded, pk=self.pk)
+
     @property
     def pk_column(self):
         return self[self.pk]
@@ -216,6 +227,15 @@ class PKData(object):
             pkdata._concise()
         return pkdata
 
+    def _pk_exclude(self, df_k, f_idx, concise):
+        dict_pkdata = self.as_dict()
+        dict_pkdata[df_k] = getattr(self, df_k).pk_exclude(f_idx)
+
+        pkdata = PKData(**dict_pkdata)
+        if concise:
+            pkdata._concise()
+        return pkdata
+
     def intervention_pk_filter(self,f_idx, concise=True):
         return self._pk_filter("interventions",f_idx, concise)
 
@@ -235,11 +255,36 @@ class PKData(object):
             pkdata = pkdata.emptify("timecourses", concise=False)
         return pkdata._pk_filter("outputs", f_idx, concise)
 
-    def timecourses_pk_filter(self, f_idx, concise=True, keep_outputs=True):
+    def timecourse_pk_filter(self, f_idx, concise=True, keep_outputs=True):
         pkdata = self
         if not keep_outputs:
             pkdata = pkdata.emptify("outputs", concise=False)
         return pkdata._pk_filter("timecourses", f_idx, concise)
+
+    def intervention_pk_exclude(self,f_idx, concise=True):
+        return self._pk_exclude("interventions",f_idx, concise)
+
+    def group_pk_exclude(self,f_idx, concise=True):
+        return self._pk_exclude("groups",f_idx, concise)
+
+    def individual_pk_exclude(self,f_idx, concise=True):
+        return self._pk_exclude("individuals",f_idx, concise)
+
+    def subject_pk_exclude(self, f_idx, concise=True):
+        group_excludeed_data = self.group_pk_exclude( f_idx, concise=False)
+        return group_excludeed_data.individual_pk_exclude(f_idx, concise=concise)
+
+    def output_pk_exclude(self, f_idx, concise=True, keep_timecourses=True):
+        pkdata = self
+        if not keep_timecourses:
+            pkdata = pkdata.emptify("timecourses", concise=False)
+        return pkdata._pk_exclude("outputs", f_idx, concise)
+
+    def timecourse_pk_exclude(self, f_idx, concise=True, keep_outputs=True):
+        pkdata = self
+        if not keep_outputs:
+            pkdata = pkdata.emptify("outputs", concise=False)
+        return pkdata._pk_exclude("timecourses", f_idx, concise)
 
     @property
     def study_sids(self):
