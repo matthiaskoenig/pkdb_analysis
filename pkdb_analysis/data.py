@@ -23,7 +23,10 @@ from pkdb_analysis.pkfilter import PKFilter
 
 
 class PKDataFrame(pd.DataFrame):
-
+    """
+    Extended Dataframe which support customized filter operations.
+    Used to encode groups, individuals, interventions, outputs, timecourses on PKData.
+    """
     @property
     def _constructor(self):
         return PKDataFrame._internal_ctor
@@ -40,16 +43,11 @@ class PKDataFrame(pd.DataFrame):
             raise ValueError("arg pk required")
 
         super(PKDataFrame, self).__init__(data=data,
-                                      index=index,
-                                      columns=columns,
-                                      dtype=dtype,
-                                      copy=copy)
+                                          index=index,
+                                          columns=columns,
+                                          dtype=dtype,
+                                          copy=copy)
         self.pk = pk
-
-        #self._validate_not_in_columns(columns)
-
-
-
 
     @staticmethod
     def _validate_not_in_columns(columns):
@@ -57,6 +55,11 @@ class PKDataFrame(pd.DataFrame):
             assert 'pk' in columns
 
     def pk_filter(self, f_idx) -> 'PKDataFrame':
+        """
+
+        :param f_idx: function, index, list
+        :return:
+        """
         if isinstance(f_idx, list):
             pk_df = self
             for f_idx_single in f_idx:
@@ -84,6 +87,7 @@ class PKDataFrame(pd.DataFrame):
 
     @property
     def pks(self) -> set:
+        """ Set of pks."""
         return set(self[self.pk].unique())
 
     @property
@@ -91,25 +95,34 @@ class PKDataFrame(pd.DataFrame):
         return len(self.pks)
 
     @property
-    def df(self):
+    def df(self) -> pd.DataFrame:
+        """ Returns a copied DataFrame."""
         df = self.copy()
         del df.pk
         return pd.DataFrame(self)
 
     @property
-    def study_sids(self):
+    def study_sids(self) -> set:
+        """ Set of study_sids."""
         return set(self.study_sid.unique())
 
-    def emptify(self):
-        empty_df = pd.DataFrame([],columns=self.columns)
+    def emptify(self) -> 'PKDataFrame':
+        empty_df = pd.DataFrame([], columns=self.columns)
         return PKDataFrame(empty_df, pk=self.pk)
 
 
-
-
 class PKData(object):
-    """ Abstraction of subset of pkdb data.
+    """ Consistent set of data from PK-DB.
+
+    Handles:
+    - study information
+    - groups
+    - individuals
+    - interventions
+    - outputs
+    - timecourses
     """
+    # FIXME: better handling and examples of different endpoints
     PKDB_URL = "http://0.0.0.0:8000"
     PKDB_USERNAME = "admin"
     PKDB_PASSWORD = "pkdb_admin"
@@ -117,8 +130,6 @@ class PKData(object):
 
     KEYS = ["groups", "individuals", "interventions", "outputs", "timecourses"]
     PK_COLUMNS = {key: f"{key[:-1]}_pk" for key in KEYS}
-
-
 
     def __init__(self,
                  interventions: pd.DataFrame = None,
@@ -149,7 +160,7 @@ class PKData(object):
         self.choices = self.get_choices()
 
     def __dict___(self):
-        return {df_key:getattr(self,df_key).df for df_key in PKData.KEYS}
+        return {df_key: getattr(self, df_key).df for df_key in PKData.KEYS}
 
     def as_dict(self):
         return self.__dict___()
@@ -163,11 +174,10 @@ class PKData(object):
         :return:
         """
         lines = [
+            "-" * 30, f"{self.__class__.__name__} ({id(self)})",
             "-" * 30,
-            f"{self.__class__.__name__ } ({id(self)})",
-            "-" * 30
+            f"{'studies':<15} {len(self.study_sids):>5} "
         ]
-        lines.append(f"{'studies':<15} {len(self.study_sids):>5} ")
 
         for key in self.KEYS:
             df = getattr(self, key)
@@ -180,43 +190,28 @@ class PKData(object):
 
     @property
     def groups_count(self) -> int:
+        """Number of groups."""
         return self.groups.pk_len
 
     @property
     def individuals_count(self) -> int:
+        """Number of individuals."""
         return self.individuals.pk_len
 
     @property
     def interventions_count(self) -> int:
+        """Number of interventions."""
         return self.interventions.pk_len
 
     @property
     def outputs_count(self) -> int:
+        """Number of outputs."""
         return self.outputs.pk_len
 
     @property
     def timecourses_count(self) -> int:
+        """Number of timecourses."""
         return self.timecourses.pk_len
-
-    @property
-    def groups_pks(self) -> set:
-        return self.groups.pks
-
-    @property
-    def individuals_pks(self) -> set:
-        return self.individuals.pks
-
-    @property
-    def interventions_pks(self) -> set:
-        return self.interventions.pks
-
-    @property
-    def outputs_pks(self) -> set:
-        return self.outputs.pks
-
-    @property
-    def timecourses_pks(self) -> set:
-        return self.timecourses.pks
 
     def _pk_filter(self, df_k, f_idx, concise):
         dict_pkdata = self.as_dict()
@@ -295,7 +290,7 @@ class PKData(object):
 
         return study_sids
 
-    def emptify(self,df_key, concise=True):
+    def emptify(self, df_key, concise=True):
         """
 
         :param df_key:
@@ -311,6 +306,7 @@ class PKData(object):
             pkdata._concise()
         return pkdata
 
+    # ---
 
     def _df_mi(self, field: str, index_fields: List[str]) -> pd.DataFrame:
         """ Create multi-index DataFrame

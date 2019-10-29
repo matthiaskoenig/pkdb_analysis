@@ -104,7 +104,6 @@ def test_data_mi():
         assert len(df) == len(getattr(data, f"{field}"))
 
 
-
 def test_data_test1():
     # check non-existing study
     pkfilter = PKFilterFactory.by_study_name("Test1")
