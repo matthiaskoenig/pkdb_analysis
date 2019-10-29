@@ -8,7 +8,6 @@ Functions for working with PKDB data.
 # TODO: consistent naming of fields, e.g. pk, study_sid
 # TODO: split groups and individuals (?!)
 """
-from json import JSONDecodeError
 
 import numpy as np
 import requests
@@ -51,12 +50,19 @@ class PKDataFrame(pd.DataFrame):
 
 
 
+
     @staticmethod
     def _validate_not_in_columns(columns):
         if columns:
             assert 'pk' in columns
 
     def pk_filter(self, f_idx) -> 'PKDataFrame':
+        if isinstance(f_idx, list):
+            pk_df = self
+            for f_idx_single in f_idx:
+                pk_df = pk_df.pk_filter(f_idx_single)
+            return pk_df
+
         df_pks = self[f_idx][self.pk].unique()
         df_filtered = self[self[self.pk].isin(df_pks)]
         return PKDataFrame(df_filtered, pk=self.pk)
@@ -79,6 +85,10 @@ class PKDataFrame(pd.DataFrame):
         del df.pk
         return pd.DataFrame(self)
 
+    @property
+    def study_sids(self):
+        return set(self.study_sid.unique())
+
 
 
 class PKData(object):
@@ -91,6 +101,8 @@ class PKData(object):
 
     KEYS = ["groups", "individuals", "interventions", "outputs", "timecourses"]
     PK_COLUMNS = {key: f"{key[:-1]}_pk" for key in KEYS}
+
+
 
     def __init__(self,
                  interventions: pd.DataFrame = None,
@@ -126,6 +138,9 @@ class PKData(object):
     def as_dict(self):
         return self.__dict___()
 
+    def copy(self):
+        return PKData(**self.as_dict())
+
     def __str__(self):
         """ Overview of content.
 
@@ -136,6 +151,8 @@ class PKData(object):
             f"{self.__class__.__name__ } ({id(self)})",
             "-" * 30
         ]
+        lines.append(f"{'studies':<15} {len(self.study_sids):>5} ")
+
         for key in self.KEYS:
             df = getattr(self, key)
             nrows = len(df)
@@ -185,13 +202,43 @@ class PKData(object):
     def timecourses_pks(self) -> set:
         return self.timecourses.pks
 
-    def intervention_pk_filter(self,f_idx, concise=True):
+    def _pk_filter(self, df_k, f_idx, concise):
         dict_pkdata = self.as_dict()
-        dict_pkdata["interventions"] = self.interventions.pk_filter(f_idx)
-        pkdata  = PKData(**dict_pkdata)
+        dict_pkdata[df_k] = getattr(self, df_k).pk_filter(f_idx)
+
+        pkdata = PKData(**dict_pkdata)
         if concise:
             pkdata._concise()
         return pkdata
+
+    def intervention_pk_filter(self,f_idx, concise=True):
+        return self._pk_filter("interventions",f_idx, concise)
+
+    def group_pk_filter(self,f_idx, concise=True):
+        return self._pk_filter("groups",f_idx, concise)
+
+    def individual_pk_filter(self,f_idx, concise=True):
+        return self._pk_filter("individuals",f_idx, concise)
+
+    def subject_pk_filter(self, f_idx, concise=True):
+        group_filtered_data = self.group_pk_filter( f_idx, concise=False)
+        return group_filtered_data.individual_pk_filter(f_idx, concise=concise)
+
+    def output_pk_filter(self, f_idx, concise=True):
+        return self._pk_filter("outputs", f_idx, concise)
+
+    def timecourses_pk_filter(self, f_idx, concise=True):
+        return self._pk_filter("individuals", f_idx, concise)
+
+    @property
+    def study_sids(self):
+        study_sids = set()
+        for df_key in PKData.KEYS:
+            pk_df = getattr(self, df_key)
+            study_sids = study_sids.union(pk_df.study_sids)
+
+        return study_sids
+
 
 
     def _df_mi(self, field: str, index_fields: List[str]) -> pd.DataFrame:
@@ -387,8 +434,13 @@ class PKData(object):
                 print(choices[field])
 
     @staticmethod
-    def _from_db(pkfilter: PKFilter = PKFilter(), page_size: int = 2000) -> "PKData":
+    def from_db(pkfilter: PKFilter = PKFilter(), page_size: int = 2000) -> "PKData":
+        """ Create a PKDBData representation and gets the data for the provided filters.
+        If no filters are given the complete data is retrieved.
 
+        :param pkfilter: Filter object to select subset of data, if no Filter is provided the complete data is returned
+        :param page_size: number of entries per query
+        """
         pkfilter = pkfilter.to_dict()
         parameters = {"format": "json", 'page_size': page_size}
         logging.warning("*** Querying data ***")
@@ -402,21 +454,6 @@ class PKData(object):
             timecourses=PKData._get_subset("timecourse_intervention",
                                            **{**parameters, **pkfilter.get("timecourses", {})})
         )
-
-
-    @staticmethod
-    def from_db(pkfilter: PKFilter = PKFilter(), page_size: int = 2000) -> "PKData":
-        """ Create a PKDBData representation and gets the data for the provided filters.
-        If no filters are given the complete data is retrieved.
-
-        :param pkfilter: Filter object to select subset of data, if no Filter is provided the complete data is returned
-        :param page_size: number of entries per query
-        """
-        pkdata = PKData._from_db(pkfilter, page_size)
-        #pkdata._concise()
-        #pkdata = pkdata._from_db_missing()
-        return pkdata
-
 
     @staticmethod
     def from_hdf5(path):
@@ -443,6 +480,7 @@ class PKData(object):
             df = getattr(self, key).df
             store[key] = df
         store.close()
+
 
     @classmethod
     def _get_subset(cls, name, **parameters):
