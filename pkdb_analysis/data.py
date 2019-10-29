@@ -18,8 +18,9 @@ import logging
 from collections import OrderedDict
 from typing import List
 
-
 from pkdb_analysis.pkfilter import PKFilter
+
+logger = logging.getLogger(__name__)
 
 
 class PKDataFrame(pd.DataFrame):
@@ -405,10 +406,14 @@ class PKData(object):
     def _len(self):
         return sum([len(getattr(self, df_key)) for df_key in PKData.KEYS])
 
+    def _concise(self) -> None:
+        """ Reduces the current PKData to a consistent subset.
 
-    def _concise(self):
+        :return:
+        """
+
         previous_len = np.inf
-        logging.warning("Consice DataFrames")
+        logger.warning("Concise DataFrames")
         while previous_len > self._len:
             previous_len = copy(self._len)
 
@@ -432,7 +437,7 @@ class PKData(object):
             current_individual_pks.add(-1)
 
             for df_key in ["individuals", "timecourses", "outputs"]:
-                df = getattr(self,df_key)
+                df = getattr(self, df_key)
                 setattr(self, df_key, df[df["individual_pk"].isin(current_individual_pks)])
 
             # concise based on groups
@@ -445,9 +450,8 @@ class PKData(object):
             current_group_pks.add(-1)
 
             for df_key in ["groups", "timecourses", "outputs"]:
-                df = getattr(self,df_key)
+                df = getattr(self, df_key)
                 setattr(self, df_key, df[df.group_pk.isin(current_group_pks)])
-
 
     def get_choices(self):
         """ This is experimental.
@@ -455,7 +459,6 @@ class PKData(object):
 
         :return:
         """
-        logging.warning("Calculating choices")
         all_choices = OrderedDict()
         for df_key in self.KEYS:
             df = getattr(self, df_key)
@@ -480,7 +483,7 @@ class PKData(object):
         :param field: header field
         :return:
         """
-        if key == None:
+        if key is None:
             df_keys = PKData.KEYS
         else:
             PKData._validate_df_key(key)
@@ -510,7 +513,7 @@ class PKData(object):
         """
         pkfilter = pkfilter.to_dict()
         parameters = {"format": "json", 'page_size': page_size}
-        logging.warning("*** Querying data ***")
+        logger.warning("*** Querying data ***")
         return PKData(
             interventions=PKData._get_subset("interventions_elastic",
                                              **{**parameters, **pkfilter.get("interventions", {})}),
@@ -532,7 +535,6 @@ class PKData(object):
         store = pd.HDFStore(path)
         data_dict = {}
         for key in store.keys():
-            logging.warning(key)
             # ugly bugfix due to hdf5 key mutation (key -> /key on storage)
             data_dict[key[1:]] = store[key]
         store.close()
@@ -543,7 +545,6 @@ class PKData(object):
         """ Store data as HDF5 serialization. """
         store = pd.HDFStore(path)
         for key in ["interventions", "individuals", "groups", "outputs", "timecourses"]:
-            logging.warning(key)
             df = getattr(self, key).df
             store[key] = df
         store.close()
@@ -591,7 +592,7 @@ class PKData(object):
         """Gets data from a paginated rest API."""
         url_params = "?" + urlparse.urlencode(parameters)
         actual_url = urlparse.urljoin(url, url_params)
-        logging.warning(actual_url)
+        logger.warning(actual_url)
 
         # FIXME: make first request fast
         response = requests.get(actual_url, headers=headers)
@@ -605,7 +606,7 @@ class PKData(object):
         data = []
         for page in range(1, num_pages + 1):
             url_current = actual_url + f"&page={page}"
-            logging.warning(url_current)
+            logger.warning(url_current)
 
             response = requests.get(url_current, headers=headers)
             data += response.json()["data"]["data"]

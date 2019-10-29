@@ -1,11 +1,11 @@
 import pytest
 from pkdb_analysis.data import PKData
 from pathlib import Path
-from pkdb_analysis.tests.constants import TEST_H5
+from pkdb_analysis.tests.constants import TEST_HDF5
 
 
 def _load_test_data():
-    return PKData.from_hdf5(TEST_H5)
+    return PKData.from_hdf5(TEST_HDF5)
 
 
 def test_sids():
