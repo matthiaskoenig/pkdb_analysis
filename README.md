@@ -12,6 +12,7 @@ mkvirtualenv pkdb_analysis --python=python3
 (pkdb_analysis) pip install jupyterlab
 (pkdb_analysis) pip install ipykernel
 (pkdb_analysis) python -m ipykernel install --user --name pkdb_analysis
+
 ```
 The scripts are running against a given endpoint on which the PKDB backend is running.
 
