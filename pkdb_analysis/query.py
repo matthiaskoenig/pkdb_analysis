@@ -1,16 +1,91 @@
 """
 Querying PK-DB
 """
+from copy import deepcopy
+
 import requests
 from urllib import parse as urlparse
 import logging
 
-from pkdb_analysis.pkfilter import PKFilter
 from pkdb_analysis.data import PKData
 import pandas as pd
 import numpy as np
 
 logger = logging.getLogger(__name__)
+
+
+class PKFilter(object):
+    """
+    Filter objects for PKData
+    """
+    KEYS = ['groups', 'individuals', "interventions", "outputs", "timecourses"]
+
+    def __init__(self, normed=True):
+        """ Create new Filter instance.
+
+        :param normed: [True, False, None] return [normed data, unnormalized data, normed and unnormalized data]
+        """
+        self.groups = dict()
+        self.individuals = dict()
+        self.interventions = dict()
+        self.outputs = dict()
+        self.timecourses = dict()
+
+        self._set_normed(normed)
+
+    def _set_normed(self, normed=True) -> None:
+        """Set the normed attribute
+
+        :param normed:
+        :return: None
+        """
+        if normed not in [True, False, None]:
+            raise ValueError
+
+        if normed in [True, False]:
+            if normed:
+                normed_value = "true"
+            else:
+                normed_value = "false"
+            for filter_key in ["interventions", "outputs", "timecourses"]:
+                d = getattr(self, filter_key)
+                d["normed"] = normed_value
+
+    def __str__(self) -> str:
+        return str(self.to_dict())
+
+    def to_dict(self) -> dict:
+        return {filter_key: deepcopy(getattr(self, filter_key)) for filter_key in PKFilter.KEYS}
+
+    def add_to_all(self, key, value) -> None:
+        """ Adds entry (key, value) to all KEY dictionaries
+
+        :return: None
+        """
+        for filter_key in PKFilter.KEYS:
+            getattr(self, filter_key)[key] = value
+
+
+class PKFilterFactory(object):
+    """ Factory for simple creation of PKFilters. """
+
+    @staticmethod
+    def by_study_sid(study_sid: str) -> PKFilter:
+        """ Creates filter based on study_sid.
+        Only data for the given study_sid is returned.
+        """
+        pkfilter = PKFilter()
+        pkfilter.add_to_all("study_sid", study_sid)
+        return pkfilter
+
+    @staticmethod
+    def by_study_name(study_name: str) -> PKFilter:
+        """ Creates filter based on study_name.
+        Only data for the given study_name is returned.
+        """
+        pkfilter = PKFilter()
+        pkfilter.add_to_all("study_name", study_name)
+        return pkfilter
 
 
 class PKDB(object):
@@ -33,15 +108,15 @@ class PKDB(object):
         logger.warning("*** Querying data ***")
         return PKData(
             interventions=cls._get_subset("interventions_elastic",
-                                             **{**parameters, **pkfilter.get("interventions", {})}),
+                                          **{**parameters, **pkfilter.get("interventions", {})}),
             individuals=cls._get_subset("characteristica_individuals",
-                                           **{**parameters, **pkfilter.get("individuals", {})}),
+                                        **{**parameters, **pkfilter.get("individuals", {})}),
             groups=cls._get_subset("characteristica_groups",
-                                      **{**parameters, **pkfilter.get("groups", {})}),
+                                   **{**parameters, **pkfilter.get("groups", {})}),
             outputs=cls._get_subset("output_intervention",
-                                       **{**parameters, **pkfilter.get("outputs", {})}),
+                                    **{**parameters, **pkfilter.get("outputs", {})}),
             timecourses=cls._get_subset("timecourse_intervention",
-                                           **{**parameters, **pkfilter.get("timecourses", {})})
+                                        **{**parameters, **pkfilter.get("timecourses", {})})
         )
 
     @classmethod
@@ -54,7 +129,6 @@ class PKDB(object):
         """
         if not name in [
             # FIXME: unify names
-            # "studies_elastic",  # studies FIXME: not working
             "characteristica_individuals",  # individuals
             "characteristica_groups",  # groups
             "interventions_elastic",  # interventions FIXME: why plural
