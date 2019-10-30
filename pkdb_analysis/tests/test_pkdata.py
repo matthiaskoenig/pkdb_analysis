@@ -20,11 +20,11 @@ def test_intervention_filter():
     def dosing_and_caffeine(d):
         return (d["measurement_type"] == "dosing") & (d["substance"] == "caffeine")
 
-    test_data = data.individual_pk_filter(dosing_and_caffeine)
+    test_data = data.individual_filter(dosing_and_caffeine)
     # check non-existing study
     assert len(test_data.study_sids) == 3
 
-    test_data_not_concise = data.individual_pk_filter(dosing_and_caffeine, concise=False)
+    test_data_not_concise = data.individual_filter(dosing_and_caffeine, concise=False)
     assert len(test_data_not_concise.study_sids) == 4
 
 
@@ -34,13 +34,13 @@ def test_output_filter():
     def is_auc_inf(d):
         return d["measurement_type"] == "auc_inf"
 
-    test_data = data.output_pk_filter(is_auc_inf)
+    test_data = data.output_filter(is_auc_inf)
     measurement_types = test_data.outputs["measurement_type"].unique()
     assert len(measurement_types) == 1
     assert measurement_types[0] == "auc_inf"
     assert len(test_data.timecourses) > 0
 
-    test_data = data.output_pk_filter(is_auc_inf, keep_timecourses=False)
+    test_data = data.output_filter(is_auc_inf).timecourses_delete()
     measurement_types = test_data.outputs["measurement_type"].unique()
     assert len(measurement_types) == 1
     assert measurement_types[0] == "auc_inf"
@@ -53,13 +53,13 @@ def test_timecourses_filter():
     def is_caffeine(d):
         return d["substance"] == "caffeine"
 
-    test_data = data.timecourse_pk_filter(is_caffeine)
+    test_data = data.timecourse_filter(is_caffeine)
     substances = test_data.timecourses["substance"].unique()
     assert len(substances) == 1
     assert substances[0] == "caffeine"
     assert len(test_data.timecourses) > 0
 
-    test_data = data.timecourse_pk_filter(is_caffeine, keep_outputs=False)
+    test_data = data.timecourse_filter(is_caffeine).outputs_delete()
     substances = test_data.timecourses["substance"].unique()
     assert len(substances) == 1
     assert substances[0] == "caffeine"
@@ -84,7 +84,7 @@ def test_subject_filter():
     def smoker_n(d):
         return smoking(d) & (d["choice"] == "N")
 
-    healthy_smoker_n_data = data.subject_pk_filter([is_healthy, smoker_n])
+    healthy_smoker_n_data = data.subject_filter([is_healthy, smoker_n])
     individual_smoking_choices = healthy_smoker_n_data.individuals[smoking].choice.unique()
     group_smoking_choices = healthy_smoker_n_data.groups[smoking].choice.unique()
 
@@ -107,7 +107,7 @@ def test_subject_exclude():
     def smoker_y(d):
         return smoking(d) & (d["choice"] == "Y")
 
-    exclude_smoker_data = data.subject_pk_exclude(smoker_y)
+    exclude_smoker_data = data.subject_exclude(smoker_y)
 
     individual_smoking_choices = exclude_smoker_data.individuals[smoking].choice.unique()
     group_smoking_choices = exclude_smoker_data.groups[smoking].choice.unique()
@@ -140,7 +140,7 @@ def test_group_filter_exclude():
     def smoker_y(d):
         return smoking(d) & choice_y(d)
 
-    healthy_smoker_n_data = data.group_pk_filter([is_healthy, smoker_n]).group_pk_exclude([smoker_y, disease])
+    healthy_smoker_n_data = data.group_filter([is_healthy, smoker_n]).group_exclude([smoker_y, disease])
 
     group_smoking_choices = healthy_smoker_n_data.groups[smoking].choice.unique()
 
