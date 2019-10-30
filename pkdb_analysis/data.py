@@ -6,6 +6,7 @@ Functions for working with PKDB data.
 """
 
 import logging
+from abc import ABC
 from collections import OrderedDict
 from copy import copy
 from typing import List
@@ -16,9 +17,12 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 
-class PKDataFrame(pd.DataFrame):
+
+
+class PKDataFrame(pd.DataFrame, ABC):
+
     """
-    Extended Dataframe which support customized filter operations.
+    Extended DataFrame which support customized filter operations.
     Used to encode groups, individuals, interventions, outputs, timecourses on PKData.
     """
 
@@ -34,6 +38,15 @@ class PKDataFrame(pd.DataFrame):
         return cls(*args, **kwargs)
 
     def __init__(self, data, pk=None, index=None, columns=None, dtype=None, copy=True):
+        """
+
+        :param data:
+        :param pk:
+        :param index:
+        :param columns:
+        :param dtype:
+        :param copy:
+        """
         if not isinstance(data, pd.core.internals.BlockManager) and not pk:
             raise ValueError("arg pk required")
 
@@ -200,7 +213,7 @@ class PKData(object):
     def __and__(self, other: 'PKData') -> 'PKData':
         """ combines instances were instances have to
 
-        param other: other PkData instance
+        param other: other PKData instance
         :return: PKData
         """
 
@@ -224,11 +237,13 @@ class PKData(object):
         return PKData(**resulting_kwargs)
 
     @staticmethod
-    def from_hdf5(path):
+    def from_hdf5(path) -> 'PKData':
         """ Load data from HDF5 serialization.
 
-        :param path:
-        :return:
+        :param path: path to HDF5.
+        :type path: str
+        :return: PKData loaded from HDF5.
+        :rtype: PKData
         """
         store = pd.HDFStore(path)
         data_dict = {}
@@ -239,8 +254,12 @@ class PKData(object):
 
         return PKData(**data_dict)
 
-    def to_hdf5(self, path):
-        """ Store data as HDF5 serialization. """
+    def to_hdf5(self, path) -> None:
+        """ Saves data HDF5
+
+        :param path: path to HDF5.
+        :type path: str
+        """
         store = pd.HDFStore(path)
         for key in ["interventions", "individuals", "groups", "outputs", "timecourses"]:
             df = getattr(self, key).df
@@ -249,7 +268,11 @@ class PKData(object):
 
     @property
     def study_sids(self) -> set:
-        """Set of study_sids used in data."""
+        """ Set of study sids contained in this PKData instance.
+
+        :return: Study sids contained in this PKData instance.
+        :rtype: set
+        """
         study_sids = set()
         for df_key in PKData.KEYS:
             pk_df = getattr(self, df_key)
@@ -259,35 +282,56 @@ class PKData(object):
 
     @property
     def groups_count(self) -> int:
-        """Number of groups."""
+        """ Number of groups contained in this PKData instance.
+
+        :return: Number of groups contained in this PKData instance.
+        :rtype: int
+        """
         return self.groups.pk_len
 
     @property
     def individuals_count(self) -> int:
-        """Number of individuals."""
+        """ Number of individuals contained in this PKData instance.
+
+                :return: Number of individuals contained in this PKData instance.
+                :rtype: int
+        """
         return self.individuals.pk_len
 
     @property
     def interventions_count(self) -> int:
-        """Number of interventions."""
+        """ Number of interventions contained in this PKData instance.
+
+        :return: Number of interventions contained in this PKData instance.
+        :rtype: int
+        """
         return self.interventions.pk_len
 
     @property
     def outputs_count(self) -> int:
-        """Number of outputs."""
+        """ Number of outputs contained in this PKData instance.
+
+        :return: Number of outputs contained in this PKData instance.
+        :rtype: int
+        """
         return self.outputs.pk_len
 
     @property
     def timecourses_count(self) -> int:
-        """Number of timecourses."""
+        """ Number of timecourses contained in this PKData instance.
+
+        :return: Number of timecourses contained in this PKData instance.
+        :rtype: int
+        """
         return self.timecourses.pk_len
 
     def _df_mi(self, field: str, index_fields: List[str]) -> pd.DataFrame:
         """ Create multi-index DataFrame
 
-        :param field:
+        :param field:  #fixme rename to df_key?
         :param index_fields:
-        :return:
+        :return: Multi-indexed Dataframe
+        :rtype: pd.DataFrame
         """
         df = getattr(self, field)
         if df.empty:
@@ -299,43 +343,72 @@ class PKData(object):
 
     @property
     def groups_mi(self) -> pd.DataFrame:
-        """ Multi-index data frame. """
+        """Multi-index DataFrame of groups contained in this PKData instance.
+
+        :return: Multi-indexed DataFrame of groups contained in this PKData instance.
+        :rtype: pd.DataFrame
+        """
         return self._df_mi('groups', ['group_pk', 'characteristica_pk'])
 
     @property
     def individuals_mi(self) -> pd.DataFrame:
-        """ Multi-index data frame. """
+        """Multi-index DataFrame of individuals contained in this PKData instance.
+
+        :return: Multi-indexed DataFrame of individuals contained in this PKData instance.
+        :rtype: pd.DataFrame
+        """
         return self._df_mi('individuals', ['individual_pk', 'characteristica_pk'])
 
     @property
     def interventions_mi(self) -> pd.DataFrame:
-        """ Multi-index data frame. """
+        """Multi-index DataFrame of interventions contained in this PKData instance.
+
+        :return: Multi-indexed DataFrame of interventions contained in this PKData instance.
+        :rtype: pd.DataFrame
+        """
         return self._df_mi('interventions', ['intervention_pk'])
 
     @property
     def outputs_mi(self) -> pd.DataFrame:
-        """ Multi-index data frame. """
+        """Multi-index DataFrame of outputs contained in this PKData instance.
+
+        :return: Multi-indexed DataFrame of outputs contained in this PKData instance.
+        :rtype: pd.DataFrame
+        """
         return self._df_mi('outputs',
                            ['output_pk', 'intervention_pk', 'group_pk', 'individual_pk'])
 
     @property
     def timecourses_mi(self) -> pd.DataFrame:
-        """ Multi-index data frame. """
+        """Multi-index DataFrame of timecourses contained in this PKData instance.
+
+        :return: Multi-indexed DataFrame of timecourses contained in this PKData instance.
+        :rtype: pd.DataFrame
+        """
         return self._df_mi('timecourses',
                            ['timecourse_pk', 'intervention_pk', 'group_pk', 'individual_pk'])
 
+
     # --- filter and exclude ---
 
-    def _pk_filter(self, df_k, f_idx, concise):
+    def _pk_filter(self, df_key:str, f_idx, concise:bool) -> 'PKData':
+        """ Helper class for filtering of PKData instances.
+
+        :param df_key: DataFrame on which the filter (f_idx) shall be applied.
+        :type df_key: str
+        :param concise:
+        :return:
+        """
         dict_pkdata = self.as_dict()
-        dict_pkdata[df_k] = getattr(self, df_k).pk_filter(f_idx)
+        dict_pkdata[df_key] = getattr(self, df_key).pk_filter(f_idx)
 
         pkdata = PKData(**dict_pkdata)
         if concise:
             pkdata._concise()
         return pkdata
 
-    def _pk_exclude(self, df_k, f_idx, concise):
+    def _pk_exclude(self, df_k, f_idx, concise) -> 'PKData':
+
         dict_pkdata = self.as_dict()
         dict_pkdata[df_k] = getattr(self, df_k).pk_exclude(f_idx)
 
@@ -360,19 +433,38 @@ class PKData(object):
         if df_key not in PKData.KEYS:
             raise ValueError(f"Unsupported key '{df_key}', key must be in '{PKData.KEYS}'")
 
-    def filter_intervention(self, f_idx, concise=True):
-        """ Filter interventions. """
+    def filter_intervention(self, f_idx, concise=True) -> 'PKData':
+        """Filter interventions.
+
+        :param f_idx: Is a filter by index of the DataFrame selected by the df_key. A similar notation as the filtering
+            of pd.DataFrames can be used. This mostly are (lambda) function. Further a list of (lambda) function are allowed
+            as input. The list of functions are executed successively, which is identical to an intersection of all filters
+            applied separately.
+
+            Pitfalls
+                - Don't use the invert operator `~` but use the exclude_*() functions.
+                - #todo: add no invert operator to Validation rule
+        :type f_idx: function, list
+
+
+        :param concise: concises the returned PKData instance.
+
+        :return: Filter PKData instance
+        :rtype: PKData
+        """
+
         return self._pk_filter("interventions", f_idx, concise)
 
-    def filter_group(self, f_idx, concise=True):
+    def filter_group(self, f_idx, concise=True) -> 'PKData':
         """ Filter groups. """
         return self._pk_filter("groups", f_idx, concise)
 
-    def filter_individual(self, f_idx, concise=True):
+    def filter_individual(self, f_idx, concise=True) -> 'PKData':
+
         """ Filter individuals. """
         return self._pk_filter("individuals", f_idx, concise)
 
-    def filter_subject(self, f_idx, concise=True):
+    def filter_subject(self, f_idx, concise=True) -> 'PKData':
         """ Filter group or individual. """
         pkdata = self.filter_group(f_idx, concise=False)
         pkdata.filter_individual(f_idx, concise=False)
@@ -380,41 +472,45 @@ class PKData(object):
             pkdata._concise()
         return pkdata
 
-    def filter_output(self, f_idx, concise=True):
+    def filter_output(self, f_idx, concise=True) -> 'PKData':
         """ Filter outputs. """
         return self._pk_filter("outputs", f_idx, concise)
 
-    def filter_timecourse(self, f_idx, concise=True):
+    def filter_timecourse(self, f_idx, concise=True) -> 'PKData':
         """ Filter timecourses. """
         return self._pk_filter("timecourses", f_idx, concise)
 
-    def exclude_intervention(self, f_idx, concise=True):
+    def exclude_intervention(self, f_idx, concise=True) -> 'PKData':
         return self._pk_exclude("interventions", f_idx, concise)
 
-    def exclude_group(self, f_idx, concise=True):
+    def exclude_group(self, f_idx, concise=True) -> 'PKData':
         return self._pk_exclude("groups", f_idx, concise)
 
     def exclude_individual(self, f_idx, concise=True):
         return self._pk_exclude("individuals", f_idx, concise)
 
-    def exclude_subject(self, f_idx, concise=True):
+    def exclude_subject(self, f_idx, concise=True) -> 'PKData':
         pkdata = self.exclude_group(f_idx, concise=False)
         pkdata = pkdata.exclude_individual(f_idx, concise=False)
         if concise:
             pkdata._concise()
         return pkdata
 
-    def exclude_output(self, f_idx, concise=True):
+    def exclude_output(self, f_idx, concise=True) -> 'PKData':
         return self._pk_exclude("outputs", f_idx, concise)
 
     def exclude_timecourse(self, f_idx, concise=True):
+
         return self._pk_exclude("timecourses", f_idx, concise)
 
-    def delete_outputs(self, concise=True):
-        """Deletes outputs."""
+    def delete_outputs(self, concise=True) -> 'PKData':
+        """
+        Deletes outputs.
+        :return:
+        """
         return self._emptify("outputs", concise=concise)
 
-    def delete_timecourses(self, concise=True):
+    def delete_timecourses(self, concise=True) -> 'PKData':
         """Deletes timecourses."""
         return self._emptify("timecourses", concise=concise)
 
