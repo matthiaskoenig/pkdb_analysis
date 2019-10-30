@@ -1,8 +1,8 @@
 """
 Functions for working with PKDB data.
 
-# TODO: consistent naming of endpoints
-# FIXME: unclear what is modifying and what is copying the data frames
+* TODO: consistent naming of endpoints
+* FIXME: unclear what is modifying and what is copying the data frames
 """
 
 import numpy as np
@@ -108,8 +108,10 @@ class PKDataFrame(pd.DataFrame):
 class PKData(object):
     """ Consistent set of data from PK-DB.
 
+    Information is stored as DataFrames.
+
     Handles:
-    - study information
+
     - groups
     - individuals
     - interventions

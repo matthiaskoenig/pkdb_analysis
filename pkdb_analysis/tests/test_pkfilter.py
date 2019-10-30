@@ -1,5 +1,5 @@
 import pytest
-from pkdb_analysis.pkfilter import PKFilter, PKFilterFactory
+from pkdb_analysis import PKFilter, PKFilterFactory
 
 
 def test_empty_filter():

@@ -1,6 +1,6 @@
 import pytest
 from pkdb_analysis.data import PKData
-from pkdb_analysis.pkfilter import PKFilterFactory
+from pkdb_analysis import PKFilterFactory
 from pkdb_analysis.query import PKDB
 import pandas as pd
 

@@ -33,6 +33,8 @@ extensions = [
     'recommonmark',
     'sphinx_rtd_theme',
     'sphinx.ext.autodoc',
+    'sphinx.ext.coverage',
+    'sphinx.ext.napoleon',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.autosectionlabel',

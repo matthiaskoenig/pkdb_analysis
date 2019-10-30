@@ -1,0 +1,413 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pkdb_analysis.query &mdash; pkdb_analysis  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pkdb_analysis
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/query_examples.html">Query PK-DB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/data_examples.html">Working with PK-DB data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/filter_examples.html">Filter data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pkdb_analysis</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pkdb_analysis.query</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pkdb_analysis.query</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Querying PK-DB</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">urllib</span> <span class="k">import</span> <span class="n">parse</span> <span class="k">as</span> <span class="n">urlparse</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">pkdb_analysis.data</span> <span class="k">import</span> <span class="n">PKData</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="PKFilter"><a class="viewcode-back" href="../../api.html#pkdb_analysis.query.PKFilter">[docs]</a><span class="k">class</span> <span class="nc">PKFilter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filter objects for PKData</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">KEYS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;groups&#39;</span><span class="p">,</span> <span class="s1">&#39;individuals&#39;</span><span class="p">,</span> <span class="s2">&quot;interventions&quot;</span><span class="p">,</span> <span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="s2">&quot;timecourses&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create new Filter instance.</span>
+
+<span class="sd">        :param normed: [True, False, None] return [normed data, unnormalized data, normed and unnormalized data]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">groups</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interventions</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_normed</span><span class="p">(</span><span class="n">normed</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_normed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Set the normed attribute</span>
+
+<span class="sd">        :param normed:</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">normed</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
+
+        <span class="k">if</span> <span class="n">normed</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">normed</span><span class="p">:</span>
+                <span class="n">normed_value</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">normed_value</span> <span class="o">=</span> <span class="s2">&quot;false&quot;</span>
+            <span class="k">for</span> <span class="n">filter_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;interventions&quot;</span><span class="p">,</span> <span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="s2">&quot;timecourses&quot;</span><span class="p">]:</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_key</span><span class="p">)</span>
+                <span class="n">d</span><span class="p">[</span><span class="s2">&quot;normed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">normed_value</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">filter_key</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_key</span><span class="p">))</span> <span class="k">for</span> <span class="n">filter_key</span> <span class="ow">in</span> <span class="n">PKFilter</span><span class="o">.</span><span class="n">KEYS</span><span class="p">}</span>
+
+<div class="viewcode-block" id="PKFilter.add_to_all"><a class="viewcode-back" href="../../api.html#pkdb_analysis.query.PKFilter.add_to_all">[docs]</a>    <span class="k">def</span> <span class="nf">add_to_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Adds entry (key, value) to all KEY dictionaries</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">filter_key</span> <span class="ow">in</span> <span class="n">PKFilter</span><span class="o">.</span><span class="n">KEYS</span><span class="p">:</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_key</span><span class="p">)[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">PKFilterFactory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Factory for simple creation of PKFilters. &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">by_study_sid</span><span class="p">(</span><span class="n">study_sid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PKFilter</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Creates filter based on study_sid.</span>
+<span class="sd">        Only data for the given study_sid is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pkfilter</span> <span class="o">=</span> <span class="n">PKFilter</span><span class="p">()</span>
+        <span class="n">pkfilter</span><span class="o">.</span><span class="n">add_to_all</span><span class="p">(</span><span class="s2">&quot;study_sid&quot;</span><span class="p">,</span> <span class="n">study_sid</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pkfilter</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">by_study_name</span><span class="p">(</span><span class="n">study_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PKFilter</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Creates filter based on study_name.</span>
+<span class="sd">        Only data for the given study_name is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pkfilter</span> <span class="o">=</span> <span class="n">PKFilter</span><span class="p">()</span>
+        <span class="n">pkfilter</span><span class="o">.</span><span class="n">add_to_all</span><span class="p">(</span><span class="s2">&quot;study_name&quot;</span><span class="p">,</span> <span class="n">study_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pkfilter</span>
+
+
+<div class="viewcode-block" id="PKDB"><a class="viewcode-back" href="../../api.html#pkdb_analysis.query.PKDB">[docs]</a><span class="k">class</span> <span class="nc">PKDB</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Querying PKData from PK-DB. &quot;&quot;&quot;</span>
+    <span class="n">PKDB_URL</span> <span class="o">=</span> <span class="s2">&quot;http://0.0.0.0:8000&quot;</span>
+    <span class="n">PKDB_USERNAME</span> <span class="o">=</span> <span class="s2">&quot;admin&quot;</span>
+    <span class="n">PKDB_PASSWORD</span> <span class="o">=</span> <span class="s2">&quot;pkdb_admin&quot;</span>
+    <span class="n">URL_BASE</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urljoin</span><span class="p">(</span><span class="n">PKDB_URL</span><span class="p">,</span> <span class="s1">&#39;/api/v1/&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PKDB.query"><a class="viewcode-back" href="../../api.html#pkdb_analysis.query.PKDB.query">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pkfilter</span><span class="p">:</span> <span class="n">PKFilter</span> <span class="o">=</span> <span class="n">PKFilter</span><span class="p">(),</span> <span class="n">page_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Create a PKDBData representation and gets the data for the provided filters.</span>
+<span class="sd">        If no filters are given the complete data is retrieved.</span>
+
+<span class="sd">        :param pkfilter: Filter object to select subset of data, if no Filter is provided the complete data is returned</span>
+<span class="sd">        :param page_size: number of entries per query</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pkfilter</span> <span class="o">=</span> <span class="n">pkfilter</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="s1">&#39;page_size&#39;</span><span class="p">:</span> <span class="n">page_size</span><span class="p">}</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;*** Querying data ***&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PKData</span><span class="p">(</span>
+            <span class="n">interventions</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_subset</span><span class="p">(</span><span class="s2">&quot;interventions_elastic&quot;</span><span class="p">,</span>
+                                          <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">pkfilter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;interventions&quot;</span><span class="p">,</span> <span class="p">{})}),</span>
+            <span class="n">individuals</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_subset</span><span class="p">(</span><span class="s2">&quot;characteristica_individuals&quot;</span><span class="p">,</span>
+                                        <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">pkfilter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="p">{})}),</span>
+            <span class="n">groups</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_subset</span><span class="p">(</span><span class="s2">&quot;characteristica_groups&quot;</span><span class="p">,</span>
+                                   <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">pkfilter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;groups&quot;</span><span class="p">,</span> <span class="p">{})}),</span>
+            <span class="n">outputs</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_subset</span><span class="p">(</span><span class="s2">&quot;output_intervention&quot;</span><span class="p">,</span>
+                                    <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">pkfilter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="p">{})}),</span>
+            <span class="n">timecourses</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_subset</span><span class="p">(</span><span class="s2">&quot;timecourse_intervention&quot;</span><span class="p">,</span>
+                                        <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">pkfilter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;timecourses&quot;</span><span class="p">,</span> <span class="p">{})})</span>
+        <span class="p">)</span></div>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_subset</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param name: name of the view</span>
+<span class="sd">        :param parameters: query parameters</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="c1"># FIXME: unify names</span>
+            <span class="s2">&quot;characteristica_individuals&quot;</span><span class="p">,</span>  <span class="c1"># individuals</span>
+            <span class="s2">&quot;characteristica_groups&quot;</span><span class="p">,</span>  <span class="c1"># groups</span>
+            <span class="s2">&quot;interventions_elastic&quot;</span><span class="p">,</span>  <span class="c1"># interventions FIXME: why plural</span>
+            <span class="s2">&quot;output_intervention&quot;</span><span class="p">,</span>  <span class="c1"># outputs</span>
+            <span class="s2">&quot;timecourse_intervention&quot;</span><span class="p">,</span>  <span class="c1"># timecourses</span>
+
+        <span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="si">{name}</span><span class="s2"> not supported&quot;</span><span class="p">)</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urljoin</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">URL_BASE</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;</span><span class="si">{name}</span><span class="s1">/&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_data</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_headers</span><span class="p">(),</span> <span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_login_token</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;</span><span class="si">{cls.PKDB_URL}</span><span class="s2">/api-token-auth/&quot;</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">PKDB_USERNAME</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">PKDB_PASSWORD</span><span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;token&quot;</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_headers</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_login_token</span><span class="p">()</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Authorization&#39;</span><span class="p">:</span> <span class="n">f</span><span class="s1">&#39;Token </span><span class="si">{token}</span><span class="s1">&#39;</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">headers</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_data</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Gets data from a paginated rest API.&quot;&quot;&quot;</span>
+        <span class="n">url_params</span> <span class="o">=</span> <span class="s2">&quot;?&quot;</span> <span class="o">+</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="n">actual_url</span> <span class="o">=</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urljoin</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">url_params</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">actual_url</span><span class="p">)</span>
+
+        <span class="c1"># FIXME: make first request fast</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">actual_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+            <span class="n">num_pages</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;last_page&quot;</span><span class="p">]</span>
+
+        <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">err</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_pages</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">url_current</span> <span class="o">=</span> <span class="n">actual_url</span> <span class="o">+</span> <span class="n">f</span><span class="s2">&quot;&amp;page=</span><span class="si">{page}</span><span class="s2">&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">url_current</span><span class="p">)</span>
+
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url_current</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">+=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+
+        <span class="c1"># convert to data frame</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># convert columns to float columns</span>
+        <span class="n">float_columns</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;median&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sd&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;se&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cv&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;min&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;max&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;time&quot;</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;timecourse&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">url</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">float_columns</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                    <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># every element must be converted individually</span>
+            <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">float_columns</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
+                    <span class="n">col_loc</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)):</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">col_loc</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">df</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="c1"># convert columns to int columns</span>
+        <span class="n">int_columns</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;timecourse_pk&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;intervention_pk&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;group_pk&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;individual_pk&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;group_parent_pk&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;raw_pk&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">int_columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">({</span><span class="n">pd</span><span class="o">.</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">})</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jan Grzegorzewski &amp; Matthias König
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
