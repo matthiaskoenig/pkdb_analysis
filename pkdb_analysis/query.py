@@ -1,15 +1,15 @@
 """
 Querying PK-DB
 """
-from copy import deepcopy
-
-import requests
-from urllib import parse as urlparse
 import logging
+from copy import deepcopy
+from urllib import parse as urlparse
+
+import numpy as np
+import pandas as pd
+import requests
 
 from pkdb_analysis.data import PKData
-import pandas as pd
-import numpy as np
 
 logger = logging.getLogger(__name__)
 
