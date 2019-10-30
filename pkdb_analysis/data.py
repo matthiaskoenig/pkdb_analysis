@@ -437,7 +437,7 @@ class PKData(object):
         """Filter interventions.
 
         :param f_idx: Is a filter by index of the DataFrame selected by the df_key. A similar notation as the filtering
-            of pd.DataFrames can be used. This mostly are (lambda) function. Further a list of (lambda) function are allowed
+            of pd.DataFrames can be used. This mostly are (lambda) functions. Further a list of (lambda) function are allowed
             as input. The list of functions are executed successively, which is identical to an intersection of all filters
             applied separately.
 
