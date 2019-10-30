@@ -18,8 +18,7 @@ def load_test_studies():
 
 if __name__ == "__main__":
     from pathlib import Path
+
     data = load_test_studies()
     h5_path = Path(".") / "test.h5"
     data.to_hdf5(h5_path)
-
-

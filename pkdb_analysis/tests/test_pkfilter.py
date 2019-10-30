@@ -1,4 +1,3 @@
-import pytest
 from pkdb_analysis import PKFilter, PKFilterFactory
 
 
