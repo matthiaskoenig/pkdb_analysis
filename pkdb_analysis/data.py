@@ -1,24 +1,17 @@
 """
 Functions for working with PKDB data.
 
-# TODO: Fix the columns data type, use basic data types for everything
-# TODO: study endpoint and add to PKDBData
-# TODO: reorder fields in order of importance
 # TODO: consistent naming of endpoints
-# TODO: consistent naming of fields, e.g. pk, study_sid
-# TODO: split groups and individuals (?!)
+# FIXME: unclear what is modifying and what is copying the data frames
 """
 
 import numpy as np
-import requests
 import pandas as pd
-from urllib import parse as urlparse
+
 from copy import copy
 import logging
 from collections import OrderedDict
 from typing import List
-
-from pkdb_analysis.pkfilter import PKFilter
 
 logger = logging.getLogger(__name__)
 
@@ -107,7 +100,7 @@ class PKDataFrame(pd.DataFrame):
         """ Set of study_sids."""
         return set(self.study_sid.unique())
 
-    def emptify(self) -> 'PKDataFrame':
+    def _emptify(self) -> 'PKDataFrame':
         empty_df = pd.DataFrame([], columns=self.columns)
         return PKDataFrame(empty_df, pk=self.pk)
 
@@ -123,12 +116,6 @@ class PKData(object):
     - outputs
     - timecourses
     """
-    # FIXME: better handling and examples of different endpoints
-    PKDB_URL = "http://0.0.0.0:8000"
-    PKDB_USERNAME = "admin"
-    PKDB_PASSWORD = "pkdb_admin"
-    URL_BASE = urlparse.urljoin(PKDB_URL, '/api/v1/')
-
     KEYS = ["groups", "individuals", "interventions", "outputs", "timecourses"]
     PK_COLUMNS = {key: f"{key[:-1]}_pk" for key in KEYS}
 
@@ -189,169 +176,6 @@ class PKData(object):
         lines.append("-" * 30)
         return "\n".join(lines)
 
-    @property
-    def groups_count(self) -> int:
-        """Number of groups."""
-        return self.groups.pk_len
-
-    @property
-    def individuals_count(self) -> int:
-        """Number of individuals."""
-        return self.individuals.pk_len
-
-    @property
-    def interventions_count(self) -> int:
-        """Number of interventions."""
-        return self.interventions.pk_len
-
-    @property
-    def outputs_count(self) -> int:
-        """Number of outputs."""
-        return self.outputs.pk_len
-
-    @property
-    def timecourses_count(self) -> int:
-        """Number of timecourses."""
-        return self.timecourses.pk_len
-
-    def _pk_filter(self, df_k, f_idx, concise):
-        dict_pkdata = self.as_dict()
-        dict_pkdata[df_k] = getattr(self, df_k).pk_filter(f_idx)
-
-        pkdata = PKData(**dict_pkdata)
-        if concise:
-            pkdata._concise()
-        return pkdata
-
-    def _pk_exclude(self, df_k, f_idx, concise):
-        dict_pkdata = self.as_dict()
-        dict_pkdata[df_k] = getattr(self, df_k).pk_exclude(f_idx)
-
-        pkdata = PKData(**dict_pkdata)
-        if concise:
-            pkdata._concise()
-        return pkdata
-
-    def intervention_pk_filter(self,f_idx, concise=True):
-        return self._pk_filter("interventions",f_idx, concise)
-
-    def group_pk_filter(self,f_idx, concise=True):
-        return self._pk_filter("groups",f_idx, concise)
-
-    def individual_pk_filter(self,f_idx, concise=True):
-        return self._pk_filter("individuals",f_idx, concise)
-
-    def subject_pk_filter(self, f_idx, concise=True):
-        group_filtered_data = self.group_pk_filter( f_idx, concise=False)
-        return group_filtered_data.individual_pk_filter(f_idx, concise=concise)
-
-    def output_pk_filter(self, f_idx, concise=True, keep_timecourses=True):
-        pkdata = self
-        if not keep_timecourses:
-            pkdata = pkdata.emptify("timecourses", concise=False)
-        return pkdata._pk_filter("outputs", f_idx, concise)
-
-    def timecourse_pk_filter(self, f_idx, concise=True, keep_outputs=True):
-        pkdata = self
-        if not keep_outputs:
-            pkdata = pkdata.emptify("outputs", concise=False)
-        return pkdata._pk_filter("timecourses", f_idx, concise)
-
-    def intervention_pk_exclude(self,f_idx, concise=True):
-        return self._pk_exclude("interventions",f_idx, concise)
-
-    def group_pk_exclude(self,f_idx, concise=True):
-        return self._pk_exclude("groups",f_idx, concise)
-
-    def individual_pk_exclude(self,f_idx, concise=True):
-        return self._pk_exclude("individuals",f_idx, concise)
-
-    def subject_pk_exclude(self, f_idx, concise=True):
-        group_excludeed_data = self.group_pk_exclude( f_idx, concise=False)
-        return group_excludeed_data.individual_pk_exclude(f_idx, concise=concise)
-
-    def output_pk_exclude(self, f_idx, concise=True, keep_timecourses=True):
-        pkdata = self
-        if not keep_timecourses:
-            pkdata = pkdata.emptify("timecourses", concise=False)
-        return pkdata._pk_exclude("outputs", f_idx, concise)
-
-    def timecourse_pk_exclude(self, f_idx, concise=True, keep_outputs=True):
-        pkdata = self
-        if not keep_outputs:
-            pkdata = pkdata.emptify("outputs", concise=False)
-        return pkdata._pk_exclude("timecourses", f_idx, concise)
-
-    @property
-    def study_sids(self):
-        study_sids = set()
-        for df_key in PKData.KEYS:
-            pk_df = getattr(self, df_key)
-            study_sids = study_sids.union(pk_df.study_sids)
-
-        return study_sids
-
-    def emptify(self, df_key, concise=True):
-        """
-
-        :param df_key:
-        :return:
-        """
-        self._validate_df_key(df_key)
-
-        dict_pkdata = self.as_dict()
-        dict_pkdata[df_key] = getattr(self, df_key).emptify()
-
-        pkdata = PKData(**dict_pkdata)
-        if concise:
-            pkdata._concise()
-        return pkdata
-
-    # ---
-
-    def _df_mi(self, field: str, index_fields: List[str]) -> pd.DataFrame:
-        """ Create multi-index DataFrame
-
-        :param field:
-        :param index_fields:
-        :return:
-        """
-        df = getattr(self, field)
-        if df.empty:
-            return pd.DataFrame()  # new empty DataFrame
-        # create multi-index DataFrame
-        df_mi = df.sort_values(index_fields, ascending=True, inplace=False)
-        df_mi.set_index(index_fields, inplace=True)
-        return df_mi
-
-    @property
-    def groups_mi(self) -> pd.DataFrame:
-        """ Multi-index data frame. """
-        return self._df_mi('groups', ['group_pk', 'characteristica_pk'])
-
-    @property
-    def individuals_mi(self) -> pd.DataFrame:
-        """ Multi-index data frame. """
-        return self._df_mi('individuals', ['individual_pk', 'characteristica_pk'])
-
-    @property
-    def interventions_mi(self) -> pd.DataFrame:
-        """ Multi-index data frame. """
-        return self._df_mi('interventions', ['intervention_pk'])
-
-    @property
-    def outputs_mi(self) -> pd.DataFrame:
-        """ Multi-index data frame. """
-        return self._df_mi('outputs',
-                           ['output_pk', 'intervention_pk', 'group_pk', 'individual_pk'])
-
-    @property
-    def timecourses_mi(self) -> pd.DataFrame:
-        """ Multi-index data frame. """
-        return self._df_mi('timecourses',
-                           ['timecourse_pk', 'intervention_pk', 'group_pk', 'individual_pk'])
-
-
     def __or__(self, other: 'PKData') -> 'PKData':
         """ combines two PKData instances
         :param other: other PkData instance
@@ -396,26 +220,210 @@ class PKData(object):
 
         return PKData(**resulting_kwargs)
 
+    @staticmethod
+    def from_hdf5(path):
+        """ Load data from HDF5 serialization.
+
+        :param path:
+        :return:
+        """
+        store = pd.HDFStore(path)
+        data_dict = {}
+        for key in store.keys():
+            # ugly bugfix due to hdf5 key mutation (key -> /key on storage)
+            data_dict[key[1:]] = store[key]
+        store.close()
+
+        return PKData(**data_dict)
+
+    def to_hdf5(self, path):
+        """ Store data as HDF5 serialization. """
+        store = pd.HDFStore(path)
+        for key in ["interventions", "individuals", "groups", "outputs", "timecourses"]:
+            df = getattr(self, key).df
+            store[key] = df
+        store.close()
+
+    @property
+    def study_sids(self) -> set:
+        """Set of study_sids used in data."""
+        study_sids = set()
+        for df_key in PKData.KEYS:
+            pk_df = getattr(self, df_key)
+            study_sids = study_sids.union(pk_df.study_sids)
+
+        return study_sids
+
+    @property
+    def groups_count(self) -> int:
+        """Number of groups."""
+        return self.groups.pk_len
+
+    @property
+    def individuals_count(self) -> int:
+        """Number of individuals."""
+        return self.individuals.pk_len
+
+    @property
+    def interventions_count(self) -> int:
+        """Number of interventions."""
+        return self.interventions.pk_len
+
+    @property
+    def outputs_count(self) -> int:
+        """Number of outputs."""
+        return self.outputs.pk_len
+
+    @property
+    def timecourses_count(self) -> int:
+        """Number of timecourses."""
+        return self.timecourses.pk_len
+
+    def _df_mi(self, field: str, index_fields: List[str]) -> pd.DataFrame:
+        """ Create multi-index DataFrame
+
+        :param field:
+        :param index_fields:
+        :return:
+        """
+        df = getattr(self, field)
+        if df.empty:
+            return pd.DataFrame()  # new empty DataFrame
+        # create multi-index DataFrame
+        df_mi = df.sort_values(index_fields, ascending=True, inplace=False)
+        df_mi.set_index(index_fields, inplace=True)
+        return df_mi
+
+    @property
+    def groups_mi(self) -> pd.DataFrame:
+        """ Multi-index data frame. """
+        return self._df_mi('groups', ['group_pk', 'characteristica_pk'])
+
+    @property
+    def individuals_mi(self) -> pd.DataFrame:
+        """ Multi-index data frame. """
+        return self._df_mi('individuals', ['individual_pk', 'characteristica_pk'])
+
+    @property
+    def interventions_mi(self) -> pd.DataFrame:
+        """ Multi-index data frame. """
+        return self._df_mi('interventions', ['intervention_pk'])
+
+    @property
+    def outputs_mi(self) -> pd.DataFrame:
+        """ Multi-index data frame. """
+        return self._df_mi('outputs',
+                           ['output_pk', 'intervention_pk', 'group_pk', 'individual_pk'])
+
+    @property
+    def timecourses_mi(self) -> pd.DataFrame:
+        """ Multi-index data frame. """
+        return self._df_mi('timecourses',
+                           ['timecourse_pk', 'intervention_pk', 'group_pk', 'individual_pk'])
+
+    # --- filter and exclude ---
+
+    def _pk_filter(self, df_k, f_idx, concise):
+        dict_pkdata = self.as_dict()
+        dict_pkdata[df_k] = getattr(self, df_k).pk_filter(f_idx)
+
+        pkdata = PKData(**dict_pkdata)
+        if concise:
+            pkdata._concise()
+        return pkdata
+
+    def _pk_exclude(self, df_k, f_idx, concise):
+        dict_pkdata = self.as_dict()
+        dict_pkdata[df_k] = getattr(self, df_k).pk_exclude(f_idx)
+
+        pkdata = PKData(**dict_pkdata)
+        if concise:
+            pkdata._concise()
+        return pkdata
+
+    def _emptify(self, df_key, concise=True) -> 'PKData':
+        self._validate_df_key(df_key)
+
+        dict_pkdata = self.as_dict()
+        dict_pkdata[df_key] = getattr(self, df_key)._emptify()
+
+        pkdata = PKData(**dict_pkdata)
+        if concise:
+            pkdata._concise()
+        return pkdata
 
     @staticmethod
     def _validate_df_key(df_key):
         if df_key not in PKData.KEYS:
             raise ValueError(f"Unsupported key '{df_key}', key must be in '{PKData.KEYS}'")
 
-    @property
-    def _len(self):
-        return sum([len(getattr(self, df_key)) for df_key in PKData.KEYS])
+    def intervention_filter(self, f_idx, concise=True):
+        """ Filter interventions. """
+        return self._pk_filter("interventions", f_idx, concise)
+
+    def group_filter(self, f_idx, concise=True):
+        """ Filter groups. """
+        return self._pk_filter("groups", f_idx, concise)
+
+    def individual_filter(self, f_idx, concise=True):
+        """ Filter individuals. """
+        return self._pk_filter("individuals", f_idx, concise)
+
+    def subject_filter(self, f_idx, concise=True):
+        """ Filter group or individual. """
+        pkdata = self.group_filter(f_idx, concise=False)
+        pkdata.individual_filter(f_idx, concise=False)
+        if concise:
+            pkdata._concise()
+        return pkdata
+
+    def output_filter(self, f_idx, concise=True):
+        """ Filter outputs. """
+        return self._pk_filter("outputs", f_idx, concise)
+
+    def timecourse_filter(self, f_idx, concise=True):
+        """ Filter timecourses. """
+        return self._pk_filter("timecourses", f_idx, concise)
+
+    def intervention_exclude(self, f_idx, concise=True):
+        return self._pk_exclude("interventions", f_idx, concise)
+
+    def group_exclude(self, f_idx, concise=True):
+        return self._pk_exclude("groups", f_idx, concise)
+
+    def individual_exclude(self, f_idx, concise=True):
+        return self._pk_exclude("individuals", f_idx, concise)
+
+    def subject_exclude(self, f_idx, concise=True):
+        pkdata = self.group_exclude(f_idx, concise=False)
+        pkdata = pkdata.individual_exclude(f_idx, concise=False)
+        if concise:
+            pkdata._concise()
+        return pkdata
+
+    def output_exclude(self, f_idx, concise=True):
+        return self._pk_exclude("outputs", f_idx, concise)
+
+    def timecourse_pk_exclude(self, f_idx, concise=True):
+        return self._pk_exclude("timecourses", f_idx, concise)
+
+    def outputs_delete(self, concise=True):
+        """Deletes outputs."""
+        return self._emptify("outputs", concise=concise)
+
+    def timecourses_delete(self, concise=True):
+        """Deletes timecourses."""
+        return self._emptify("timecourses", concise=concise)
 
     def _concise(self) -> None:
         """ Reduces the current PKData to a consistent subset.
-
+        Modifies the DataFrame in place.
         :return:
         """
-
         previous_len = np.inf
         logger.warning("Concise DataFrames")
-        while previous_len > self._len:
-            previous_len = copy(self._len)
+        while previous_len > self._len_total:
+            previous_len = copy(self._len_total)
 
             # concise based on interventions
             outputs_intervention_pks = set(self.outputs.intervention_pk)
@@ -452,6 +460,11 @@ class PKData(object):
             for df_key in ["groups", "timecourses", "outputs"]:
                 df = getattr(self, df_key)
                 setattr(self, df_key, df[df.group_pk.isin(current_group_pks)])
+
+    @property
+    def _len_total(self):
+        return sum([len(getattr(self, df_key)) for df_key in PKData.KEYS])
+
 
     def get_choices(self):
         """ This is experimental.
@@ -502,164 +515,3 @@ class PKData(object):
             for field in fields:
                 print(f"*** {field} ***")
                 print(choices[field])
-
-    @staticmethod
-    def from_db(pkfilter: PKFilter = PKFilter(), page_size: int = 2000) -> "PKData":
-        """ Create a PKDBData representation and gets the data for the provided filters.
-        If no filters are given the complete data is retrieved.
-
-        :param pkfilter: Filter object to select subset of data, if no Filter is provided the complete data is returned
-        :param page_size: number of entries per query
-        """
-        pkfilter = pkfilter.to_dict()
-        parameters = {"format": "json", 'page_size': page_size}
-        logger.warning("*** Querying data ***")
-        return PKData(
-            interventions=PKData._get_subset("interventions_elastic",
-                                             **{**parameters, **pkfilter.get("interventions", {})}),
-            individuals=PKData._get_subset("characteristica_individuals",
-                                           **{**parameters, **pkfilter.get("individuals", {})}),
-            groups=PKData._get_subset("characteristica_groups", **{**parameters, **pkfilter.get("groups", {})}),
-            outputs=PKData._get_subset("output_intervention", **{**parameters, **pkfilter.get("outputs", {})}),
-            timecourses=PKData._get_subset("timecourse_intervention",
-                                           **{**parameters, **pkfilter.get("timecourses", {})})
-        )
-
-    @staticmethod
-    def from_hdf5(path):
-        """ Load data from HDF5 serialization.
-
-        :param path:
-        :return:
-        """
-        store = pd.HDFStore(path)
-        data_dict = {}
-        for key in store.keys():
-            # ugly bugfix due to hdf5 key mutation (key -> /key on storage)
-            data_dict[key[1:]] = store[key]
-        store.close()
-
-        return PKData(**data_dict)
-
-    def to_hdf5(self, path):
-        """ Store data as HDF5 serialization. """
-        store = pd.HDFStore(path)
-        for key in ["interventions", "individuals", "groups", "outputs", "timecourses"]:
-            df = getattr(self, key).df
-            store[key] = df
-        store.close()
-
-
-    @classmethod
-    def _get_subset(cls, name, **parameters):
-        """
-
-        :param name: name of the view
-        :param parameters: query parameters
-        :return:
-        """
-        if not name in [
-            # FIXME: unify names
-            # "studies_elastic",  # studies FIXME: not working
-            "characteristica_individuals",  # individuals
-            "characteristica_groups",  # groups
-            "interventions_elastic",  # interventions FIXME: why plural
-            "output_intervention",  # outputs
-            "timecourse_intervention",  # timecourses
-
-        ]:
-            raise ValueError(f"{name} not supported")
-
-        url = urlparse.urljoin(cls.URL_BASE, f'{name}/')
-        return cls._get_data(url, cls._get_headers(), **parameters)
-
-    @classmethod
-    def _get_login_token(cls):
-        url = f"{cls.PKDB_URL}/api-token-auth/"
-        payload = {'username': cls.PKDB_USERNAME, 'password': cls.PKDB_PASSWORD}
-        response = requests.post(url, data=payload)
-        return response.json().get("token")
-
-    @classmethod
-    def _get_headers(cls):
-        token = cls._get_login_token()
-        headers = {'Authorization': f'Token {token}'}
-        return headers
-
-
-    @staticmethod
-    def _get_data(url, headers, **parameters) -> pd.DataFrame:
-        """Gets data from a paginated rest API."""
-        url_params = "?" + urlparse.urlencode(parameters)
-        actual_url = urlparse.urljoin(url, url_params)
-        logger.warning(actual_url)
-
-        # FIXME: make first request fast
-        response = requests.get(actual_url, headers=headers)
-        try:
-            response.raise_for_status()
-            num_pages = response.json()["last_page"]
-
-        except requests.exceptions.HTTPError as err:
-            raise err
-
-        data = []
-        for page in range(1, num_pages + 1):
-            url_current = actual_url + f"&page={page}"
-            logger.warning(url_current)
-
-            response = requests.get(url_current, headers=headers)
-            data += response.json()["data"]["data"]
-
-        # convert to data frame
-        df = pd.DataFrame(data)
-
-        # convert columns to float columns
-        float_columns = [
-            "mean",
-            "median",
-            "value",
-            "sd",
-            "se",
-            "cv",
-            "min",
-            "max",
-            "time"
-        ]
-        if "timecourse" not in url:
-            for column in float_columns:
-                if column in df.columns:
-                    df[column] = df[column].astype(float)
-        else:
-            # every element must be converted individually
-            for column in float_columns:
-                if column in df:
-                    col_loc = df.columns.get_loc(column)
-                    for k in range(len(df)):
-                        value = df.iloc[k, col_loc]
-                        if value is not None:
-                            df.at[k, column] = np.array(value).astype(float)
-
-        # convert columns to int columns
-        int_columns = [
-            "timecourse_pk",
-            "intervention_pk",
-            "group_pk",
-            "individual_pk",
-            "group_parent_pk",
-            "raw_pk",
-        ]
-        for column in int_columns:
-            if column in df.columns:
-                df[column] = df[column].replace({pd.np.nan:-1}).astype(int)
-
-        return df
-
-
-if __name__ == "__main__":
-    from pathlib import Path
-    data = PKData.from_db()
-    h5_path = Path("../results/") / "test.h5"
-
-    data.to_hdf5(h5_path)
-    data2 = PKData.from_hdf5(h5_path)

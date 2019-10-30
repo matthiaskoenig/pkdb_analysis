@@ -1,6 +1,7 @@
 import pytest
 from pkdb_analysis.data import PKData
-from pkdb_analysis.pkfilter import PKFilter, PKFilterFactory
+from pkdb_analysis.pkfilter import PKFilterFactory
+from pkdb_analysis.query import PKDB
 import pandas as pd
 
 
@@ -31,7 +32,7 @@ def _check_data_empty(data):
 def test_data_by_study_name():
     # check existing study
     pkfilter = PKFilterFactory.by_study_name("Test1")
-    data = PKData.from_db(pkfilter=pkfilter)
+    data = PKDB.query(pkfilter=pkfilter)
     _check_data(data)
 
     for key in PKData.KEYS:
@@ -44,14 +45,14 @@ def test_data_by_study_name():
 def test_data_by_study_name_empty():
     # check non-existing study
     pkfilter = PKFilterFactory.by_study_name("xyzfasdfs")
-    data = PKData.from_db(pkfilter=pkfilter)
+    data = PKDB.query(pkfilter=pkfilter)
     _check_data_empty(data)
 
 
 def test_data_by_study_sid():
     # check existing study
     pkfilter = PKFilterFactory.by_study_sid("PKDB99999")
-    data = PKData.from_db(pkfilter=pkfilter)
+    data = PKDB.query(pkfilter=pkfilter)
 
     _check_data(data)
 
@@ -65,13 +66,13 @@ def test_data_by_study_sid():
 def test_data_by_study_sid_empty():
     # check non-existing study
     pkfilter = PKFilterFactory.by_study_sid("xyzfasdfs")
-    data = PKData.from_db(pkfilter=pkfilter)
+    data = PKDB.query(pkfilter=pkfilter)
     _check_data_empty(data)
 
 
 def test_data_hdf5(tmp_path):
     """ Test HDF io"""
-    data = PKData.from_db()
+    data = PKDB.query()
 
     h5_path = tmp_path / "test.h5"
     data.to_hdf5(h5_path)
@@ -84,7 +85,7 @@ def test_data_hdf5(tmp_path):
 
 def test_data_counts():
     pkfilter = PKFilterFactory.by_study_name("Test1")
-    data = PKData.from_db(pkfilter=pkfilter)
+    data = PKDB.query(pkfilter=pkfilter)
     assert data.groups_count == 1
     assert data.individuals_count == 6
     assert data.interventions_count == 3
@@ -94,7 +95,7 @@ def test_data_counts():
 
 def test_data_mi():
     pkfilter = PKFilterFactory.by_study_name("Test1")
-    data = PKData.from_db(pkfilter=pkfilter)
+    data = PKDB.query(pkfilter=pkfilter)
     for field in PKData.KEYS:
         print(field)
         df = getattr(data, f"{field}_mi")
@@ -107,7 +108,7 @@ def test_data_mi():
 def test_data_test1():
     # check non-existing study
     pkfilter = PKFilterFactory.by_study_name("Test1")
-    data = PKData.from_db(pkfilter=pkfilter)
+    data = PKDB.query(pkfilter=pkfilter)
     _check_data(data)
 
     assert len(data.groups) == 6
