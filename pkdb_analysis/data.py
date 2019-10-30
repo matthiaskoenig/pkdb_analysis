@@ -396,27 +396,6 @@ class PKData(object):
 
         :param df_key: DataFrame on which the filter (f_idx) shall be applied.
         :type df_key: str
-        :param f_idx:  Is a filter by index of the DataFrame selected by the df_key. A similar notation as the filtering
-        of pd.DataFrames can be used. This mostly are (lambda) function. Further a list of (lambda) function are allowed
-        as input. The list of functions are executed successively, which is identical to an intersection of all filters
-        applied separately.
-
-        * Pitfalls
-        Don't use the the invert operator `~` but use the exclude_*() functions.
-        # todo: add no invert operator to Validation rule
-
-        *Example
-         1.
-         >>> lambda d: d['measurement_type'] == 'disease'
-         2.
-         >>> def female(d):
-         >>>    return (d['measurement_type'] == 'sex') & (d['measurement_type'] == 'F')
-         3.
-         >>> def healthy_female(d):
-         >>>    return [(d['measurement_type'] == 'sex') & (d['measurement_type'] == 'F'), (d['measurement_type'] == 'healthy') & (d['measurement_type'] == 'T')]
-
-        :type f_idx: function, list
-
         :param concise:
         :return:
         """
@@ -454,22 +433,34 @@ class PKData(object):
         if df_key not in PKData.KEYS:
             raise ValueError(f"Unsupported key '{df_key}', key must be in '{PKData.KEYS}'")
 
-    def filter_intervention(self, f_idx, concise=True)  -> 'PKData':
+    def filter_intervention(self, f_idx, concise=True) -> 'PKData':
         """Filter interventions.
-        :param f_idx:
-        :param concise: this is the doc for concise
 
-        :return:
+        :param f_idx: Is a filter by index of the DataFrame selected by the df_key. A similar notation as the filtering
+            of pd.DataFrames can be used. This mostly are (lambda) function. Further a list of (lambda) function are allowed
+            as input. The list of functions are executed successively, which is identical to an intersection of all filters
+            applied separately.
+
+            Pitfalls
+                - Don't use the invert operator `~` but use the exclude_*() functions.
+                - #todo: add no invert operator to Validation rule
+        :type f_idx: function, list
+
+
+        :param concise: concises the returned PKData instance.
+
+        :return: Filter PKData instance
+        :rtype: PKData
         """
 
-        """ Filter interventions. """
         return self._pk_filter("interventions", f_idx, concise)
 
-    def filter_group(self, f_idx, concise=True)  -> 'PKData':
+    def filter_group(self, f_idx, concise=True) -> 'PKData':
         """ Filter groups. """
         return self._pk_filter("groups", f_idx, concise)
 
     def filter_individual(self, f_idx, concise=True) -> 'PKData':
+
         """ Filter individuals. """
         return self._pk_filter("individuals", f_idx, concise)
 
@@ -515,7 +506,6 @@ class PKData(object):
     def delete_outputs(self, concise=True) -> 'PKData':
         """
         Deletes outputs.
-        :paramref:`.pkdb_analysis.data.PKData.filter_intervention`
         :return:
         """
         return self._emptify("outputs", concise=concise)
