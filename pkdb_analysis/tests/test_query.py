@@ -1,8 +1,8 @@
-import pytest
-from pkdb_analysis.data import PKData
-from pkdb_analysis import PKFilterFactory
-from pkdb_analysis.query import PKDB
 import pandas as pd
+
+from pkdb_analysis import PKFilterFactory
+from pkdb_analysis.data import PKData
+from pkdb_analysis.query import PKDB
 
 
 def _check_data(data):
