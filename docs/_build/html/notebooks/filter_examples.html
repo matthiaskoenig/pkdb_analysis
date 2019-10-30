@@ -1,0 +1,2058 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Filter data &mdash; pkdb_analysis  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Working with PK-DB data" href="data_examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pkdb_analysis
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="query_examples.html">Query PK-DB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Working with PK-DB data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Filter data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#filter-functions">Filter functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filter-by-study-sid">Filter by <code class="docutils literal notranslate"><span class="pre">study_sid</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#concise-data">Concise data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#query-groups-and-individuals">Query groups and individuals</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#get-data-for-groups-with-characteristica-keywords-x">2.1 Get data for groups with characteristica/keywords X</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#query-interventions">3 Query interventions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#get-outputs-timecourses-for-intervention-with-substance">3.1 Get outputs/timecourses for intervention with substance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-outputs-timecourses-where-multiple-interventions-were-given">3.2 Get outputs/timecourses where multiple interventions were given</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#query-outputs-timecourses">4 Query outputs/timecourses</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#query-by-measurement-type">4.1 query by measurement_type</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#other-query-others">5 Other Query others</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#complex">5.1 Complex</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pitfalls">6 Pitfalls</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pkdb_analysis</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Filter data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/notebooks/filter_examples.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
+
+<span class="kn">from</span> <span class="nn">pkdb_analysis</span> <span class="kn">import</span> <span class="n">PKData</span><span class="p">,</span> <span class="n">PKFilter</span>
+<span class="kn">from</span> <span class="nn">pkdb_analysis.tests.constants</span> <span class="kn">import</span> <span class="n">TEST_HDF5</span>
+</pre></div>
+</div>
+<div class="section" id="filter-data">
+<h1>Filter data<a class="headerlink" href="#filter-data" title="Permalink to this headline">¶</a></h1>
+<p>A recurring task is to filter data for a certain question. E.g. to
+compare two groups, or get the subset of data for all healthy smokers.</p>
+<p>We work again with our test data set and will filter various subsets
+from it.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span> <span class="o">=</span> <span class="n">PKData</span><span class="o">.</span><span class="n">from_hdf5</span><span class="p">(</span><span class="n">TEST_HDF5</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140385774054312</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">4</span>
+<span class="n">groups</span>              <span class="mi">8</span>  <span class="p">(</span>   <span class="mi">86</span><span class="p">)</span>
+<span class="n">individuals</span>       <span class="mi">246</span>  <span class="p">(</span> <span class="mi">3144</span><span class="p">)</span>
+<span class="n">interventions</span>      <span class="mi">18</span>  <span class="p">(</span>   <span class="mi">18</span><span class="p">)</span>
+<span class="n">outputs</span>          <span class="mi">1064</span>  <span class="p">(</span> <span class="mi">1106</span><span class="p">)</span>
+<span class="n">timecourses</span>        <span class="mi">40</span>  <span class="p">(</span>   <span class="mi">46</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+<div class="section" id="filter-functions">
+<h2>Filter functions<a class="headerlink" href="#filter-functions" title="Permalink to this headline">¶</a></h2>
+<p>The main principle for filtering <code class="docutils literal notranslate"><span class="pre">PKData</span></code> is by using the <code class="docutils literal notranslate"><span class="pre">filter_*</span></code>
+and <code class="docutils literal notranslate"><span class="pre">exclude_*</span></code> functionality.</p>
+<p>A key principle are hereby filter functions which for a given DataFrame
+return a logical index.</p>
+<p>Depending on which subset of information this should be applied the
+<code class="docutils literal notranslate"><span class="pre">groups</span></code>, <code class="docutils literal notranslate"><span class="pre">individuals</span></code>, <code class="docutils literal notranslate"><span class="pre">subjects</span></code> (groups and individuals),
+<code class="docutils literal notranslate"><span class="pre">outputs</span></code> and <code class="docutils literal notranslate"><span class="pre">timecourses</span></code>.</p>
+</div>
+<div class="section" id="filter-by-study-sid">
+<h2>Filter by <code class="docutils literal notranslate"><span class="pre">study_sid</span></code><a class="headerlink" href="#filter-by-study-sid" title="Permalink to this headline">¶</a></h2>
+<p>A first example is filtering by <code class="docutils literal notranslate"><span class="pre">study_sid</span></code>, i.e. we only want the
+subset of data from a single study. An overview over the existing study
+sids in the dataset is available via</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span><span class="o">.</span><span class="n">study_sids</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;PKDB99996&#39;</span><span class="p">,</span> <span class="s1">&#39;PKDB99997&#39;</span><span class="p">,</span> <span class="s1">&#39;PKDB99998&#39;</span><span class="p">,</span> <span class="s1">&#39;PKDB99999&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Filtering a subset of data works by providing filter/selection functions
+which select a subset of the data. The filters are written on the
+<code class="docutils literal notranslate"><span class="pre">groups</span></code>, <code class="docutils literal notranslate"><span class="pre">individuals</span></code></p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">is_PKDB99999</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Filter for specific study_sid. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">d</span><span class="o">.</span><span class="n">study_sid</span> <span class="o">==</span> <span class="s2">&quot;PKDB99999&quot;</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_intervention</span><span class="p">(</span><span class="n">is_PKDB99999</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140383711397536</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">1</span>
+<span class="n">groups</span>              <span class="mi">1</span>  <span class="p">(</span>    <span class="mi">6</span><span class="p">)</span>
+<span class="n">individuals</span>         <span class="mi">6</span>  <span class="p">(</span>   <span class="mi">42</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">3</span>  <span class="p">(</span>    <span class="mi">3</span><span class="p">)</span>
+<span class="n">outputs</span>           <span class="mi">194</span>  <span class="p">(</span>  <span class="mi">194</span><span class="p">)</span>
+<span class="n">timecourses</span>         <span class="mi">4</span>  <span class="p">(</span>    <span class="mi">4</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+<p>The PKData now only contains data for the given study_sid:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">study_sids</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;PKDB99999&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># for instance interventions</span>
+<span class="n">display</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">interventions</span><span class="p">)</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>study_sid</th>
+      <th>study_name</th>
+      <th>intervention_pk</th>
+      <th>raw_pk</th>
+      <th>normed</th>
+      <th>name</th>
+      <th>route</th>
+      <th>form</th>
+      <th>application</th>
+      <th>time</th>
+      <th>...</th>
+      <th>substance</th>
+      <th>value</th>
+      <th>mean</th>
+      <th>median</th>
+      <th>min</th>
+      <th>max</th>
+      <th>sd</th>
+      <th>se</th>
+      <th>cv</th>
+      <th>unit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>8</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>93</td>
+      <td>91</td>
+      <td>True</td>
+      <td>po75</td>
+      <td>oral</td>
+      <td>tablet</td>
+      <td>single dose</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>midazolam</td>
+      <td>0.007500</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>gram</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>94</td>
+      <td>92</td>
+      <td>True</td>
+      <td>po15</td>
+      <td>oral</td>
+      <td>tablet</td>
+      <td>single dose</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>midazolam</td>
+      <td>0.015000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>gram</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>96</td>
+      <td>95</td>
+      <td>True</td>
+      <td>iv</td>
+      <td>iv</td>
+      <td>solution</td>
+      <td>single dose</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>midazolam</td>
+      <td>0.000075</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>gram / kilogram</td>
+    </tr>
+  </tbody>
+</table>
+<p>3 rows × 23 columns</p>
+</div><p>One could also define this as a simple lambda function</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_intervention</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">study_sid</span> <span class="o">==</span> <span class="s2">&quot;PKDB99999&quot;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140383711800288</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">1</span>
+<span class="n">groups</span>              <span class="mi">1</span>  <span class="p">(</span>    <span class="mi">6</span><span class="p">)</span>
+<span class="n">individuals</span>         <span class="mi">6</span>  <span class="p">(</span>   <span class="mi">42</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">3</span>  <span class="p">(</span>    <span class="mi">3</span><span class="p">)</span>
+<span class="n">outputs</span>           <span class="mi">194</span>  <span class="p">(</span>  <span class="mi">194</span><span class="p">)</span>
+<span class="n">timecourses</span>         <span class="mi">4</span>  <span class="p">(</span>    <span class="mi">4</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="concise-data">
+<h2>Concise data<a class="headerlink" href="#concise-data" title="Permalink to this headline">¶</a></h2>
+<p>All operations on <code class="docutils literal notranslate"><span class="pre">PKData</span></code> leave the data in a consistent manner. E.g.
+if an intervention is filtered out also all the outputs using this
+intervention are filtered out. This behavior is controlled by the
+<code class="docutils literal notranslate"><span class="pre">concise</span></code> flag on most operations.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t1</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_intervention</span><span class="p">(</span><span class="n">is_PKDB99999</span><span class="p">)</span>
+<span class="n">t2</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_intervention</span><span class="p">(</span><span class="n">is_PKDB99999</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140385774083208</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">1</span>
+<span class="n">groups</span>              <span class="mi">1</span>  <span class="p">(</span>    <span class="mi">6</span><span class="p">)</span>
+<span class="n">individuals</span>         <span class="mi">6</span>  <span class="p">(</span>   <span class="mi">42</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">3</span>  <span class="p">(</span>    <span class="mi">3</span><span class="p">)</span>
+<span class="n">outputs</span>           <span class="mi">194</span>  <span class="p">(</span>  <span class="mi">194</span><span class="p">)</span>
+<span class="n">timecourses</span>         <span class="mi">4</span>  <span class="p">(</span>    <span class="mi">4</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140383709836176</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">4</span>
+<span class="n">groups</span>              <span class="mi">8</span>  <span class="p">(</span>   <span class="mi">86</span><span class="p">)</span>
+<span class="n">individuals</span>       <span class="mi">246</span>  <span class="p">(</span> <span class="mi">3144</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">6</span>  <span class="p">(</span>    <span class="mi">6</span><span class="p">)</span>
+<span class="n">outputs</span>          <span class="mi">1064</span>  <span class="p">(</span> <span class="mi">1106</span><span class="p">)</span>
+<span class="n">timecourses</span>        <span class="mi">40</span>  <span class="p">(</span>   <span class="mi">46</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># FIXME: only normed data</span>
+<span class="n">t1</span><span class="o">.</span><span class="n">interventions_mi</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>study_sid</th>
+      <th>study_name</th>
+      <th>raw_pk</th>
+      <th>normed</th>
+      <th>name</th>
+      <th>route</th>
+      <th>form</th>
+      <th>application</th>
+      <th>time</th>
+      <th>time_unit</th>
+      <th>...</th>
+      <th>substance</th>
+      <th>value</th>
+      <th>mean</th>
+      <th>median</th>
+      <th>min</th>
+      <th>max</th>
+      <th>sd</th>
+      <th>se</th>
+      <th>cv</th>
+      <th>unit</th>
+    </tr>
+    <tr>
+      <th>intervention_pk</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>93</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>91</td>
+      <td>True</td>
+      <td>po75</td>
+      <td>oral</td>
+      <td>tablet</td>
+      <td>single dose</td>
+      <td>0.0</td>
+      <td>hr</td>
+      <td>...</td>
+      <td>midazolam</td>
+      <td>0.007500</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>gram</td>
+    </tr>
+    <tr>
+      <th>94</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>92</td>
+      <td>True</td>
+      <td>po15</td>
+      <td>oral</td>
+      <td>tablet</td>
+      <td>single dose</td>
+      <td>0.0</td>
+      <td>hr</td>
+      <td>...</td>
+      <td>midazolam</td>
+      <td>0.015000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>gram</td>
+    </tr>
+    <tr>
+      <th>96</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>95</td>
+      <td>True</td>
+      <td>iv</td>
+      <td>iv</td>
+      <td>solution</td>
+      <td>single dose</td>
+      <td>0.0</td>
+      <td>hr</td>
+      <td>...</td>
+      <td>midazolam</td>
+      <td>0.000075</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>gram / kilogram</td>
+    </tr>
+  </tbody>
+</table>
+<p>3 rows × 22 columns</p>
+</div><div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t2</span><span class="o">.</span><span class="n">interventions_mi</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>study_sid</th>
+      <th>study_name</th>
+      <th>raw_pk</th>
+      <th>normed</th>
+      <th>name</th>
+      <th>route</th>
+      <th>form</th>
+      <th>application</th>
+      <th>time</th>
+      <th>time_unit</th>
+      <th>...</th>
+      <th>substance</th>
+      <th>value</th>
+      <th>mean</th>
+      <th>median</th>
+      <th>min</th>
+      <th>max</th>
+      <th>sd</th>
+      <th>se</th>
+      <th>cv</th>
+      <th>unit</th>
+    </tr>
+    <tr>
+      <th>intervention_pk</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>91</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>-1</td>
+      <td>False</td>
+      <td>po75</td>
+      <td>oral</td>
+      <td>tablet</td>
+      <td>single dose</td>
+      <td>0.0</td>
+      <td>hr</td>
+      <td>...</td>
+      <td>midazolam</td>
+      <td>7.500000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>mg</td>
+    </tr>
+    <tr>
+      <th>92</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>-1</td>
+      <td>False</td>
+      <td>po15</td>
+      <td>oral</td>
+      <td>tablet</td>
+      <td>single dose</td>
+      <td>0.0</td>
+      <td>hr</td>
+      <td>...</td>
+      <td>midazolam</td>
+      <td>15.000000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>mg</td>
+    </tr>
+    <tr>
+      <th>93</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>91</td>
+      <td>True</td>
+      <td>po75</td>
+      <td>oral</td>
+      <td>tablet</td>
+      <td>single dose</td>
+      <td>0.0</td>
+      <td>hr</td>
+      <td>...</td>
+      <td>midazolam</td>
+      <td>0.007500</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>gram</td>
+    </tr>
+    <tr>
+      <th>94</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>92</td>
+      <td>True</td>
+      <td>po15</td>
+      <td>oral</td>
+      <td>tablet</td>
+      <td>single dose</td>
+      <td>0.0</td>
+      <td>hr</td>
+      <td>...</td>
+      <td>midazolam</td>
+      <td>0.015000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>gram</td>
+    </tr>
+    <tr>
+      <th>95</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>-1</td>
+      <td>False</td>
+      <td>iv</td>
+      <td>iv</td>
+      <td>solution</td>
+      <td>single dose</td>
+      <td>0.0</td>
+      <td>hr</td>
+      <td>...</td>
+      <td>midazolam</td>
+      <td>0.075000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>mg/kg</td>
+    </tr>
+    <tr>
+      <th>96</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>95</td>
+      <td>True</td>
+      <td>iv</td>
+      <td>iv</td>
+      <td>solution</td>
+      <td>single dose</td>
+      <td>0.0</td>
+      <td>hr</td>
+      <td>...</td>
+      <td>midazolam</td>
+      <td>0.000075</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>gram / kilogram</td>
+    </tr>
+  </tbody>
+</table>
+<p>6 rows × 22 columns</p>
+</div><div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t2</span><span class="o">.</span><span class="n">outputs</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>study_sid</th>
+      <th>study_name</th>
+      <th>output_pk</th>
+      <th>intervention_pk</th>
+      <th>group_pk</th>
+      <th>individual_pk</th>
+      <th>normed</th>
+      <th>calculated</th>
+      <th>tissue</th>
+      <th>time</th>
+      <th>...</th>
+      <th>substance</th>
+      <th>value</th>
+      <th>mean</th>
+      <th>median</th>
+      <th>min</th>
+      <th>max</th>
+      <th>sd</th>
+      <th>se</th>
+      <th>cv</th>
+      <th>unit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>2510</td>
+      <td>106</td>
+      <td>27</td>
+      <td>-1</td>
+      <td>False</td>
+      <td>False</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>caffeine</td>
+      <td>NaN</td>
+      <td>0.78000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.18000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>hr</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>2515</td>
+      <td>106</td>
+      <td>27</td>
+      <td>-1</td>
+      <td>True</td>
+      <td>False</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>caffeine</td>
+      <td>NaN</td>
+      <td>4.80000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.10000</td>
+      <td>0.27500</td>
+      <td>0.229</td>
+      <td>hour</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>2519</td>
+      <td>108</td>
+      <td>27</td>
+      <td>-1</td>
+      <td>False</td>
+      <td>False</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>caffeine</td>
+      <td>NaN</td>
+      <td>4.07000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.56000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>µg/ml</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>2523</td>
+      <td>106</td>
+      <td>27</td>
+      <td>-1</td>
+      <td>True</td>
+      <td>False</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>caffeine</td>
+      <td>NaN</td>
+      <td>0.00407</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.00056</td>
+      <td>0.00014</td>
+      <td>0.138</td>
+      <td>gram / liter</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>2528</td>
+      <td>106</td>
+      <td>27</td>
+      <td>-1</td>
+      <td>True</td>
+      <td>False</td>
+      <td>plasma</td>
+      <td>24.0</td>
+      <td>...</td>
+      <td>caffeine</td>
+      <td>NaN</td>
+      <td>0.02970</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.00660</td>
+      <td>0.00165</td>
+      <td>0.222</td>
+      <td>gram * hour / liter</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1101</th>
+      <td>PKDB99998</td>
+      <td>Test2</td>
+      <td>2095</td>
+      <td>98</td>
+      <td>-1</td>
+      <td>171</td>
+      <td>True</td>
+      <td>False</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>paracetamol</td>
+      <td>0.0577</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>gram * hour / liter</td>
+    </tr>
+    <tr>
+      <th>1102</th>
+      <td>PKDB99998</td>
+      <td>Test2</td>
+      <td>2105</td>
+      <td>98</td>
+      <td>-1</td>
+      <td>181</td>
+      <td>True</td>
+      <td>False</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>paracetamol</td>
+      <td>0.0536</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>gram * hour / liter</td>
+    </tr>
+    <tr>
+      <th>1103</th>
+      <td>PKDB99998</td>
+      <td>Test2</td>
+      <td>2110</td>
+      <td>98</td>
+      <td>-1</td>
+      <td>186</td>
+      <td>True</td>
+      <td>False</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>paracetamol</td>
+      <td>0.0414</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>gram * hour / liter</td>
+    </tr>
+    <tr>
+      <th>1104</th>
+      <td>PKDB99998</td>
+      <td>Test2</td>
+      <td>2111</td>
+      <td>98</td>
+      <td>-1</td>
+      <td>187</td>
+      <td>True</td>
+      <td>False</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>paracetamol</td>
+      <td>0.0502</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>gram * hour / liter</td>
+    </tr>
+    <tr>
+      <th>1105</th>
+      <td>PKDB99998</td>
+      <td>Test2</td>
+      <td>2116</td>
+      <td>98</td>
+      <td>-1</td>
+      <td>192</td>
+      <td>True</td>
+      <td>False</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>paracetamol</td>
+      <td>0.0659</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>gram * hour / liter</td>
+    </tr>
+  </tbody>
+</table>
+<p>1106 rows × 23 columns</p>
+</div></div>
+<div class="section" id="query-groups-and-individuals">
+<h2>Query groups and individuals<a class="headerlink" href="#query-groups-and-individuals" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-data-for-groups-with-characteristica-keywords-x">
+<h3>2.1 Get data for groups with characteristica/keywords X<a class="headerlink" href="#get-data-for-groups-with-characteristica-keywords-x" title="Permalink to this headline">¶</a></h3>
+<p>healthy=True, smoking=N, disease=None, individual queries and
+combinations.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">is_healthy</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="c1"># healthy is reported and True</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">measurement_type</span> <span class="o">==</span> <span class="s2">&quot;healthy&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">disease</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="c1"># any disease is reported</span>
+    <span class="k">return</span>  <span class="n">d</span><span class="o">.</span><span class="n">measurement_type</span> <span class="o">==</span> <span class="s2">&quot;disease&quot;</span>
+
+<span class="k">def</span> <span class="nf">smoking</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="c1"># smoking status is curated for study (this could by Y/N/NR)</span>
+    <span class="k">return</span>  <span class="n">d</span><span class="o">.</span><span class="n">measurement_type</span> <span class="o">==</span> <span class="s2">&quot;smoking&quot;</span>
+
+<span class="k">def</span> <span class="nf">nonsmoker</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="c1"># smoking is reported and no</span>
+    <span class="k">return</span> <span class="n">smoking</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;N&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">smoker</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="c1"># smoking is reported and yes</span>
+    <span class="k">return</span> <span class="n">smoking</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span> <span class="o">=</span> <span class="n">PKData</span><span class="o">.</span><span class="n">from_hdf5</span><span class="p">(</span><span class="n">TEST_HDF5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">f_idx</span></code> can be a single function, or a list of functions. A list of
+functions are applied successively and is equivalent to “AND logic”. “OR
+logic” can be directly applied on the index.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">healthy_nonsmoker</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_subject</span><span class="p">(</span><span class="n">f_idx</span><span class="o">=</span><span class="p">[</span><span class="n">is_healthy</span><span class="p">,</span> <span class="n">nonsmoker</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="n">healthy_nonsmoker</span><span class="p">)</span>
+<span class="n">healthy_nonsmoker</span><span class="o">.</span><span class="n">groups_mi</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140383710390032</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">4</span>
+<span class="n">groups</span>              <span class="mi">6</span>  <span class="p">(</span>   <span class="mi">73</span><span class="p">)</span>
+<span class="n">individuals</span>       <span class="mi">246</span>  <span class="p">(</span> <span class="mi">3144</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">9</span>  <span class="p">(</span>    <span class="mi">9</span><span class="p">)</span>
+<span class="n">outputs</span>          <span class="mi">1064</span>  <span class="p">(</span> <span class="mi">1106</span><span class="p">)</span>
+<span class="n">timecourses</span>        <span class="mi">40</span>  <span class="p">(</span>   <span class="mi">46</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>study_sid</th>
+      <th>study_name</th>
+      <th>group_name</th>
+      <th>group_count</th>
+      <th>group_parent_pk</th>
+      <th>count</th>
+      <th>measurement_type</th>
+      <th>choice</th>
+      <th>substance</th>
+      <th>value</th>
+      <th>mean</th>
+      <th>median</th>
+      <th>min</th>
+      <th>max</th>
+      <th>sd</th>
+      <th>se</th>
+      <th>cv</th>
+      <th>unit</th>
+    </tr>
+    <tr>
+      <th>group_pk</th>
+      <th>characteristica_pk</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="5" valign="top">20</th>
+      <th>481</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>all</td>
+      <td>6</td>
+      <td>-1</td>
+      <td>6</td>
+      <td>species</td>
+      <td>homo sapiens</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>482</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>all</td>
+      <td>6</td>
+      <td>-1</td>
+      <td>6</td>
+      <td>healthy</td>
+      <td>Y</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>483</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>all</td>
+      <td>6</td>
+      <td>-1</td>
+      <td>1</td>
+      <td>smoking</td>
+      <td>Y</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>484</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>all</td>
+      <td>6</td>
+      <td>-1</td>
+      <td>5</td>
+      <td>smoking</td>
+      <td>N</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>485</th>
+      <td>PKDB99999</td>
+      <td>Test1</td>
+      <td>all</td>
+      <td>6</td>
+      <td>-1</td>
+      <td>6</td>
+      <td>age</td>
+      <td>None</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>25.0</td>
+      <td>37.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>yr</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th rowspan="5" valign="top">27</th>
+      <th>1086</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>all</td>
+      <td>16</td>
+      <td>-1</td>
+      <td>16</td>
+      <td>alcohol</td>
+      <td>N</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1087</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>all</td>
+      <td>16</td>
+      <td>-1</td>
+      <td>16</td>
+      <td>weight</td>
+      <td>None</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>76.7</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>6.8</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>kilogram</td>
+    </tr>
+    <tr>
+      <th>1088</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>all</td>
+      <td>16</td>
+      <td>-1</td>
+      <td>16</td>
+      <td>age</td>
+      <td>None</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>27.1</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>3.1</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>yr</td>
+    </tr>
+    <tr>
+      <th>1089</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>all</td>
+      <td>16</td>
+      <td>-1</td>
+      <td>16</td>
+      <td>ethnicity</td>
+      <td>NR</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1090</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>all</td>
+      <td>16</td>
+      <td>-1</td>
+      <td>16</td>
+      <td>overnight fast</td>
+      <td>Y</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+  </tbody>
+</table>
+<p>73 rows × 18 columns</p>
+</div><p>Often attributes are mixed for groups so we have to exclude the
+opposites. In the example, the group <code class="docutils literal notranslate"><span class="pre">20</span></code> consists of 5 smokers and 1
+nonsmoker. So for a subset of the group smoking is No. We can exclude
+groups via</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">healthy_nonsmoker</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_subject</span><span class="p">([</span><span class="n">is_healthy</span><span class="p">,</span> <span class="n">nonsmoker</span><span class="p">])</span><span class="o">.</span><span class="n">exclude_subject</span><span class="p">([</span><span class="n">smoker</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="n">healthy_nonsmoker</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">healthy_nonsmoker</span><span class="o">.</span><span class="n">groups_mi</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
+<span class="n">Concise</span> <span class="n">DataFrames</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140383710391936</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">2</span>
+<span class="n">groups</span>              <span class="mi">1</span>  <span class="p">(</span>   <span class="mi">11</span><span class="p">)</span>
+<span class="n">individuals</span>         <span class="mi">2</span>  <span class="p">(</span>    <span class="mi">8</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">5</span>  <span class="p">(</span>    <span class="mi">5</span><span class="p">)</span>
+<span class="n">outputs</span>           <span class="mi">191</span>  <span class="p">(</span>  <span class="mi">233</span><span class="p">)</span>
+<span class="n">timecourses</span>        <span class="mi">12</span>  <span class="p">(</span>   <span class="mi">18</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>study_sid</th>
+      <th>study_name</th>
+      <th>group_name</th>
+      <th>group_count</th>
+      <th>group_parent_pk</th>
+      <th>count</th>
+      <th>measurement_type</th>
+      <th>choice</th>
+      <th>substance</th>
+      <th>value</th>
+      <th>mean</th>
+      <th>median</th>
+      <th>min</th>
+      <th>max</th>
+      <th>sd</th>
+      <th>se</th>
+      <th>cv</th>
+      <th>unit</th>
+    </tr>
+    <tr>
+      <th>group_pk</th>
+      <th>characteristica_pk</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="11" valign="top">27</th>
+      <th>1080</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>all</td>
+      <td>16</td>
+      <td>-1</td>
+      <td>16</td>
+      <td>species</td>
+      <td>homo sapiens</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1081</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>all</td>
+      <td>16</td>
+      <td>-1</td>
+      <td>16</td>
+      <td>healthy</td>
+      <td>Y</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1082</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>all</td>
+      <td>16</td>
+      <td>-1</td>
+      <td>16</td>
+      <td>sex</td>
+      <td>M</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1083</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>all</td>
+      <td>16</td>
+      <td>-1</td>
+      <td>16</td>
+      <td>smoking</td>
+      <td>N</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1084</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>all</td>
+      <td>16</td>
+      <td>-1</td>
+      <td>16</td>
+      <td>abstinence</td>
+      <td>None</td>
+      <td>methylxanthine</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1085</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>all</td>
+      <td>16</td>
+      <td>-1</td>
+      <td>16</td>
+      <td>medication</td>
+      <td>N</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1086</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>all</td>
+      <td>16</td>
+      <td>-1</td>
+      <td>16</td>
+      <td>alcohol</td>
+      <td>N</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1087</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>all</td>
+      <td>16</td>
+      <td>-1</td>
+      <td>16</td>
+      <td>weight</td>
+      <td>None</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>76.7</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>6.8</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>kilogram</td>
+    </tr>
+    <tr>
+      <th>1088</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>all</td>
+      <td>16</td>
+      <td>-1</td>
+      <td>16</td>
+      <td>age</td>
+      <td>None</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>27.1</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>3.1</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>yr</td>
+    </tr>
+    <tr>
+      <th>1089</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>all</td>
+      <td>16</td>
+      <td>-1</td>
+      <td>16</td>
+      <td>ethnicity</td>
+      <td>NR</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1090</th>
+      <td>PKDB99996</td>
+      <td>Test4</td>
+      <td>all</td>
+      <td>16</td>
+      <td>-1</td>
+      <td>16</td>
+      <td>overnight fast</td>
+      <td>Y</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+    </tr>
+  </tbody>
+</table>
+</div><p>In addition often combinations of attributes have to be used to find the
+correct subjects. For instance a combination of <code class="docutils literal notranslate"><span class="pre">healthy</span></code> and reported
+<code class="docutils literal notranslate"><span class="pre">disease</span></code></p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">is_healthy</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="c1"># healthy is reported and True</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">measurement_type</span> <span class="o">==</span> <span class="s2">&quot;healthy&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">disease</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="c1"># any disease is reported</span>
+    <span class="k">return</span>  <span class="n">d</span><span class="o">.</span><span class="n">measurement_type</span> <span class="o">==</span> <span class="s2">&quot;disease&quot;</span>
+
+<span class="n">healthy1</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_subject</span><span class="p">(</span><span class="n">is_healthy</span><span class="p">)</span>
+<span class="n">healthy2</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">exclude_subject</span><span class="p">(</span><span class="n">disease</span><span class="p">)</span>
+<span class="n">healthy3</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_subject</span><span class="p">(</span><span class="n">is_healthy</span><span class="p">)</span><span class="o">.</span><span class="n">exclude_subject</span><span class="p">(</span><span class="n">disease</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">healthy1</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">healthy2</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">healthy3</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
+<span class="n">Concise</span> <span class="n">DataFrames</span>
+<span class="n">Concise</span> <span class="n">DataFrames</span>
+<span class="n">Concise</span> <span class="n">DataFrames</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140383709837800</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">4</span>
+<span class="n">groups</span>              <span class="mi">6</span>  <span class="p">(</span>   <span class="mi">73</span><span class="p">)</span>
+<span class="n">individuals</span>       <span class="mi">246</span>  <span class="p">(</span> <span class="mi">3144</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">9</span>  <span class="p">(</span>    <span class="mi">9</span><span class="p">)</span>
+<span class="n">outputs</span>          <span class="mi">1064</span>  <span class="p">(</span> <span class="mi">1106</span><span class="p">)</span>
+<span class="n">timecourses</span>        <span class="mi">40</span>  <span class="p">(</span>   <span class="mi">46</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140383709976840</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">4</span>
+<span class="n">groups</span>              <span class="mi">6</span>  <span class="p">(</span>   <span class="mi">73</span><span class="p">)</span>
+<span class="n">individuals</span>       <span class="mi">246</span>  <span class="p">(</span> <span class="mi">3144</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">9</span>  <span class="p">(</span>    <span class="mi">9</span><span class="p">)</span>
+<span class="n">outputs</span>          <span class="mi">1064</span>  <span class="p">(</span> <span class="mi">1106</span><span class="p">)</span>
+<span class="n">timecourses</span>        <span class="mi">40</span>  <span class="p">(</span>   <span class="mi">46</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140383710418760</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">4</span>
+<span class="n">groups</span>              <span class="mi">6</span>  <span class="p">(</span>   <span class="mi">73</span><span class="p">)</span>
+<span class="n">individuals</span>       <span class="mi">246</span>  <span class="p">(</span> <span class="mi">3144</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">9</span>  <span class="p">(</span>    <span class="mi">9</span><span class="p">)</span>
+<span class="n">outputs</span>          <span class="mi">1064</span>  <span class="p">(</span> <span class="mi">1106</span><span class="p">)</span>
+<span class="n">timecourses</span>        <span class="mi">40</span>  <span class="p">(</span>   <span class="mi">46</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="query-interventions">
+<h2>3 Query interventions<a class="headerlink" href="#query-interventions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-outputs-timecourses-for-intervention-with-substance">
+<h3>3.1 Get outputs/timecourses for intervention with substance<a class="headerlink" href="#get-outputs-timecourses-for-intervention-with-substance" title="Permalink to this headline">¶</a></h3>
+<p>intervention with measurement_type “dosing” and substance “caffeine”</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">dosing_and_caffeine</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;measurement_type&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;dosing&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;substance&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;caffeine&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="get-outputs-timecourses-where-multiple-interventions-were-given">
+<h3>3.2 Get outputs/timecourses where multiple interventions were given<a class="headerlink" href="#get-outputs-timecourses-where-multiple-interventions-were-given" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span> <span class="o">=</span> <span class="n">PKData</span><span class="o">.</span><span class="n">from_hdf5</span><span class="p">(</span><span class="n">TEST_HDF5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">caffeine_data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_intervention</span><span class="p">(</span><span class="n">dosing_and_caffeine</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">caffeine_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140383712104008</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">1</span>
+<span class="n">groups</span>              <span class="mi">1</span>  <span class="p">(</span>   <span class="mi">11</span><span class="p">)</span>
+<span class="n">individuals</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">1</span>  <span class="p">(</span>    <span class="mi">1</span><span class="p">)</span>
+<span class="n">outputs</span>            <span class="mi">71</span>  <span class="p">(</span>   <span class="mi">71</span><span class="p">)</span>
+<span class="n">timecourses</span>        <span class="mi">12</span>  <span class="p">(</span>   <span class="mi">12</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="query-outputs-timecourses">
+<h2>4 Query outputs/timecourses<a class="headerlink" href="#query-outputs-timecourses" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="query-by-measurement-type">
+<h3>4.1 query by measurement_type<a class="headerlink" href="#query-by-measurement-type" title="Permalink to this headline">¶</a></h3>
+<p>filter all outputs with measurement_type auc_inf</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">is_auc_inf</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;measurement_type&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;auc_inf&quot;</span><span class="p">)</span>
+
+<span class="n">test_data</span> <span class="o">=</span> <span class="n">PKData</span><span class="o">.</span><span class="n">from_hdf5</span><span class="p">(</span><span class="n">TEST_HDF5</span><span class="p">)</span>
+
+<span class="n">test_data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_output</span><span class="p">(</span><span class="n">is_auc_inf</span><span class="p">)</span><span class="o">.</span><span class="n">delete_timecourses</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
+<span class="n">Concise</span> <span class="n">DataFrames</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140383709865296</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">3</span>
+<span class="n">groups</span>              <span class="mi">6</span>  <span class="p">(</span>   <span class="mi">73</span><span class="p">)</span>
+<span class="n">individuals</span>       <span class="mi">118</span>  <span class="p">(</span> <span class="mi">1534</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">5</span>  <span class="p">(</span>    <span class="mi">5</span><span class="p">)</span>
+<span class="n">outputs</span>           <span class="mi">276</span>  <span class="p">(</span>  <span class="mi">278</span><span class="p">)</span>
+<span class="n">timecourses</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="other-query-others">
+<h2>5 Other Query others<a class="headerlink" href="#other-query-others" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="complex">
+<h3>5.1 Complex<a class="headerlink" href="#complex" title="Permalink to this headline">¶</a></h3>
+<p>get clearance of codeine for all.h5 subjects, which have been phenotyped
+for cyp2d6.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">is_cyp2d6_phenotyped</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="n">cyp2d6_phenotype_substances</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;spar/(2hspar+5hspar)&#39;</span><span class="p">,</span> <span class="s1">&#39;deb/4hdeb&#39;</span><span class="p">,</span> <span class="s1">&#39;dtf/dmt&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;measurement_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s2">&quot;metabolic phenotype&quot;</span><span class="p">,</span> <span class="s2">&quot;metabolic ratio&quot;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;substance&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">cyp2d6_phenotype_substances</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">codeine_clearance</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;measurement_type&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;clearance&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;substance&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;codeine&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span> <span class="o">=</span> <span class="n">PKData</span><span class="o">.</span><span class="n">from_hdf5</span><span class="p">(</span><span class="n">TEST_HDF5</span><span class="p">)</span>
+<span class="n">phenotyped_data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_output</span><span class="p">(</span><span class="n">is_cyp2d6_phenotyped</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span><span class="o">.</span><span class="n">groups</span> <span class="o">=</span> <span class="n">phenotyped_data</span><span class="o">.</span><span class="n">groups</span>
+<span class="n">test_data</span><span class="o">.</span><span class="n">individuals</span> <span class="o">=</span> <span class="n">phenotyped_data</span><span class="o">.</span><span class="n">individuals</span>
+<span class="n">test_data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_output</span><span class="p">(</span><span class="n">codeine_clearance</span><span class="p">)</span><span class="o">.</span><span class="n">delete_timecourses</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
+<span class="n">Concise</span> <span class="n">DataFrames</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140383709093336</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">0</span>
+<span class="n">groups</span>              <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">individuals</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">outputs</span>             <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">timecourses</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="pitfalls">
+<h2>6 Pitfalls<a class="headerlink" href="#pitfalls" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span> <span class="o">=</span> <span class="n">PKData</span><span class="o">.</span><span class="n">from_hdf5</span><span class="p">(</span><span class="n">TEST_HDF5</span><span class="p">)</span>
+<span class="c1"># Wrong</span>
+<span class="k">def</span> <span class="nf">is_healthy_smoker</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; This will yield zero subjects. No characteristica satisfy measurement_type == &#39;healthy&#39; and measurement_type == &#39;disease&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;measurement_type&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;healthy&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;choice&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;Y&quot;</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">((</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;measurement_type&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;smoking&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;choice&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;Y&quot;</span><span class="p">))</span>
+
+<span class="c1"># Correct</span>
+<span class="k">def</span> <span class="nf">is_healthy_smoker</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;measurement_type&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;healthy&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;choice&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;Y&quot;</span><span class="p">),</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;measurement_type&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;smoking&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;choice&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;Y&quot;</span><span class="p">)]</span>
+
+
+<span class="c1"># Wrong</span>
+<span class="k">def</span> <span class="nf">not_smoker_y</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Be care this might not do what you expect. Excluding a specific characteristica will not eliminate any subject unless it is the only characteristica.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="o">~</span><span class="p">((</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;measurement_type&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;smoking&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;choice&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;Y&quot;</span><span class="p">))</span>
+<span class="n">not_smoker_y_data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_subject</span><span class="p">(</span><span class="n">not_smoker_y</span><span class="p">)</span>
+
+<span class="c1">#Correct</span>
+<span class="c1"># exlcude smoker</span>
+<span class="k">def</span> <span class="nf">smoker_y</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;measurement_type&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;smoking&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;choice&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+<span class="n">healthy_data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">exclude_subject</span><span class="p">(</span><span class="n">smoker_y</span><span class="p">)</span>
+
+
+<span class="c1"># Wrong</span>
+<span class="k">def</span> <span class="nf">not_disease</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Be care this might not do what you expect. Excluding a specific characteristica will not eliminate any subject unless it is the only characteristica</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span>  <span class="o">~</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;measurement_type&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;disease&quot;</span><span class="p">)</span>
+<span class="n">healthy_data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_subject</span><span class="p">(</span><span class="n">not_disease</span><span class="p">)</span>
+
+<span class="c1"># Correct</span>
+<span class="c1"># exlcude the disease</span>
+<span class="k">def</span> <span class="nf">disease</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="k">return</span>  <span class="n">d</span><span class="p">[</span><span class="s2">&quot;measurement_type&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;disease&quot;</span>
+<span class="n">healthy_data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">exclude_subject</span><span class="p">(</span><span class="n">disease</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
+<span class="n">Concise</span> <span class="n">DataFrames</span>
+<span class="n">Concise</span> <span class="n">DataFrames</span>
+<span class="n">Concise</span> <span class="n">DataFrames</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="data_examples.html" class="btn btn-neutral float-left" title="Working with PK-DB data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jan Grzegorzewski &amp; Matthias König
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
