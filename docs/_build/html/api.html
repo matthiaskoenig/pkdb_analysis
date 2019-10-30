@@ -214,7 +214,6 @@ If no filters are given the complete data is retrieved.</p>
 <dt id="pkdb_analysis.data.PKData.delete_outputs">
 <code class="sig-name descname">delete_outputs</code><span class="sig-paren">(</span><em class="sig-param">concise=True</em><span class="sig-paren">)</span> &#x2192; pkdb_analysis.data.PKData<a class="reference internal" href="_modules/pkdb_analysis/data.html#PKData.delete_outputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pkdb_analysis.data.PKData.delete_outputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deletes outputs.
-<a href="#id1"><span class="problematic" id="id2">:paramref:`.pkdb_analysis.data.PKData.filter_intervention`</span></a>
 :return:</p>
 </dd></dl>
 
@@ -239,12 +238,30 @@ If no filters are given the complete data is retrieved.</p>
 <dl class="method">
 <dt id="pkdb_analysis.data.PKData.filter_intervention">
 <code class="sig-name descname">filter_intervention</code><span class="sig-paren">(</span><em class="sig-param">f_idx</em>, <em class="sig-param">concise=True</em><span class="sig-paren">)</span> &#x2192; pkdb_analysis.data.PKData<a class="reference internal" href="_modules/pkdb_analysis/data.html#PKData.filter_intervention"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pkdb_analysis.data.PKData.filter_intervention" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filter interventions.
-:param f_idx:
-:param concise: this is the doc for concise</p>
+<dd><p>Filter interventions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f_idx</strong> (<em>function</em><em>, </em><em>list</em>) – <p>Is a filter by index of the DataFrame selected by the df_key. A similar notation as the filtering
+of pd.DataFrames can be used. This mostly are (lambda) function. Further a list of (lambda) function are allowed
+as input. The list of functions are executed successively, which is identical to an intersection of all filters
+applied separately.</p>
+<dl class="simple">
+<dt>Pitfalls</dt><dd><ul>
+<li><p>Don’t use the invert operator <cite>~</cite> but use the exclude_*() functions.</p></li>
+<li><p>#todo: add no invert operator to Validation rule</p></li>
+</ul>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>concise</strong> – concises the returned PKData instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Filter PKData instance</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pkdb_analysis.data.PKData" title="pkdb_analysis.data.PKData">PKData</a></p>
 </dd>
 </dl>
 </dd></dl>
