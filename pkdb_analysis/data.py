@@ -357,61 +357,61 @@ class PKData(object):
         if df_key not in PKData.KEYS:
             raise ValueError(f"Unsupported key '{df_key}', key must be in '{PKData.KEYS}'")
 
-    def intervention_filter(self, f_idx, concise=True):
+    def filter_intervention(self, f_idx, concise=True):
         """ Filter interventions. """
         return self._pk_filter("interventions", f_idx, concise)
 
-    def group_filter(self, f_idx, concise=True):
+    def filter_group(self, f_idx, concise=True):
         """ Filter groups. """
         return self._pk_filter("groups", f_idx, concise)
 
-    def individual_filter(self, f_idx, concise=True):
+    def filter_individual(self, f_idx, concise=True):
         """ Filter individuals. """
         return self._pk_filter("individuals", f_idx, concise)
 
-    def subject_filter(self, f_idx, concise=True):
+    def filter_subject(self, f_idx, concise=True):
         """ Filter group or individual. """
-        pkdata = self.group_filter(f_idx, concise=False)
-        pkdata.individual_filter(f_idx, concise=False)
+        pkdata = self.filter_group(f_idx, concise=False)
+        pkdata.filter_individual(f_idx, concise=False)
         if concise:
             pkdata._concise()
         return pkdata
 
-    def output_filter(self, f_idx, concise=True):
+    def filter_output(self, f_idx, concise=True):
         """ Filter outputs. """
         return self._pk_filter("outputs", f_idx, concise)
 
-    def timecourse_filter(self, f_idx, concise=True):
+    def filter_timecourse(self, f_idx, concise=True):
         """ Filter timecourses. """
         return self._pk_filter("timecourses", f_idx, concise)
 
-    def intervention_exclude(self, f_idx, concise=True):
+    def exclude_intervention(self, f_idx, concise=True):
         return self._pk_exclude("interventions", f_idx, concise)
 
-    def group_exclude(self, f_idx, concise=True):
+    def exclude_group(self, f_idx, concise=True):
         return self._pk_exclude("groups", f_idx, concise)
 
-    def individual_exclude(self, f_idx, concise=True):
+    def exclude_individual(self, f_idx, concise=True):
         return self._pk_exclude("individuals", f_idx, concise)
 
-    def subject_exclude(self, f_idx, concise=True):
-        pkdata = self.group_exclude(f_idx, concise=False)
-        pkdata = pkdata.individual_exclude(f_idx, concise=False)
+    def exclude_subject(self, f_idx, concise=True):
+        pkdata = self.exclude_group(f_idx, concise=False)
+        pkdata = pkdata.exclude_individual(f_idx, concise=False)
         if concise:
             pkdata._concise()
         return pkdata
 
-    def output_exclude(self, f_idx, concise=True):
+    def exclude_output(self, f_idx, concise=True):
         return self._pk_exclude("outputs", f_idx, concise)
 
-    def timecourse_pk_exclude(self, f_idx, concise=True):
+    def exclude_timecourse(self, f_idx, concise=True):
         return self._pk_exclude("timecourses", f_idx, concise)
 
-    def outputs_delete(self, concise=True):
+    def delete_outputs(self, concise=True):
         """Deletes outputs."""
         return self._emptify("outputs", concise=concise)
 
-    def timecourses_delete(self, concise=True):
+    def delete_timecourses(self, concise=True):
         """Deletes timecourses."""
         return self._emptify("timecourses", concise=concise)
 
