@@ -5,13 +5,13 @@ Functions for working with PKDB data.
 * FIXME: unclear what is modifying and what is copying the data frames
 """
 
-import numpy as np
-import pandas as pd
-
-from copy import copy
 import logging
 from collections import OrderedDict
+from copy import copy
 from typing import List
+
+import numpy as np
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +21,7 @@ class PKDataFrame(pd.DataFrame):
     Extended Dataframe which support customized filter operations.
     Used to encode groups, individuals, interventions, outputs, timecourses on PKData.
     """
+
     @property
     def _constructor(self):
         return PKDataFrame._internal_ctor
@@ -466,7 +467,6 @@ class PKData(object):
     @property
     def _len_total(self):
         return sum([len(getattr(self, df_key)) for df_key in PKData.KEYS])
-
 
     def get_choices(self):
         """ This is experimental.

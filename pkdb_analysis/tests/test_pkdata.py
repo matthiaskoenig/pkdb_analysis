@@ -1,6 +1,4 @@
-import pytest
 from pkdb_analysis.data import PKData
-from pathlib import Path
 from pkdb_analysis.tests.constants import TEST_HDF5
 
 
