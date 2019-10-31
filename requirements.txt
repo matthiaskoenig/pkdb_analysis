@@ -4,5 +4,5 @@ pandas>=0.25.1
 tables>=3.6.0
 pint>=0.9
 pytest
-
+seaborn>=0.9.0
 matplotlib>3.0
