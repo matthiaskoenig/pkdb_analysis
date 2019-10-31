@@ -106,7 +106,7 @@ class PKDB(object):
         pkfilter = pkfilter.to_dict()
         parameters = {"format": "json", 'page_size': page_size}
         logger.warning("*** Querying data ***")
-        return PKData(
+        pkdata = PKData(
             interventions=cls._get_subset("interventions_elastic",
                                           **{**parameters, **pkfilter.get("interventions", {})}),
             individuals=cls._get_subset("characteristica_individuals",
@@ -118,6 +118,8 @@ class PKDB(object):
             timecourses=cls._get_subset("timecourse_intervention",
                                         **{**parameters, **pkfilter.get("timecourses", {})})
         )
+
+        return cls._intervention_pk_update(pkdata)
 
     @classmethod
     def _get_subset(cls, name, **parameters):
@@ -221,3 +223,76 @@ class PKDB(object):
                 df[column] = df[column].replace({pd.np.nan: -1}).astype(int)
 
         return df
+
+    @staticmethod
+    def _map_intervention_pks(pkdata):
+        interventions_output = pd.DataFrame()
+        interventions_timecourse = pd.DataFrame()
+
+        if not pkdata.outputs.empty :
+            interventions_output = pkdata.outputs.df.pivot_table(values="intervention_pk", index="output_pk",
+                                                             aggfunc=lambda x: frozenset(x))
+        if not pkdata.timecourses.empty:
+            interventions_timecourse = pkdata.timecourses.df.pivot_table(values="intervention_pk", index="timecourse_pk",
+                                                                     aggfunc=lambda x: frozenset(x))
+
+        interventions = interventions_output.append(interventions_timecourse).drop_duplicates(
+            "intervention_pk").reset_index()
+        interventions.index = interventions.index.set_names(['intervention_pk_updated'])
+
+        return interventions["intervention_pk"].reset_index()
+
+    @staticmethod
+    def _update_interventions(pkdata, mapping_int_pks):
+        mapping_int_pks = mapping_int_pks.copy()
+        mapping_int_pks["intervention_pk"] = mapping_int_pks.intervention_pk.apply(lambda x: list(x))
+        mapping_int_pks = mapping_int_pks.intervention_pk.apply(pd.Series).stack().reset_index(level=-1,
+                                                                                               drop=True).astype(
+            int).reset_index()
+        mapping_int_pks = mapping_int_pks.rename(columns={"index": "intervention_pk_updated", 0: "intervention_pk"})
+        return pd.merge(mapping_int_pks, pkdata.interventions, on="intervention_pk").drop(
+            columns=["intervention_pk"]).rename(columns={"intervention_pk_updated": "intervention_pk"})
+
+    @staticmethod
+    def _update_outputs(pkdata, mapping_int_pks):
+        mapping_int_pks = mapping_int_pks.copy()
+
+        interventions_output = pkdata.outputs.df.pivot_table(values="intervention_pk", index="output_pk",
+                                                             aggfunc=lambda x: frozenset(x))
+        mapping_int_pks = pd.merge(interventions_output.reset_index(), mapping_int_pks, on="intervention_pk",how="left" )[
+            ["output_pk", "intervention_pk_updated"]]
+
+        return pd.merge(mapping_int_pks, pkdata.outputs.df.drop_duplicates(subset="output_pk") ,how='left').drop(columns=["intervention_pk"]).rename(
+            columns={"intervention_pk_updated": "intervention_pk"})
+
+    @staticmethod
+    def _update_timecourses(pkdata, mapping_int_pks):
+        mapping_int_pks = mapping_int_pks.copy()
+        interventions_timecourse = pkdata.timecourses.df.pivot_table(values="intervention_pk", index="timecourse_pk",
+                                                                     aggfunc=lambda x: frozenset(x))
+        mapping_int_pks = pd.merge(interventions_timecourse.reset_index(), mapping_int_pks, on="intervention_pk",how="left")[
+            ["timecourse_pk", "intervention_pk_updated"]]
+        result = pd.merge(mapping_int_pks, pkdata.timecourses.df.drop_duplicates(subset="timecourse_pk"), how='left').drop(columns=["intervention_pk"]).rename(
+            columns={"intervention_pk_updated": "intervention_pk"})
+
+
+        return result
+
+
+    @classmethod
+    def _intervention_pk_update(cls, pkdata):
+        if not pkdata.outputs.empty or not pkdata.timecourses.empty:
+            mapping_int_pks = cls._map_intervention_pks(pkdata)
+
+            data_dict = pkdata.as_dict()
+            data_dict["interventions"] = cls._update_interventions(pkdata, mapping_int_pks)
+            if not pkdata.outputs.empty:
+                data_dict["outputs"] = cls._update_outputs(pkdata, mapping_int_pks)
+            if not pkdata.timecourses.empty:
+                data_dict["timecourses"] = cls._update_timecourses(pkdata, mapping_int_pks)
+
+            return PKData(**data_dict)
+        else:
+            return pkdata
+
+

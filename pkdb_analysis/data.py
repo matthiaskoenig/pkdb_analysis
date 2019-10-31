@@ -503,12 +503,27 @@ class PKData(object):
 
         return self._pk_exclude("timecourses", f_idx, concise)
 
+    def delete_groups(self, concise=True) -> 'PKData':
+        """
+        Deletes outputs.
+        :return:
+        """
+        return self._emptify("groups", concise=concise)
+
+    def delete_individuals(self, concise=True) -> 'PKData':
+        """
+        Deletes outputs.
+        :return:
+        """
+        return self._emptify("individuals", concise=concise)
+
     def delete_outputs(self, concise=True) -> 'PKData':
         """
         Deletes outputs.
         :return:
         """
         return self._emptify("outputs", concise=concise)
+
 
     def delete_timecourses(self, concise=True) -> 'PKData':
         """Deletes timecourses."""
@@ -581,7 +596,7 @@ class PKData(object):
                             continue
 
                     # remove None so sorting is working
-                    values = [c for c in df[key].unique() if c is not None]
+                    values = [c for c in set(df[key]) if c is not None]
                     choices[key] = sorted(values)
 
             all_choices[df_key] = choices
