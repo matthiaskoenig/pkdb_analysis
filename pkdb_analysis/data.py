@@ -467,7 +467,7 @@ class PKData(object):
     def filter_subject(self, f_idx, concise=True) -> 'PKData':
         """ Filter group or individual. """
         pkdata = self.filter_group(f_idx, concise=False)
-        pkdata.filter_individual(f_idx, concise=False)
+        pkdata = pkdata.filter_individual(f_idx, concise=False)
         if concise:
             pkdata._concise()
         return pkdata
