@@ -66,6 +66,7 @@ def figure_category(d):
 def create_plots(data, fig_path, nrows=2, ncols=2, figsize=(30, 30), log_y=False):
     data["plotting_category"] = data[["per_bodyweight", "per_bodyweight_intervention"]].apply(figure_category,axis=1)
     figure, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
+
     axes_iter = iter(axes.flatten())
     substance = _get_one(data.substance)
     substance_intervention = _get_one(data.substance_intervention)
@@ -88,7 +89,7 @@ def create_plots(data, fig_path, nrows=2, ncols=2, figsize=(30, 30), log_y=False
 
         max_values = np.array([data_category["value"].max(), data_category["mean"].max()])
         max_values = max_values[~np.isnan(max_values)]
-        df_figure_max = np.max(max_values) * 1.05
+        df_subplot_max = np.max(max_values) * 1.05
         df_figure_x_max = data_category.value_intervention.max() * 1.05
         df_figure_min = 0
 
@@ -105,7 +106,12 @@ def create_plots(data, fig_path, nrows=2, ncols=2, figsize=(30, 30), log_y=False
         y_group_max = group_data["mean"].max()
         for group, df_group in group_data.iterrows():
             x_group = df_group["value_intervention"]
-            y_group = df_group["mean"]
+
+            if np.isnan(df_group["mean"]):
+                y_group = df_group["median"]
+
+            else:
+                y_group = df_group["mean"]
             yerr_group = df_group.se
             ms = df_group.group_count + 5
             color = df_group.color
@@ -114,7 +120,12 @@ def create_plots(data, fig_path, nrows=2, ncols=2, figsize=(30, 30), log_y=False
             ax.errorbar(x_group, y_group, yerr=yerr_group, xerr=0, color=color, fmt=marker, ms=ms, alpha=0.7)
 
             txt = df_group["study_name"]
-            ax.annotate(txt, (x_group + (0.01 * x_group_max), y_group + (0.01 * y_group_max)), alpha=0.7)
+
+
+            data_values = [x_group + (0.01 * x_group_max), y_group + (0.01 * y_group_max)]
+            isnan = np.isnan(np.array(data_values))
+            if not any(isnan):
+                ax.annotate(txt, (x_group + (0.01 * x_group_max), y_group + (0.01 * y_group_max)), alpha=0.7)
 
         legend_elements = []
 
@@ -150,23 +161,22 @@ def create_plots(data, fig_path, nrows=2, ncols=2, figsize=(30, 30), log_y=False
 
         ax.set_title(f"{plotting_category}")
         ax.set_xlim(left=0, right=df_figure_x_max)
-        # figure.ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        #ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         ax.yaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
 
         leg1 = ax.legend(handles=legend_elements, prop=font, loc="upper right")
 
         leg2 = ax.legend(handles=legend2_elements, prop=font, loc="upper left")
-        leg3 = ax.legend(handles=legend3_elements, prop=font, labelspacing=1.3, loc=("center right"))
+        leg3 = ax.legend(handles=legend3_elements, prop=font, labelspacing=1.3, loc="center right")
         leg3.set_title(title="GROUP SIZE", prop=font)
         ax.add_artist(leg2)
         ax.add_artist(leg1)
 
         if log_y:
             ax.set_yscale("log")
-            ax.set_ylim(bottom=df_figure_min, top=df_figure_max)
+            ax.set_ylim(bottom=df_figure_min, top=df_subplot_max)
         else:
-            ax.set_ylim(bottom=0, top=df_figure_max)
+            ax.set_ylim(bottom=0, top=df_subplot_max)
 
-        figure.savefig(os.path.join(fig_path, f"{substance_intervention}_{measurement_type}.png"),
-                       bbox_inches="tight", dpi=72)
+    figure.savefig(os.path.join(fig_path, f"{substance_intervention}_{measurement_type}.png"), bbox_inches="tight", dpi=72)
 
