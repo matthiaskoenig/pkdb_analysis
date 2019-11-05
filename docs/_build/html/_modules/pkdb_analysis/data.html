@@ -585,7 +585,7 @@
         <span class="sd">&quot;&quot;&quot;Filter interventions.</span>
 
 <span class="sd">        :param f_idx: Is a filter by index of the DataFrame selected by the df_key. A similar notation as the filtering</span>
-<span class="sd">            of pd.DataFrames can be used. This mostly are (lambda) function. Further a list of (lambda) function are allowed</span>
+<span class="sd">            of pd.DataFrames can be used. This mostly are (lambda) functions. Further a list of (lambda) function are allowed</span>
 <span class="sd">            as input. The list of functions are executed successively, which is identical to an intersection of all filters</span>
 <span class="sd">            applied separately.</span>
 
@@ -615,7 +615,7 @@
 <div class="viewcode-block" id="PKData.filter_subject"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.filter_subject">[docs]</a>    <span class="k">def</span> <span class="nf">filter_subject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Filter group or individual. &quot;&quot;&quot;</span>
         <span class="n">pkdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_group</span><span class="p">(</span><span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">pkdata</span><span class="o">.</span><span class="n">filter_individual</span><span class="p">(</span><span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">pkdata</span> <span class="o">=</span> <span class="n">pkdata</span><span class="o">.</span><span class="n">filter_individual</span><span class="p">(</span><span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">concise</span><span class="p">:</span>
             <span class="n">pkdata</span><span class="o">.</span><span class="n">_concise</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">pkdata</span></div>
@@ -651,12 +651,27 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_exclude</span><span class="p">(</span><span class="s2">&quot;timecourses&quot;</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">)</span>
 
+<div class="viewcode-block" id="PKData.delete_groups"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.delete_groups">[docs]</a>    <span class="k">def</span> <span class="nf">delete_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes outputs.</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emptify</span><span class="p">(</span><span class="s2">&quot;groups&quot;</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="n">concise</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PKData.delete_individuals"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.delete_individuals">[docs]</a>    <span class="k">def</span> <span class="nf">delete_individuals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes outputs.</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emptify</span><span class="p">(</span><span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="n">concise</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="PKData.delete_outputs"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.delete_outputs">[docs]</a>    <span class="k">def</span> <span class="nf">delete_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Deletes outputs.</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emptify</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="n">concise</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="PKData.delete_timecourses"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.delete_timecourses">[docs]</a>    <span class="k">def</span> <span class="nf">delete_timecourses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Deletes timecourses.&quot;&quot;&quot;</span>
@@ -729,7 +744,7 @@
                             <span class="k">continue</span>
 
                     <span class="c1"># remove None so sorting is working</span>
-                    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+                    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
                     <span class="n">choices</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
 
             <span class="n">all_choices</span><span class="p">[</span><span class="n">df_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">choices</span>
