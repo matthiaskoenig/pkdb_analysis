@@ -211,6 +211,20 @@ If no filters are given the complete data is retrieved.</p>
 <li><p>timecourses</p></li>
 </ul>
 <dl class="method">
+<dt id="pkdb_analysis.data.PKData.delete_groups">
+<code class="sig-name descname">delete_groups</code><span class="sig-paren">(</span><em class="sig-param">concise=True</em><span class="sig-paren">)</span> &#x2192; pkdb_analysis.data.PKData<a class="reference internal" href="_modules/pkdb_analysis/data.html#PKData.delete_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pkdb_analysis.data.PKData.delete_groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes outputs.
+:return:</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pkdb_analysis.data.PKData.delete_individuals">
+<code class="sig-name descname">delete_individuals</code><span class="sig-paren">(</span><em class="sig-param">concise=True</em><span class="sig-paren">)</span> &#x2192; pkdb_analysis.data.PKData<a class="reference internal" href="_modules/pkdb_analysis/data.html#PKData.delete_individuals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pkdb_analysis.data.PKData.delete_individuals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes outputs.
+:return:</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="pkdb_analysis.data.PKData.delete_outputs">
 <code class="sig-name descname">delete_outputs</code><span class="sig-paren">(</span><em class="sig-param">concise=True</em><span class="sig-paren">)</span> &#x2192; pkdb_analysis.data.PKData<a class="reference internal" href="_modules/pkdb_analysis/data.html#PKData.delete_outputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pkdb_analysis.data.PKData.delete_outputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deletes outputs.
@@ -243,7 +257,7 @@ If no filters are given the complete data is retrieved.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>f_idx</strong> (<em>function</em><em>, </em><em>list</em>) – <p>Is a filter by index of the DataFrame selected by the df_key. A similar notation as the filtering
-of pd.DataFrames can be used. This mostly are (lambda) function. Further a list of (lambda) function are allowed
+of pd.DataFrames can be used. This mostly are (lambda) functions. Further a list of (lambda) function are allowed
 as input. The list of functions are executed successively, which is identical to an intersection of all filters
 applied separately.</p>
 <dl class="simple">
