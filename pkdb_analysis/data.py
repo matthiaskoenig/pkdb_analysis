@@ -543,8 +543,8 @@ class PKData(object):
             outputs_intervention_pks = set(self.outputs.intervention_pk)
             timecourses_intervention_pks = set(self.timecourses.intervention_pk)
 
-            current_intervention_pks = (self.interventions.pks.intersection(outputs_intervention_pks)) or \
-                                       (self.interventions.pks.intersection(timecourses_intervention_pks))
+            current_intervention_pks = (self.interventions.pks.intersection(outputs_intervention_pks)).union(
+                self.interventions.pks.intersection(timecourses_intervention_pks))
 
             self.interventions = self.interventions[self.interventions.intervention_pk.isin(current_intervention_pks)]
             self.timecourses = self.timecourses[self.timecourses.intervention_pk.isin(current_intervention_pks)]
@@ -554,8 +554,8 @@ class PKData(object):
             outputs_individual_pks = set(self.outputs.individual_pk)
             timecourses_individual_pks = set(self.timecourses.individual_pk)
 
-            current_individual_pks = (self.individuals.pks.intersection(outputs_individual_pks)) or \
-                                     (self.individuals.pks.intersection(timecourses_individual_pks))
+            current_individual_pks = (self.individuals.pks.intersection(outputs_individual_pks)).union(
+                                     self.individuals.pks.intersection(timecourses_individual_pks))
             current_individual_pks.add(-1)
 
             for df_key in ["individuals", "timecourses", "outputs"]:
@@ -566,8 +566,8 @@ class PKData(object):
             outputs_group_pks = set(self.outputs.group_pk)
             timecourses_group_pks = set(self.timecourses.group_pk)
 
-            current_group_pks = (self.groups.pks.intersection(outputs_group_pks)) or \
-                                (self.groups.pks.intersection(timecourses_group_pks))
+            current_group_pks = (self.groups.pks.intersection(outputs_group_pks)).union(
+                                self.groups.pks.intersection(timecourses_group_pks))
 
             current_group_pks.add(-1)
 
