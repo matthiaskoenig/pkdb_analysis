@@ -62,7 +62,6 @@ def figure_category(d):
     elif not d["per_bodyweight"] and d["per_bodyweight_intervention"]:
         return "abs_output_rel_intervention"
 
-
 def create_plots(data, fig_path, nrows=2, ncols=2, figsize=(30, 30), log_y=False):
     data["plotting_category"] = data[["per_bodyweight", "per_bodyweight_intervention"]].apply(figure_category,axis=1)
     figure, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
