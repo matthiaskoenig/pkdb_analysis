@@ -1,5 +1,6 @@
 """ Defines frequently used filters for the PKData instances."""
 from pkdb_analysis.data import PKData
+from typing import List
 
 TEST_STUDY_NAMES = ["Test1", "Test2", "Test3", "Test4"]
 import collections
@@ -64,8 +65,17 @@ def f_dosing(d, substance:str):
     :param substance:
     :return:
     """
-    return f_substance(d, substance) & (d["measurement_type"] == "dosing")
+    return f_substance(d, substance) & f_mt(d, "dosing")
 
+def f_dosing_in(d, substances:List[str]):
+    """filtering index for PKData for dosing with substance
+
+    :param d: PKDataFrame or pandas.DataFrame
+    :param substance:
+    :return:
+    """
+    d["substance"].isin(substances)
+    return d["substance"].isin(substances) & f_mt(d, "dosing")
 
 def f_mt_substance(d, measurement_type:str , substance:str):
     """filtering index for PKData for measurement_type with substance
