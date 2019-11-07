@@ -9,7 +9,7 @@ import logging
 from abc import ABC
 from collections import OrderedDict
 from copy import copy
-from typing import List
+from typing import List, Callable
 
 import numpy as np
 import pandas as pd
@@ -62,30 +62,39 @@ class PKDataFrame(pd.DataFrame, ABC):
         if columns:
             assert 'pk' in columns
 
-    def pk_filter(self, f_idx) -> 'PKDataFrame':
+    def pk_filter(self, f_idx: Callable, **kwargs) -> 'PKDataFrame':
         """
 
         :param f_idx: function, index, list
         :return:
         """
+
+        def ff_idx(d):
+            return f_idx(d, **kwargs)
+
         if isinstance(f_idx, list):
+
             pk_df = self
             for f_idx_single in f_idx:
-                pk_df = pk_df.pk_filter(f_idx_single)
+                pk_df = pk_df.pk_filter(f_idx_single, **kwargs)
             return pk_df
 
-        df_pks = self[f_idx][self.pk].unique()
+        df_pks = self[ff_idx][self.pk].unique()
         df_filtered = self[self[self.pk].isin(df_pks)]
         return PKDataFrame(df_filtered, pk=self.pk)
 
-    def pk_exclude(self, f_idx) -> 'PKDataFrame':
+    def pk_exclude(self, f_idx: Callable, **kwargs) -> 'PKDataFrame':
+
+        def ff_idx(d):
+            return f_idx(d, **kwargs)
+
         if isinstance(f_idx, list):
             pk_df = self
             for f_idx_single in f_idx:
-                pk_df = pk_df.pk_exclude(f_idx_single)
+                pk_df = pk_df.pk_exclude(f_idx_single, **kwargs)
             return pk_df
 
-        df_pks = self[f_idx][self.pk].unique()
+        df_pks = self[ff_idx][self.pk].unique()
         df_excluded = self[~self[self.pk].isin(df_pks)]
         return PKDataFrame(df_excluded, pk=self.pk)
 
@@ -341,6 +350,15 @@ class PKData(object):
         df_mi.set_index(index_fields, inplace=True)
         return df_mi
 
+    def _df_core(self, field: str, core_fields: List[str]) -> PKDataFrame:
+        """  Core group information with unique pk per row
+        """
+
+        pk_df = getattr(self, field)
+        return pk_df.pivot_table(index=pk_df.pk, values=core_fields, aggfunc=lambda x: x.iloc[0]).reset_index()
+
+
+
     @property
     def groups_mi(self) -> pd.DataFrame:
         """Multi-index DataFrame of groups contained in this PKData instance.
@@ -349,6 +367,17 @@ class PKData(object):
         :rtype: pd.DataFrame
         """
         return self._df_mi('groups', ['group_pk', 'characteristica_pk'])
+
+
+
+    @property
+    def groups_core(self) -> PKDataFrame:
+        """  Core group information with unique pk per row
+
+        :return: PKDataFrame of groups contained in this PKData instance .
+        :rtype: PKDataFrame
+        """
+        return self._df_core("groups", core_fields=["group_name", "group_count"])
 
     @property
     def individuals_mi(self) -> pd.DataFrame:
@@ -360,6 +389,15 @@ class PKData(object):
         return self._df_mi('individuals', ['individual_pk', 'characteristica_pk'])
 
     @property
+    def individuals_core(self) -> PKDataFrame:
+        """  Core individual information with unique pk per row
+
+        :return: PKDataFrame of individuals contained in this PKData instance .
+        :rtype: PKDataFrame
+        """
+        return self._df_core("individuals", core_fields=["individual_name"])
+
+    @property
     def interventions_mi(self) -> pd.DataFrame:
         """Multi-index DataFrame of interventions contained in this PKData instance.
 
@@ -367,6 +405,7 @@ class PKData(object):
         :rtype: pd.DataFrame
         """
         return self._df_mi('interventions', ['intervention_pk'])
+
 
     @property
     def outputs_mi(self) -> pd.DataFrame:
@@ -388,10 +427,9 @@ class PKData(object):
         return self._df_mi('timecourses',
                            ['timecourse_pk', 'intervention_pk', 'group_pk', 'individual_pk'])
 
-
     # --- filter and exclude ---
 
-    def _pk_filter(self, df_key:str, f_idx, concise:bool) -> 'PKData':
+    def _pk_filter(self, df_key:str, f_idx, concise:bool, *args, **kwargs) -> 'PKData':
         """ Helper class for filtering of PKData instances.
 
         :param df_key: DataFrame on which the filter (f_idx) shall be applied.
@@ -400,17 +438,17 @@ class PKData(object):
         :return:
         """
         dict_pkdata = self.as_dict()
-        dict_pkdata[df_key] = getattr(self, df_key).pk_filter(f_idx)
+        dict_pkdata[df_key] = getattr(self, df_key).pk_filter(f_idx, **kwargs)
 
         pkdata = PKData(**dict_pkdata)
         if concise:
             pkdata._concise()
         return pkdata
 
-    def _pk_exclude(self, df_k, f_idx, concise) -> 'PKData':
+    def _pk_exclude(self, df_k, f_idx, concise, **kwargs) -> 'PKData':
 
         dict_pkdata = self.as_dict()
-        dict_pkdata[df_k] = getattr(self, df_k).pk_exclude(f_idx)
+        dict_pkdata[df_k] = getattr(self, df_k).pk_exclude(f_idx, **kwargs)
 
         pkdata = PKData(**dict_pkdata)
         if concise:
@@ -433,7 +471,7 @@ class PKData(object):
         if df_key not in PKData.KEYS:
             raise ValueError(f"Unsupported key '{df_key}', key must be in '{PKData.KEYS}'")
 
-    def filter_intervention(self, f_idx, concise=True) -> 'PKData':
+    def filter_intervention(self, f_idx, concise=True, *args, **kwargs) -> 'PKData':
         """Filter interventions.
 
         :param f_idx: Is a filter by index of the DataFrame selected by the df_key. A similar notation as the filtering
@@ -453,55 +491,55 @@ class PKData(object):
         :rtype: PKData
         """
 
-        return self._pk_filter("interventions", f_idx, concise)
+        return self._pk_filter("interventions", f_idx, concise, **kwargs)
 
-    def filter_group(self, f_idx, concise=True) -> 'PKData':
+    def filter_group(self, f_idx, concise=True, **kwargs) -> 'PKData':
         """ Filter groups. """
-        return self._pk_filter("groups", f_idx, concise)
+        return self._pk_filter("groups", f_idx, concise, **kwargs)
 
-    def filter_individual(self, f_idx, concise=True) -> 'PKData':
+    def filter_individual(self, f_idx, concise=True, **kwargs) -> 'PKData':
 
         """ Filter individuals. """
-        return self._pk_filter("individuals", f_idx, concise)
+        return self._pk_filter("individuals", f_idx, concise, **kwargs)
 
-    def filter_subject(self, f_idx, concise=True) -> 'PKData':
+    def filter_subject(self, f_idx, concise=True, **kwargs) -> 'PKData':
         """ Filter group or individual. """
-        pkdata = self.filter_group(f_idx, concise=False)
-        pkdata = pkdata.filter_individual(f_idx, concise=False)
+        pkdata = self.filter_group(f_idx, concise=False, **kwargs)
+        pkdata = pkdata.filter_individual(f_idx, concise=False, **kwargs)
         if concise:
             pkdata._concise()
         return pkdata
 
-    def filter_output(self, f_idx, concise=True) -> 'PKData':
+    def filter_output(self, f_idx, concise=True, **kwargs) -> 'PKData':
         """ Filter outputs. """
-        return self._pk_filter("outputs", f_idx, concise)
+        return self._pk_filter("outputs", f_idx, concise, **kwargs)
 
-    def filter_timecourse(self, f_idx, concise=True) -> 'PKData':
+    def filter_timecourse(self, f_idx, concise=True, **kwargs) -> 'PKData':
         """ Filter timecourses. """
-        return self._pk_filter("timecourses", f_idx, concise)
+        return self._pk_filter("timecourses", f_idx, concise, **kwargs)
 
-    def exclude_intervention(self, f_idx, concise=True) -> 'PKData':
-        return self._pk_exclude("interventions", f_idx, concise)
+    def exclude_intervention(self, f_idx, concise=True, **kwargs) -> 'PKData':
+        return self._pk_exclude("interventions", f_idx, concise, **kwargs)
 
-    def exclude_group(self, f_idx, concise=True) -> 'PKData':
-        return self._pk_exclude("groups", f_idx, concise)
+    def exclude_group(self, f_idx, concise=True, **kwargs) -> 'PKData':
+        return self._pk_exclude("groups", f_idx, concise, **kwargs)
 
-    def exclude_individual(self, f_idx, concise=True):
-        return self._pk_exclude("individuals", f_idx, concise)
+    def exclude_individual(self, f_idx, concise=True, **kwargs):
+        return self._pk_exclude("individuals", f_idx, concise, **kwargs)
 
-    def exclude_subject(self, f_idx, concise=True) -> 'PKData':
-        pkdata = self.exclude_group(f_idx, concise=False)
-        pkdata = pkdata.exclude_individual(f_idx, concise=False)
+    def exclude_subject(self, f_idx, concise=True, **kwargs) -> 'PKData':
+        pkdata = self.exclude_group(f_idx, concise=False, **kwargs)
+        pkdata = pkdata.exclude_individual(f_idx, concise=False, **kwargs)
         if concise:
             pkdata._concise()
         return pkdata
 
-    def exclude_output(self, f_idx, concise=True) -> 'PKData':
-        return self._pk_exclude("outputs", f_idx, concise)
+    def exclude_output(self, f_idx, concise=True, **kwargs) -> 'PKData':
+        return self._pk_exclude("outputs", f_idx, concise, **kwargs)
 
-    def exclude_timecourse(self, f_idx, concise=True):
+    def exclude_timecourse(self, f_idx, concise=True, **kwargs):
 
-        return self._pk_exclude("timecourses", f_idx, concise)
+        return self._pk_exclude("timecourses", f_idx, concise, **kwargs)
 
     def delete_groups(self, concise=True) -> 'PKData':
         """
