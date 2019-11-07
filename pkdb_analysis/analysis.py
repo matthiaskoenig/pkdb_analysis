@@ -34,6 +34,10 @@ def _get_one(d):
     assert len(set(d)) <= 1, set(d)
     return list(set(d))[0]
 
+def _str_all(d):
+    d = d.dropna()
+    return ", ".join(set(d))
+
 def mscatter(x,y, ax=None, m=None, **kw):
     import matplotlib.markers as mmarkers
     ax = ax or plt.gca()
@@ -68,7 +72,7 @@ def create_plots(data, fig_path, nrows=2, ncols=2, figsize=(30, 30), log_y=False
 
     axes_iter = iter(axes.flatten())
     substance = _get_one(data.substance)
-    substance_intervention = _get_one(data.substance_intervention)
+    substance_intervention = _str_all(data.substance_intervention)
     measurement_type = _get_one(data.measurement_type)
 
     for plotting_category, data_category in data.groupby("plotting_category"):
@@ -177,5 +181,5 @@ def create_plots(data, fig_path, nrows=2, ncols=2, figsize=(30, 30), log_y=False
         else:
             ax.set_ylim(bottom=0, top=df_subplot_max)
 
-    figure.savefig(os.path.join(fig_path, f"{substance_intervention}_{measurement_type}.png"), bbox_inches="tight", dpi=72)
+    figure.savefig(os.path.join(fig_path, f"{measurement_type}.png"), bbox_inches="tight", dpi=72)
 
