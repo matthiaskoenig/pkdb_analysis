@@ -18,10 +18,14 @@ def exclude_tests(data: PKData):
     return data.exclude_intervention(lambda d: d["study_name"].isin(TEST_STUDY_NAMES))
 
 
-def pk_info(d, measurement_type, columns):
+def pk_info(d, measurement_type, columns, suffix=None):
+    if suffix is None:
+        suffix_text = f"_{measurement_type}"
+    else:
+        suffix_text = suffix
+
     columns = [d.pk, *columns]
-    return d[d["measurement_type"] == measurement_type][columns].set_index(d.pk).add_suffix(
-        f"_{measurement_type}").reset_index()
+    return d[d["measurement_type"] == measurement_type][columns].set_index(d.pk).add_suffix(suffix_text).reset_index()
 
 def f_unit(d, unit: str):
     """
