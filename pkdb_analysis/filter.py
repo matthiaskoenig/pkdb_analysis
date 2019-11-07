@@ -3,7 +3,7 @@ from pkdb_analysis.data import PKData
 
 TEST_STUDY_NAMES = ["Test1", "Test2", "Test3", "Test4"]
 import collections
-
+import pandas as pd
 PlottingParameter = collections.namedtuple('PlottingParameter',
                                            ['measurement_type',
                                             'units_rm'])
@@ -16,6 +16,7 @@ PlottingParameter = collections.namedtuple('PlottingParameter',
 
 def exclude_tests(data: PKData):
     return data.exclude_intervention(lambda d: d["study_name"].isin(TEST_STUDY_NAMES))
+
 
 
 def pk_info(d, measurement_type, columns, suffix=None):

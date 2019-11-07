@@ -84,3 +84,15 @@ def infer_intervention(d):
             d["inferred"] = True
             d["per_bodyweight_intervention"] = not d["per_bodyweight_intervention"]
             return d
+
+def infer_weight(d):
+    result_bodyweight = d.dropna(subset=["unit_weight"])
+    result_no_bodyweight = d[d["unit_weight"].isnull()]
+    result_infer_outputs = result_bodyweight.apply(infer_output, axis=1).dropna(how="all")
+    result_infer = result_bodyweight.append(result_infer_outputs, ignore_index=True)
+    result_infer_outputs = result_infer.apply(infer_intervention, axis=1).dropna(how="all")
+    result_infer = result_infer.append(result_infer_outputs, ignore_index=True)
+    result_infer = result_infer.append(result_no_bodyweight, ignore_index=True)
+    return result_infer
+
+
