@@ -90,9 +90,14 @@ class PKFilterFactory(object):
 
 class PKDB(object):
     """ Querying PKData from PK-DB. """
-    PKDB_URL = "https://develop.pk-db.com/"
-    PKDB_USERNAME = "jbrandhorst"
-    PKDB_PASSWORD = "pkdb_deploy"
+    #todo: make this as an function argument of query
+    #PKDB_URL = "https://develop.pk-db.com/"
+    #PKDB_USERNAME = "jbrandhorst"
+    #PKDB_PASSWORD = "pkdb_deploy"
+    #URL_BASE = urlparse.urljoin(PKDB_URL, '/api/v1/')
+    PKDB_URL = "http://0.0.0.0:8000"
+    PKDB_USERNAME = "admin"
+    PKDB_PASSWORD = "pkdb_admin"
     URL_BASE = urlparse.urljoin(PKDB_URL, '/api/v1/')
 
     @classmethod
@@ -141,8 +146,8 @@ class PKDB(object):
             raise ValueError(f"{name} not supported")
 
         url = urlparse.urljoin(cls.URL_BASE, f'{name}/')
-        #return cls._get_data(url, cls._get_headers(), **parameters)
-        return cls._get_data(url, {}, **parameters)
+        return cls._get_data(url, cls._get_headers(), **parameters)
+        #return cls._get_data(url, {}, **parameters)
     @classmethod
     def _get_login_token(cls):
         url = f"{cls.PKDB_URL}/api-token-auth/"
