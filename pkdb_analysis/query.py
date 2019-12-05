@@ -2,6 +2,7 @@
 Querying PK-DB
 """
 import logging
+import os
 from copy import deepcopy
 from urllib import parse as urlparse
 
@@ -10,6 +11,7 @@ import pandas as pd
 import requests
 
 from pkdb_analysis.data import PKData
+from pkdb_analysis.envs import USER, PASSWORD, API_URL, API_BASE
 
 logger = logging.getLogger(__name__)
 
@@ -95,11 +97,6 @@ class PKDB(object):
     #PKDB_USERNAME = "jbrandhorst"
     #PKDB_PASSWORD = "pkdb_deploy"
     #URL_BASE = urlparse.urljoin(PKDB_URL, '/api/v1/')
-    PKDB_URL = "http://0.0.0.0:8000"
-    PKDB_USERNAME = "admin"
-    PKDB_PASSWORD = "pkdb_admin"
-    URL_BASE = urlparse.urljoin(PKDB_URL, '/api/v1/')
-
     @classmethod
     def query(cls, pkfilter: PKFilter = PKFilter(), page_size: int = 2000) -> "PKData":
         """ Create a PKDBData representation and gets the data for the provided filters.
@@ -145,21 +142,30 @@ class PKDB(object):
         ]:
             raise ValueError(f"{name} not supported")
 
-        url = urlparse.urljoin(cls.URL_BASE, f'{name}/')
-        return cls._get_data(url, cls._get_headers(), **parameters)
-        #return cls._get_data(url, {}, **parameters)
-    @classmethod
-    def _get_login_token(cls):
-        url = f"{cls.PKDB_URL}/api-token-auth/"
-        payload = {'username': cls.PKDB_USERNAME, 'password': cls.PKDB_PASSWORD}
-        response = requests.post(url, data=payload)
-        return response.json().get("token")
+        url = os.path.join(API_URL, f'{name}/')
+
+        return cls._get_data(url, cls.get_authentication_headers(API_BASE,USER,PASSWORD), **parameters)
 
     @classmethod
-    def _get_headers(cls):
-        token = cls._get_login_token()
-        headers = {'Authorization': f'Token {token}'}
-        return headers
+    def get_authentication_headers(cls, api_base, username, password):
+        """ Get authentication header with token for given user.
+
+        Returns admin authentication as default.
+        """
+        auth_token_url = os.path.join(api_base, "api-token-auth/")
+        try:
+            response = requests.post(auth_token_url, json={"username": username, "password": password})
+        except requests.exceptions.ConnectionError as e:
+            raise requests.exceptions.InvalidURL(
+                f"Error Connecting (probably wrong url <{api_base}>): ", e)
+
+        if response.status_code != 200:
+            logger.error(f"Request headers could not be retrieved from: {auth_token_url}")
+            logger.warning(response.text)
+            raise requests.exceptions.ConnectionError(response)
+
+        token = response.json().get("token")
+        return {'Authorization': f'token {token}'}
 
     @staticmethod
     def _get_data(url, headers, **parameters) -> pd.DataFrame:
