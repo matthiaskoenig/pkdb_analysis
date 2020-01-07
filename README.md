@@ -1,4 +1,3 @@
-1
 # `pkdb_analysis` - Computational analysis based on PK-DB
 
 
@@ -46,4 +45,4 @@ cpan[1]>install Math::Bezier
 - download Circos
 
 
-&copy; 2018-2019 Jan Grzegorzewski & Matthias König.
+&copy; 2018-2020 Jan Grzegorzewski & Matthias König.
