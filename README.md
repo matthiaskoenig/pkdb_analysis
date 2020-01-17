@@ -6,7 +6,7 @@ This repository contains meta-analyses and example use cases of the data in the 
 ## Installation
 To run the analysis scripts create a virtual environment with the required dependencies.
 ```
-mkvirtualenv pyPKDB --python=python3.7
+mkvirtualenv pkdb_analysis --python=python3.7
 (pyPKDB) pip install -e .
 # optional for jupyter notebooks
 (pyPKDB) pip install jupyterlab
