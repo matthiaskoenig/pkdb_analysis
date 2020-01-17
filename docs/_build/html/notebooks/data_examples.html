@@ -154,7 +154,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+  <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
 
 <span class="kn">from</span> <span class="nn">pkdb_analysis</span> <span class="kn">import</span> <span class="n">PKData</span><span class="p">,</span> <span class="n">PKFilter</span>
@@ -177,7 +177,7 @@ the test data set and print an overview.</p>
 <span class="kn">from</span> <span class="nn">pkdb_analysis.tests.constants</span> <span class="kn">import</span> <span class="n">TEST_HDF5</span>
 
 <span class="n">data</span> <span class="o">=</span> <span class="n">PKData</span><span class="o">.</span><span class="n">from_hdf5</span><span class="p">(</span><span class="n">TEST_HDF5</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
@@ -209,7 +209,7 @@ interventions, uniquely identified via <code class="docutils literal notranslate
 <code class="docutils literal notranslate"><span class="pre">outputs</span></code>: outputs, uniquely identified via <code class="docutils literal notranslate"><span class="pre">output_pk</span></code> -
 <code class="docutils literal notranslate"><span class="pre">timecourses</span></code>: groups, uniquely identified via <code class="docutils literal notranslate"><span class="pre">timecourse_pk</span></code></p>
 <p>The <code class="docutils literal notranslate"><span class="pre">print</span></code> function provides a simple overview over the content</p>
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
@@ -829,7 +829,7 @@ via <code class="docutils literal notranslate"><span class="pre">data.groups</sp
 </table>
 <p>86 rows × 18 columns</p>
 </div><p>To access the number of items use the <code class="docutils literal notranslate"><span class="pre">*_count</span></code>.</p>
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Number of groups: {data.groups_count}&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of groups: </span><span class="si">{data.groups_count}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Number</span> <span class="n">of</span> <span class="n">groups</span><span class="p">:</span> <span class="mi">8</span>

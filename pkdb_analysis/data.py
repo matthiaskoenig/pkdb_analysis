@@ -105,7 +105,10 @@ class PKDataFrame(pd.DataFrame, ABC):
     @property
     def pks(self) -> set:
         """ Set of pks."""
-        return set(self[self.pk].unique())
+        if self.pk in self.df.columns:
+            return set(self[self.pk].unique())
+        else:
+            return set()
 
     @property
     def pk_len(self) -> int:
@@ -121,7 +124,11 @@ class PKDataFrame(pd.DataFrame, ABC):
     @property
     def study_sids(self) -> set:
         """ Set of study_sids."""
-        return set(self.study_sid.unique())
+        study_sids =  set([])
+        if "study_sid" in self.df.columns:
+            study_sids = set(self.study_sid.unique())
+        return study_sids
+
 
     def _emptify(self) -> 'PKDataFrame':
         empty_df = pd.DataFrame([], columns=self.columns)
