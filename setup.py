@@ -27,7 +27,7 @@ if mo:
 else:
     raise RuntimeError("Unable to find version string")
 
-setup_kwargs['long_description'] = "PKDB analysis"
+setup_kwargs['long_description'] = "Python module for the interaction with PKDB."
 
 # parse requirements.txt
 required = []
@@ -54,7 +54,7 @@ setup(
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Programming Language :: Cython',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Scientific/Engineering',

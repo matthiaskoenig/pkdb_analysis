@@ -172,7 +172,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+  <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
 
 <span class="kn">from</span> <span class="nn">pkdb_analysis</span> <span class="kn">import</span> <span class="n">PKData</span><span class="p">,</span> <span class="n">PKFilter</span>
@@ -186,7 +186,7 @@ compare two groups, or get the subset of data for all healthy smokers.</p>
 <p>We work again with our test data set and will filter various subsets
 from it.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span> <span class="o">=</span> <span class="n">PKData</span><span class="o">.</span><span class="n">from_hdf5</span><span class="p">(</span><span class="n">TEST_HDF5</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
@@ -230,7 +230,7 @@ which select a subset of the data. The filters are written on the
     <span class="k">return</span> <span class="n">d</span><span class="o">.</span><span class="n">study_sid</span> <span class="o">==</span> <span class="s2">&quot;PKDB99999&quot;</span>
 
 <span class="n">data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_intervention</span><span class="p">(</span><span class="n">is_PKDB99999</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
@@ -249,7 +249,7 @@ which select a subset of the data. The filters are written on the
 </pre></div>
 </div>
 <p>The PKData now only contains data for the given study_sid:</p>
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">study_sids</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">study_sids</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;PKDB99999&#39;</span><span class="p">}</span>
@@ -378,7 +378,7 @@ which select a subset of the data. The filters are written on the
 <p>3 rows × 23 columns</p>
 </div><p>One could also define this as a simple lambda function</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_intervention</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">study_sid</span> <span class="o">==</span> <span class="s2">&quot;PKDB99999&quot;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
@@ -404,9 +404,9 @@ if an intervention is filtered out also all the outputs using this
 intervention are filtered out. This behavior is controlled by the
 <code class="docutils literal notranslate"><span class="pre">concise</span></code> flag on most operations.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t1</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_intervention</span><span class="p">(</span><span class="n">is_PKDB99999</span><span class="p">)</span>
-<span class="n">t2</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_intervention</span><span class="p">(</span><span class="n">is_PKDB99999</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span>
+<span class="n">t2</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_intervention</span><span class="p">(</span><span class="n">is_PKDB99999</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
@@ -1142,7 +1142,7 @@ combinations.</p>
 functions are applied successively and is equivalent to “AND logic”. “OR
 logic” can be directly applied on the index.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">healthy_nonsmoker</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_subject</span><span class="p">(</span><span class="n">f_idx</span><span class="o">=</span><span class="p">[</span><span class="n">is_healthy</span><span class="p">,</span> <span class="n">nonsmoker</span><span class="p">])</span>
-<span class="k">print</span><span class="p">(</span><span class="n">healthy_nonsmoker</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">healthy_nonsmoker</span><span class="p">)</span>
 <span class="n">healthy_nonsmoker</span><span class="o">.</span><span class="n">groups_mi</span>
 </pre></div>
 </div>
@@ -1465,7 +1465,7 @@ opposites. In the example, the group <code class="docutils literal notranslate">
 nonsmoker. So for a subset of the group smoking is No. We can exclude
 groups via</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">healthy_nonsmoker</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_subject</span><span class="p">([</span><span class="n">is_healthy</span><span class="p">,</span> <span class="n">nonsmoker</span><span class="p">])</span><span class="o">.</span><span class="n">exclude_subject</span><span class="p">([</span><span class="n">smoker</span><span class="p">])</span>
-<span class="k">print</span><span class="p">(</span><span class="n">healthy_nonsmoker</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">healthy_nonsmoker</span><span class="p">)</span>
 <span class="n">display</span><span class="p">(</span><span class="n">healthy_nonsmoker</span><span class="o">.</span><span class="n">groups_mi</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1796,9 +1796,9 @@ correct subjects. For instance a combination of <code class="docutils literal no
 <span class="n">healthy2</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">exclude_subject</span><span class="p">(</span><span class="n">disease</span><span class="p">)</span>
 <span class="n">healthy3</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_subject</span><span class="p">(</span><span class="n">is_healthy</span><span class="p">)</span><span class="o">.</span><span class="n">exclude_subject</span><span class="p">(</span><span class="n">disease</span><span class="p">)</span>
 
-<span class="k">print</span><span class="p">(</span><span class="n">healthy1</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">healthy2</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">healthy3</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">healthy1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">healthy2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">healthy3</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
@@ -1862,7 +1862,7 @@ correct subjects. For instance a combination of <code class="docutils literal no
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
 </pre></div>
 </div>
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">caffeine_data</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">caffeine_data</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
@@ -1890,7 +1890,7 @@ correct subjects. For instance a combination of <code class="docutils literal no
 <span class="n">test_data</span> <span class="o">=</span> <span class="n">PKData</span><span class="o">.</span><span class="n">from_hdf5</span><span class="p">(</span><span class="n">TEST_HDF5</span><span class="p">)</span>
 
 <span class="n">test_data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_output</span><span class="p">(</span><span class="n">is_auc_inf</span><span class="p">)</span><span class="o">.</span><span class="n">delete_timecourses</span><span class="p">()</span>
-<span class="k">print</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Concise</span> <span class="n">DataFrames</span>
@@ -1941,7 +1941,7 @@ for cyp2d6.</p>
 <span class="n">Concise</span> <span class="n">DataFrames</span>
 </pre></div>
 </div>
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>

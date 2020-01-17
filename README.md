@@ -1,4 +1,4 @@
-# `pkdb_analysis` - Computational analysis based on PK-DB
+# `pyPKDB` - Computational analysis based on PK-DB
 
 
 This repository contains meta-analyses and example use cases of the data in the PKDB database.
@@ -6,13 +6,12 @@ This repository contains meta-analyses and example use cases of the data in the 
 ## Installation
 To run the analysis scripts create a virtual environment with the required dependencies.
 ```
-mkvirtualenv pkdb_analysis --python=python3
-(pkdb_analysis) pip install -r requirements.txt
-(pkdb_analysis) pip install -e .
-(pkdb_analysis) pip install jupyterlab
-(pkdb_analysis) pip install ipykernel
-(pkdb_analysis) python -m ipykernel install --user --name pkdb_analysis
-
+mkvirtualenv pyPKDB --python=python3.7
+(pyPKDB) pip install -e .
+# optional for jupyter notebooks
+(pyPKDB) pip install jupyterlab
+(pyPKDB) pip install ipykernel
+(pyPKDB) python -m ipykernel install --user --name pyPKDB
 ```
 The scripts are running against a given endpoint on which the PKDB backend is running.
 
@@ -20,10 +19,10 @@ The scripts are running against a given endpoint on which the PKDB backend is ru
 Subsequently the virtualenv must be registered as jupyter kernel to use it for the analysis.
 
 ### Install Circos
-follow instructions on 
+follow instructions on
 `http://circos.ca/documentation/tutorials/configuration/distribution_and_installation/`.
-and install Circos 
- 
+and install Circos
+
 Install missing perl modules:
 
 `http://www.circos.ca/documentation/tutorials/configuration/perl_and_modules/`

@@ -143,8 +143,7 @@ class PKDB(object):
             raise ValueError(f"{name} not supported")
 
         url = os.path.join(API_URL, f'{name}/')
-
-        return cls._get_data(url, cls.get_authentication_headers(API_BASE,USER,PASSWORD), **parameters)
+        return cls._get_data(url, cls.get_authentication_headers(API_BASE, USER, PASSWORD), **parameters)
 
     @classmethod
     def get_authentication_headers(cls, api_base, username, password):
@@ -152,9 +151,13 @@ class PKDB(object):
 
         Returns admin authentication as default.
         """
+        auth_dict = {"username": username, "password": password}
+        for key, value in auth_dict.items():
+            if value is None:
+                return {}
         auth_token_url = os.path.join(api_base, "api-token-auth/")
         try:
-            response = requests.post(auth_token_url, json={"username": username, "password": password})
+            response = requests.post(auth_token_url, json=auth_dict)
         except requests.exceptions.ConnectionError as e:
             raise requests.exceptions.InvalidURL(
                 f"Error Connecting (probably wrong url <{api_base}>): ", e)
