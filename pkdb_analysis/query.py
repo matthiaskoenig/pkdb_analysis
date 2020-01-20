@@ -135,7 +135,7 @@ class PKDB(object):
             # FIXME: unify names
             "characteristica_individuals",  # individuals
             "characteristica_groups",  # groups
-            "interventions_elastic",  # interventions FIXME: why plural
+            "interventions",  # interventions FIXME: why plural
             "output_intervention",  # outputs
             "timecourse_intervention",  # timecourses
 
