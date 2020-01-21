@@ -64,7 +64,7 @@ def test_data_by_study_name_empty():
 @pytest.mark.skipif(is_admin_and_connection(), reason="Database not running or not admin user.")
 def test_data_by_study_sid():
     # check existing study
-    pkfilter = PKFilterFactory.by_study_sid("PKDB99999")
+    pkfilter = PKFilterFactory.by_study_sid("Test1")
     data = PKDB.query(pkfilter=pkfilter)
 
     _check_data(data)
@@ -73,7 +73,7 @@ def test_data_by_study_sid():
         df = getattr(data, key)
         study_sids = df.study_sid.unique()
         assert len(study_sids) == 1
-        assert "PKDB99999" in study_sids
+        assert "Test1" in study_sids
 
 @pytest.mark.skipif(is_admin_and_connection(), reason="Database not running or not admin user.")
 def test_data_by_study_sid_empty():
