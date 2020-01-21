@@ -14,4 +14,8 @@ mkvirtualenv pkdb_analysis --python=python3.7
 ```
 The scripts are running against a given endpoint on which the PKDB backend is running.
 
+## Endpoint
+The endpoint on which `PK-DB` is running is set via environment variables.
+See for an example the `.env.local` for working with a locally running instance.
+
 &copy; 2018-2020 Jan Grzegorzewski & Matthias König.
