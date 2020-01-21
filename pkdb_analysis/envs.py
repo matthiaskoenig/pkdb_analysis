@@ -15,7 +15,6 @@ try:
 
     USER = os.environ['USER']
     PASSWORD = os.environ['PASSWORD']
-    DEFAULT_USER_PASSWORD = os.environ['DEFAULT_USER_PASSWORD']
 
     API_URL = os.path.join(API_BASE, "api/v1")
 
@@ -23,12 +22,10 @@ except KeyError:
 
     USER = None
     PASSWORD = None
-    #API_BASE = "https://develop.pk-db.com/"
-    API_BASE = "http://0.0.0.0:8000/"
+    API_BASE = "https://develop.pk-db.com/"
 
     API_URL = os.path.join(API_BASE, "api/v1")
     logger.warning(
         f"Environment variables have not been initialized. "
-        f"1. add authentication credentials; and 2. run {bcolors.OKBLUE}set -a && source .env.local{bcolors.ENDC}. Queries will be performed as a anonymous user.")
-    #logger.error(f"")
-
+        f"1. add authentication credentials; and 2. run {bcolors.OKBLUE}set -a && "
+        f"source .env.local{bcolors.ENDC}. Queries will be performed as a anonymous user.")
