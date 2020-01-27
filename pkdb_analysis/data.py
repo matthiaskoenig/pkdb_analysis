@@ -11,7 +11,10 @@ from typing import List, Callable
 
 import numpy as np
 import pandas as pd
+import warnings
+from pandas.errors import PerformanceWarning
 
+warnings.simplefilter(action='ignore', category=PerformanceWarning)
 logger = logging.getLogger(__name__)
 
 
