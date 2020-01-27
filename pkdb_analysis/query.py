@@ -169,7 +169,7 @@ class PKDB(object):
         """Gets data from a paginated rest API."""
         url_params = "?" + urlparse.urlencode(parameters)
         actual_url = urlparse.urljoin(url, url_params)
-        logger.warning(actual_url)
+        logger.info(actual_url)
 
         # FIXME: make first request fast
         response = requests.get(actual_url, headers=headers)
@@ -183,7 +183,7 @@ class PKDB(object):
         data = []
         for page in range(1, num_pages + 1):
             url_current = actual_url + f"&page={page}"
-            logger.warning(url_current)
+            logger.info(url_current)
 
             response = requests.get(url_current, headers=headers)
             data += response.json()["data"]["data"]
