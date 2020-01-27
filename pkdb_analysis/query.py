@@ -108,7 +108,7 @@ class PKDB(object):
                                           **{**parameters, **pkfilter.get("interventions", {})}),
             individuals=cls._get_subset("individuals_analysis",
                                         **{**parameters, **pkfilter.get("individuals", {})}),
-            groups=cls._get_subset("groups_analysis",
+            groups=cls._get_subset("",
                                    **{**parameters, **pkfilter.get("groups", {})}),
             outputs=cls._get_subset("output_analysis",
                                     **{**parameters, **pkfilter.get("outputs", {})}),
@@ -127,12 +127,11 @@ class PKDB(object):
         :return:
         """
         if not name in [
-            # FIXME: unify names
-            "characteristica_individuals",  # individuals
-            "characteristica_groups",  # groups
-            "interventions",  # interventions
-            "output_intervention",  # outputs
-            "timecourse_intervention",  # timecourses
+            "individuals_analysis",  # individuals
+            "groups_analysis",  # groups
+            "interventions_analysis",  # interventions
+            "output_analysis",  # outputs
+            "timecourse_analysis",  # timecourses
 
         ]:
             raise ValueError(f"{name} not supported")
