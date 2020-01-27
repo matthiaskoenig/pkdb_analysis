@@ -1,10 +1,8 @@
 """
 Functions for working with PKDB data.
 
-* TODO: consistent naming of endpoints
-* FIXME: unclear what is modifying and what is copying the data frames
+* FIXME: specify which methods modify or copy data frames
 """
-
 import logging
 from abc import ABC
 from collections import OrderedDict
@@ -17,15 +15,11 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 
-
-
 class PKDataFrame(pd.DataFrame, ABC):
-
     """
     Extended DataFrame which support customized filter operations.
     Used to encode groups, individuals, interventions, outputs, timecourses on PKData.
     """
-
     @property
     def _constructor(self):
         return PKDataFrame._internal_ctor
@@ -128,7 +122,6 @@ class PKDataFrame(pd.DataFrame, ABC):
         if "study_sid" in self.df.columns:
             study_sids = set(self.study_sid.unique())
         return study_sids
-
 
     def _emptify(self) -> 'PKDataFrame':
         empty_df = pd.DataFrame([], columns=self.columns)
