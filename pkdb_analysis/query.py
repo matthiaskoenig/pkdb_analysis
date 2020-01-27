@@ -17,15 +17,14 @@ logger = logging.getLogger(__name__)
 
 
 class PKFilter(object):
-    """
-    Filter objects for PKData
-    """
+    """Filter objects for PKData"""
     KEYS = ['groups', 'individuals', "interventions", "outputs", "timecourses"]
 
     def __init__(self, normed=True):
         """ Create new Filter instance.
 
-        :param normed: [True, False, None] return [normed data, unnormalized data, normed and unnormalized data]
+        :param normed: [True, False, None] return [normed data, unnormalized data,
+                        normed and unnormalized data]
         """
         self.groups = dict()
         self.individuals = dict()
@@ -92,11 +91,7 @@ class PKFilterFactory(object):
 
 class PKDB(object):
     """ Querying PKData from PK-DB. """
-    #todo: make this as an function argument of query
-    #PKDB_URL = "https://develop.pk-db.com/"
-    #PKDB_USERNAME = "jbrandhorst"
-    #PKDB_PASSWORD = "pkdb_deploy"
-    #URL_BASE = urlparse.urljoin(PKDB_URL, '/api/v1/')
+
     @classmethod
     def query(cls, pkfilter: PKFilter = PKFilter(), page_size: int = 2000) -> "PKData":
         """ Create a PKDBData representation and gets the data for the provided filters.
@@ -135,7 +130,7 @@ class PKDB(object):
             # FIXME: unify names
             "characteristica_individuals",  # individuals
             "characteristica_groups",  # groups
-            "interventions",  # interventions FIXME: why plural
+            "interventions",  # interventions
             "output_intervention",  # outputs
             "timecourse_intervention",  # timecourses
 
@@ -289,9 +284,7 @@ class PKDB(object):
         result = pd.merge(mapping_int_pks, pkdata.timecourses.df.drop_duplicates(subset="timecourse_pk"), how='left').drop(columns=["intervention_pk"]).rename(
             columns={"intervention_pk_updated": "intervention_pk"})
 
-
         return result
-
 
     @classmethod
     def _intervention_pk_update(cls, pkdata):
@@ -308,5 +301,3 @@ class PKDB(object):
             return PKData(**data_dict)
         else:
             return pkdata
-
-
