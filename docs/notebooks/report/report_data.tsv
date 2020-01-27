@@ -1,247 +1,84 @@
-sid	date	name_x	substance	name_y	licence	access	curators	group_count	individual_count	intervention_count	output_count	timecourse_count
-PKDB00001	2019-05-03		caffeine	Abernethy1985	closed	public	['mkoenig', 'janekg']	3	54	1	64	0
-PKDB00002	2019-05-03		caffeine	Akinyinka2000	closed	public	['mkoenig', 'dimitra', 'janekg']	4	20	1	160	6
-PKDB00003	2019-05-03		caffeine	Amchin1999	closed	public	['mkoenig', 'janekg']	1	16	2	72	2
-PKDB00004	2019-05-03		caffeine	Backman2008	closed	public	['mkoenig', 'janekg']	5	70	1	140	0
-PKDB00005	2019-05-03		caffeine	Balogh1992	closed	public	['mkoenig', 'janekg']	1	12	1	363	72
-PKDB00006	2019-05-06		caffeine	Balogh1995	closed	public	['mkoenig', 'janekg']	7	40	4	150	0
-PKDB00007	2019-05-06		caffeine	Barnett1990	closed	public	['mkoenig', 'janekg']	1	6	3	120	0
-PKDB00008	2019-05-06		caffeine	Beach1986	closed	public	['mkoenig']	5	21	3	281	4
-PKDB00009	2019-05-06		caffeine	Begas2007	closed	public	['mkoenig', 'dimitra', 'janekg']	9	0	1	18	0
-PKDB00010	2019-05-06		caffeine	Benowitz1995	closed	public	['mkoenig', 'janekg']	3	0	4	29	8
-PKDB00011	2019-05-06		caffeine	Benowitz2003	closed	public	['mkoenig', 'dimitra', 'janekg']	1	20	4	150	6
-PKDB00012	2019-05-06		caffeine	Birkett1991	open	public	['mkoenig', 'dimitra']	1	6	1	24	0
-PKDB00013	2019-05-06		caffeine	Blanchard1983a	closed	public	['mkoenig', 'janekg']	1	0	2	23	2
-PKDB00014	2019-05-07		caffeine	Bonati1982	closed	public	['mkoenig', 'dimitra', 'janekg']	1	4	5	175	16
-PKDB00015	2019-05-07		caffeine	Campbell1987a	closed	public	['mkoenig', 'janekg']	4	15	1	180	0
-PKDB00016	2019-05-07		caffeine	Carbo1989	closed	public	['mkoenig', 'janekg']	1	6	3	210	3
-PKDB00017	2019-05-07		caffeine	Carrillo2000a	closed	public	['mkoenig', 'janekg']	7	0	1	130	16
-PKDB00018	2019-05-07		caffeine	Cheng1990	closed	public	['mkoenig', 'janekg']	3	26	3	105	0
-PKDB00019	2019-05-07		caffeine	CulmMerdek2005	open	public	['mkoenig', 'dimitra', 'janekg']	1	0	5	49	6
-PKDB00020	2019-05-07		caffeine	Desmond1980	open	public	['mkoenig', 'janekg']	4	0	1	10	0
-PKDB00021	2019-05-07		acetaminophen	Shinoda2007	open	public	['jbrandhorst', 'mkoenig']	3	10	3	92	4
-PKDB00022	2019-05-07		acetaminophen	Albert1974	open	public	['mkoenig', 'dimitra', 'janekg']	1	0	2	26	2
-PKDB00023	2019-05-07		acetaminophen	Ameer1981	closed	public	['mkoenig', 'dimitra', 'janekg']	1	1	2	24	2
-PKDB00024	2019-05-07		acetaminophen	Baraka1990	open	public	['mkoenig', 'dimitra', 'janekg']	1	0	3	32	2
-PKDB00025	2019-05-07		acetaminophen	Chan1997	closed	public	['mkoenig', 'dimitra', 'janekg']	5	0	1	175	16
-PKDB00026	2019-05-07		acetaminophen	Chiew2010	closed	public	['mkoenig', 'dimitra', 'janekg']	1	0	2	50	6
-PKDB00027	2019-05-07		acetaminophen	Critchley2005	closed	public	['mkoenig', 'dimitra', 'janekg']	3	0	1	81	8
-PKDB00028	2019-05-07		acetaminophen	Iqbal1995	closed	public	['jbrandhorst', 'mkoenig']	1	0	2	34	2
-PKDB00029	2019-05-07		acetaminophen	Jensen2004	closed	public	['mkoenig', 'dimitra', 'janekg']	1	0	1	24	3
-PKDB00030	2019-05-07		acetaminophen	Rawlins1977	closed	public	['mkoenig', 'dimitra', 'janekg']	1	0	4	41	4
-PKDB00031	2019-05-07		acetaminophen	Sahajwalla1991	closed	public	['mkoenig', 'jbrandhorst', 'janekg']	1	0	24	128	8
-PKDB00032	2019-05-07		caffeine	Faber2004	closed	public	['mkoenig']	3	24	1	26	0
-PKDB00033	2019-05-07		caffeine	Fuhr1993a	open	public	['mkoenig', 'janekg']	3	12	2	104	0
-PKDB00034	2019-05-07		caffeine	George1986	closed	public	['mkoenig']	5	20	2	64	0
-PKDB00035	2019-05-07		caffeine	Ghassabian2009	closed	public	['mkoenig', 'janekg']	1	11	5	33	0
-PKDB00036	2019-05-07		caffeine	Granfors2005	closed	public	['mkoenig', 'janekg']	3	30	1	62	0
-PKDB00037	2019-05-07		caffeine	Haller2002	closed	public	['mkoenig', 'dimitra', 'janekg']	1	8	1	62	1
-PKDB00038	2019-05-07		caffeine	Harder1988	closed	public	['mkoenig', 'janekg']	1	0	37	160	0
-PKDB00039	2019-05-07		caffeine	Harder1989	closed	public	['mkoenig', 'janekg']	2	0	37	2	0
-PKDB00040	2019-05-07		caffeine	Healy1989	open	public	['mkoenig', 'janekg']	1	0	4	20	0
-PKDB00041	2019-05-07		caffeine	Healy1991	open	public	['mkoenig', 'janekg']	1	0	2	45	6
-PKDB00042	2019-05-07		caffeine	Hetzler1990	closed	public	['mkoenig', 'dimitra', 'janekg']	1	0	1	50	0
-PKDB00043	2019-05-07		caffeine	Jeppesen1996	closed	public	['mkoenig', 'dimitra', 'janekg']	1	0	2	34	8
-PKDB00044	2019-05-07		caffeine	Joeres1988	closed	public	['mkoenig', 'janekg']	6	71	3	107	0
-PKDB00045	2019-05-07		caffeine	Kaplan1997	closed	public	['mkoenig', 'janekg']	1	12	2	55	8
-PKDB00046	2019-05-07		caffeine	Koch1999	closed	public	['mkoenig', 'dimitra']	1	6	1	6	0
-PKDB00047	2019-05-07		caffeine	Lelo1986a	open	public	['mkoenig', 'dimitra']	1	1	4	40	8
-PKDB00048	2019-05-07		caffeine	Levy1983	closed	public	['mkoenig']	3	12	1	144	12
-PKDB00049	2019-05-08		caffeine	Magnusson2008	closed	public	['mkoenig', 'janekg']	1	7	3	57	21
-PKDB00050	2019-05-08		caffeine	May1982	closed	public	['mkoenig']	3	12	2	156	2
-PKDB00051	2019-05-08		caffeine	McLean2002	closed	public	['mkoenig', 'dimitra']	3	0	1	192	32
-PKDB00052	2019-05-08		caffeine	Murphy1988	closed	public	['mkoenig']	5	0	2	16	0
-PKDB00053	2019-05-08		caffeine	Newton1981	closed	public	['mkoenig']	1	0	5	33	0
-PKDB00054	2019-05-08		caffeine	Oh2012	closed	public	['mkoenig', 'dimitra', 'janekg']	1	0	5	48	11
-PKDB00055	2019-05-08		caffeine	Park2003	closed	public	['mkoenig', 'dimitra']	4	30	1	90	0
-PKDB00056	2019-05-08		caffeine	Parsons1978	closed	public	['mkoenig', 'janekg']	3	26	1	112	0
-PKDB00057	2019-05-08		caffeine	Patwardhan1980	closed	public	['mkoenig']	4	0	1	42	3
-PKDB00058	2019-05-08		caffeine	Perera2011	closed	public	['mkoenig', 'janekg']	3	0	1	74	16
-PKDB00059	2019-05-08		caffeine	Renner1984	closed	public	['mkoenig', 'dimitra', 'janekg']	5	36	1	120	0
-PKDB00060	2019-05-08		caffeine	Seng2009	closed	public	['mkoenig', 'janekg']	4	0	2	84	6
-PKDB00061	2019-05-08		caffeine	Spigset1999a	closed	public	['mkoenig', 'janekg']	1	0	1	8	2
-PKDB00062	2019-05-08		caffeine	Stille1987	closed	public	['mkoenig']	1	12	13	432	0
-PKDB00063	2019-05-08		caffeine	Turpault2009	open	public	['mkoenig', 'dimitra']	1	0	5	54	14
-PKDB00065	2019-05-08		caffeine	ZylberKatz1984	closed	public	['mkoenig', 'janekg']	1	12	3	96	0
-PKDB00066	2019-05-08		glucose	Basu2009	closed	public	['mkoenig', 'kgreen']	3	0	1	24	14
-PKDB00067	2019-05-08		glucose	Bergman1981	open	public	['mkoenig', 'kgreen']	5	18	1	86	8
-PKDB00068	2019-05-08		glucose	Butler1991	closed	public	['mkoenig', 'kgreen']	4	0	1	54	30
-PKDB00069	2019-05-08		glucose	Calbet2002	closed	public	['mkoenig', 'kgreen']	1	0	4	23	4
-PKDB00070	2019-05-08		glucose	Degn2004	open	public	['mkoenig', 'kgreen']	1	0	2	101	20
-PKDB00071	2019-05-08		glucose	Felig1969	closed	public	['mkoenig', 'kgreen']	3	0	1	28	4
-PKDB00072	2019-05-08		glucose	Ferrannini1979	open	public	['mkoenig', 'kgreen']	1	0	1	14	3
-PKDB00073	2019-05-08		glucose	Ferrannini1988	closed	public	['mkoenig', 'kgreen']	3	0	1	20	14
-PKDB00074	2019-05-08		glucose	Fery1993	closed	public	['mkoenig', 'kgreen']	5	0	1	111	33
-PKDB00075	2019-05-08		glucose	Firth1986	open	public	['mkoenig', 'kgreen']	3	0	1	52	20
-PKDB00076	2019-05-08		glucose	Henkel2005	closed	public	['mkoenig', 'kgreen']	4	0	1	42	9
-PKDB00077	2019-05-08		glucose	Hovorka2002	open	public	['mkoenig', 'kgreen']	1	0	1	8	4
-PKDB00078	2019-05-08		glucose	Israelian2006	closed	public	['mkoenig', 'kgreen']	3	0	2	69	18
-PKDB00079	2019-05-08		glucose	Jones1998	open	public	['mkoenig', 'kgreen']	3	0	5	86	20
-PKDB00080	2019-05-08		glucose	Kjems2001	closed	public	['mkoenig', 'kgreen']	3	0	2	46	12
-PKDB00081	2019-05-08		glucose	Knop2007	open	public	['mkoenig']	3	0	2	84	32
-PKDB00082	2019-05-08		glucose	Mitrakou1991	closed	public	['mkoenig', 'kgreen']	1	0	2	36	14
-PKDB00083	2019-05-08		glucose	Mitrakou1992	open	public	['mkoenig', 'kgreen']	5	0	1	80	32
-PKDB00084	2019-05-08		glucose	Polonsky1986	open	public	['mkoenig', 'kgreen']	3	19	4	79	5
-PKDB00085	2019-05-08		glucose	Thomaseth2008	closed	public	['mkoenig']	3	0	1	16	6
-PKDB00086	2019-05-08		glucose	Yang2015	open	public	['mkoenig']	7	0	1	100	18
-PKDB00087	2019-05-08		glucose	Zavaroni1987	closed	public	['mkoenig', 'kgreen']	1	0	0	0	0
-PKDB00089	2019-05-08		codeine	Ammon2002	closed	public	['janekg', 'mkoenig', 'dimitra']	1	0	3	143	10
-PKDB00090	2019-05-08		codeine	Caraco1996a	closed	public	['janekg', 'mkoenig']	3	15	4	155	12
-PKDB00091	2019-05-08		codeine	Chen1991	open	public	['mkoenig', 'janekg', 'dimitra']	3	39	9	490	4
-PKDB00092	2019-05-08		codeine	Hasselstrom1997	closed	public	['janekg', 'mkoenig']	3	0	2	20	0
-PKDB00093	2019-05-08		codeine	He2008	closed	public	['mkoenig', 'dimitra', 'janekg']	3	72	1	74	4
-PKDB00094	2019-05-08		codeine	Kim2002	open	public	['janekg', 'mkoenig']	5	0	2	77	8
-PKDB00095	2019-05-08		codeine	Kirchheiner2007	closed	public	['mkoenig', 'janekg', 'dimitra']	4	0	1	72	12
-PKDB00096	2019-05-08		codeine	Kronstrand2001	closed	public	['mkoenig', 'dimitra', 'janekg']	1	0	1	13	3
-PKDB00097	2019-05-08		codeine	Lafolie1996	closed	public	['mkoenig', 'janekg', 'dimitra']	1	13	2	170	5
-PKDB00098	2019-05-08		codeine	Liao2009	closed	public	['mkoenig', 'janekg', 'dimitra']	1	0	1	24	2
-PKDB00099	2019-05-08		codeine	Loetsch2006	closed	public	['mkoenig', 'janekg', 'dimitra']	1	11	3	599	132
-PKDB00100	2019-05-08		codeine	Mikus1997	closed	public	['janekg', 'mkoenig']	3	10	3	104	4
-PKDB00101	2019-05-08		codeine	Mitchell1991	closed	public	['mkoenig', 'janekg']	1	4	1	12	4
-PKDB00102	2019-05-08		codeine	Mohammed1993	closed	public	['mkoenig', 'janekg', 'dimitra']	3	0	1	27	4
-PKDB00103	2019-05-08		codeine	Molanaei2010	closed	public	['mkoenig', 'janekg', 'dimitra']	3	9	2	127	25
-PKDB00104	2019-05-08		codeine	ONeal1999	closed	public	['janekg', 'mkoenig']	1	0	1	12	3
-PKDB00105	2019-05-08		codeine	Shah1990	closed	public	['mkoenig', 'dimitra', 'janekg']	1	0	1	22	2
-PKDB00106	2019-05-08		codeine	Shord2009	open	public	['mkoenig', 'janekg', 'dimitra']	3	0	1	38	2
-PKDB00107	2019-05-08		codeine	Sindrup1996	open	public	['mkoenig', 'janekg', 'dimitra']	1	17	3	136	0
-PKDB00108	2019-05-08		codeine	Somogyi1991	closed	public	['mkoenig', 'dimitra', 'janekg']	1	0	9	39	0
-PKDB00109	2019-05-08		codeine	Vree1992	closed	public	['janekg', 'mkoenig']	1	8	1	296	14
-PKDB00110	2019-05-08		codeine	Wu2013	closed	public	['mkoenig', 'dimitra', 'janekg']	1	0	1	52	4
-PKDB00111	2019-05-08		codeine	Wu2014	closed	public	['mkoenig', 'janekg', 'dimitra']	4	208	1	361	12
-PKDB00112	2019-05-08		codeine	Yue1989a	open	public	['janekg', 'mkoenig']	17	0	1	52	0
-PKDB00113	2019-05-08		codeine	Yue1989	open	public	['janekg', 'mkoenig']	3	132	2	301	0
-PKDB00114	2019-05-08		codeine	Yue1991	open	public	['janekg', 'mkoenig']	1	9	2	85	7
-PKDB00115	2019-05-08		codeine	Yue1991a	open	public	['janekg', 'mkoenig']	5	16	11	393	11
-PKDB00116	2019-05-08		codeine	Yue1999	closed	public	['janekg', 'mkoenig']	1	0	3	10	0
-PKDB00117	2019-05-13		codeine	Yue1997	closed	public	['janekg', 'mkoenig']	3	0	2	2	0
-PKDB00118	2019-05-13		codeine	Tan2006	closed	public	['jbrandhorst', 'mkoenig']	2	0	2	24	2
-PKDB00119	2019-05-13		codeine	Malan1985	open	public	['jbrandhorst', 'mkoenig']	1	0	3	39	3
-PKDB00121	2019-05-14		acetaminophen	Ganetsky2013	open	public	['jbrandhorst', 'mkoenig']	1	0	2	96	10
-PKDB00122	2019-05-14		acetaminophen	Briant1976	closed	public	['jbrandhorst', 'mkoenig']	7	57	1	69	0
-PKDB00123	2019-05-14		acetaminophen	Lau1994	closed	public	['mkoenig', 'dimitra', 'jbrandhorst']	1	6	1	62	4
-PKDB00124	2019-05-14		acetaminophen	Perucca1979	open	public	['mkoenig', 'dimitra']	3	0	2	68	6
-PKDB00125	2019-05-20		acetaminophen	Renner2007	open	public	['mkoenig']	3	0	2	22	2
-PKDB00126	2019-05-23		acetaminophen	TangLiu1983	closed	public	['mkoenig']	1	6	2	158	16
-PKDB00127	2019-05-24		acetaminophen	Blanchard1982	closed	public	['mkoenig']	3	0	2	82	4
-PKDB00128	2019-05-24		acetaminophen	Cornish1957	open	public	['mkoenig']	1	2	3	60	0
-PKDB00129	2019-05-27		acetaminophen	Trang1982	closed	public	['mkoenig']	1	10	3	24	0
-PKDB00130	2019-06-12		acetaminophen	Miners1988	open	public	['jbrandhorst', 'mkoenig']	3	16	1	108	0
-PKDB00131	2019-06-12		acetaminophen	Divoll1982	open	public	['jbrandhorst', 'mkoenig']	7	1	3	50	3
-PKDB00132	2019-06-20		acetaminophen	Yin2001	closed	public	['jbrandhorst', 'mkoenig']	1	0	1	15	1
-PKDB00133	2019-06-20		acetaminophen	Itoh2002	closed	public	['jbrandhorst', 'mkoenig']	1	0	3	97	11
-PKDB00134	2019-06-20		acetaminophen	Wynne1990	closed	public	['mkoenig', 'jbrandhorst']	6	47	1	74	0
-PKDB00135	2019-06-20		glucose	Hoogwerf1986	closed	public	['mkoenig']	1	0	2	42	8
-PKDB00136	2019-06-21		caffeine	Tanaka2014	open	public	['mkoenig']	1	0	5	60	11
-PKDB00137	2019-06-21		caffeine	Kakuda2014	closed	public	['mkoenig']	1	0	5	27	5
-PKDB00138	2019-06-21		caffeine	Doroshyenko2013	closed	public	['mkoenig']	1	0	6	160	10
-PKDB00139	2019-07-28		acetaminophen	Kim2011	closed	public	['jbrandhorst', 'mkoenig']	1	0	2	85	6
-PKDB00140	2019-07-28		acetaminophen	Miners1984	open	public	['jbrandhorst', 'mkoenig']	5	0	4	66	0
-PKDB00141	2019-07-28		acetaminophen	Kamali1993	closed	public	['jbrandhorst', 'mkoenig']	1	0	2	32	2
-PKDB00142	2019-07-28		acetaminophen	Souliman2006	closed	public	['jbrandhorst', 'mkoenig']	1	0	3	24	4
-PKDB00143	2019-07-28		acetaminophen	Osborne1991	closed	public	['jbrandhorst', 'mkoenig']	3	0	1	20	0
-PKDB00144	2019-07-28		acetaminophen	Richter1974	closed	public	['jbrandhorst', 'mkoenig']	1	0	6	60	6
-PKDB00145	2019-07-28		acetaminophen	Chen1996	closed	public	['jbrandhorst', 'mkoenig']	6	0	2	140	20
-PKDB00146	2019-07-28		acetaminophen	Gwilt1963	closed	public	['jbrandhorst', 'mkoenig']	3	0	3	17	4
-PKDB00147	2019-07-28		acetaminophen	McGilveray1972	closed	public	['jbrandhorst', 'mkoenig']	3	8	5	150	36
-PKDB00148	2019-07-28		acetaminophen	Volak2013	closed	public	['jbrandhorst', 'mkoenig']	1	0	5	144	14
-PKDB00149	2019-07-28		acetaminophen	Itoh2000	closed	public	['jbrandhorst', 'mkoenig']	1	0	3	101	13
-PKDB00150	2019-07-28		acetaminophen	Miners1983	open	public	['jbrandhorst', 'mkoenig']	4	0	1	33	0
-PKDB00151	2019-07-28		acetaminophen	Prescott1981	open	public	['jbrandhorst', 'mkoenig']	3	0	2	70	6
-PKDB00152	2019-07-28		acetaminophen	Sevilla-Tirado2003	closed	public	['jbrandhorst', 'mkoenig']	1	0	5	85	5
-PKDB00153	2019-07-28		acetaminophen	Divoll1982b	closed	public	['jbrandhorst', 'mkoenig']	3	49	4	140	4
-PKDB00154	2019-07-28		acetaminophen	Liukas2011	open	public	['jbrandhorst', 'mkoenig']	5	238	1	369	12
-PKDB00155	2019-07-28		acetaminophen	Forrest1979	closed	public	['jbrandhorst', 'mkoenig']	5	15	1	116	12
-PKDB00156	2019-07-28		acetaminophen	Levy1971	open	public	['jbrandhorst', 'mkoenig']	1	3	10	35	26
-PKDB00157	2019-07-28		acetaminophen	Sonne1988	closed	public	['jbrandhorst', 'mkoenig']	1	9	3	160	0
-PKDB00158	2019-07-28		acetaminophen	Mitchell1983	closed	public	['mkoenig', 'jbrandhorst']	3	0	1	32	2
-PKDB00159	2019-07-28		acetaminophen	Jack1985	closed	public	['mkoenig', 'jbrandhorst']	1	0	7	36	0
-PKDB00160	2019-07-28		acetaminophen	Adithan1982	closed	public	['mkoenig', 'jbrandhorst']	1	10	1	60	2
-PKDB00161	2019-07-28		acetaminophen	Miners1986	closed	public	['mkoenig', 'jbrandhorst']	3	20	1	132	0
-PKDB00162	2019-07-28		acetaminophen	Wojcicki1979	closed	public	['mkoenig', 'jbrandhorst']	3	0	3	42	3
-PKDB00163	2019-07-28		acetaminophen	Kulo2014	closed	public	['mkoenig', 'jbrandhorst']	5	146	1	170	0
-PKDB00164	2019-07-28		acetaminophen	Mucklow1980	closed	public	['jbrandhorst', 'mkoenig']	24	0	2	24	0
-PKDB00165	2019-07-29		acetaminophen	Prescott1973	closed	public	['jbrandhorst', 'mkoenig']	12	11	1	45	8
-PKDB00166	2019-09-10		acetaminophen	Ochs1984	closed	public	['jbrandhorst', 'mkoenig']	4	123	3	185	2
-PKDB00167	2019-09-11		acetaminophen	Sanaka2002	closed	public	['mkoenig', 'jbrandhorst']	1	20	2	82	4
-PKDB00168	2019-09-11		acetaminophen	Somaja1987	closed	public	['mkoenig', 'jbrandhorst']	1	0	6	10	0
-PKDB00169	2019-09-11		acetaminophen	Kietzmann1990	closed	public	['mkoenig', 'jbrandhorst']	3	39	1	320	26
-PKDB00170	2019-09-12		acetaminophen	Davis1976	closed	public	['mkoenig', 'jbrandhorst']	7	30	35	58	0
-PKDB00171	2019-09-12		acetaminophen	Shively1975	closed	public	['mkoenig', 'jbrandhorst']	3	8	3	254	16
-PKDB00172	2019-09-12		acetaminophen	Glynn1973	closed	public	['mkoenig', 'jbrandhorst']	1	0	4	64	8
-PKDB00174	2019-09-12		acetaminophen	Triggs1975	closed	public	['mkoenig', 'jbrandhorst']	3	14	4	154	3
-PKDB00175	2019-09-16		acetaminophen	Rashid1990	closed	public	['mkoenig', 'jbrandhorst']	3	0	3	64	6
-PKDB00176	2019-09-20		acetaminophen	Bedjaoui1984	closed	public	['mkoenig', 'jbrandhorst']	3	25	1	205	2
-PKDB00177	2019-09-20		acetaminophen	Sanaka2000	closed	public	['mkoenig', 'jbrandhorst']	3	0	2	22	2
-PKDB00178	2019-09-26		midazolam	Heizmann1983	open	public	['yduport', 'janekg', 'mkoenig']	3	6	4	199	36
-PKDB00179	2019-09-26		midazolam	Greenblatt1986	closed	public	['yduport', 'mkoenig']	3	86	4	156	6
-PKDB00180	2019-09-26		acetaminophen	Bannwarth1992	closed	public	['mkoenig', 'jbrandhorst']	12	0	1	90	22
-PKDB00181	2019-09-26		acetaminophen	Allonen1981	closed	public	['yduport', 'mkoenig']	1	6	3	105	2
-PKDB00182	2019-09-26		acetaminophen	Singla2012	closed	public	['mkoenig', 'jbrandhorst']	1	7	4	208	24
-PKDB00183	2019-09-26		acetaminophen	Paintaud1998	closed	public	['mkoenig', 'jbrandhorst']	1	15	3	266	32
-PKDB00184	2019-09-30		acetaminophen	Douglas1996	closed	public	['mkoenig', 'jbrandhorst']	1	0	2	24	2
-PKDB00185	2019-09-30		acetaminophen	Ray1985	closed	public	['mkoenig', 'jbrandhorst']	3	7	3	50	2
-PKDB00186	2019-09-30		acetaminophen	Clements1976	closed	public	['mkoenig', 'jbrandhorst']	1	4	1	8	0
-PKDB00188	2019-09-30		acetaminophen	Clements1978	closed	public	['mkoenig', 'jbrandhorst']	4	8	4	112	10
-PKDB00189	2019-09-30		acetaminophen	Langford2016	closed	public	['mkoenig', 'jbrandhorst']	4	0	3	62	6
-PKDB00190	2019-09-30		acetaminophen	Fulton1979	closed	public	['mkoenig', 'jbrandhorst']	3	0	2	10	0
-PKDB00191	2019-09-30		acetaminophen	Kamali1993a	closed	public	['mkoenig', 'jbrandhorst']	3	19	1	105	0
-PKDB00192	2019-09-30		acetaminophen	Heading1973	closed	public	['mkoenig', 'jbrandhorst']	3	14	1	108	0
-PKDB00193	2019-09-30		acetaminophen	Bannwarth2001	closed	public	['mkoenig', 'jbrandhorst']	1	0	2	26	2
-PKDB00194	2019-09-30		acetaminophen	Nelson1963	closed	public	['mkoenig', 'jbrandhorst']	1	9	1	27	18
-PKDB00195	2019-09-30		acetaminophen	Clements1984	open	public	['jbrandhorst', 'mkoenig']	1	0	5	66	4
-PKDB00196	2019-09-30		acetaminophen	Divoll1982c	closed	public	['mkoenig', 'jbrandhorst']	5	66	1	100	2
-PKDB00197	2019-10-01		acetaminophen	Abernethy1982a	closed	public	['mkoenig', 'jbrandhorst']	3	34	1	54	2
-PKDB00198	2019-10-01		acetaminophen	Abernethy1982	closed	public	['mkoenig', 'jbrandhorst']	7	46	1	92	4
-PKDB00199	2019-10-01		midazolam	Smith1981	closed	public	['yduport', 'mkoenig']	1	6	3	136	3
-PKDB00200	2019-10-01		acetaminophen	Prescott1968	closed	public	['mkoenig', 'jbrandhorst']	3	8	3	80	16
-PKDB00201	2019-10-01		midazolam	Tsunoda1999	closed	public	['yduport', 'mkoenig']	1	0	3	76	6
-PKDB00202	2019-10-01		midazolam	Thummel1996	closed	public	['yduport', 'mkoenig']	3	20	2	349	8
-PKDB00203	2019-10-06		midazolam	Klotz1982	closed	public	['yduport', 'mkoenig']	1	30	6	153	6
-PKDB00204	2019-10-08		codeine	Desmeules1991	closed	public	['mkoenig', 'dimitra', 'janekg']	3	1	3	29	3
-PKDB00205	2019-10-09		midazolam	Gorski2003	closed	public	['yduport', 'mkoenig']	7	0	4	144	4
-PKDB00206	2019-10-09		midazolam	Mandema1992	closed	public	['yduport', 'mkoenig']	1	8	3	151	5
-PKDB00207	2019-10-09		midazolam	Kupferschmidt1995	closed	public	['yduport', 'mkoenig']	1	0	4	79	8
-PKDB00209	2019-10-09		midazolam	Farkas2007	closed	public	['yduport', 'mkoenig']	1	0	6	63	5
-PKDB00210	2019-10-09		caffeine	Blanchard1983	closed	public	['mkoenig', 'dimitra']	3	0	2	12	0
-PKDB00211	2019-10-09		midazolam	Kharasch2004	closed	public	['yduport', 'mkoenig']	1	0	10	226	18
-PKDB00212	2019-10-10		acetaminophen	Depre1992	closed	public	['jbrandhorst']	3	0	4	25	2
-PKDB00213	2019-10-12		acetaminophen	Lowenthal1976	closed	public	['mkoenig', 'jbrandhorst']	4	13	1	118	9
-PKDB00214	2019-10-12		acetaminophen	Kamali1992	closed	public	['mkoenig', 'jbrandhorst']	1	0	2	48	4
-PKDB00215	2019-10-12		acetaminophen	Stillings2000	closed	public	['mkoenig', 'jbrandhorst']	1	0	3	80	6
-PKDB00216	2019-10-12		acetaminophen	Grattan2000	closed	public	['jbrandhorst', 'mkoenig']	1	0	5	70	5
-PKDB00217	2019-10-25		midazolam	Veronese2003	closed	public	['yduport', 'mkoenig']	3	24	8	41	5
-PKDB00218	2019-10-25		acetaminophen	Lee1981	closed	public	['mkoenig', 'jbrandhorst']	3	13	1	64	2
-PKDB00219	2019-10-25		acetaminophen	Nimmo1978	closed	public	['mkoenig', 'jbrandhorst']	1	0	3	18	2
-PKDB00220	2019-10-26		acetaminophen	Carlo1955	closed	public	['mkoenig', 'jbrandhorst']	3	24	8	576	104
-PKDB00221	2019-10-26		acetaminophen	Rumble1991	closed	public	['mkoenig', 'jbrandhorst']	1	0	8	99	9
-PKDB00222	2019-10-26		acetaminophen	HolmerPettersson2004	closed	public	['jbrandhorst', 'mkoenig']	6	0	5	15	5
-PKDB00223	2019-10-27		acetaminophen	Adithan1988	closed	public	['jbrandhorst', 'mkoenig']	5	19	1	93	3
-PKDB00224	2019-10-27		acetaminophen	Prescott1993	closed	public	['mkoenig', 'jbrandhorst']	3	0	2	28	2
-PKDB00225	2019-10-27		acetaminophen	Nimmo1973	closed	public	['jbrandhorst', 'mkoenig']	3	1	3	60	7
-PKDB00226	2019-10-27		acetaminophen	Liedtke1979	closed	public	['jbrandhorst', 'mkoenig']	8	0	7	80	7
-PKDB00227	2019-10-31		midazolam	Backman1996	closed	public	['yduport', 'mkoenig']	1	10	2	96	2
-PKDB00228	2019-10-31		midazolam	Backman1998	closed	public	['yduport', 'mkoenig']	1	0	6	105	10
-PKDB00243	2019-11-03		midazolam	Chung2006	closed	public	['yduport', 'mkoenig']	6	0	4	96	6
-PKDB00244	2019-11-03		midazolam	Pentikis2007	closed	public	['yduport', 'mkoenig']	13	0	4	150	12
-PKDB00245	2019-11-03		midazolam	Kharasch1997	open	public	['yduport', 'mkoenig']	1	9	4	90	12
-PKDB00246	2019-11-03		midazolam	Olkkola1993	closed	public	['yduport', 'mkoenig']	2	0	3	48	4
-PKDB00247	2019-11-03		midazolam	Eeckhoudt1998	closed	public	['yduport', 'mkoenig']	1	9	2	28	4
-PKDB00248	2019-11-03		midazolam	Link2008	open	public	['yduport', 'mkoenig']	1	9	3	342	18
-PKDB00249	2019-11-04		midazolam	Erp2011	open	public	['yduport', 'mkoenig']	1	8	2	16	0
-PKDB00250	2019-11-04		midazolam	Kanto1985	closed	public	['yduport', 'mkoenig']	24	0	13	0	0
-PKDB00251	2019-11-04		midazolam	Bornemann1985	closed	public	['yduport', 'mkoenig']	1	12	3	186	6
-PKDB00252	2019-11-04		midazolam	Kawaguchi-Suzuki2017	open	public	['yduport', 'mkoenig']	1	55	3	132	6
-PKDB00253	2019-11-04		midazolam	Vanakoski1996	closed	public	['yduport', 'mkoenig']	12	120	5	151	18
-PKDB00254	2019-11-04		midazolam	Greenblatt2003	closed	public	['yduport', 'mkoenig']	4	0	6	46	2
-PKDB00255	2019-11-06		acetaminophen	Forfar1980	closed	public	['jbrandhorst', 'mkoenig']	4	24	1	48	3
-PKDB00256	2019-11-06		acetaminophen	Douglas1978	closed	public	['jbrandhorst', 'mkoenig']	3	6	2	26	2
-PKDB00257	2019-11-06		acetaminophen	Ray1986	closed	public	['jbrandhorst', 'mkoenig']	3	6	2	48	2
-PKDB00258	2019-11-06		acetaminophen	Adjepon-Yamoah1986	closed	public	['mkoenig', 'jbrandhorst']	1	6	2	82	2
-PKDB00259	2019-11-06		acetaminophen	Kolawole2002	closed	public	['jbrandhorst', 'mkoenig']	1	0	5	51	3
-PKDB00260	2019-11-06		acetaminophen	Rostami-Hodjegan2002	closed	public	['jbrandhorst', 'mkoenig']	1	0	3	72	4
-PKDB00261	2019-11-08		acetaminophen	Tokola1984	closed	public	['mkoenig', 'jbrandhorst']	1	9	2	111	6
-PKDB00262	2019-11-08		acetaminophen	Brodie1980	closed	public	['jbrandhorst', 'mkoenig']	5	0	3	12	0
-PKDB00263	2019-11-08		glucose	Shapiro1987	closed	public	['kgreen', 'mkoenig']	1	0	5	66	13
-PKDB00264	2019-11-08		acetaminophen	Sommers1987	closed	public	['jbrandhorst', 'mkoenig']	4	0	1	6	0
-PKDB00265	2019-11-09		acetaminophen	Hall1976	closed	public	['jbrandhorst', 'mkoenig']	2	6	3	50	4
-PKDB00266	2019-11-09		acetaminophen	Ali1993	closed	public	['mkoenig', 'jbrandhorst']	11	0	1	23	2
+sid	date	name	creator	licence	access	group_count	individual_count	intervention_count	output_count	timecourse_count
+PKDB00024	2019-05-07	Baraka1990	mkoenig	open	public	1	0	3	32	2
+PKDB00029	2019-05-07	Jensen2004	mkoenig	closed	public	1	0	1	24	3
+PKDB00023	2019-05-07	Ameer1981	mkoenig	closed	public	0	0	0	0	0
+PKDB00028	2019-05-07	Iqbal1995	jbrandhorst	closed	public	1	0	2	34	2
+PKDB00026	2019-05-07	Chiew2010	mkoenig	closed	public	1	0	2	50	6
+PKDB00022	2019-05-07	Albert1974	mkoenig	open	public	1	0	2	26	2
+PKDB00027	2019-05-07	Critchley2005	mkoenig	closed	public	3	0	1	81	8
+PKDB00119	2019-05-13	Malan1985	jbrandhorst	open	public	1	0	3	39	3
+PKDB00122	2019-05-14	Briant1976	jbrandhorst	closed	public	7	57	1	69	0
+PKDB00123	2019-05-14	Lau1994	mkoenig	closed	public	1	6	1	62	4
+PKDB00121	2019-05-14	Ganetsky2013	jbrandhorst	open	public	1	0	2	96	10
+PKDB00124	2019-05-14	Perucca1979	mkoenig	open	public	3	0	2	68	6
+PKDB00130	2019-06-12	Miners1988	jbrandhorst	open	public	3	16	1	108	0
+PKDB00131	2019-06-12	Divoll1982	jbrandhorst	open	public	7	1	3	50	3
+PKDB00133	2019-06-20	Itoh2002	jbrandhorst	closed	public	1	0	3	97	11
+PKDB00146	2019-07-28	Gwilt1963	jbrandhorst	closed	public	3	0	3	17	4
+PKDB00149	2019-07-28	Itoh2000	jbrandhorst	closed	public	1	0	3	101	13
+PKDB00160	2019-07-28	Adithan1982	jbrandhorst	closed	public	1	10	1	60	2
+PKDB00159	2019-07-28	Jack1985	mkoenig	closed	public	1	0	7	36	0
+PKDB00156	2019-07-28	Levy1971	jbrandhorst	open	public	1	3	10	35	26
+PKDB00155	2019-07-28	Forrest1979	jbrandhorst	closed	public	5	15	1	116	12
+PKDB00164	2019-07-28	Mucklow1980	jbrandhorst	closed	public	24	0	2	24	0
+PKDB00154	2019-07-28	Liukas2011	jbrandhorst	open	public	5	238	1	369	12
+PKDB00141	2019-07-28	Kamali1993	jbrandhorst	closed	public	1	0	2	32	2
+PKDB00145	2019-07-28	Chen1996	jbrandhorst	closed	public	6	0	2	140	20
+PKDB00147	2019-07-28	McGilveray1972	jbrandhorst	closed	public	3	8	5	150	36
+PKDB00158	2019-07-28	Mitchell1983	jbrandhorst	closed	public	3	0	1	32	2
+PKDB00150	2019-07-28	Miners1983	jbrandhorst	open	public	4	0	1	33	0
+PKDB00163	2019-07-28	Kulo2014	jbrandhorst	closed	public	5	146	1	170	0
+PKDB00161	2019-07-28	Miners1986	jbrandhorst	closed	public	3	20	1	132	0
+PKDB00139	2019-07-28	Kim2011	jbrandhorst	closed	public	1	0	2	85	6
+PKDB00143	2019-07-28	Osborne1991	jbrandhorst	closed	public	3	0	1	20	0
+PKDB00153	2019-07-28	Divoll1982b	jbrandhorst	closed	public	3	49	4	140	4
+PKDB00151	2019-07-28	Prescott1981	jbrandhorst	open	public	3	0	2	70	6
+PKDB00140	2019-07-28	Miners1984	jbrandhorst	open	public	5	0	4	66	0
+PKDB00165	2019-07-29	Prescott1973	jbrandhorst	closed	public	12	11	1	45	8
+PKDB00166	2019-09-10	Ochs1984	jbrandhorst	closed	public	4	123	3	185	2
+PKDB00169	2019-09-11	Kietzmann1990	jbrandhorst	closed	public	3	39	1	320	26
+PKDB00170	2019-09-12	Davis1976	jbrandhorst	closed	public	7	30	35	58	0
+PKDB00172	2019-09-12	Glynn1973	jbrandhorst	closed	public	1	0	4	64	8
+PKDB00176	2019-09-20	Bedjaoui1984	jbrandhorst	closed	public	3	25	1	205	2
+PKDB00183	2019-09-26	Paintaud1998	jbrandhorst	closed	public	1	15	3	266	32
+PKDB00180	2019-09-26	Bannwarth1992	jbrandhorst	closed	public	12	0	1	90	22
+PKDB00193	2019-09-30	Bannwarth2001	jbrandhorst	closed	public	1	0	2	26	2
+PKDB00184	2019-09-30	Douglas1996	jbrandhorst	closed	public	1	0	2	24	2
+PKDB00189	2019-09-30	Langford2016	jbrandhorst	closed	public	4	0	3	62	6
+PKDB00191	2019-09-30	Kamali1993a	jbrandhorst	closed	public	3	19	1	105	0
+PKDB00195	2019-09-30	Clements1984	mkoenig	open	public	1	0	5	66	4
+PKDB00194	2019-09-30	Nelson1963	jbrandhorst	closed	public	1	9	1	27	18
+PKDB00188	2019-09-30	Clements1978	jbrandhorst	closed	public	4	8	4	112	10
+PKDB00190	2019-09-30	Fulton1979	jbrandhorst	closed	public	3	0	2	10	0
+PKDB00186	2019-09-30	Clements1976	jbrandhorst	closed	public	1	4	1	8	0
+PKDB00196	2019-09-30	Divoll1982c	jbrandhorst	closed	public	5	66	1	100	2
+PKDB00200	2019-10-01	Prescott1968	jbrandhorst	closed	public	3	8	3	80	16
+PKDB00197	2019-10-01	Abernethy1982a	mkoenig	closed	public	3	34	1	54	2
+PKDB00198	2019-10-01	Abernethy1982	jbrandhorst	closed	public	7	46	1	92	4
+PKDB00212	2019-10-10	Depre1992	jbrandhorst	closed	public	3	0	4	25	2
+PKDB00214	2019-10-12	Kamali1992	jbrandhorst	closed	public	1	0	2	48	4
+PKDB00213	2019-10-12	Lowenthal1976	jbrandhorst	closed	public	4	13	1	118	9
+PKDB00216	2019-10-12	Grattan2000	jbrandhorst	closed	public	1	0	5	70	5
+PKDB00219	2019-10-25	Nimmo1978	jbrandhorst	closed	public	1	0	3	18	2
+PKDB00218	2019-10-25	Lee1981	jbrandhorst	closed	public	3	13	1	64	2
+PKDB00220	2019-10-26	Carlo1955	jbrandhorst	closed	public	3	24	8	576	104
+PKDB00222	2019-10-26	HolmerPettersson2004	jbrandhorst	closed	public	6	0	5	15	5
+PKDB00223	2019-10-27	Adithan1988	jbrandhorst	closed	public	5	19	1	93	3
+PKDB00225	2019-10-27	Nimmo1973	jbrandhorst	closed	public	3	1	3	60	7
+PKDB00226	2019-10-27	Liedtke1979	jbrandhorst	closed	public	8	0	7	80	7
+PKDB00256	2019-11-06	Douglas1978	jbrandhorst	closed	public	3	6	2	26	2
+PKDB00259	2019-11-06	Kolawole2002	jbrandhorst	closed	public	1	0	5	51	3
+PKDB00258	2019-11-06	Adjepon-Yamoah1986	jbrandhorst	closed	public	1	6	2	82	2
+PKDB00255	2019-11-06	Forfar1980	jbrandhorst	closed	public	4	24	1	48	3
+PKDB00262	2019-11-08	Brodie1980	jbrandhorst	closed	public	5	0	3	12	0
+PKDB00265	2019-11-09	Hall1976	jbrandhorst	closed	public	2	6	3	50	4
+PKDB00266	2019-11-09	Ali1993	jbrandhorst	closed	public	11	0	1	23	2
+24517114	2020-01-25	Berg2014	jbrandhorst	closed	public	3	0	3	40	4
+1577043	2020-01-25	Nielsen1992	jbrandhorst	closed	public	1	0	3	24	3
+4850385	2020-01-25	Mrochek1974	jbrandhorst	closed	public	1	2	1	0	0
+10412886	2020-01-25	Esteban1999	jbrandhorst	closed	public	5	0	1	24	0
+Itoh2001	2020-01-25	Itoh2001	jbrandhorst	closed	public	1	0	2	56	7
+4851431	2020-01-25	Chiou1974	jbrandhorst	closed	public	0	0	0	0	0
+3604267	2020-01-25	Kamali1987	jbrandhorst	closed	public	4	0	8	92	4
+Borin1989	2020-01-25	Borin1989	jbrandhorst	closed	public	1	15	5	60	5
+7002186	2020-01-25	Prescott1980	mkoenig	open	public	0	0	0	0	0
