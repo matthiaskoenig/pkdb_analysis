@@ -108,7 +108,7 @@ class PKDB(object):
                                           **{**parameters, **pkfilter.get("interventions", {})}),
             individuals=cls._get_subset("individuals_analysis",
                                         **{**parameters, **pkfilter.get("individuals", {})}),
-            groups=cls._get_subset("",
+            groups=cls._get_subset("groups_analysis",
                                    **{**parameters, **pkfilter.get("groups", {})}),
             outputs=cls._get_subset("output_analysis",
                                     **{**parameters, **pkfilter.get("outputs", {})}),
