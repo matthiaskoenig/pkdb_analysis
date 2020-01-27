@@ -102,7 +102,7 @@ class PKDB(object):
         """
         pkfilter = pkfilter.to_dict()
         parameters = {"format": "json", 'page_size': page_size}
-        logger.warning("*** Querying data ***")
+        logger.info("*** Querying data ***")
         pkdata = PKData(
             interventions=cls._get_subset("interventions_analysis",
                                           **{**parameters, **pkfilter.get("interventions", {})}),
