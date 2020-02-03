@@ -144,7 +144,7 @@ class PKData(object):
     - outputs
     - timecourses
     """
-    KEYS = ["groups", "individuals", "interventions", "outputs", "timecourses"]
+    KEYS = ["groups", "individuals", "interventions", "outputs", "timecourses", "studies"]
     PK_COLUMNS = {key: f"{key[:-1]}_pk" for key in KEYS}
 
     def __init__(self,
@@ -152,8 +152,10 @@ class PKData(object):
                  groups: pd.DataFrame = None,
                  individuals: pd.DataFrame = None,
                  outputs: pd.DataFrame = None,
-                 timecourses: pd.DataFrame = None
-                 ):
+                 timecourses: pd.DataFrame = None,
+                 studies: pd.DataFrame = None
+
+    ):
         """ Creates PKDB data object from given DataFrames.
 
         :param interventions:
@@ -167,6 +169,7 @@ class PKData(object):
         self.interventions = PKDataFrame(interventions, pk="intervention_pk")
         self.outputs = PKDataFrame(outputs, pk="output_pk")
         self.timecourses = PKDataFrame(timecourses, pk="timecourse_pk")
+        self.studies = PKDataFrame(studies, pk="sid")
 
         if not self.individuals.empty:
             self.individuals.substance = self.individuals.substance.astype(str)
@@ -474,6 +477,10 @@ class PKData(object):
         if df_key not in PKData.KEYS:
             raise ValueError(f"Unsupported key '{df_key}', key must be in '{PKData.KEYS}'")
 
+    def filter_study(self, f_idx, concise=True, **kwargs) -> 'PKData':
+        """ Filter groups. """
+        return self._pk_filter("study", f_idx, concise, **kwargs)
+
     def filter_intervention(self, f_idx, concise=True, *args, **kwargs) -> 'PKData':
         """Filter interventions.
 
@@ -520,6 +527,10 @@ class PKData(object):
     def filter_timecourse(self, f_idx, concise=True, **kwargs) -> 'PKData':
         """ Filter timecourses. """
         return self._pk_filter("timecourses", f_idx, concise, **kwargs)
+
+    def exclude_study(self, f_idx, concise=True, **kwargs) -> 'PKData':
+        """ Filter groups. """
+        return self._pk_exclude("study", f_idx, concise, **kwargs)
 
     def exclude_intervention(self, f_idx, concise=True, **kwargs) -> 'PKData':
         return self._pk_exclude("interventions", f_idx, concise, **kwargs)
@@ -579,6 +590,17 @@ class PKData(object):
         logger.warning("Concise DataFrames")
         while previous_len > self._len_total:
             previous_len = copy(self._len_total)
+
+            # concise based on studies
+            outputs_study_sids = set(self.outputs.study_sid)
+            timecourses_study_sids = set(self.timecourses.study_sid)
+            interventions_study_sids = set(self.interventions.study_sid)
+            groups_study_sids = set(self.groups.study_sid)
+            individuals_study_sids = set(self.individuals.study_sid)
+
+            study_sid_sets = [outputs_study_sids, timecourses_study_sids, interventions_study_sids, groups_study_sids,individuals_study_sids ]
+            current_study_sid_sets = set().union(*study_sid_sets)
+            self.studies =  self.studies[self.studies.pk.isin(current_study_sid_sets)]
 
             # concise based on interventions
             outputs_intervention_pks = set(self.outputs.intervention_pk)
