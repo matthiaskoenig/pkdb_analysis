@@ -104,6 +104,9 @@ class PKDB(object):
         parameters = {"format": "json", 'page_size': page_size}
         logger.info("*** Querying data ***")
         pkdata = PKData(
+            studies=cls._get_subset("studies",
+                                    **{**parameters, **pkfilter.get("studies", {})}
+                                    ),
             interventions=cls._get_subset("interventions_analysis",
                                           **{**parameters, **pkfilter.get("interventions", {})}),
             individuals=cls._get_subset("individuals_analysis",
@@ -113,7 +116,9 @@ class PKDB(object):
             outputs=cls._get_subset("output_analysis",
                                     **{**parameters, **pkfilter.get("outputs", {})}),
             timecourses=cls._get_subset("timecourse_analysis",
-                                        **{**parameters, **pkfilter.get("timecourses", {})})
+                                        **{**parameters, **pkfilter.get("timecourses", {})}
+                                        ),
+
         )
 
         return cls._intervention_pk_update(pkdata)
@@ -132,6 +137,7 @@ class PKDB(object):
             "interventions_analysis",  # interventions
             "output_analysis",  # outputs
             "timecourse_analysis",  # timecourses
+            "studies",  # studies
 
         ]:
             raise ValueError(f"{name} not supported")
@@ -203,11 +209,8 @@ class PKDB(object):
             "max",
             "time"
         ]
-        if "timecourse" not in url:
-            for column in float_columns:
-                if column in df.columns:
-                    df[column] = df[column].astype(float)
-        else:
+
+        if "timecourse" in url:
             # every element must be converted individually
             for column in float_columns:
                 if column in df:
@@ -216,6 +219,10 @@ class PKDB(object):
                         value = df.iloc[k, col_loc]
                         if value is not None:
                             df.at[k, column] = np.array(value).astype(float)
+        else:
+            for column in float_columns:
+                if column in df.columns:
+                    df[column] = df[column].astype(float)
 
         # convert columns to int columns
         int_columns = [
