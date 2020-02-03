@@ -144,7 +144,7 @@ class PKData(object):
     - outputs
     - timecourses
     """
-    KEYS = ["groups", "individuals", "interventions", "outputs", "timecourses", "studies"]
+    KEYS = ["studies", "groups", "individuals", "interventions", "outputs", "timecourses"]
     PK_COLUMNS = {key: f"{key[:-1]}_pk" for key in KEYS}
 
     def __init__(self,
@@ -176,7 +176,7 @@ class PKData(object):
         if not self.groups.empty:
             self.groups.substance = self.groups.substance.astype(str)
 
-        self.choices = self.get_choices()
+        #self.choices = self.get_choices() #TODO:not working with studies. Is this still important?
 
     def __dict___(self):
         return {df_key: getattr(self, df_key).df for df_key in PKData.KEYS}
@@ -195,7 +195,6 @@ class PKData(object):
         lines = [
             "-" * 30, f"{self.__class__.__name__} ({id(self)})",
             "-" * 30,
-            f"{'studies':<15} {len(self.study_sids):>5} "
         ]
 
         for key in self.KEYS:
@@ -479,7 +478,7 @@ class PKData(object):
 
     def filter_study(self, f_idx, concise=True, **kwargs) -> 'PKData':
         """ Filter groups. """
-        return self._pk_filter("study", f_idx, concise, **kwargs)
+        return self._pk_filter("studies", f_idx, concise, **kwargs)
 
     def filter_intervention(self, f_idx, concise=True, *args, **kwargs) -> 'PKData':
         """Filter interventions.
@@ -530,7 +529,7 @@ class PKData(object):
 
     def exclude_study(self, f_idx, concise=True, **kwargs) -> 'PKData':
         """ Filter groups. """
-        return self._pk_exclude("study", f_idx, concise, **kwargs)
+        return self._pk_exclude("studies", f_idx, concise, **kwargs)
 
     def exclude_intervention(self, f_idx, concise=True, **kwargs) -> 'PKData':
         return self._pk_exclude("interventions", f_idx, concise, **kwargs)
@@ -598,9 +597,13 @@ class PKData(object):
             groups_study_sids = set(self.groups.study_sid)
             individuals_study_sids = set(self.individuals.study_sid)
 
-            study_sid_sets = [outputs_study_sids, timecourses_study_sids, interventions_study_sids, groups_study_sids,individuals_study_sids ]
+            study_sid_sets = [outputs_study_sids, timecourses_study_sids, interventions_study_sids, groups_study_sids,individuals_study_sids]
             current_study_sid_sets = set().union(*study_sid_sets)
-            self.studies =  self.studies[self.studies.pk.isin(current_study_sid_sets)]
+            self.studies =  self.studies[self.studies.sid.isin(current_study_sid_sets)]
+            for df_key in ["interventions", "groups", "individuals", "timecourses", "outputs"]:
+                df = getattr(self, df_key)
+                setattr(self, df_key, df[df["study_sid"].isin(self.studies.pks)])
+
 
             # concise based on interventions
             outputs_intervention_pks = set(self.outputs.intervention_pk)

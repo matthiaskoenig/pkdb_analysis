@@ -31,6 +31,8 @@ class PKFilter(object):
         self.interventions = dict()
         self.outputs = dict()
         self.timecourses = dict()
+        self.studies = dict()
+
 
         self._set_normed(normed)
 
@@ -104,11 +106,8 @@ class PKDB(object):
         parameters = {"format": "json", 'page_size': page_size}
         logger.info("*** Querying data ***")
         pkdata = PKData(
-            studies=cls._get_subset("studies",
-                                    **{**parameters, **pkfilter.get("studies", {})}
-                                    ),
-            interventions=cls._get_subset("interventions_analysis",
-                                          **{**parameters, **pkfilter.get("interventions", {})}),
+            studies=cls._get_subset("studies", **{**parameters, **pkfilter.get("studies", {})}),
+            interventions=cls._get_subset("interventions_analysis", **{**parameters, **pkfilter.get("interventions", {})}),
             individuals=cls._get_subset("individuals_analysis",
                                         **{**parameters, **pkfilter.get("individuals", {})}),
             groups=cls._get_subset("groups_analysis",
@@ -116,9 +115,7 @@ class PKDB(object):
             outputs=cls._get_subset("output_analysis",
                                     **{**parameters, **pkfilter.get("outputs", {})}),
             timecourses=cls._get_subset("timecourse_analysis",
-                                        **{**parameters, **pkfilter.get("timecourses", {})}
-                                        ),
-
+                                        **{**parameters, **pkfilter.get("timecourses", {})})
         )
 
         return cls._intervention_pk_update(pkdata)
