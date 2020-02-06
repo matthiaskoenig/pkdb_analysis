@@ -69,7 +69,6 @@ def figure_category(d):
 def create_plots(data, fig_path, nrows=2, ncols=2, figsize=(30, 30), log_y=False):
     data["plotting_category"] = data[["per_bodyweight", "per_bodyweight_intervention"]].apply(figure_category,axis=1)
     figure, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
-
     axes_iter = iter(axes.flatten())
     substance = _get_one(data.substance)
     substance_intervention = _str_all(data.substance_intervention)
@@ -90,7 +89,7 @@ def create_plots(data, fig_path, nrows=2, ncols=2, figsize=(30, 30), log_y=False
         ax.set_xlabel(f'{x_label} [{u_unit_intervention.u :~P}]')
         ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
 
-        max_values = np.array([data_category["value"].max(), data_category["mean"].max()])
+        max_values = np.array([data_category["value"].max(), data_category["mean"].max(), data_category["median"].max()])
         max_values = max_values[~np.isnan(max_values)]
         df_subplot_max = np.max(max_values) * 1.05
         df_figure_x_max = data_category.value_intervention.max() * 1.05
@@ -180,6 +179,6 @@ def create_plots(data, fig_path, nrows=2, ncols=2, figsize=(30, 30), log_y=False
             ax.set_ylim(bottom=df_figure_min, top=df_subplot_max)
         else:
             ax.set_ylim(bottom=0, top=df_subplot_max)
-
-    figure.savefig(os.path.join(fig_path, f"{measurement_type}.png"), bbox_inches="tight", dpi=72)
+    figure.savefig(os.path.join(fig_path, f"{measurement_type}.svg"), bbox_inches="tight", dpi=72, format="svg")
+    #figure.savefig(os.path.join(fig_path, f"{measurement_type}.png"), bbox_inches="tight", dpi=72)
 
