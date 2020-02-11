@@ -14,6 +14,9 @@ def infer_output(d):
         weight = d["value_weight"]
     elif not np.isnan(d["mean_weight"]):
         weight = d["mean_weight"]
+
+    elif not np.isnan(d["median_weight"]):
+        weight = d["median_weight"]
     else:
         return pd.Series(None, index=d.index)
     assert weight is not None, d
@@ -36,6 +39,9 @@ def infer_output(d):
         if weight:
             result = u_unit * ((d["mean_weight"] * u_unit_weight) ** exponent)
             d["mean"] = result.m * d["mean"]
+            d["median"] = result.m * d["median"]
+            d["min"] = result.m * d["min"]
+            d["max"] = result.m * d["max"]
             d["sd"] = result.m * d["sd"]
             d["se"] = result.m * d["se"]
             d["cv"] = result.m * d["cv"]
