@@ -136,6 +136,8 @@ class PKDataFrame(pd.DataFrame, ABC):
     def __repr__(self):
         return self.df.__repr__()
 
+    def _repr_html_(self):
+        return self.df.to_html()
 
 class PKData(object):
     """ Consistent set of data from PK-DB.
