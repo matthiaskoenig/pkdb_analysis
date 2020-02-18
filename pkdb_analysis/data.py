@@ -130,6 +130,11 @@ class PKDataFrame(pd.DataFrame, ABC):
         empty_df = pd.DataFrame([], columns=self.columns)
         return PKDataFrame(empty_df, pk=self.pk)
 
+    def __str__(self):
+        return self.df
+
+    def __rep__(self):
+        return self.df
 
 class PKData(object):
     """ Consistent set of data from PK-DB.
