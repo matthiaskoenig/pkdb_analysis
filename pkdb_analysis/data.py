@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 import warnings
 from pandas.errors import PerformanceWarning
+from IPython.display import display
 
 warnings.simplefilter(action='ignore', category=PerformanceWarning)
 logger = logging.getLogger(__name__)
@@ -137,7 +138,7 @@ class PKDataFrame(pd.DataFrame, ABC):
         return self.df.__repr__()
 
     def _repr_html_(self):
-        return self.df.to_html()
+        return display(self.df)
 
 class PKData(object):
     """ Consistent set of data from PK-DB.
