@@ -131,10 +131,11 @@ class PKDataFrame(pd.DataFrame, ABC):
         return PKDataFrame(empty_df, pk=self.pk)
 
     def __str__(self):
-        return self.df
+        return self.df.__str__()
 
-    def __rep__(self):
-        return self.df
+    def __repr__(self):
+        return self.df.__repr__()
+
 
 class PKData(object):
     """ Consistent set of data from PK-DB.
