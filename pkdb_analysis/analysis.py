@@ -66,7 +66,7 @@ def figure_category(d):
     elif not d["per_bodyweight"] and d["per_bodyweight_intervention"]:
         return "abs_output_rel_intervention"
 
-def create_plots(data, fig_path, nrows=2, ncols=2, figsize=(30, 30), log_y=False):
+def create_plots(data, fig_path, nrows=2, ncols=2, figsize=(30, 30), log_y=False, formats=["png","svg"]):
     data["plotting_category"] = data[["per_bodyweight", "per_bodyweight_intervention"]].apply(figure_category,axis=1)
     figure, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
     axes_iter = iter(axes.flatten())
@@ -179,6 +179,7 @@ def create_plots(data, fig_path, nrows=2, ncols=2, figsize=(30, 30), log_y=False
             ax.set_ylim(bottom=df_figure_min, top=df_subplot_max)
         else:
             ax.set_ylim(bottom=0, top=df_subplot_max)
-    figure.savefig(os.path.join(fig_path, f"{measurement_type}.svg"), bbox_inches="tight", dpi=72, format="svg")
+    for format in formats:
+        figure.savefig(os.path.join(fig_path, f"{measurement_type}.{format}"), bbox_inches="tight", dpi=72, format=format)
     #figure.savefig(os.path.join(fig_path, f"{measurement_type}.png"), bbox_inches="tight", dpi=72)
 

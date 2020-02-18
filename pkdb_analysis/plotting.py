@@ -6,6 +6,7 @@ import pandas as pd
 import seaborn as sns
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.preprocessing import Normalizer
+import math
 
 
 def _classify(df, n_clusters):
@@ -89,9 +90,10 @@ def arc_plot(pkdata, n_clusters=7):
     return json_dict
 
 
-def study_overview(pkdata, title, max_values={}, **kwargs):
+def study_overview(pkdata, title=None, max_values={}, **kwargs):
     fig, axes = plt.subplots(ncols=1, nrows=5, sharex=True, **kwargs)
-    fig.suptitle(title, fontsize=16)
+    if title is not None:
+        fig.suptitle(title, fontsize=16)
     sns.set_style("white")
     sns.despine(left=True, bottom=True)
     df = pkdata.studies.df.set_index("name")[
@@ -165,3 +167,24 @@ def study_overview(pkdata, title, max_values={}, **kwargs):
         show_values_on_bars(ax, 0.2)
     plt.setp(axes[4].get_xticklabels(), rotation=70, horizontalalignment='right', fontsize=8)
     return fig
+
+
+def study_overview_wrapped(pkdata, rows):
+    rows_per_plot = math.ceil(len(pkdata.studies) / rows)
+    index = 0
+    max_values = {
+        "groups": pkdata.studies.group_count.max(),
+        "individuals": pkdata.studies.individual_count.max(),
+        "interventions": pkdata.studies.intervention_count.max(),
+        "outputs": pkdata.studies.output_count.max(),
+        "timecourses": pkdata.studies.timecourse_count.max(),
+
+    }
+    for row in range(rows):
+        subset = pkdata.copy()
+        new_index = index + rows_per_plot
+        subset.studies = subset.studies.iloc[index:new_index]
+        index = new_index
+        subset._concise()
+        fig = study_overview(subset, max_values=max_values, figsize=(len(subset.studies), 6))
+        fig.savefig(f"./caffeine_overview_{rows}-{row}.png", dpi=300, bbox_inches='tight')
