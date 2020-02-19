@@ -5,6 +5,7 @@ from typing import List
 TEST_STUDY_NAMES = ["Test1", "Test2", "Test3", "Test4"]
 import collections
 import pandas as pd
+import numpy as np
 PlottingParameter = collections.namedtuple('PlottingParameter',
                                            ['measurement_type',
                                             'units_rm'])
@@ -18,31 +19,38 @@ PlottingParameter = collections.namedtuple('PlottingParameter',
 def exclude_tests(data: PKData):
     return data.exclude_intervention(lambda d: d["study_name"].isin(TEST_STUDY_NAMES))
 
+def combine(args):
+    args = sorted(set([str(arg) for arg in args]))
+    str_value = " || ".join(args)
+    if str_value == "nan":
+        return np.NAN
+    try:
+        return pd.to_numeric(str_value)
+
+    except:
+        return str_value
 
 
-def pk_info(d, measurement_type, columns, suffix=None):
+
+def pk_info(d, measurement_type, columns, suffix=None, concise=True, aggfunc=combine):
     if suffix is None:
         suffix_text = f"_{measurement_type}"
     else:
         suffix_text = suffix
 
     columns = [d.pk, *columns]
+    df = d[d["measurement_type"] == measurement_type][columns].set_index(d.pk).add_suffix(suffix_text).reset_index()
+    if len(df) == 0:
+        return df
+    if concise:
+        return df.pivot_table(index=d.pk, aggfunc=aggfunc,dropna=False).reset_index()
+    return df
 
 
-    return d[d["measurement_type"] == measurement_type][columns].set_index(d.pk).add_suffix(suffix_text).reset_index()
 
-def combine(*args):
-    args = [str(arg) for arg in args]
-    return " || ".join(args)
 
-def pk_info_r(d, measurement_type, columns, suffix=None, aggfunc=combine):
 
-    if suffix is None:
-        suffix_text = f"_{measurement_type}"
-    else:
-        suffix_text = suffix
 
-    return pd.pivot_table(d,columns=columns,index=d.pk, aggfunc=aggfunc).add_suffix(suffix_text).reset_index()
 
 def f_unit(d, unit: str):
     """
