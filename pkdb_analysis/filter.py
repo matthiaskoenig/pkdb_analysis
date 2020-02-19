@@ -27,7 +27,22 @@ def pk_info(d, measurement_type, columns, suffix=None):
         suffix_text = suffix
 
     columns = [d.pk, *columns]
+
+
     return d[d["measurement_type"] == measurement_type][columns].set_index(d.pk).add_suffix(suffix_text).reset_index()
+
+def combine(*args):
+    args = [str(arg) for arg in args]
+    return " || ".join(args)
+
+def pk_info_r(d, measurement_type, columns, suffix=None, aggfunc=combine):
+
+    if suffix is None:
+        suffix_text = f"_{measurement_type}"
+    else:
+        suffix_text = suffix
+
+    return pd.pivot_table(d,columns=columns,index=d.pk, aggfunc=aggfunc).add_suffix(suffix_text).reset_index()
 
 def f_unit(d, unit: str):
     """
