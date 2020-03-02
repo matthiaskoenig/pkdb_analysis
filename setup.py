@@ -27,7 +27,8 @@ if mo:
 else:
     raise RuntimeError("Unable to find version string")
 
-setup_kwargs['long_description'] = "PKDB analysis"
+
+setup_kwargs['long_description'] = "Python interface for PK-DB."
 
 # parse requirements.txt
 required = []
@@ -54,7 +55,7 @@ setup(
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Programming Language :: Cython',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Scientific/Engineering',
@@ -67,6 +68,7 @@ setup(
     },
     entry_points={},
     include_package_data=True,
+    python_requires='>=3.7',
     zip_safe=False,
     install_requires=required,
     extras_require={},

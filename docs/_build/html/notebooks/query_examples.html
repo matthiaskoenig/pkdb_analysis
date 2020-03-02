@@ -1,0 +1,245 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Query PK-DB &mdash; pkdb_analysis  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Working with PK-DB data" href="data_examples.html" />
+    <link rel="prev" title="Welcome to PKDB’s documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pkdb_analysis
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Query PK-DB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Working with PK-DB data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filter_examples.html">Filter data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pkdb_analysis</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Query PK-DB</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/notebooks/query_examples.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
+</pre></div>
+</div>
+<div class="section" id="query-pk-db">
+<h1>Query PK-DB<a class="headerlink" href="#query-pk-db" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>how to set the endpoint for queries</p></li>
+<li><p>how to query data from PKDB</p></li>
+</ul>
+<p>To query the complete database content we can do</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pkdb_analysis</span> <span class="kn">import</span> <span class="n">PKDB</span><span class="p">,</span> <span class="n">PKData</span><span class="p">,</span> <span class="n">PKFilter</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">PKDB</span><span class="o">.</span><span class="n">query</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<pre class="literal-block"><strong>* Querying data *</strong>
+<a class="reference external" href="http://0.0.0.0:8000/api/v1/interventions_elastic/?format=json&amp;page_size=2000&amp;normed=true">http://0.0.0.0:8000/api/v1/interventions_elastic/?format=json&amp;page_size=2000&amp;normed=true</a>
+<a class="reference external" href="http://0.0.0.0:8000/api/v1/interventions_elastic/?format=json&amp;page_size=2000&amp;normed=true&amp;page=1">http://0.0.0.0:8000/api/v1/interventions_elastic/?format=json&amp;page_size=2000&amp;normed=true&amp;page=1</a>
+<a class="reference external" href="http://0.0.0.0:8000/api/v1/characteristica_individuals/?format=json&amp;page_size=2000">http://0.0.0.0:8000/api/v1/characteristica_individuals/?format=json&amp;page_size=2000</a>
+<a class="reference external" href="http://0.0.0.0:8000/api/v1/characteristica_individuals/?format=json&amp;page_size=2000&amp;page=1">http://0.0.0.0:8000/api/v1/characteristica_individuals/?format=json&amp;page_size=2000&amp;page=1</a>
+<a class="reference external" href="http://0.0.0.0:8000/api/v1/characteristica_individuals/?format=json&amp;page_size=2000&amp;page=2">http://0.0.0.0:8000/api/v1/characteristica_individuals/?format=json&amp;page_size=2000&amp;page=2</a>
+<a class="reference external" href="http://0.0.0.0:8000/api/v1/characteristica_groups/?format=json&amp;page_size=2000">http://0.0.0.0:8000/api/v1/characteristica_groups/?format=json&amp;page_size=2000</a>
+<a class="reference external" href="http://0.0.0.0:8000/api/v1/characteristica_groups/?format=json&amp;page_size=2000&amp;page=1">http://0.0.0.0:8000/api/v1/characteristica_groups/?format=json&amp;page_size=2000&amp;page=1</a>
+<a class="reference external" href="http://0.0.0.0:8000/api/v1/output_intervention/?format=json&amp;page_size=2000&amp;normed=true">http://0.0.0.0:8000/api/v1/output_intervention/?format=json&amp;page_size=2000&amp;normed=true</a>
+<a class="reference external" href="http://0.0.0.0:8000/api/v1/output_intervention/?format=json&amp;page_size=2000&amp;normed=true&amp;page=1">http://0.0.0.0:8000/api/v1/output_intervention/?format=json&amp;page_size=2000&amp;normed=true&amp;page=1</a>
+<a class="reference external" href="http://0.0.0.0:8000/api/v1/timecourse_intervention/?format=json&amp;page_size=2000&amp;normed=true">http://0.0.0.0:8000/api/v1/timecourse_intervention/?format=json&amp;page_size=2000&amp;normed=true</a>
+<a class="reference external" href="http://0.0.0.0:8000/api/v1/timecourse_intervention/?format=json&amp;page_size=2000&amp;normed=true&amp;page=1">http://0.0.0.0:8000/api/v1/timecourse_intervention/?format=json&amp;page_size=2000&amp;normed=true&amp;page=1</a></pre>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140525911948592</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">4</span>
+<span class="n">groups</span>              <span class="mi">8</span>  <span class="p">(</span>   <span class="mi">86</span><span class="p">)</span>
+<span class="n">individuals</span>       <span class="mi">246</span>  <span class="p">(</span> <span class="mi">3144</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">9</span>  <span class="p">(</span>    <span class="mi">9</span><span class="p">)</span>
+<span class="n">outputs</span>           <span class="mi">599</span>  <span class="p">(</span>  <span class="mi">628</span><span class="p">)</span>
+<span class="n">timecourses</span>        <span class="mi">20</span>  <span class="p">(</span>   <span class="mi">23</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="data_examples.html" class="btn btn-neutral float-right" title="Working with PK-DB data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to PKDB’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Jan Grzegorzewski &amp; Matthias König
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

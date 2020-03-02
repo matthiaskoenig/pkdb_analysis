@@ -1,52 +1,47 @@
-# pkdb_analysis - PKDB Analysis scripts
-This repository contains meta-analyses and example use cases of the data in the PKDB database.
+# `pkdb_analysis` - PK-DB python interface
+[![License (LGPL version 3)](https://img.shields.io/badge/license-LGPLv3.0-blue.svg?style=flat-square)](http://opensource.org/licenses/LGPL-3.0)
+
+<b><a href="https://orcid.org/0000-0002-4588-4925" title="0000-0002-4588-4925"><img src="./docs/images/orcid.png" height="15"/></a> Jan Grzegorzewski</b>
+and
+<b><a href="https://orcid.org/0000-0003-1725-179X" title="https://orcid.org/0000-0003-1725-179X"><img src="./docs/images/orcid.png" height="15" width="15"/></a> Matthias König</b>
+
+
+This repository provides a python interface to PK-DB (https://pk-db.com) using the existing REST endpoints.
 
 ## Installation
 To run the analysis scripts create a virtual environment with the required dependencies.
 ```
-mkvirtualenv pkdb_analysis --python=python3
-(pkdb_analysis) pip install -r requirements.txt
+mkvirtualenv pkdb_analysis --python=python3.7
 (pkdb_analysis) pip install -e .
-(pkdb_analysis) ipython kernel install --user --name pkdb_analysis
-```
-Subsequently the virtualenv must be registered as jupyter kernel to use it for the analysis.
-
-### Install Circos
-follow instructions on 
-`http://circos.ca/documentation/tutorials/configuration/distribution_and_installation/`.
-and install Circos 
- 
-Install missing perl modules:
-
-`http://www.circos.ca/documentation/tutorials/configuration/perl_and_modules/`
-Check which modules are missing
-```
-circos -modules
-```
-Install them
-```
-sudo apt-get install libgd-gd2-perl
-
-```
-```
-sudo perl -MCPAN -e shell
-...
-cpan[1]>install Math::Bezier
-...
 ```
 
-- download Circos
--
-
-### Start pkdb backend
-The scripts use the REST API of PKDB. Consequently, a running REST endpoint is required.
-This can either be the online database at `pk-db.com` or a locally running instance of 
-the backend
+To install the optional support for jupyter notebooks use
 ```
-workon pkdb
-(pkdb) cd path/to/pkdb
-(pkdb) sudo sysctl -w vm.max_map_count=262144
-(pkdb) docker-compose up 
+(pkdb_analysis) pip install jupyterlab
+(pkdb_analysis) pip install ipykernel
+(pkdb_analysis) python -m ipykernel install --user --name pkdb_analysis
+```
+The scripts are running against a given endpoint on which the PKDB backend is running.
+
+## Select PK-DB endpoint
+`pkdb_analysis` can use any existing endpoint to a PKDB instance. 
+To select the endpoint on which `PK-DB` is running set the respective environment variables.
+See for an example the `.env.local` for working with a locally running instance.
+
+To interact with PKDB the API endpoint and the user information have to be set.
+To use a local instance set
+```
+API_BASE=http://0.0.0.0:8000/
+USER=admin
+PASSWORD=pkdb_admin
+```
+Two publically available instances are running at 
+```
+API_BASE=https://develop.pk-db.com
+``` 
+and 
+```
+API_BASE=https://pk-db.com
 ```
 
-&copy; 2018-2019 Jan Grzegorzewski & Matthias König.
+&copy; 2018-2020 Jan Grzegorzewski & Matthias König.

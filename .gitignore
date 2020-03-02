@@ -5,3 +5,6 @@ pkdb_analysis.egg-info/
 .idea/
 __pycache__/
 *.pyc
+.env
+.env.develop
+.env.production
