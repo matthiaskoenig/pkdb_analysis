@@ -10,3 +10,4 @@ __pycache__/
 .env.production
 results/
 circos/
+notebooks/
