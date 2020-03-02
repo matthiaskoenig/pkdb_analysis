@@ -1,6 +1,8 @@
+
 import pytest
-from pkdb_analysis.data import PKDBData
-import pandas as pd
+
+from pkdb_analysis import PKData
+from pkdb_analysis.query import PKDB, PKFilter
 
 
 def _check_data(data):
@@ -17,17 +19,17 @@ def _check_data(data):
 
 def test_all_data():
     """ Test database requests."""
-    data = PKDBData.from_db(filters=None)
+    data = PKDB.query()
     _check_data(data)
 
 
 def test_data_hdf5(tmp_path):
     """ Test HDF io"""
-    data = PKDBData.from_db(filters=None)
+    data = PKDB.query()
 
     h5_path = tmp_path / "test.h5"
     data.to_hdf5(h5_path)
-    data2 = PKDBData.from_hdf5(h5_path)
+    data2 = PKData.from_hdf5(h5_path)
     _check_data(data2)
 
     for key in ["interventions", "characteristica", "outputs", "timecourses"]:

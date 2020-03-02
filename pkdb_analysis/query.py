@@ -96,7 +96,7 @@ class PKDB(object):
 
     @classmethod
     def query(cls, pkfilter: PKFilter = PKFilter(), page_size: int = 2000) -> "PKData":
-        """ Create a PKDBData representation and gets the data for the provided filters.
+        """ Create a PKData representation and gets the data for the provided filters.
         If no filters are given the complete data is retrieved.
 
         :param pkfilter: Filter object to select subset of data, if no Filter is provided the complete data is returned
