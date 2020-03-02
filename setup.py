@@ -27,7 +27,8 @@ if mo:
 else:
     raise RuntimeError("Unable to find version string")
 
-setup_kwargs['long_description'] = "Python module for the interaction with PKDB."
+
+setup_kwargs['long_description'] = "Python interface for PK-DB."
 
 # parse requirements.txt
 required = []
