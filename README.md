@@ -36,6 +36,12 @@ USER=admin
 PASSWORD=pkdb_admin
 ```
 Two publically available instances are running at 
-`API_BASE=https://develop.pk-db.com` and `API_BASE=https://pk-db.com`.
+```
+API_BASE=https://develop.pk-db.com
+``` 
+and 
+```
+API_BASE=https://pk-db.com
+```
 
 &copy; 2018-2020 Jan Grzegorzewski & Matthias König.
