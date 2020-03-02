@@ -3,7 +3,10 @@
 .~lock*
 pkdb_analysis.egg-info/
 .idea/
+
 __pycache__/
+.pytest_cache
+
 *.pyc
 .env
 .env.develop
