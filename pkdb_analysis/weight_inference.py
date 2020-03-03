@@ -39,7 +39,7 @@ def infer_output(d):
 
             if weight:
                 result = u_unit * ((d["mean_weight"] * u_unit_weight) ** exponent)
-                for key in ["mean","median","min", "max", "sd", "se", "sd"]:
+                for key in ["mean", "median", "min", "max", "sd", "se", "sd"]:
                     if d[key] is not None:
                         d[key] = result.m * d[key]
 
