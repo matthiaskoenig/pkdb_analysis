@@ -7,51 +7,48 @@ ureg = pint.UnitRegistry()
 
 def infer_output(d):
     d = d.copy()
-    u_unit = ureg(d["unit"])
-    u_unit_weight = ureg(d["unit_weight"])
+    if len(d) > 0:
+        u_unit = ureg(d["unit"])
+        u_unit_weight = ureg(d["unit_weight"])
 
-    if not np.isnan(d["value_weight"]):
-        weight = d["value_weight"]
-    elif not np.isnan(d["mean_weight"]):
-        weight = d["mean_weight"]
+        if not np.isnan(d["value_weight"]):
+            weight = d["value_weight"]
+        elif not np.isnan(d["mean_weight"]):
+            weight = d["mean_weight"]
 
-    elif not np.isnan(d["median_weight"]):
-        weight = d["median_weight"]
-    else:
-        return pd.Series(None, index=d.index)
-    assert weight is not None, d
-
-    if d["per_bodyweight"]:
-        exponent = 1
-    else:
-        exponent = -1
-
-    if d["group_pk"] == -1:
-        if weight:
-            result = d["value"] * u_unit * ((weight * u_unit_weight) ** exponent)
-            d["value"] = result.m
-            d["unit"] = str(result.u)
-            d["inferred"] = True
-            d["per_bodyweight"] = not d["per_bodyweight"]
-            return d
-    else:
-
-        if weight:
-            result = u_unit * ((d["mean_weight"] * u_unit_weight) ** exponent)
-            d["mean"] = result.m * d["mean"]
-            d["median"] = result.m * d["median"]
-            d["min"] = result.m * d["min"]
-            d["max"] = result.m * d["max"]
-            d["sd"] = result.m * d["sd"]
-            d["se"] = result.m * d["se"]
-            d["cv"] = result.m * d["cv"]
-
-            d["unit"] = str(result.u)
-            d["inferred"] = True
-            d["per_bodyweight"] = not d["per_bodyweight"]
-            return d
+        elif not np.isnan(d["median_weight"]):
+            weight = d["median_weight"]
         else:
             return pd.Series(None, index=d.index)
+        assert weight is not None, d
+
+        if d["per_bodyweight"]:
+            exponent = 1
+        else:
+            exponent = -1
+
+        if d["group_pk"] == -1:
+            if weight:
+                result = d["value"] * u_unit * ((weight * u_unit_weight) ** exponent)
+                d["value"] = result.m
+                d["unit"] = str(result.u)
+                d["inferred"] = True
+                d["per_bodyweight"] = not d["per_bodyweight"]
+                return d
+        else:
+
+            if weight:
+                result = u_unit * ((d["mean_weight"] * u_unit_weight) ** exponent)
+                for key in ["mean","median","min", "max", "sd", "se", "sd"]:
+                    if d[key] is not None:
+                        d[key] = result.m * d[key]
+
+
+                d["unit"] = str(result.u)
+                d["inferred"] = True
+                d["per_bodyweight"] = not d["per_bodyweight"]
+                return d
+    return pd.Series(None, index=d.index)
 
 
 def infer_intervention(d):
