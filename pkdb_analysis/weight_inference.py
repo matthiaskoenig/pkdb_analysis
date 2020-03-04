@@ -41,9 +41,6 @@ def infer_output(d):
                 result = u_unit * ((d["mean_weight"] * u_unit_weight) ** exponent)
                 for key in ["mean", "median", "min", "max", "sd", "se"]:
                     if isinstance(d[key], (float, np.ndarray)):
-                        if d["study_name"] == "Yu2004":
-                            print(result.m)
-
                         d[key] = result.m * d[key]
 
 
