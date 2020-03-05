@@ -6,10 +6,11 @@ pint>=0.9
 
 seaborn>=0.9.0
 matplotlib>3.0
-altair >=3.2.0
-selenium >= 3.141.0
-papermill >= 1.2.1
+altair>=3.2.0
+selenium>=3.141.0
+papermill>=1.2.1
 coloredlogs>=10.0
-scikit-learn >= 0.22.1
+scikit-learn>=0.22.1
+ipykernel>=5.1.4
 
 pytest
