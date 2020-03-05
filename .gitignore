@@ -12,8 +12,4 @@ __pycache__/
 .env.develop
 .env.production
 results/
-circos/
-notebooks/
-data/
-caffeine/
-midazolam/
+

@@ -4,6 +4,7 @@ pharmacokinetic parameters can be calculated.
 """
 import pandas as pd
 from pkdb_analysis.pk import pharmacokinetics
+from pkdb_analysis.pk import reporting
 from matplotlib import pyplot as plt
 
 
@@ -44,9 +45,9 @@ def example1():
                 bodyweight_unit="kg",
             )
 
-            info = pharmacokinetics.pk_report(pk)
+            info = reporting.pk_report(pk)
             print(info)
-            pharmacokinetics.pk_figure(t=t, c=c, pk=pk)
+            reporting.pk_figure(t=t, c=c, pk=pk)
 
 
 def example2():
@@ -96,9 +97,9 @@ def example2():
             bodyweight_unit="kg",
         )
 
-        info = pharmacokinetics.pk_report(pk)
+        info = reporting.pk_report(pk)
         print(info)
-        pharmacokinetics.pk_figure(t=t, c=c, pk=pk)
+        reporting.pk_figure(t=t, c=c, pk=pk)
     plt.show()
 
 

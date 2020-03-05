@@ -8,12 +8,14 @@ import warnings
 
 import numpy as np
 import pandas as pd
-from matplotlib import pyplot as plt
+
 from scipy import stats
 
 # TODO: add estimation of confidence intervals (use also the errorbars on the curves)
 # Currently only simple calculation of pharmacokinetic parameters
 
+
+# TODO: Refactor in class to cache regressions
 
 def f_pk(
         t,
@@ -59,7 +61,7 @@ def f_pk(
     assert isinstance(c, np.ndarray)
     assert t.size == c.size
 
-    # caculate all results relative to the intervention time
+    # calculate all results relative to the intervention time
     t = t + intervention_time
 
     # calculate pk
@@ -76,10 +78,11 @@ def f_pk(
     aucinf = _aucinf(t, c, slope=slope, intercept=intercept)
 
     if dose is not None:
-        vd = _vd(t, c, dose, intercept=intercept)
-        cl = kel * vd
+        vdss = _vdss(t, c, dose, intercept=intercept)
+        vd = _vd(t, c, dose)
+        cl = kel * vdss
     else:
-        vd = np.nan
+        vdss = np.nan
         cl = np.nan
 
     return {
@@ -106,6 +109,8 @@ def f_pk(
         "thalf_unit": t_unit,
         "vd": vd,
         "vd_unit": vd_unit,
+        "vdss": vdss,
+        "vdss_unit": vd_unit,
         "cl": cl,
         "cl_unit": "({})/({})".format(vd_unit, t_unit),
         "slope": slope,
@@ -115,131 +120,6 @@ def f_pk(
         "std_err": std_err,
         "max_idx": max_idx,
     }
-
-
-def pk_report(pk):
-    """ Print report for given pharmacokinetic information.
-
-    :param pk: set of pharamacokinetic parameters returned by f_pk.
-    :param t_unit:
-    :param dose_unit:
-    :param c_unit:
-    :param vd_unit:
-    :param vdbw_unit:
-    :return:
-    """
-    lines = []
-    lines.append("-" * 80)
-    lines.append(pk["compound"])
-    lines.append("-" * 80)
-    for key in ["slope", "intercept", "r_value", "p_value", "std_err"]:
-        lines.append("{:<12}: {:>3.3f}".format(key, pk[key]))
-    lines.append("-" * 80)
-    for key in [
-        "dose",
-        "bodyweight",
-        "auc",
-        "aucinf",
-        "tmax",
-        "cmax",
-        "tmaxhalf",
-        "cmaxhalf",
-        "kel",
-        "thalf",
-        "vd",
-        "cl",
-    ]:
-        pk_key = pd.to_numeric(pk[key])
-        lines.append(
-            "\t{:<12}: {:>3.3f} [{}]".format(key, pk_key, pk["{}_unit".format(key)])
-        )
-
-    lines.append("")
-    for key in ["dose", "auc", "aucinf", "kel", "vd", "cl"]:
-        key_bw = "{}/bw".format(key)
-        pk_key = pd.to_numeric(pk[key])
-
-        lines.append(
-            "\t{:<12}: {:>3.3f} [{}/{}]".format(
-                key_bw,
-                1.0 * pk_key / pd.to_numeric(pk["bodyweight"]),
-                pk["{}_unit".format(key)],
-                pk["bodyweight_unit"],
-            )
-        )
-
-    return "\n".join(lines)
-
-
-def pk_figure(t, c, pk):
-    """ Create figure from time course and pharmacokinetic parameters.
-
-    :param t: time vector
-    :param c: concentration vector
-    :param pk: set of pharmacokinetic parameters returned by f_pk.
-
-    :return: matplotlib figure instance
-    """
-    c_unit = pk["cmax_unit"]
-    t_unit = pk["tmax_unit"]
-    slope = pk["slope"]
-    intercept = pk["intercept"]
-    max_idx = pk["max_idx"]
-    if max_idx is None or np.isnan(max_idx):
-        max_idx = c.size - 1
-
-    kwargs = {"markersize": 10}
-
-    # create figure
-    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4), dpi=80)
-    f.subplots_adjust(wspace=0.3)
-
-    ax1.plot(t, c, "--", color="black", label="__nolabel__", **kwargs)
-    ax1.plot(t[: max_idx + 1], c[: max_idx + 1], "o", color="darkgray", **kwargs)
-    if max_idx < c.size - 1:
-        ax1.plot(
-            t[max_idx + 1:],
-            c[max_idx + 1:],
-            "s",
-            color="black",
-            linewidth=2,
-            **kwargs
-        )
-
-    ax1.set_ylabel("substance [{}]".format(c_unit))
-    ax1.set_xlabel("time [{}]".format(t_unit))
-
-    ax1.plot(t, np.exp(intercept) * np.exp(slope * t), "-", color="blue", label="fit")
-    ax1.legend()
-
-    # log
-    ax2.plot(t[1:], np.log(c[1:]), "--", color="black", label="__nolabel__", **kwargs)
-
-    ax2.plot(
-        t[1: max_idx + 1],
-        np.log(c[1: max_idx + 1]),
-        "o",
-        color="darkgray",
-        label="log(substance)",
-        **kwargs
-    )
-    if max_idx < c.size - 1:
-        ax2.plot(
-            t[max_idx + 1:],
-            np.log(c[max_idx + 1:]),
-            "s",
-            color="black",
-            linewidth=2,
-            label="log(substance) fit",
-            **kwargs
-        )
-
-    ax2.set_ylabel("log(substance [{}])".format(c_unit))
-    ax2.set_xlabel("time [{}]".format(t_unit))
-    ax2.plot(t, intercept + slope * t, "-", color="blue", label="fit")
-    ax2.legend()
-
-    return f
 
 
 def _auc(t, c):
@@ -328,12 +208,6 @@ def _kel_cv(t, c, std_err=None, slope=None):
     return std_err / slope
 
 
-def _thalf_cv(t, c, slope=None, std_err=None):
-    kel = _kel(t, c, slope=slope)
-
-    return np.log(2) / _kel_cv(t, c, slope=slope, std_err=std_err)
-
-
 def _thalf(t, c, slope=None):
     """ Calculates the half-life using the elimination constant.
 
@@ -348,10 +222,17 @@ def _thalf(t, c, slope=None):
     of the elimination constant.
     """
     kel = _kel(t, c, slope=slope)
+    # np.log is natural logarithm, i.e. ln(2)
     return np.log(2) / kel
 
 
-def _vd(t, c, dose, intercept=None):
+def _thalf_cv(t, c, slope=None, std_err=None):
+    kel = _kel(t, c, slope=slope)
+
+    return np.log(2) / _kel_cv(t, c, slope=slope, std_err=std_err)
+
+
+def _vdss(t, c, dose, intercept=None):
     """
     Apparent volume of distribution.
     Not a physical space, but a dilution space.
@@ -377,6 +258,22 @@ def _vd(t, c, dose, intercept=None):
     if intercept is None:
         [slope, intercept, r_value, p_value, std_err, max_index] = _regression(t, c)
     return dose / np.exp(intercept)
+
+
+def _vd(t, c, dose):
+    """
+    Apparent volume of distribution.
+    Not a physical space, but a dilution space.
+
+    Volume of distribution is calculated via
+        vd = Dose/(AUC_inf*kel)
+    """
+    # FIXME: refactor everything in class to avoid recalculation of regression
+    [slope, intercept, r_value, p_value, std_err, max_index] = _regression(t, c)
+    kel = _kel(t, c, slope=slope)
+    aucinf = _aucinf(t, c, slope=slope, intercept=intercept)
+
+    return dose / (aucinf*kel)
 
 
 def _regression(t, c):
