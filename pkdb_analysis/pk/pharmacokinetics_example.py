@@ -3,8 +3,7 @@ This examples shows how based on time and concentration vector the
 pharmacokinetic parameters can be calculated.
 """
 import pandas as pd
-from pkdb_analysis.pk import pharmacokinetics
-from pkdb_analysis.pk import reporting
+from pkdb_analysis.pk.pharmacokinetics import PKInference, Q_
 from matplotlib import pyplot as plt
 
 
@@ -19,8 +18,7 @@ def example1():
     # Pharmacokinetic parameter for caffeine
     # ------------------------------------------
     # get caffeine data
-    bodyweight = 70  # [kg]
-    dose = 100  # [mg]
+    dose = Q_(100, "mg")
     substance = "caffeine"
 
     for tissue in df.tissue.unique():
@@ -29,25 +27,19 @@ def example1():
             data = df[(df.tissue == tissue) & (df.group == group)]
 
             # calculate pharmacokinetic information
-            t = data.time
-            c = data.caf
+            t = Q_(data.time.values, "hr")
+            c = Q_(data.caf.values, "mg/l")
 
-            pk = pharmacokinetics.f_pk(
-                t=t,
-                c=c,
-                compound=substance,
-                dose=dose,
-                bodyweight=bodyweight,
-                t_unit="h",
-                c_unit="mg/L",
-                dose_unit="mg",
-                vd_unit="L",
-                bodyweight_unit="kg",
+            pkinf = PKInference(
+                time=t,
+                concentration=c,
+                substance=substance,
+                dose=dose
             )
 
-            info = reporting.pk_report(pk)
-            print(info)
-            reporting.pk_figure(t=t, c=c, pk=pk)
+            print(pkinf.info())
+            f = pkinf.figure()
+            plt.show()
 
 
 def example2():
@@ -105,5 +97,5 @@ def example2():
 
 if __name__ == "__main__":
     example1()
-    example2()
+    # example2()
     plt.show()
