@@ -22,6 +22,7 @@ import pint
 from pint import Quantity
 from pint.errors import DimensionalityError
 
+# FIXME: Problem with multiple unit registries
 ureg = pint.UnitRegistry()
 Q_ = ureg.Quantity
 with warnings.catch_warnings():
@@ -81,6 +82,13 @@ class PKInference(object):
             raise err
 
         assert time.size == concentration.size
+
+        # TODO:
+        # convert dosing time in units of the timecourse
+        # pk_dict["intervention_time"] = (
+        #            ureg(dosing.time_unit) * dosing.time).to(
+        #    tc.time_unit).magnitude
+
 
         self.t = time
         self.c = concentration
