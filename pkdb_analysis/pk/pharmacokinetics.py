@@ -134,10 +134,14 @@ def _aucinf(t, c, slope=None, intercept=None):
         [slope, intercept, r_value, p_value, std_err, max_index] = _regression(t, c)
     auc = _auc(t, c)
 
-    # calculate remaining area under the curve
-    # auc_d = -(np.exp(intercept) / slope) * np.exp(slope * t[-1])
-    # should be equivalent to the result above
-    auc_d = c[-1] / (-slope)
+    # necessary to calculate the slope at last datapoint via differentiation
+    # dy/dt with y(t) = c0 exp(slope*t) and t=0
+    # => slope_eff = c0*slope
+    # delta_x from last data point to x-axis is via m*x + c = 0
+    # delta_x = - c/m
+    # area is then 1/2 * c * delta_x
+    slope_eff = c[-1] * slope
+    auc_d = - 0.5 * c[-1]**2 / slope_eff
 
     return auc + auc_d
 
