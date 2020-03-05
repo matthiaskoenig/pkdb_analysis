@@ -134,16 +134,18 @@ def _aucinf(t, c, slope=None, intercept=None):
         [slope, intercept, r_value, p_value, std_err, max_index] = _regression(t, c)
     auc = _auc(t, c)
 
-    # necessary to calculate the slope at last datapoint via differentiation
-    # dy/dt with y(t) = c0 exp(slope*t) and t=0
-    # => slope_eff = c0*slope
-    # delta_x from last data point to x-axis is via m*x + c = 0
-    # delta_x = - c/m
-    # area is then 1/2 * c * delta_x
-    slope_eff = c[-1] * slope
-    auc_d = - 0.5 * c[-1]**2 / slope_eff
+    # by integrating from tend to infinity for c[-1]exp(slope * t) we get
+    auc_d = -c[-1]/slope
 
-    return auc + auc_d
+    # If the % extrapolated is greater than 20%, than the total AUC may be unreliable.
+    # The unreliability of the data is not due to a calculation error. Instead it
+    # indicates that more sampling is needed for an accurate estimate of the elimination
+    # rate constant and the observed area under the curve.
+    auc_tot = auc + auc_d
+    if auc_d > 0.2*auc_tot:
+        warnings.warn("AUC(t-oo) is > 20% of total AUC, calculation may be unreliable.")
+
+    return auc_tot
 
 
 def _max(t, c):
