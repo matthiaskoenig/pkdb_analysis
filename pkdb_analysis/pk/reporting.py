@@ -5,7 +5,7 @@ Plotting and reporting of pharmacokinetics.
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-
+from matplotlib.pyplot import Figure
 
 def pk_report(pk):
     """ Print report for given pharmacokinetic information.
@@ -62,7 +62,7 @@ def pk_report(pk):
     return "\n".join(lines)
 
 
-def pk_figure(t, c, pk):
+def pk_figure(t, c, pk) -> Figure:
     """ Create figure from time course and pharmacokinetic parameters.
 
     :param t: time vector
