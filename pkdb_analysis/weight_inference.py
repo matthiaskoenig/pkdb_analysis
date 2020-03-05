@@ -4,7 +4,6 @@ import pint
 
 ureg = pint.UnitRegistry()
 
-
 def infer_output(d):
     d = d.copy()
     if len(d) > 0:
@@ -54,7 +53,7 @@ def infer_output(d):
 def infer_intervention(d):
     d = d.copy()
 
-    u_unit_intervention = ureg(d["unit_intervention"])
+    u_intervention_unit = ureg(d["intervention_unit"])
 
     if not np.isnan(d["value_weight"]):
         weight = d["value_weight"]
@@ -67,26 +66,26 @@ def infer_intervention(d):
     u_unit_weight = ureg(d["unit_weight"])
     assert weight is not None, d
 
-    if d["per_bodyweight_intervention"]:
+    if d["intervention_per_bodyweight"]:
         exponent = 1
     else:
         exponent = -1
 
     if d["group_pk"] == -1:
         if weight:
-            result = d["value_intervention"] * u_unit_intervention * ((weight * u_unit_weight) ** exponent)
-            d["value_intervention"] = result.m
-            d["unit_intervention"] = str(result.u)
+            result = d["intervention_value"] * u_intervention_unit * ((weight * u_unit_weight) ** exponent)
+            d["intervention_value"] = result.m
+            d["intervention_unit"] = str(result.u)
             d["inferred"] = True
-            d["per_bodyweight_intervention"] = not d["per_bodyweight_intervention"]
+            d["intervention_per_bodyweight"] = not d["intervention_per_bodyweight"]
             return d
     else:
         if weight:
-            result = d["value_intervention"] * u_unit_intervention * ((weight * u_unit_weight) ** exponent)
-            d["value_intervention"] = result.m
-            d["unit_intervention"] = str(result.u)
+            result = d["intervention_value"] * u_intervention_unit * ((weight * u_unit_weight) ** exponent)
+            d["intervention_value"] = result.m
+            d["intervention_unit"] = str(result.u)
             d["inferred"] = True
-            d["per_bodyweight_intervention"] = not d["per_bodyweight_intervention"]
+            d["intervention_per_bodyweight"] = not d["intervention_per_bodyweight"]
             return d
 
 
