@@ -1,4 +1,5 @@
 # `pkdb_analysis` - PK-DB python interface
+[![Build Status](https://travis-ci.org/matthiaskoenig/pkdb_analysis.svg?branch=develop)](https://travis-ci.org/matthiaskoenig/pkdb_analysis)
 [![License (LGPL version 3)](https://img.shields.io/badge/license-LGPLv3.0-blue.svg?style=flat-square)](http://opensource.org/licenses/LGPL-3.0)
 
 <b><a href="https://orcid.org/0000-0002-4588-4925" title="0000-0002-4588-4925"><img src="./docs/images/orcid.png" height="15"/></a> Jan Grzegorzewski</b>
