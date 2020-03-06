@@ -57,17 +57,17 @@ def mscatter(x,y, ax=None, m=None, **kw):
 
 
 def figure_category(d):
-    if d["per_bodyweight"] and d["per_bodyweight_intervention"]:
+    if d["per_bodyweight"] and d["intervention_per_bodyweight"]:
         return "rel_output_rel_intervention"
-    elif d["per_bodyweight"] and not d["per_bodyweight_intervention"]:
+    elif d["per_bodyweight"] and not d["intervention_per_bodyweight"]:
         return "rel_output_abs_intervention"
-    elif not d["per_bodyweight"] and not d["per_bodyweight_intervention"]:
+    elif not d["per_bodyweight"] and not d["intervention_per_bodyweight"]:
         return "abs_output_abs_intervention"
-    elif not d["per_bodyweight"] and d["per_bodyweight_intervention"]:
+    elif not d["per_bodyweight"] and d["intervention_per_bodyweight"]:
         return "abs_output_rel_intervention"
 
-def create_plots(data, fig_path, nrows=2, ncols=2, figsize=(30, 30), log_y=False, formats=["png","svg"]):
-    data["plotting_category"] = data[["per_bodyweight", "per_bodyweight_intervention"]].apply(figure_category,axis=1)
+def create_plots(data, fig_path, color_by=None, color_mapping=None,  nrows=2, ncols=2, figsize=(30, 30), log_y=False,  formats=["png","svg"]):
+    data["plotting_category"] = data[["per_bodyweight", "intervention_per_bodyweight"]].apply(figure_category,axis=1)
     figure, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
     axes_iter = iter(axes.flatten())
     substance = _get_one(data.substance)

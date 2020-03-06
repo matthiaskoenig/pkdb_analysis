@@ -110,6 +110,16 @@ def f_mt_substance(d, measurement_type:str , substance:str):
     """
     return f_mt(d,measurement_type) & f_substance(d, substance)
 
+def f_mt_in_substance_in(d, measurement_types:str , substances:str):
+    """filtering index for PKData for measurement_type with substance
+
+    :param d: PKDataFrame or pandas.DataFrame
+    :param measurement_type:
+    :param substance:
+    :return:
+    """
+    return d["measurement_type"].isin(measurement_types) & d["substance"].isin(substances)
+
 
 def f_choice(d, choice):
     return d["choice"] == choice
