@@ -10,24 +10,15 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 from dataclasses import dataclass
-import numpy as np
-import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.pyplot import Figure
 
-
-# TODO: add estimation of confidence intervals (use also the errorbars on the curves)
-
-import pint
-from pint import Quantity
+from pint import UnitRegistry, Quantity
 from pint.errors import DimensionalityError
-
-# FIXME: Problem with multiple unit registries
-ureg = pint.UnitRegistry()
-Q_ = ureg.Quantity
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     Quantity([])
+
 
 @dataclass
 class PKParameters:
@@ -52,20 +43,34 @@ class PKParameters:
     max_idx: int
 
 
-class PKInference(object):
-    def __init__(self, time, concentration, dose,
-                 intervention_time=Q_(0, "hr"), substance="substance"):
+class TimecoursePK(object):
+    """ Class for calculating pharmacokinetics from timecourses. """
+
+    def __init__(self, time: Quantity, concentration: Quantity,
+                 dose: Quantity, ureg: UnitRegistry,
+                 intervention_time: Quantity = None,
+                 substance: str = "substance"):
         """The given doses must be in absolute amount, not per bodyweight. If doses are given per bodyweight, e.g. [mg/kg]
         these must be multiplied with the bodyweight before calling this function.
+
+        Pharmacokinetics parameters are calculated for a single dose experiment.
+
 
         :param time: ndarray (with units)
         :param concentration: ndarray (with units)
         :param dose: dose of the test substance (with unit)
+        :param ureg: unit registry, allowing to calculate the pk in the respective unit system
         :param substance: name of compound/substance
         :param intervention_time: time of intervention (with unit)
 
         :return: pharmacokinetic parameters
         """
+        self.ureg = ureg
+        self.Q_ = ureg.Quantity
+
+        if intervention_time is None:
+            intervention_time = self.Q_(0.0, "hr")
+
         if not isinstance(time, Quantity):
             raise ValueError(f"'time' must be a pint Quantity: {type(dose)}")
         if not isinstance(concentration, Quantity):
@@ -76,7 +81,7 @@ class PKInference(object):
             raise ValueError(f"'intervention_time' must be a pint Quantity: {type(dose)}")
 
         try:
-            (dose.units/Q_("liter")).to(concentration.units)
+            (dose.units/self.Q_("liter")).to(concentration.units)
         except DimensionalityError as err:
             warnings.warn("dose units per liter must be convertible to concentration.")
             raise err
@@ -84,11 +89,10 @@ class PKInference(object):
         assert time.size == concentration.size
 
         # TODO:
-        # convert dosing time in units of the timecourse
+        # convert dosing time in units of the timecourse (this must happen here)
         # pk_dict["intervention_time"] = (
         #            ureg(dosing.time_unit) * dosing.time).to(
         #    tc.time_unit).magnitude
-
 
         self.t = time
         self.c = concentration
@@ -116,8 +120,6 @@ class PKInference(object):
         tmaxhalf, cmaxhalf = self._max_half(t, c)
 
         [slope, intercept, r_value, p_value, std_err, max_idx] = self._ols_regression(t, c)
-        if np.isnan(slope) or np.isnan(intercept):
-            warnings.warn("Regression could not be calculated on timecourse curve.")
 
         kel = self._kel(slope=slope)
         thalf = self._thalf(kel=kel)
@@ -129,9 +131,9 @@ class PKInference(object):
             cl = kel * vd
         else:
             vd_units = self.dose.units/(auc.units/kel.units)
-            vdss = Q_(np.nan, vd_units)
-            vd = Q_(np.nan, vd_units)
-            cl = Q_(np.nan, kel.units*vd.units)
+            vdss = self.Q_(np.nan, vd_units)
+            vd = self.Q_(np.nan, vd_units)
+            cl = self.Q_(np.nan, kel.units*vd.units)
 
         return PKParameters(
             compound=self.substance,
@@ -163,24 +165,34 @@ class PKInference(object):
 
         :return:
         """
+        slope_units = self.ureg.Unit(f"1/{t.units}")
+        intercept_units = self.ureg.Unit(c.units)
+
         max_index = np.argmax(c)
-        # at least two data points after maximum are required for a regression
-        if max_index > (len(c) - 3):
-            return [np.nan] * 6
+        # at least three data points after maximum are required for a regression
+        if max_index > (len(c) - 4):
+            warnings.warn("Regression could not be calculated, "
+                          "at least 3 data points after maximum required.")
+            return [self.Q_(np.nan, slope_units), self.Q_(np.nan, intercept_units)] + [np.nan]*4
 
         # linear regression start regression on data point after maximum
         x = t.magnitude[max_index + 1:]
         y = np.log(c.magnitude[max_index + 1:])
 
         slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
-        slope = Q_(slope, 1/t.units)
-        intercept = Q_(intercept, c.units)
 
-        if slope > 0.0:
+        # handle possible regression issues
+        if np.isnan(slope) or np.isnan(intercept):
+            warnings.warn("Regression could not be calculated on timecourse curve.")
+        elif slope > 0.0:
             warnings.warn("Regression gave a positive slope, "
                           "resulting in a negative elimination rate."
                           "This is not allowed. Slope is set to NaN.")
-            slope = np.NAN
+            slope = np.nan
+            intercept = np.nan
+
+        slope = self.Q_(slope, slope_units)
+        intercept = self.Q_(intercept, intercept_units)
 
         return [slope, intercept, r_value, p_value, std_err, max_index]
 
@@ -197,15 +209,19 @@ class PKInference(object):
         # by integrating from tend to infinity for c[-1]exp(slope * t) we get
         auc_d = -c[-1]/slope
 
-        auc_tot = auc + auc_d
-        if auc_d > 0.2*auc_tot:
+        if auc_d > auc:
+            warnings.warn(
+                f"AUC(t-oo) > AUC(0-tend), no AUC(0-oo) calculated.")
+            return self.Q_(np.nan, auc.units)
+        if auc_d > 0.25*auc:
             # If the % extrapolated is greater than 20%, than the total AUC may be unreliable.
             # The unreliability of the data is not due to a calculation error. Instead it
             # indicates that more sampling is needed for an accurate estimate of the elimination
             # rate constant and the observed area under the curve.
-            warnings.warn("AUC(t-oo) is > 20% of total AUC, calculation may be unreliable.")
+            warnings.warn(f"AUC(t-oo) is >25% ({(auc_d/auc*100).magnitude}%) of total AUC, "
+                          f"calculation may be unreliable.")
 
-        return auc_tot
+        return auc + auc_d
 
     def _max(self, t, c):
         """ Returns timepoint of maximal value and maximal value based on curve.
@@ -230,12 +246,10 @@ class PKInference(object):
         """
         idx = np.argmax(c)
         if idx == len(c) - 1:
-            # no maximum reached within the time course
-            #raise serializers.ValidationError({"timecourse": "No MAXIMUM reached within time course, last value used."})
             warnings.warn("No MAXIMUM reached within time course, last value used.")
         if idx == 0:
             # no maximum in time course
-            return Q_(np.nan, t.units), Q_(np.nan, c.units)
+            return self.Q_(np.nan, t.units), self.Q_(np.nan, c.units)
 
         cmax = c[idx]
         tnew = t[:idx]
@@ -305,7 +319,7 @@ class PKInference(object):
         The term "apparent" underscores the fact that where the drug is distributed cannot be
         determined from Vd; only that it goes somewhere.
         """
-        return dose / Q_(np.exp(intercept.magnitude), intercept.units)
+        return dose / self.Q_(np.exp(intercept.magnitude), intercept.units)
 
     def _vd(self, aucinf, dose, kel):
         """
@@ -316,11 +330,10 @@ class PKInference(object):
             vd = Dose/(AUC_inf*kel)
         """
         vd = dose / (aucinf*kel)
-        print("vd", vd)
         return vd
 
     def info(self) -> str:
-        """ Print report for given pharmacokinetic information.
+        """ Information string for given pharmacokinetic information.
 
         :return:
         """
@@ -348,85 +361,82 @@ class PKInference(object):
             lines.append(
                 "{:<12}: {:P}".format(key, getattr(self.pk, key))
             )
-
+        lines.append("-" * 80)
         return "\n".join(lines)
 
-    def figure(self) -> Figure:
+    def figure(self, title=None) -> Figure:
         """
         Create figure from time course and pharmacokinetic parameters.
         """
+        fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
+        for ax in (ax1, ax2):
+            if title is None:
+                title = self.pk.compound
+            ax.set_title(title)
+            ax.set_xlabel(f"time [{self.t.units}]")
+            ax.set_ylabel(f"concentration [{self.c.units}]")
+
+        t = self.t.magnitude
         c = self.c.magnitude
-        t = self.c.magnitude
-        c_unit = self.c.units
-        t_unit = self.t.units
         slope = self.pk.slope.magnitude
         intercept = self.pk.intercept.magnitude
         max_idx = self.pk.max_idx
         if max_idx is None or np.isnan(max_idx):
             max_idx = c.size - 1
 
-        kwargs = {"markersize": 10}
+        # pharmacokinetic parameters
+        cmax = self.pk.cmax.magnitude
+        tmax = self.pk.tmax.magnitude
 
-        # create figure
-        f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
-        f.subplots_adjust(wspace=0.3)
+        # aucinf
+        tend = t[-1]
+        cend = c[-1]
 
-        ax1.plot(t, c, "--", color="black", label="__nolabel__", **kwargs)
-        ax1.plot(t[: max_idx + 1], c[: max_idx + 1], "o", color="darkgray", **kwargs)
-        if max_idx < c.size - 1:
-            ax1.plot(
-                t[max_idx + 1:],
-                c[max_idx + 1:],
-                "s",
-                color="black",
-                linewidth=2,
-                **kwargs
-            )
+        kwargs = {
+            "linestyle": "-",
+            "linewidth": 2.0,
+        }
+        for ax in (ax1, ax2):
 
-        ax1.set_ylabel("substance [{}]".format(c_unit))
-        ax1.set_xlabel("time [{}]".format(t_unit))
+            # auc
+            ax.fill_between(t, np.zeros_like(c), c, color="green", alpha=0.2, label="AUCend")
+            ax.plot((tend, tend), (0, cend), linestyle="-", color="black")
 
-        ax1.plot(t, np.exp(intercept) * np.exp(slope * t), "-", color="blue", label="fit")
-        ax1.legend()
+            # aucinf
+            t_aucinf = np.linspace(0, 0.3 * tend, 50)  # interpolate by 30%
+            c_aucinf = cend * np.exp(slope * t_aucinf)
+            ax.fill_between(tend + t_aucinf, c_aucinf, np.zeros_like(c_aucinf),
+                            color="red", alpha=0.2, label="AUCinf")
+            ax.plot(tend + t_aucinf, c_aucinf, linestyle="-", color="black")
 
-        # log
-        ax2.plot(t[1:], np.log(c[1:]), "--", color="black", label="__nolabel__", **kwargs)
+            # fit
+            if not np.isnan(slope):
+                ax.plot(t, np.exp(intercept) * np.exp(slope * t), "-", color="blue", label="fit",
+                    linewidth=2.0)
+            # cmax (hline)
+            ax.plot((0, tmax), (cmax, cmax), linestyle="--", color="black")
+            # tmax (vline)
+            ax.plot((tmax, tmax), (0, cmax), linestyle="--", color="black")
 
-        ax2.plot(
-            t[1: max_idx + 1],
-            np.log(c[1: max_idx + 1]),
-            "o",
-            color="darkgray",
-            label="log(substance)",
-            **kwargs
-        )
-        if max_idx < c.size - 1:
-            ax2.plot(
-                t[max_idx + 1:],
-                np.log(c[max_idx + 1:]),
-                "s",
-                color="black",
-                linewidth=2,
-                label="log(substance) fit",
-                **kwargs
-            )
+            ax.plot(t, c, "o-", color="black", markersize=6, linewidth=2)
 
-        ax2.set_ylabel("log(substance [{}])".format(c_unit))
-        ax2.set_xlabel("time [{}]".format(t_unit))
-        ax2.plot(t, intercept + slope * t, "-", color="blue", label="fit")
-        ax2.legend()
+            # plot data points used for fitting
+            if not np.isnan(slope):
+                if max_idx < c.size - 1:
+                    ax.plot(
+                        t[max_idx + 2:],
+                        c[max_idx + 2:],
+                        "s",
+                        color="blue",
+                        linewidth=2,
+                        markersize=8
+                    )
+            ax.annotate('(tmax, cmax)', xy=(tmax, cmax))
 
-        return f
+        ax1.set_ylim(bottom=0)
+        ax2.set_yscale("log")
 
-
-if __name__ == "__main__":
-    t = np.linspace(0, 100, num=50)
-    kel = 1.0
-    c0 = 10.0
-    dose = Q_(10.0, "mg") * Q_(1.0, "mole/g")
-    c = c0 * np.exp(-kel*t)
-
-    pk = PKInference(time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"),
-                     dose=dose)
-    print(pk.info())
-
+        for ax in (ax1, ax2):
+            ax.set_xlim(left=0)
+            ax.legend()
+        return fig
