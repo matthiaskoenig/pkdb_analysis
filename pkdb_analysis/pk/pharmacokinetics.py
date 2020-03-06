@@ -42,6 +42,23 @@ class PKParameters:
     std_err: float
     max_idx: int
 
+    def to_dict(self):
+        """Convert to dictionary.
+
+        Splits all quantities in magnitude and unit parts.
+        """
+        d = {
+            "compound": self.compound,
+        }
+        for key in ["dose", "auc", "aucinf", "tmax", "cmax", "tmaxhalf", "cmaxhalf", "kel", "thalf", "vd", "vdss", "cl"]:
+            q = getattr(self, key)
+            d[key] = q.magnitude
+            d[f"{key}_unit"] = q.units
+
+        for key in ["slope", "intercept", "r_value", "p_value", "std_err", "max_idx"]:
+            d[key] = getattr(self, key)
+        return d
+
 
 class TimecoursePK(object):
     """ Class for calculating pharmacokinetics from timecourses. """
@@ -214,7 +231,8 @@ class TimecoursePK(object):
         if auc_d > auc:
             warnings.warn(
                 f"AUC(t-oo) > AUC(0-tend), no AUC(0-oo) calculated.")
-            return self.Q_(np.nan, auc.units)
+            # return self.Q_(np.nan, auc.units)
+
         if auc_d > 0.25*auc:
             # If the % extrapolated is greater than 20%, than the total AUC may be unreliable.
             # The unreliability of the data is not due to a calculation error. Instead it
