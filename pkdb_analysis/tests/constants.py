@@ -2,10 +2,8 @@
 Definition of data and files for the tests.
 The files are located in the data directory.
 """
-import os
-from os.path import join as pjoin
+from pathlib import Path
 
-TEST_PATH = os.path.dirname(os.path.abspath(__file__))  # directory of test files
-DATA_PATH = pjoin(TEST_PATH, 'data')  # directory of data for tests
-
-TEST_HDF5 = pjoin(DATA_PATH, "test.h5")
+TEST_PATH = Path(__file__).parent  # directory of test files
+DATA_PATH = TEST_PATH / 'data'  # directory of data for tests
+TEST_HDF5 = DATA_PATH / "test.h5"

@@ -8,6 +8,8 @@ import warnings
 import pandas as pd
 from pkdb_analysis.pk.pharmacokinetics import TimecoursePK
 from matplotlib import pyplot as plt
+from pkdb_analysis.tests.constants import DATA_PATH
+from pathlib import Path
 
 import pint
 from pint import Quantity
@@ -40,7 +42,7 @@ def example1() -> List[TimecoursePK]:
     :return:
     """
     results = []
-    df = pd.read_csv("../tests/data/pk/data_example1.csv", sep="\t", na_values="NA")
+    df = pd.read_csv(DATA_PATH / "pk" / "data_example1.csv", sep="\t", na_values="NA")
 
     # ------------------------------------------
     # Pharmacokinetic parameter for caffeine
@@ -79,7 +81,7 @@ def example2() -> List[TimecoursePK]:
     :return:
     """
     results = []
-    df = pd.read_csv("../tests/data/pk/data_example2.csv", sep="\t", na_values="NA")
+    df = pd.read_csv(DATA_PATH / "pk" / "data_example2.csv", sep="\t", na_values="NA")
 
     # ------------------------------------------
     # Pharmacokinetic parameter for caffeine
