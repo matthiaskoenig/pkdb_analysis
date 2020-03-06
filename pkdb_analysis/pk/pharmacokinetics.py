@@ -72,18 +72,20 @@ class TimecoursePK(object):
             intervention_time = self.Q_(0.0, "hr")
 
         if not isinstance(time, Quantity):
-            raise ValueError(f"'time' must be a pint Quantity: {type(dose)}")
+            raise ValueError(f"'time' must be a pint Quantity: {type(time)}")
         if not isinstance(concentration, Quantity):
-            raise ValueError(f"'concentration' must be a pint Quantity: {type(dose)}")
+            raise ValueError(f"'concentration' must be a pint Quantity: {type(concentration)}")
         if not isinstance(dose, Quantity):
             raise ValueError(f"'dose' must be a pint Quantity: {type(dose)}")
         if not isinstance(intervention_time, Quantity):
-            raise ValueError(f"'intervention_time' must be a pint Quantity: {type(dose)}")
+            raise ValueError(f"'intervention_time' must be a pint Quantity: {type(intervention_time)}")
 
         try:
             (dose.units/self.Q_("liter")).to(concentration.units)
         except DimensionalityError as err:
-            warnings.warn("dose units per liter must be convertible to concentration.")
+            warnings.warn(f"dose.units/liter ({dose.units}/liter) must be convertible "
+                          f"to concentration ({concentration.units}). Check that dose "
+                          f"units are correct.")
             raise err
 
         assert time.size == concentration.size
