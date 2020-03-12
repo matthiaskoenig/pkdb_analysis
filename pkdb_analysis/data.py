@@ -284,7 +284,7 @@ class PKData(object):
         :type path: str
         """
         store = pd.HDFStore(path)
-        for key in ["interventions", "individuals", "groups", "outputs", "timecourses"]:
+        for key in ["studies", "interventions", "individuals", "groups", "outputs", "timecourses"]:
             df = getattr(self, key).df
             store[key] = df
         store.close()
