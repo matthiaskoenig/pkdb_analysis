@@ -232,7 +232,7 @@ class PKDB(object):
         ]
         for column in int_columns:
             if column in df.columns:
-                df[column] = df[column].replace({pd.np.nan: -1}).astype(int)
+                df[column] = df[column].replace({np.nan: -1}).astype(int)
 
         return df
 
