@@ -2,7 +2,7 @@ import pandas as pd
 
 from pkdb_analysis.analysis import figure_category
 from pkdb_analysis.filter import pk_info, f_healthy, f_n_healthy
-from pkdb_analysis.weight_inference import infer_weight
+from pkdb_analysis.inference.body_weight import infer_weight
 
 INTERVENTION_FIELDS = ["substance", "value", "unit", "route", "form", "application"]
 NUMERIC_FIELDS_NO_VALUE = ["mean", "min", "max", "median", "count", "sd", "se", "unit"]

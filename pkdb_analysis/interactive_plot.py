@@ -2,7 +2,6 @@ import math
 import seaborn as sns
 import pandas as pd
 import pint
-
 import altair as alt
 
 ureg = pint.UnitRegistry()

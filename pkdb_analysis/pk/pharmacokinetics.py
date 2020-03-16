@@ -7,7 +7,6 @@ Pharmacokinetic parameters are than calculated and returned.
 import warnings
 
 import numpy as np
-import pandas as pd
 from scipy import stats
 from dataclasses import dataclass
 from matplotlib import pyplot as plt
