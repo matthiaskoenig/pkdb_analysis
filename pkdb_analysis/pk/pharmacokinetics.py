@@ -67,10 +67,7 @@ class TimecoursePK(object):
                  dose: Quantity, ureg: UnitRegistry,
                  intervention_time: Quantity = None,
                  substance: str = "substance", **kwargs):
-        """The given doses must be in absolute amount, not per bodyweight. If doses are given per bodyweight, e.g. [mg/kg]
-        these must be multiplied with the bodyweight before calling this function.
-
-        Pharmacokinetics parameters are calculated for a single dose experiment.
+        """Pharmacokinetics parameters are calculated for a single dose experiment.
 
         TODO: support errors on concentrations which are then used in calculation
         FIXME: ctype is used in kwargs for "value", "mean", "median", but not
@@ -78,7 +75,7 @@ class TimecoursePK(object):
 
         :param time: ndarray (with units)
         :param concentration: ndarray (with units)
-        :param dose: dose of the test substance (with unit)
+        :param dose: dose of the test substance (with units)
         :param ureg: unit registry, allowing to calculate the pk in the respective unit system
         :param substance: name of compound/substance
         :param intervention_time: time of intervention (with unit)
@@ -102,11 +99,13 @@ class TimecoursePK(object):
 
         try:
             (dose.units/self.Q_("liter")).to(concentration.units)
-        except DimensionalityError as err:
-            warnings.warn(f"dose.units/liter ({dose.units}/liter) must be convertible "
-                          f"to concentration ({concentration.units}). Check that dose "
-                          f"units are correct.")
-            raise err
+        except DimensionalityError as err1:
+            try:
+                (dose.units / self.Q_("liter") * self.Q_("kg")).to(concentration.units)
+            except DimensionalityError as err2:
+                warnings.warn(f"dose.units/liter ({dose.units}/liter) must be convertible "
+                              f"to concentration ({concentration.units} or {concentration.units * self.Q_('kg')}. "
+                              f"Check that dose units are correct.")
 
         assert time.size == concentration.size
 

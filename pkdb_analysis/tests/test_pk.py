@@ -23,6 +23,24 @@ def test_pharmacokinetics():
     assert pk.cmax == Q_(10.0, "nmol/l")
     assert pk.vd.units == ureg.Unit("liter")
 
+def test_pharmacokinetics_per_bodyweight():
+    ureg = UnitRegistry()
+    Q_ = ureg.Quantity
+    t = np.linspace(0, 100, num=50)
+    kel = 1.0
+    c0 = 10.0
+    dose = Q_(10.0, "mg/kg") * Q_(1.0, "mole/g")
+    c = c0 * np.exp(-kel * t)
+
+    tcpk = TimecoursePK(time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"),
+                        dose=dose, ureg=ureg)
+    pk = tcpk.pk
+    assert pk.kel.magnitude == kel
+    assert pk.dose == Q_(0.01, "mole/kg")
+    assert pk.tmax == Q_(0.0, "hr")
+    assert pk.cmax == Q_(10.0, "nmol/l")
+    assert pk.vd.units == ureg.Unit("liter/kg")
+
 
 def test_example0():
     results = example0()
