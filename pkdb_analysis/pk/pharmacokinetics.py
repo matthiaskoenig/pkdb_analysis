@@ -66,12 +66,15 @@ class TimecoursePK(object):
     def __init__(self, time: Quantity, concentration: Quantity,
                  dose: Quantity, ureg: UnitRegistry,
                  intervention_time: Quantity = None,
-                 substance: str = "substance"):
+                 substance: str = "substance", **kwargs):
         """The given doses must be in absolute amount, not per bodyweight. If doses are given per bodyweight, e.g. [mg/kg]
         these must be multiplied with the bodyweight before calling this function.
 
         Pharmacokinetics parameters are calculated for a single dose experiment.
 
+        TODO: support errors on concentrations which are then used in calculation
+        FIXME: ctype is used in kwargs for "value", "mean", "median", but not
+         processed
 
         :param time: ndarray (with units)
         :param concentration: ndarray (with units)
@@ -107,11 +110,8 @@ class TimecoursePK(object):
 
         assert time.size == concentration.size
 
-        # TODO:
-        # convert dosing time in units of the timecourse (this must happen here)
-        # pk_dict["intervention_time"] = (
-        #            ureg(dosing.time_unit) * dosing.time).to(
-        #    tc.time_unit).magnitude
+        # convert dosing time to units of timecourse
+        intervention_time = intervention_time.to(time.units)
 
         self.t = time
         self.c = concentration
