@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from pkdb_analysis.pk.pharmacokinetics_example import example0, example1, example2, show_results
+from pkdb_analysis.pk.pharmacokinetics_example import example0, example1, example2, example_Kim2011_Fig2, show_results
 from pkdb_analysis.pk.pharmacokinetics import TimecoursePK
 from pint import UnitRegistry
 from matplotlib import pyplot as plt
@@ -129,4 +129,9 @@ def test_example1():
 
 def test_example2():
     results = example2()
+    show_results(results)
+
+
+def test_example_Kim2011_Fig2():
+    results = example_Kim2011_Fig2()
     show_results(results)

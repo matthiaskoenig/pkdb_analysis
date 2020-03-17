@@ -145,7 +145,7 @@ class TimecoursePK(object):
         thalf = self._thalf(kel=kel)
         aucinf = self._aucinf(t, c, slope=slope)
 
-        if self.dose is not None:
+        if self.dose is not None and not np.isnan(self.dose.magnitude):
             # parameters depending on dose
             vdss = self._vdss(dose=self.dose, intercept=intercept)
             vd = self._vd(aucinf=aucinf, dose=self.dose, kel=kel)
