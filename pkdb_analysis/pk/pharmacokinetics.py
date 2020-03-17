@@ -65,16 +65,18 @@ class TimecoursePK(object):
     def __init__(self, time: Quantity, concentration: Quantity,
                  dose: Quantity, ureg: UnitRegistry,
                  intervention_time: Quantity = None,
-                 substance: str = "substance"):
-        """The given doses must be in absolute amount, not per bodyweight. If doses are given per bodyweight, e.g. [mg/kg]
-        these must be multiplied with the bodyweight before calling this function.
+                 substance: str = "substance", **kwargs):
+        """Pharmacokinetics parameters are calculated for a single dose experiment.
 
-        Pharmacokinetics parameters are calculated for a single dose experiment.
+        TODO: support errors on concentrations which are then used in calculation
+        FIXME: ctype is used in kwargs for "value", "mean", "median", but not
+         processed
 
+        tmax values are reported relative to intervention time
 
         :param time: ndarray (with units)
         :param concentration: ndarray (with units)
-        :param dose: dose of the test substance (with unit)
+        :param dose: dose of the test substance (with units)
         :param ureg: unit registry, allowing to calculate the pk in the respective unit system
         :param substance: name of compound/substance
         :param intervention_time: time of intervention (with unit)
@@ -86,6 +88,8 @@ class TimecoursePK(object):
 
         if intervention_time is None:
             intervention_time = self.Q_(0.0, "hr")
+        if dose is None:
+            dose = self.Q_(np.nan, "mg")
 
         if not isinstance(time, Quantity):
             raise ValueError(f"'time' must be a pint Quantity: {type(time)}")
@@ -96,21 +100,18 @@ class TimecoursePK(object):
         if not isinstance(intervention_time, Quantity):
             raise ValueError(f"'intervention_time' must be a pint Quantity: {type(intervention_time)}")
 
-        try:
-            (dose.units/self.Q_("liter")).to(concentration.units)
-        except DimensionalityError as err:
-            warnings.warn(f"dose.units/liter ({dose.units}/liter) must be convertible "
-                          f"to concentration ({concentration.units}). Check that dose "
-                          f"units are correct.")
-            raise err
+        # check dimensionality of dose
+        dr = dose.to_base_units().to_reduced_units()  # see https://github.com/hgrecco/pint/issues/1058
+        if not (dr.check("[mass]") or dr.check("[substance]") or dr.check("[mass]/[mass]") or dr.check("[substance]/[mass]")):
+            warnings.warn(f"dose_reduced.dimensionality must either be in '[mass]', '[substance']', '[mass]/[mass]' or '[substance]/[mass]'"
+                          f"The given units are: '{dr.dimensionality}' for {dr.units}. "
+                          f"Check that dose units are correct.")
+            raise ValueError(f"Incorrect dimensionality '{dr.dimensionality}' for dose: {dose.units}")
 
         assert time.size == concentration.size
 
-        # TODO:
-        # convert dosing time in units of the timecourse (this must happen here)
-        # pk_dict["intervention_time"] = (
-        #            ureg(dosing.time_unit) * dosing.time).to(
-        #    tc.time_unit).magnitude
+        # convert dosing time to units of timecourse
+        intervention_time = intervention_time.to(time.units)
 
         self.t = time
         self.c = concentration
@@ -129,7 +130,7 @@ class TimecoursePK(object):
 
         """
         # calculate all results relative to the intervention time
-        t = self.t + self.intervention_time
+        t = self.t - self.intervention_time
         c = self.c
 
         # simple pk
@@ -144,6 +145,7 @@ class TimecoursePK(object):
         aucinf = self._aucinf(t, c, slope=slope)
 
         if self.dose is not None:
+            # parameters depending on dose
             vdss = self._vdss(dose=self.dose, intercept=intercept)
             vd = self._vd(aucinf=aucinf, dose=self.dose, kel=kel)
             cl = kel * vd
@@ -152,6 +154,15 @@ class TimecoursePK(object):
             vdss = self.Q_(np.nan, vd_units)
             vd = self.Q_(np.nan, vd_units)
             cl = self.Q_(np.nan, kel.units*vd.units)
+
+        # perform unit normalization on volumes
+        vd.to_base_units().to_reduced_units(),  # see https://github.com/hgrecco/pint/issues/1058
+        vdss.to_base_units().to_reduced_units(),  # see https://github.com/hgrecco/pint/issues/1058
+        for vd_par in [vd, vdss]:
+            if vd_par.check('[length] ** 3'):
+                vd_par.ito('liter')
+            elif vd_par.check('[length] ** 3/[mass]'):
+                vd_par.ito('liter/kg')
 
         return PKParameters(
             compound=self.substance,
@@ -164,8 +175,8 @@ class TimecoursePK(object):
             cmaxhalf=cmaxhalf.to_reduced_units(),
             kel=kel.to_reduced_units(),
             thalf=thalf.to_reduced_units(),
-            vd=vd.to_reduced_units(),
-            vdss=vdss.to_reduced_units(),
+            vd=vd,
+            vdss=vdss,
             cl=cl.to_reduced_units(),
             slope=slope.to_reduced_units(),
             intercept=intercept.to_reduced_units(),
@@ -204,8 +215,8 @@ class TimecoursePK(object):
             warnings.warn("Regression could not be calculated on timecourse curve.")
         elif slope > 0.0:
             warnings.warn("Regression gave a positive slope, "
-                          "resulting in a negative elimination rate."
-                          "This is not allowed. Slope is set to NaN.")
+                          "resulting in a negative elimination rate. "
+                          "Slope is set to NaN.")
             slope = np.nan
             intercept = np.nan
 
@@ -237,7 +248,7 @@ class TimecoursePK(object):
             # The unreliability of the data is not due to a calculation error. Instead it
             # indicates that more sampling is needed for an accurate estimate of the elimination
             # rate constant and the observed area under the curve.
-            warnings.warn(f"AUC(t-oo) is >25% ({(auc_d/auc*100).magnitude}%) of total AUC, "
+            warnings.warn(f"AUC(t-oo) is >25% ({round((auc_d/auc*100).magnitude, 2)}%) of total AUC, "
                           f"calculation may be unreliable.")
 
         return auc + auc_d
