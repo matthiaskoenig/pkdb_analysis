@@ -2,7 +2,8 @@
 Helper functions for body weight inferences.
 Takes PKData instance and  calculates  additional outputs based on body weights of subjects.
 """
-from typing import Tuple
+from typing import Tuple, Optional
+
 import numpy as np
 import pandas as pd
 import pint
@@ -35,14 +36,16 @@ class InferWeight(object):
 
     def get_weight(self,
                    weight_fields=("value_weight", "mean_weight", "median_weight"),
-                   weight_unit_field="unit_weight") -> Tuple[Quantity, str]:
+                   weight_unit_field="unit_weight") -> Tuple[Optional[Quantity], Optional[str]]:
         """ helper function to get the weight of a subject or group"""
         for weight_field in weight_fields:
             if weight_field in self.series:
                 this_value = self.series[weight_field]
                 this_unit = self.series[weight_unit_field]
-                if not np.isnan(this_value):
-                   return Q_(this_value, this_unit), weight_field
+                if this_value is not None:
+                    if not np.isnan(this_value):
+                        return Q_(this_value, this_unit), weight_field
+            return None, None
 
     def bw_infer(self,
                  unit_field="unit",

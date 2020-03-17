@@ -39,17 +39,17 @@ def data_type(d):
 
 class MetaAnalysis(object):
 
-    def __init__(self, pkdata,intervention_substance):
+    def __init__(self, pkdata,intervention_substances):
         self.pkdata = pkdata
         self.results = None
         self.group_pk = pkdata.groups.pk
         self.individual_pk = pkdata.individuals.pk
         self.intervention_pk = pkdata.interventions.pk
-        self.intervention_substance = intervention_substance
+        self.intervention_substances = intervention_substances
 
     def specific_intervention_info(self, d):
         print(d)
-        subset = d[d["substance"] == self.intervention_substance]
+        subset = d[d["substance"] == self.intervention_substances]
         subset["intervention_number"] = len(d)
         extra_info = []
         for intervention in d.intervention.iterrows():
@@ -62,7 +62,7 @@ class MetaAnalysis(object):
     def create_intervention_table(self):
         intervention_table = pd.DataFrame()
         for intervention_pk, df in self.pkdata.interventions.df.groupby(self.intervention_pk):
-            subset = df[df["substance"] == self.intervention_substance]
+            subset = df[df["substance"].isin(self.intervention_substances)]
             subset["number"] = len(df)
 
             if len(subset) == 1:
@@ -76,7 +76,7 @@ class MetaAnalysis(object):
                     subset = subset.iloc[0]
                     subset["extra"] = extra
                 intervention_table = intervention_table.append(subset)
-        intervention_table["per_bodyweight"] = intervention_table.unit.str.endswith("/ kilogram")
+        intervention_table["per_bw"] = intervention_table.unit.str.endswith("/ kilogram")
         intervention_table["pk"] = intervention_table[self.intervention_pk].astype("int")
         del intervention_table["intervention_pk"]
         return intervention_table
@@ -110,7 +110,7 @@ class MetaAnalysis(object):
         return subject_core
 
     def add_extra_info(self):
-        self.results["unit_category"] = self.results[["per_bodyweight", "intervention_per_bodyweight"]].apply(
+        self.results["unit_category"] = self.results[["per_bw", "intervention_per_bw"]].apply(
             figure_category, axis=1)
         self.results["y"] = self.results[["mean", "median", "value"]].max(axis=1)
         self.results["y_min"] = self.results["y"] - self.results["sd"]
@@ -137,7 +137,7 @@ class MetaAnalysis(object):
 
     def create_results_base(self):
         results = self.pkdata.outputs.copy()
-        results["per_bodyweight"] = results.unit.str.endswith("/ kilogram")
+        results["per_bw"] = results.unit.str.endswith("/ kilogram")
         results["inferred"] = False
         self.results = results
 
@@ -173,3 +173,4 @@ class MetaAnalysis(object):
         self.create_results_base()
         self.add_intervention_info()
         self.add_subject_info()
+

@@ -7,6 +7,9 @@ import altair as alt
 ureg = pint.UnitRegistry()
 ureg.define('yr = year')
 
+from pkdb_analysis.meta_analysis import MetaAnalysis
+from pkdb_analysis.filter import f_mt_in_substance_in, f_dosing_in
+
 
 def column_to_color(column):
     mapping = {v: n for n, v in enumerate(column.unique())}
@@ -34,7 +37,7 @@ def expand_df(df, on):
 
 
 def abs_abs(d):
-    return (d["per_bodyweight"] == False) & (d["intervention_per_bodyweight"] == False)
+    return (d["per_bw"] == False) & (d["intervention_per_bw"] == False)
 
 
 def legend(df, slection, title, value_field, color_field=None, color=None):
@@ -59,11 +62,13 @@ def round_up(n, decimals=0):
 
 
 def create_interactive_plot(df,path, multi_legend = {"study": "study_name"}, multi_color_legend= {"sex": "sex", "health": "healthy", "route": "intervention_route", "tissue": "tissue","data_type": "data_type"}):
-
     df = expand_df(df, multi_color_legend)
+    print(len(df))
+    measurement_type = df["measurement_type"].unique()[0]
+
+    print(measurement_type)
     u_unit = ureg(df["unit"].unique()[0])
     u_unit_intervention = ureg(df["intervention_unit"].unique()[0])
-    measurement_type = df["measurement_type"].unique()[0]
     substance = df["substance"].unique()[0]
     substance_intervention = df["intervention_substance"].unique()[0]
 
@@ -109,13 +114,23 @@ def create_interactive_plot(df,path, multi_legend = {"study": "study_name"}, mul
 
     stepsize_x = (x_max - x_min) / bins
 
-    u_unit_age = ureg(df["unit_age"].dropna().unique()[0])
-    u_unit_weight = ureg(df["unit_weight"].dropna().unique()[0])
-    title_age = f'age [{u_unit_age.u :~P}]'
-    title_weight = f'weight [{u_unit_weight.u :~P}]'
+    titles = {}
 
-    x_age = alt.X("age:Q", scale=alt.Scale(domain=[0, 100], clamp=True), axis=alt.Axis(title=title_age))
-    y_weight = alt.Y("weight:Q", scale=alt.Scale(domain=[0, 150], clamp=True), axis=alt.Axis(title=title_weight))
+    for key in ["age", "weight"]:
+        try:
+            _u_unit = ureg(df[f"unit_{key}"].dropna().unique()[0])
+            titles[key] = f'{key} [{_u_unit.u :~P}]'
+        except:
+            titles[key] = f'{key} [""]'
+
+
+    #u_unit_age = ureg(df["unit_age"].dropna().unique()[0])
+    #u_unit_weight = ureg(df["unit_weight"].dropna().unique()[0])
+    #title_age = f'age [{u_unit_age.u :~P}]'
+    #title_weight = f'weight [{u_unit_weight.u :~P}]'
+
+    x_age = alt.X("age:Q", scale=alt.Scale(domain=[0, 100], clamp=True), axis=alt.Axis(title=titles["age"]))
+    y_weight = alt.Y("weight:Q", scale=alt.Scale(domain=[0, 150], clamp=True), axis=alt.Axis(title=titles["weight"]))
 
     errorbars_y = filter_transform_no_brush(alt.Chart(df).mark_errorbar().encode(
         x=alt.X('intervention_value:Q', axis=alt.Axis(title=x_title), scale=alt.Scale(domain=x_domain, clamp=True)),
@@ -127,14 +142,14 @@ def create_interactive_plot(df,path, multi_legend = {"study": "study_name"}, mul
 
     errorbars_weight = filter_transform_no_brush(alt.Chart(df).mark_errorbar().encode(
         x=x_age,
-        y=alt.Y("min_sd_weight:Q", scale=alt.Scale(domain=[0, 150], clamp=True), axis=alt.Axis(title=title_weight)),
+        y=alt.Y("min_sd_weight:Q", scale=alt.Scale(domain=[0, 150], clamp=True), axis=alt.Axis(title=titles["weight"])),
         y2="max_sd_weight:Q",
         color=alt.Color('color:N', scale=None, legend=None),
         opacity=alt.condition(brush, alt.OpacityValue(1), alt.OpacityValue(0.1)),
     )).properties(height=300, width=500).add_selection(brush).add_selection(selection_base)
 
     errorbars_age = filter_transform_no_brush(alt.Chart(df).mark_errorbar().encode(
-        x=alt.X("min_sd_age:Q", scale=alt.Scale(domain=[0, 100], clamp=True), axis=alt.Axis(title=title_age)),
+        x=alt.X("min_sd_age:Q", scale=alt.Scale(domain=[0, 100], clamp=True), axis=alt.Axis(title=titles["age"])),
         x2="max_sd_age:Q",
         y=y_weight,
         color=alt.Color('color:N', scale=None, legend=None),
@@ -198,3 +213,62 @@ def create_interactive_plot(df,path, multi_legend = {"study": "study_name"}, mul
         errorbars_age + errorbars_weight + scatter.encode(x=x_age, y=y_weight).properties(height=300, width=500),
         alt.hconcat(*legends_color.values()) | alt.hconcat(*legend_black.values()))
     chart.save(path, webdriver='firefox', embed_options={'renderer': 'svg'})
+
+
+
+
+def pkdata_by_measurement_type(pkdata,
+                               measurement_types,
+                               intervention_substances,
+                               output_substances,
+                               exclude_study_names):
+
+    # filter pkdata for given attributes
+    data_dict = {}
+    for measurement_type in measurement_types:
+        data = pkdata.filter_intervention(f_dosing_in,
+                                          substances=intervention_substances).filter_output(f_mt_in_substance_in,
+                                                                               measurement_types=measurement_type,
+                                                                               substances=output_substances).exclude_intervention(
+                                                                                    lambda d: d["study_name"].isin(exclude_study_names))
+        measurement_type_joined = "_".join(measurement_type)
+        data.outputs["measurement_type"] = measurement_type_joined
+        data_dict[measurement_type_joined] = data.copy()
+        return data_dict
+
+
+def results(data_dict, intervention_substances, intervention_types):
+    # creates one dataframe from PKData instance.
+    # infers additional results from body weights.
+    results_dict = {}
+    for measurement_type, pkd in data_dict.items():
+        meta_analysis = MetaAnalysis(pkd, intervention_substances)
+        meta_analysis.create_results()
+        meta_analysis.results["intervention_extra"] = meta_analysis.results.apply(intervention_types, axis=1)
+        meta_analysis.infer_from_body_weight()
+        meta_analysis.add_extra_info()
+        results = meta_analysis.results
+        results_dict[measurement_type] = results
+        return results_dict
+
+
+def create_plots(results_dict,path, multi_color_legend):
+    for measurement_type, result_infer in results_dict.items():
+        for group, df in result_infer.groupby("unit_category"):
+            file_name = f'{path}/{measurement_type}_{group}.html'
+            create_interactive_plot(df, file_name, multi_color_legend)
+
+
+def interactive_plot_factory(pkdata,
+                             measurement_types,
+                             intervention_substances,
+                             output_substances,
+                             exclude_study_names,
+                             multi_color_legend,
+                             intervention_types,
+                             path):
+
+    data_dict = pkdata_by_measurement_type(pkdata, measurement_types, intervention_substances, output_substances,exclude_study_names)
+    results_dict = results(data_dict, intervention_substances, intervention_types)
+    create_plots(results_dict, path, multi_color_legend)
+

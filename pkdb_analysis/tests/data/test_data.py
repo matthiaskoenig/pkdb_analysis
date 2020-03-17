@@ -13,7 +13,21 @@ INDIVIDUAL_OUTPUT = {
         "intervention_value": 0.8,
         "intervention_unit": "ng",
 }
-
+INDIVIDUAL_NO_BODYWEIGHT_OUTPUT = {
+        "value": 2.0,
+        "mean": None,
+        "median": None,
+        "min": None,
+        "max": None,
+        "sd": None,
+        "se": None,
+        "cv": None,
+        "unit": "ng",
+        "value_weight": None,
+        "unit_weight": None,
+        "intervention_value": 0.8,
+        "intervention_unit": "ng",
+}
 GROUP_OUTPUT = {
         "value": None,
         "mean": 4.5,
