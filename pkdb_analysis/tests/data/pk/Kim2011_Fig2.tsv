@@ -1,0 +1,27 @@
+study	interventions	time	time_unit	mean	sd	unit
+Kim2011	paracetamol1000mg	0.0	hr	0.0	NA	microg/mL
+Kim2011	paracetamol1000mg	0.25	hr	4.198895	3.97790053	microg/mL
+Kim2011	paracetamol1000mg	0.5	hr	3.0939226	2.96132591	microg/mL
+Kim2011	paracetamol1000mg	1.0	hr	4.9944754	4.90607761	microg/mL
+Kim2011	paracetamol1000mg	1.5	hr	8.530387	4.6850832	microg/mL
+Kim2011	paracetamol1000mg	2.0	hr	8.928177	4.287293	microg/mL
+Kim2011	paracetamol1000mg	3.0	hr	8.441989	3.226519	microg/mL
+Kim2011	paracetamol1000mg	4.0	hr	6.9834256	2.0331492	microg/mL
+Kim2011	paracetamol1000mg	6.0	hr	3.801105	1.4143646	microg/mL
+Kim2011	paracetamol1000mg	8.0	hr	1.9889503	0.8397791	microg/mL
+Kim2011	paracetamol1000mg	10.0	hr	1.1049724	0.3535912	microg/mL
+Kim2011	paracetamol1000mg	12.0	hr	0.70718235	0.30939231	microg/mL
+Kim2011	paracetamol1000mg	24.0	hr	0.26519337	0.220994473	microg/mL
+Kim2011	paracetamol1000mg, imatinib400mg	0.0	hr	0.0	NA	microg/mL
+Kim2011	paracetamol1000mg, imatinib400mg	0.25	hr	2.2541437	3.845304	microg/mL
+Kim2011	paracetamol1000mg, imatinib400mg	0.5	hr	4.0220995	3.9337015	microg/mL
+Kim2011	paracetamol1000mg, imatinib400mg	1.0	hr	5.7458563	3.9337017	microg/mL
+Kim2011	paracetamol1000mg, imatinib400mg	1.5	hr	7.20442	7.20442	microg/mL
+Kim2011	paracetamol1000mg, imatinib400mg	2.0	hr	8.044199	5.524861	microg/mL
+Kim2011	paracetamol1000mg, imatinib400mg	3.0	hr	9.149171	3.1381215	microg/mL
+Kim2011	paracetamol1000mg, imatinib400mg	4.0	hr	6.674033	3.049724	microg/mL
+Kim2011	paracetamol1000mg, imatinib400mg	6.0	hr	3.6243093	1.0607737	microg/mL
+Kim2011	paracetamol1000mg, imatinib400mg	8.0	hr	1.8121547	0.7513813	microg/mL
+Kim2011	paracetamol1000mg, imatinib400mg	10.0	hr	0.9723757	0.5303867	microg/mL
+Kim2011	paracetamol1000mg, imatinib400mg	12.0	hr	0.6629834	0.3977901	microg/mL
+Kim2011	paracetamol1000mg, imatinib400mg	24.0	hr	0.22099447	0.1	microg/mL

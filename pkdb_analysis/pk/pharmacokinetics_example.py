@@ -118,6 +118,37 @@ def example2() -> List[TimecoursePK]:
     return results
 
 
+def example_Kim2011_Fig2() -> List[TimecoursePK]:
+    """ Example for pharmacokinetics calculation.
+
+    :return:
+    """
+    results = []
+    df = pd.read_csv(DATA_PATH / "pk" / "Kim2011_Fig2.tsv", sep="\t", na_values="NA")
+    df = df[(df.interventions == "paracetamol1000mg")]
+
+    # ------------------------------------------
+    # Pharmacokinetic parameter for acetaminophen
+    # ------------------------------------------
+    # get caffeine data
+    dose = Q_(100, "mg")
+    substance = "acetaminophen"
+
+    # calculate pharmacokinetic information
+    t = Q_(df.time.values, "hr")
+    c = Q_(df["mean"].values, "µg/ml")
+    tcpk = TimecoursePK(
+        time=t,
+        concentration=c,
+        substance=substance,
+        dose=dose,
+        ureg=ureg
+    )
+    results.append(tcpk)
+
+    return results
+
+
 def show_results(results: List[TimecoursePK]):
     """Show given results."""
     for tcpk in results:
@@ -135,4 +166,7 @@ if __name__ == "__main__":
 
     r2 = example2()
     show_results(r2)
+
+    rkim_fig2 = example_Kim2011_Fig2()
+    show_results(rkim_fig2)
     plt.show()
