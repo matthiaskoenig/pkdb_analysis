@@ -87,6 +87,8 @@ class TimecoursePK(object):
 
         if intervention_time is None:
             intervention_time = self.Q_(0.0, "hr")
+        if dose is None:
+            dose = self.Q_(np.nan, "mg")
 
         if not isinstance(time, Quantity):
             raise ValueError(f"'time' must be a pint Quantity: {type(time)}")
@@ -156,7 +158,6 @@ class TimecoursePK(object):
         vd.to_base_units().to_reduced_units(),  # see https://github.com/hgrecco/pint/issues/1058
         vdss.to_base_units().to_reduced_units(),  # see https://github.com/hgrecco/pint/issues/1058
         for vd_par in [vd, vdss]:
-            print(vd_par.dimensionality)
             if vd_par.check('[length] ** 3'):
                 vd_par.ito('liter')
             elif vd_par.check('[length] ** 3/[mass]'):
