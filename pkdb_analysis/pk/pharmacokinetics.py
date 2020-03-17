@@ -7,7 +7,6 @@ Pharmacokinetic parameters are than calculated and returned.
 import warnings
 
 import numpy as np
-# np.seterr(divide='raise')  # raising the divide errors to figure out what is going on
 
 import pandas as pd
 from scipy import stats
