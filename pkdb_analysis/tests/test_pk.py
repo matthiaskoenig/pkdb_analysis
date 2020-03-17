@@ -23,6 +23,18 @@ def test_pharmacokinetics():
     assert pk.cmax == Q_(10.0, "nmol/l")
     assert pk.vd.units == ureg.Unit("liter")
 
+
+def test_mg_per_kg_units():
+    # failing due to pint bug: https://github.com/hgrecco/pint/issues/1058
+    # (required to go to base units first)
+    ureg = UnitRegistry()
+    Q_ = ureg.Quantity
+    dose = Q_(10.0, "mg/kg") * Q_(1.0, "mole/g")
+    print(dose)
+    dose = dose.to_base_units().to_reduced_units()
+    print(dose)
+
+
 def test_pharmacokinetics_per_bodyweight():
     ureg = UnitRegistry()
     Q_ = ureg.Quantity
@@ -30,6 +42,7 @@ def test_pharmacokinetics_per_bodyweight():
     kel = 1.0
     c0 = 10.0
     dose = Q_(10.0, "mg/kg") * Q_(1.0, "mole/g")
+    dose.ito("mmole/kg")  # do a hard conversion to avoid problems with units
     c = c0 * np.exp(-kel * t)
 
     tcpk = TimecoursePK(time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"),

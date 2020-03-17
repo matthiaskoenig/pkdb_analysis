@@ -97,15 +97,13 @@ class TimecoursePK(object):
         if not isinstance(intervention_time, Quantity):
             raise ValueError(f"'intervention_time' must be a pint Quantity: {type(intervention_time)}")
 
-        try:
-            (dose.units/self.Q_("liter")).to(concentration.units)
-        except DimensionalityError as err1:
-            try:
-                (dose.units / self.Q_("liter") * self.Q_("kg")).to(concentration.units)
-            except DimensionalityError as err2:
-                warnings.warn(f"dose.units/liter ({dose.units}/liter) must be convertible "
-                              f"to concentration ({concentration.units} or {concentration.units * self.Q_('kg')}. "
-                              f"Check that dose units are correct.")
+        # check dimensionality of dose
+        dr = dose.to_base_units().to_reduced_units()  # see https://github.com/hgrecco/pint/issues/1058
+        if not (dr.check("[mass]") or dr.check("[substance]") or dr.check("[mass]/[mass]") or dr.check("[substance]/[mass]")):
+            warnings.warn(f"dose_reduced.dimensionality must either be in '[mass]', '[substance']', '[mass]/[mass]' or '[substance]/[mass]'"
+                          f"The given units are: '{dr.dimensionality}' for {dr.units}. "
+                          f"Check that dose units are correct.")
+            raise ValueError(f"Incorrect dimensionality '{dr.dimensionality}' for dose: {dose.units}")
 
         assert time.size == concentration.size
 
@@ -144,6 +142,7 @@ class TimecoursePK(object):
         aucinf = self._aucinf(t, c, slope=slope)
 
         if self.dose is not None:
+            # parameters depending on dose
             vdss = self._vdss(dose=self.dose, intercept=intercept)
             vd = self._vd(aucinf=aucinf, dose=self.dose, kel=kel)
             cl = kel * vd
@@ -152,6 +151,16 @@ class TimecoursePK(object):
             vdss = self.Q_(np.nan, vd_units)
             vd = self.Q_(np.nan, vd_units)
             cl = self.Q_(np.nan, kel.units*vd.units)
+
+        # perform unit normalization on volumes
+        vd.to_base_units().to_reduced_units(),  # see https://github.com/hgrecco/pint/issues/1058
+        vdss.to_base_units().to_reduced_units(),  # see https://github.com/hgrecco/pint/issues/1058
+        for vd_par in [vd, vdss]:
+            print(vd_par.dimensionality)
+            if vd_par.check('[length] ** 3'):
+                vd_par.ito('liter')
+            elif vd_par.check('[length] ** 3/[mass]'):
+                vd_par.ito('liter/kg')
 
         return PKParameters(
             compound=self.substance,
@@ -164,8 +173,8 @@ class TimecoursePK(object):
             cmaxhalf=cmaxhalf.to_reduced_units(),
             kel=kel.to_reduced_units(),
             thalf=thalf.to_reduced_units(),
-            vd=vd.to_reduced_units(),
-            vdss=vdss.to_reduced_units(),
+            vd=vd,
+            vdss=vdss,
             cl=cl.to_reduced_units(),
             slope=slope.to_reduced_units(),
             intercept=intercept.to_reduced_units(),
