@@ -216,8 +216,8 @@ class TimecoursePK(object):
             warnings.warn("Regression could not be calculated on timecourse curve.")
         elif slope > 0.0:
             warnings.warn("Regression gave a positive slope, "
-                          "resulting in a negative elimination rate."
-                          "This is not allowed. Slope is set to NaN.")
+                          "resulting in a negative elimination rate. "
+                          "Slope is set to NaN.")
             slope = np.nan
             intercept = np.nan
 
