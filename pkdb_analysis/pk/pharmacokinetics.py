@@ -247,7 +247,7 @@ class TimecoursePK(object):
             # The unreliability of the data is not due to a calculation error. Instead it
             # indicates that more sampling is needed for an accurate estimate of the elimination
             # rate constant and the observed area under the curve.
-            warnings.warn(f"AUC(t-oo) is >25% ({(auc_d/auc*100).magnitude}%) of total AUC, "
+            warnings.warn(f"AUC(t-oo) is >25% ({round((auc_d/auc*100).magnitude, 2)}%) of total AUC, "
                           f"calculation may be unreliable.")
 
         return auc + auc_d
