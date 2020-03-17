@@ -1,8 +1,10 @@
+import pytest
 import numpy as np
 from pkdb_analysis.pk.pharmacokinetics_example import example0, example1, example2, show_results
 from pkdb_analysis.pk.pharmacokinetics import TimecoursePK
 from pint import UnitRegistry
 from matplotlib import pyplot as plt
+
 
 
 def test_pharmacokinetics():
@@ -48,11 +50,33 @@ def test_pharmacokinetics_per_bodyweight():
     tcpk = TimecoursePK(time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"),
                         dose=dose, ureg=ureg)
     pk = tcpk.pk
-    assert pk.kel.magnitude == kel
+    assert pk.kel.magnitude == pytest.approx(kel)
     assert pk.dose == Q_(0.01, "mole/kg")
     assert pk.tmax == Q_(0.0, "hr")
     assert pk.cmax == Q_(10.0, "nmol/l")
     assert pk.vd.units == ureg.Unit("liter/kg")
+
+def test_pharmacokinetics_shifted_intervention():
+    ureg = UnitRegistry()
+    Q_ = ureg.Quantity
+    t = np.linspace(0, 100, num=50)
+    kel = 1.0
+    c0 = 10.0
+    c = c0 * np.exp(-kel * t)
+    time_shift = 10
+    t = t + time_shift
+    intervention_time = Q_(time_shift, "hr")
+    dose = Q_(10.0, "mg") * Q_(1.0, "mole/g")
+
+    tcpk = TimecoursePK(time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"),
+                        dose=dose, ureg=ureg,
+                        intervention_time=intervention_time)
+    pk = tcpk.pk
+    assert pk.kel.magnitude == pytest.approx(kel)
+    assert pk.dose == Q_(0.01, "mole")
+    assert pk.tmax == Q_(0.0, "hr")
+    assert pk.cmax == Q_(10.0, "nmol/l")
+    assert pk.vd.units == ureg.Unit("liter")
 
 
 def test_pharmacokinetics_per_bodyweight2():

@@ -73,6 +73,8 @@ class TimecoursePK(object):
         FIXME: ctype is used in kwargs for "value", "mean", "median", but not
          processed
 
+        tmax values are reported relative to intervention time
+
         :param time: ndarray (with units)
         :param concentration: ndarray (with units)
         :param dose: dose of the test substance (with units)
@@ -129,7 +131,7 @@ class TimecoursePK(object):
 
         """
         # calculate all results relative to the intervention time
-        t = self.t + self.intervention_time
+        t = self.t - self.intervention_time
         c = self.c
 
         # simple pk
