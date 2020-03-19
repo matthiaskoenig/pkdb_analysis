@@ -48,13 +48,12 @@ class MetaAnalysis(object):
         self.intervention_substances = intervention_substances
 
     def specific_intervention_info(self, d):
-        print(d)
         subset = d[d["substance"] == self.intervention_substances]
         subset["intervention_number"] = len(d)
         extra_info = []
         for intervention in d.intervention.iterrows():
             if intervention["measurement_type"] == "dosing":
-                extra_info.append(intervention[["value", "unit", "substance", "route"]])
+                extra_info.append(intervention[["value", "unit", "substance", "route", "name"]])
         subset["intervention_extra"] = extra_info
         if len(subset) == 1:
             return subset
@@ -66,16 +65,15 @@ class MetaAnalysis(object):
             subset["number"] = len(df)
 
             if len(subset) == 1:
-                if len(df) > 1:
                     extra_info = []
                     for r, intervention in df.iterrows():
-                        if intervention["measurement_type"] == "dosing":
-                            extra_info.append(intervention[["value", "unit", "substance", "route"]])
+                        #if intervention["measurement_type"] == "dosing":
+                        extra_info.append(intervention[["value", "unit", "substance", "route","name"]])
                     extra = pd.concat(extra_info, axis=1).T
 
                     subset = subset.iloc[0]
                     subset["extra"] = extra
-                intervention_table = intervention_table.append(subset)
+                    intervention_table = intervention_table.append(subset)
         intervention_table["per_bw"] = intervention_table.unit.str.endswith("/ kilogram")
         intervention_table["pk"] = intervention_table[self.intervention_pk].astype("int")
         del intervention_table["intervention_pk"]
@@ -101,11 +99,13 @@ class MetaAnalysis(object):
         for categorial_field in catgorial_fields:
             detail_info = pk_info(subject_df, categorial_field, ["choice"]).rename(
                 columns={f"choice_{categorial_field}": categorial_field})
-            detail_info[categorial_field] = detail_info[categorial_field].fillna("unknown")
             subject_categorials_extra.append(detail_info)
 
         for individuals_info in [*subject_categorials_extra, *subject_numeric_extra]:
             subject_core = pd.merge(subject_core, individuals_info, on=subject_df.pk, how="left")
+
+        for categorial_field in catgorial_fields:
+            subject_core[categorial_field] = subject_core[categorial_field].fillna("unknown")
 
         return subject_core
 
