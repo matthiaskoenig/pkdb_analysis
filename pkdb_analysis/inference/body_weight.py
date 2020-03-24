@@ -45,7 +45,8 @@ class InferWeight(object):
                 if this_value is not None:
                     if not np.isnan(this_value):
                         return Q_(this_value, this_unit), weight_field
-            return None, None
+
+        return None, None
 
     def bw_infer(self,
                  unit_field="unit",
@@ -55,7 +56,6 @@ class InferWeight(object):
 
         per_bw = self.per_bw(unit_field)
         per_bw_exp = self.per_bw_exp(per_bw)
-
         if self.weight is not None:
             series = self.series.copy()
             unit = self.ureg(series[unit_field])

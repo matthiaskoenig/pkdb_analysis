@@ -9,6 +9,8 @@ import numpy as np
 PlottingParameter = collections.namedtuple('PlottingParameter',
                                            ['measurement_type',
                                             'units_rm'])
+
+
 # add group_columns,
 # add individual_columns,
 # add intervention_columns,

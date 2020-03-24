@@ -67,7 +67,7 @@ def test_inference_by_body_weight2():
 def test_inference_by_body_weight3():
     h5_path = Path(".") / "data" / "test.h5"
     test_data = PKData.from_hdf5(h5_path)
-    ma = MetaAnalysis(test_data, "caffeine")
+    ma = MetaAnalysis(test_data, ["caffeine"], "test/url/")
     ma.create_results()
     results_inferred = infer_weight(ma.results)
     assert len(results_inferred) > len(ma.results)

@@ -39,45 +39,29 @@ def data_type(d):
 
 class MetaAnalysis(object):
 
-    def __init__(self, pkdata,intervention_substances):
+    def __init__(self, pkdata,intervention_substances, url):
         self.pkdata = pkdata
         self.results = None
         self.group_pk = pkdata.groups.pk
         self.individual_pk = pkdata.individuals.pk
         self.intervention_pk = pkdata.interventions.pk
         self.intervention_substances = intervention_substances
+        self.url = url
 
-    def specific_intervention_info(self, d):
-        subset = d[d["substance"] == self.intervention_substances]
-        subset["intervention_number"] = len(d)
-        extra_info = []
-        for intervention in d.intervention.iterrows():
-            if intervention["measurement_type"] == "dosing":
-                extra_info.append(intervention[["value", "unit", "substance", "route", "name"]])
-        subset["intervention_extra"] = extra_info
-        if len(subset) == 1:
-            return subset
 
-    def create_intervention_table(self):
-        intervention_table = pd.DataFrame()
-        for intervention_pk, df in self.pkdata.interventions.df.groupby(self.intervention_pk):
-            subset = df[df["substance"].isin(self.intervention_substances)]
+    def _create_extra_table(self, table_name, substances):
+
+        table = getattr(self.pkdata, table_name)
+        _table = pd.DataFrame()
+        for table_pk, df in table.df.groupby(table.pk):
+            subset = df[df["substance"].isin(substances)]
             subset["number"] = len(df)
-
             if len(subset) == 1:
-                    extra_info = []
-                    for r, intervention in df.iterrows():
-                        #if intervention["measurement_type"] == "dosing":
-                        extra_info.append(intervention[["value", "unit", "substance", "route","name"]])
-                    extra = pd.concat(extra_info, axis=1).T
+                subset = subset.iloc[0]
+                subset["extra"] = df
+                _table = _table.append(subset)
+        return _table
 
-                    subset = subset.iloc[0]
-                    subset["extra"] = extra
-                    intervention_table = intervention_table.append(subset)
-        intervention_table["per_bw"] = intervention_table.unit.str.endswith("/ kilogram")
-        intervention_table["pk"] = intervention_table[self.intervention_pk].astype("int")
-        del intervention_table["intervention_pk"]
-        return intervention_table
 
     @property
     def healthy_data(self):
@@ -107,6 +91,9 @@ class MetaAnalysis(object):
         for categorial_field in catgorial_fields:
             subject_core[categorial_field] = subject_core[categorial_field].fillna("unknown")
 
+        pk = subject_df.pk
+        subject_core["extra"] =  getattr(subject_core,pk).apply(lambda x: subject_df[subject_df[pk] == x])
+
         return subject_core
 
     def add_extra_info(self):
@@ -116,11 +103,6 @@ class MetaAnalysis(object):
         self.results["y_min"] = self.results["y"] - self.results["sd"]
         self.results["y_max"] = self.results["y"] + self.results["sd"]
 
-        # self.results["x_min"] = self.results["value_intervention"]-self.results["se_intervention"]
-        # self.results["x_max"] = self.results["value_intervention"]+self.results["se_intervention"]
-
-        # self.results["p_unit"] = self.results["unit"].apply(lambda x: f'{ureg(x).u: ~P}')
-        # self.results["p_unit_intervention"] = self.results["unit_intervention"].apply(lambda x: f'{ureg(x).u: ~P}')
 
         self.results["weight"] = self.results[["mean_weight", "median_weight", "value_weight"]].max(axis=1)
         self.results["min_sd_weight"] = self.results["weight"] - self.results["sd_weight"]
@@ -132,7 +114,7 @@ class MetaAnalysis(object):
 
         self.results["subject_count"] = self.results["group_count"].fillna(1)
 
-        self.results["url"] = self.results["study_sid"].apply(lambda x: f"http://0.0.0.0:8081/studies/{x}")
+        self.results["url"] = self.results["study_sid"].apply(lambda x: f"{self.url}/studies/{x}")
 
 
     def create_results_base(self):
@@ -142,7 +124,9 @@ class MetaAnalysis(object):
         self.results = results
 
     def add_intervention_info(self):
-        intervention_table = self.create_intervention_table()
+        intervention_table = self._create_extra_table("interventions", self.intervention_substances)
+        intervention_table["per_bw"] = intervention_table.unit.str.endswith("/ kilogram")
+        intervention_table = intervention_table.rename(columns={"intervention_pk":"pk"})
         self.results = pd.merge(self.results, intervention_table.add_prefix('intervention_'), on=self.intervention_pk,
                                 how="inner")
 
