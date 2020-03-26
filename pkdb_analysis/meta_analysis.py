@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 from pkdb_analysis.analysis import figure_category
 from pkdb_analysis.filter import pk_info, f_healthy, f_n_healthy
@@ -62,6 +63,20 @@ class MetaAnalysis(object):
                 _table = _table.append(subset)
         return _table
 
+    def add_age(self, df):
+        age_data = df.extra[df.extra["measurement_type"] == "age"]
+        if len(age_data) == 1:
+            return tuple(age_data.iloc[0][NUMERIC_FIELDS].values)
+        else:
+            return tuple([np.nan for _ in NUMERIC_FIELDS])
+
+
+    def add_weight(self, df):
+        age_data = df.extra[df.extra["measurement_type"] == "weight"]
+        if len(age_data) == 1:
+            return tuple(age_data.iloc[0][NUMERIC_FIELDS].values)
+        else:
+            return tuple([np.nan for _ in NUMERIC_FIELDS])
 
     @property
     def healthy_data(self):
@@ -92,8 +107,9 @@ class MetaAnalysis(object):
             subject_core[categorial_field] = subject_core[categorial_field].fillna("unknown")
 
         pk = subject_df.pk
-        subject_core["extra"] =  getattr(subject_core,pk).apply(lambda x: subject_df[subject_df[pk] == x])
-
+        subject_core["extra"] = getattr(subject_core,pk).apply(lambda x: subject_df[subject_df[pk] == x])
+        subject_core[[f"{k}_age" for k in NUMERIC_FIELDS]] = subject_core.apply(self.add_age, axis=1, result_type="expand")
+        subject_core[[f"{k}_weight" for k in NUMERIC_FIELDS]] = subject_core.apply(self.add_weight, axis=1, result_type="expand")
         return subject_core
 
     def add_extra_info(self):
