@@ -85,12 +85,14 @@ def infer_intervention(series: pd.Series):
                                               per_bw_field="intervention_per_bw")
 
 
-def infer_weight(df: pd.DataFrame):
-    result_bodyweight = df.dropna(subset=["unit_weight"])
+def infer_weight(df: pd.DataFrame, by_intervention=True, by_output=True):
+    result_infer = df.dropna(subset=["unit_weight"])
     result_no_bodyweight = df[df["unit_weight"].isnull()]
-    result_infer_outputs = result_bodyweight.apply(infer_output, axis="columns").dropna(how="all")
-    result_infer = result_bodyweight.append(result_infer_outputs, ignore_index=True)
-    result_infer_outputs = result_infer.apply(infer_intervention, axis="columns").dropna(how="all")
-    result_infer = result_infer.append(result_infer_outputs, ignore_index=True)
+    if by_output:
+        result_infer_outputs = result_infer.apply(infer_output, axis="columns").dropna(how="all")
+        result_infer = result_infer.append(result_infer_outputs, ignore_index=True)
+    if by_intervention:
+        result_infer_outputs = result_infer.apply(infer_intervention, axis="columns").dropna(how="all")
+        result_infer = result_infer.append(result_infer_outputs, ignore_index=True)
     result_infer = result_infer.append(result_no_bodyweight, ignore_index=True)
     return result_infer

@@ -3,13 +3,11 @@ import seaborn as sns
 import pandas as pd
 import pint
 import altair as alt
-import collections
 import yaml
 import os
 import shutil
 from pathlib import Path
 
-import json
 
 alt.data_transformers.disable_max_rows()
 #alt.data_transformers.enable('json')
@@ -20,9 +18,24 @@ ureg.define('yr = year')
 from pkdb_analysis.meta_analysis import MetaAnalysis
 from pkdb_analysis.filter import f_mt_in_substance_in, f_dosing_in
 
-PlottingParameter = collections.namedtuple('PlottingParameter',
-                                           ['measurement_types',
-                                            'units_rm'])
+class LegendArgs(object):
+    def __init__(self, field, init=None):
+        self.field = field
+        self.init = init
+
+class PlottingParameter(object):
+
+    def __init__(self,measurement_types, units_rm, infer_by_intervention=True, infer_by_output=True):
+        self.measurement_types = measurement_types
+        self.units_rm = units_rm
+        self.infer_by_intervention = infer_by_intervention
+        self.infer_by_output = infer_by_output
+
+    @property
+    def joined_measurement_type(self):
+        return "_".join(self.measurement_types)
+
+
 
 def column_to_color(column):
     mapping = {v: n for n, v in enumerate(column.unique())}
@@ -34,16 +47,16 @@ def column_to_color(column):
 def expand_df(df, on):
     result_df = pd.DataFrame()
     black = "#323232"
-    for choice, field in on.items():
+    for choice, mc in on.items():
         this_df = df.copy()
 
         this_df["show"] = choice
-        this_df["show_value"] = df[field]
+        this_df["show_value"] = df[mc.field]
 
         for key in on.keys():
             this_df[f"color_{key}"] = black
 
-        this_df[f"color_{choice}"] = column_to_color(df[field])
+        this_df[f"color_{choice}"] = column_to_color(df[mc.field])
         this_df[f"color"] = this_df[f"color_{choice}"]
         result_df = result_df.append(this_df)
     return result_df.reset_index(drop=True)
@@ -90,21 +103,35 @@ def create_interactive_plot(df,path, tooltip,
 
 
     y_axis_label = f"{substance} {measurement_type}"
-    y_title = f'{y_axis_label} [{u_unit.u :~P}]'
+    y_title = f'{y_axis_label} [{u_unit.u :~P}]'.capitalize()
     x_label = f'{substance_intervention} dose'
-    x_title = f'{x_label} [{u_unit_intervention.u :~P}]'
+    x_title = f'{x_label} [{u_unit_intervention.u :~P}]'.capitalize()
 
     y_domain = alt.selection_interval(bind='scales', encodings=['y'])
     x_domain = alt.selection_interval(bind='scales', encodings=['x'])
     brush = alt.selection(type='interval')
 
-    input_dropdown = alt.binding_select(options=df["show"].unique().tolist())
-    selection_base = alt.selection_single(fields=['show'], bind=input_dropdown, init={'show': 'Sex'})
+    input_dropdown = alt.binding_select(options=df["show"].unique().tolist(), name=" ")
+    selection_base = alt.selection_single(fields=['show'],  bind=input_dropdown, init={'show': 'Sex'})
+
+    multi_color_legend_fields = {key: mc.field for key, mc in multi_color_legend.items()}
 
 
-    multi_legends  = {**multi_color_legend, **multi_legend}
+    multi_legends  = {**multi_color_legend_fields, **multi_legend}
 
-    selections_multi = {key :alt.selection_multi(fields=[value])for key, value in multi_legends.items()}
+    selections_multi_color = {}
+
+    for key, mc in multi_color_legend.items():
+        kwargs = {"fields": [mc.field]}
+        if mc.init is not None:
+            #
+            kwargs["init"] = [{mc.field: field for field in mc.init}]
+        selections_multi_color[key] = alt.selection_multi(**kwargs)
+
+    selections_multi = {key :alt.selection_multi(fields=[value])for key, value in multi_legend.items()}
+
+    selections_multi = {**selections_multi, **selections_multi_color}
+
 
 
     def filter_transform_no_brush(base):
@@ -139,9 +166,9 @@ def create_interactive_plot(df,path, tooltip,
     for key in ["age", "weight"]:
         try:
             _u_unit = ureg(df[f"unit_{key}"].dropna().unique()[0])
-            titles[key] = f'{key} [{_u_unit.u :~P}]'
+            titles[key] = f'{key} [{_u_unit.u :~P}]'.capitalize()
         except:
-            titles[key] = f'{key} [""]'
+            titles[key] = f'{key} [""]'.capitalize()
 
 
 
@@ -162,13 +189,16 @@ def create_interactive_plot(df,path, tooltip,
                         "url",
                         "subject_count"}
 
-    color_columns =    {f"color_{name}" for name in multi_color_legend.keys()}
+    color_columns = {f"color_{name}" for name in multi_color_legend.keys()}
+    tooltip_columns = {name[:-2] for name in tooltip}
 
 
     relevant_columns = relevant_columns.union(set(multi_legends.values())).union(color_columns)
+    relevant_columns = relevant_columns.union(tooltip_columns)
 
+    #FIXME
+    df = df[relevant_columns.intersection(df.columns)]
 
-    df = df[relevant_columns]
 
 
     x_age = alt.X("age:Q", scale=alt.Scale(domain=[0, 100], clamp=True), axis=alt.Axis(title=titles["age"]))
@@ -198,7 +228,7 @@ def create_interactive_plot(df,path, tooltip,
         opacity=alt.condition(brush, alt.OpacityValue(1), alt.OpacityValue(0.1)),
     )).properties(height=300, width=500).add_selection(brush).add_selection(selection_base)
 
-    domain_marker = ['from publication', 'from timecourse', 'from body weight']
+    domain_marker = ['publication', 'from timecourse', 'from bodyweight']
     range_marker = ['circle', 'square', 'triangle']
 
     scatter = filter_transform_no_brush(
@@ -207,8 +237,8 @@ def create_interactive_plot(df,path, tooltip,
             y=alt.Y('y:Q', axis=alt.Axis(title=y_title), scale=alt.Scale(domain=y_domain, clamp=True)),
             color=alt.Color('color:N', scale=None, legend=None),
             opacity=alt.condition(brush, alt.OpacityValue(1), alt.OpacityValue(0.1)),
-            shape=alt.Shape('data_type:N', scale=alt.Scale(domain=domain_marker, range=range_marker), legend=alt.Legend(title="Data Type",orient="left")),
-            size=alt.Size('subject_count:Q', scale=alt.Scale(domain=[0, size_max]), legend=alt.Legend( title="Number of Subjects", orient="left")),
+            shape=alt.Shape('data_type:N', scale=alt.Scale(domain=domain_marker, range=range_marker), legend=alt.Legend(title="Data type",orient="left")),
+            size=alt.Size('subject_count:Q', scale=alt.Scale(domain=[0, size_max]), legend=alt.Legend( title="Number of subjects", orient="left")),
             href="url:N",
             tooltip=tooltip,
         ).add_selection(brush).add_selection(selection_base))
@@ -216,7 +246,7 @@ def create_interactive_plot(df,path, tooltip,
     bars = filter_transform_all(alt.Chart(df).properties(width=500).mark_bar().encode(
         y=alt.Y('show_value:N', axis=alt.Axis(title=None)),
         color=alt.Color('color:N', scale=None, legend=None),
-        x=alt.X('sum(subject_count):Q', axis=alt.Axis(title="Number of Subjects"))))
+        x=alt.X('sum(subject_count):Q', axis=alt.Axis(title="Number of subjects"))))
 
     histo_y = filter_transform_all(alt.Chart(df).properties(height=350, width=80).mark_bar(
         opacity=0.9,
@@ -236,7 +266,7 @@ def create_interactive_plot(df,path, tooltip,
 
 
     legends_color = {}
-    for name, key in multi_color_legend.items():
+    for name, key in multi_color_legend_fields.items():
         legends_color[name] = legend(df, selections_multi[name], f'{name}', f'{key}:N', f'color_{name}:N').transform_filter(selection_base)
 
 
@@ -275,13 +305,16 @@ def pkdata_by_measurement_type(pkdata,
         data = data.exclude_output(lambda d : d["unit"].isin(plotting_category.units_rm))
         data = data.exclude_intervention(lambda d: d["study_name"].isin(exclude_study_names))
 
-        measurement_type_joined = "_".join(plotting_category.measurement_types)
-        data.outputs["measurement_type"] = measurement_type_joined
-        data_dict[measurement_type_joined] = data.copy()
+        data.outputs["measurement_type"] = plotting_category.joined_measurement_type
+        data_dict[plotting_category.joined_measurement_type] = data.copy()
     return data_dict
 
-
-def results(data_dict, intervention_substances, additional_information,url):
+def _get_pc(measurement_type, plotting_categories):
+    for plotting_category in plotting_categories:
+        if plotting_category.joined_measurement_type == measurement_type:
+            return plotting_category
+    return
+def results(data_dict, intervention_substances, additional_information,url, plotting_categories, replacements):
     # creates one dataframe from PKData instance.
     # infers additional results from body weights.
     results_dict = {}
@@ -290,8 +323,9 @@ def results(data_dict, intervention_substances, additional_information,url):
         meta_analysis.create_results()
         for key, additional_function in additional_information.items():
             meta_analysis.results[key] = meta_analysis.results.apply(additional_function, axis=1)
-        meta_analysis.infer_from_body_weight()
-        meta_analysis.add_extra_info()
+        pc = _get_pc(measurement_type, plotting_categories)
+        meta_analysis.infer_from_body_weight(by_intervention=pc.infer_by_intervention, by_output=pc.infer_by_output)
+        meta_analysis.add_extra_info(replacements)
         results = meta_analysis.results
         results_dict[measurement_type] = results
         print(measurement_type)
@@ -319,7 +353,7 @@ def create_navigation_file(results_dict, path):
 
 
             this_dropdown_item = {
-                "name":f"{measurement_type} [{u_unit.u :~P}] / dosing [{u_unit_intervention.u :~P}]",
+                "name":f"{measurement_type} [{u_unit.u :~P}] / dosing [{u_unit_intervention.u :~P}]".capitalize(),
                 "link": f"/_pages/{measurement_type}_{group}/",
             }
             this_nav["dropdown"].append(this_dropdown_item)
@@ -330,22 +364,17 @@ def create_navigation_file(results_dict, path):
 
 def create_pages(results_dict, path):
     for measurement_type, result_infer in results_dict.items():
-        this_nav = {
-            "name": measurement_type,
-            "link": "/#",
-            "dropdown": []
-        }
         for group, df in result_infer.groupby("unit_category"):
 
             u_unit = ureg(df["unit"].unique()[0])
             u_unit_intervention = ureg(df["intervention_unit"].unique()[0])
-            u_unit_intervention = ureg(df["intervention_unit"].unique()[0])
             intervention_substance = df["intervention_substance"].unique()[0]
 
             content = {
-                "title": f"{measurement_type} [{u_unit.u :~P}] / dosing [{u_unit_intervention.u :~P}]",
+                "title": f"{measurement_type} [{u_unit.u :~P}] / dosing [{u_unit_intervention.u :~P}]".capitalize(),
                 "subtitle": f"Meta analysis of {intervention_substance} {measurement_type}",
                 "layout": "pk",
+                "hero_height": "80px",
                 "json": f"{measurement_type}_{group}.json"
 
             }
@@ -361,7 +390,8 @@ def create_plots(results_dict,path, multi_legend, multi_color_legend, tooltip, c
     for measurement_type, result_infer in results_dict.items():
         for group, df in result_infer.groupby("unit_category"):
             file_name = f'{path}/_static/reports/{measurement_type}_{group}'
-            check_legends(df, [*multi_color_legend.values(),*multi_legend.values()])
+            multi_color_legend_fields = [mc.field for mc in multi_color_legend.values()]
+            check_legends(df, [*multi_color_legend_fields,*multi_legend.values()])
             create_interactive_plot(df, file_name, tooltip=tooltip, multi_legend=multi_legend, multi_color_legend=multi_color_legend, create_json=create_json)
 
 
@@ -404,11 +434,12 @@ def interactive_plot_factory(pkdata,
                              tooltip,
                              path,
                              url="http://0.0.0.0:8081",
-                             create_json = True,
+                             create_json=True,
+                             replacements= {},
                              ):
 
     data_dict = pkdata_by_measurement_type(pkdata, plotting_categories, intervention_substances, output_substances,exclude_study_names)
-    results_dict = results(data_dict=data_dict, intervention_substances=intervention_substances, additional_information=additional_information,url=url)
+    results_dict = results(data_dict=data_dict, intervention_substances=intervention_substances, additional_information=additional_information,url=url, plotting_categories=plotting_categories, replacements=replacements)
     copy_dir(Path(__file__).parent / "template",Path(path), "_".join(output_substances))
     create_navigation_file(results_dict, path)
     create_pages(results_dict, path)

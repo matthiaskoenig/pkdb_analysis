@@ -400,7 +400,7 @@ class PKData(object):
         :return: Multi-indexed DataFrame of individuals contained in this PKData instance.
         :rtype: pd.DataFrame
         """
-        return self._df_mi('individuals', ['individual_pk', 'characteristica_pk'])
+        return self._df_mi('individuals', ['individual_pk', 'individual_name', 'characteristica_pk'])
 
     @property
     def individuals_core(self) -> PKDataFrame:

@@ -2,6 +2,8 @@
 title: ?Substance?
 subtitle: This is an interactive analysis of ?substance? pharmacokinetics
 layout: page
+hero_height: 80px
+
 ---
 
 

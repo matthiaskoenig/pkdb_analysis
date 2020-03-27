@@ -36,7 +36,7 @@ def data_type(d):
     elif d["inferred"]:
         return "from body weight"
     else:
-        return "from publication"
+        return "publication"
 
 class MetaAnalysis(object):
 
@@ -63,20 +63,13 @@ class MetaAnalysis(object):
                 _table = _table.append(subset)
         return _table
 
-    def add_age(self, df):
-        age_data = df.extra[df.extra["measurement_type"] == "age"]
+    def _add(self,df, measurement_type):
+        age_data = df.extra[df.extra["measurement_type"] == measurement_type]
         if len(age_data) == 1:
             return tuple(age_data.iloc[0][NUMERIC_FIELDS].values)
         else:
             return tuple([np.nan for _ in NUMERIC_FIELDS])
 
-
-    def add_weight(self, df):
-        age_data = df.extra[df.extra["measurement_type"] == "weight"]
-        if len(age_data) == 1:
-            return tuple(age_data.iloc[0][NUMERIC_FIELDS].values)
-        else:
-            return tuple([np.nan for _ in NUMERIC_FIELDS])
 
     @property
     def healthy_data(self):
@@ -108,11 +101,16 @@ class MetaAnalysis(object):
 
         pk = subject_df.pk
         subject_core["extra"] = getattr(subject_core,pk).apply(lambda x: subject_df[subject_df[pk] == x])
-        subject_core[[f"{k}_age" for k in NUMERIC_FIELDS]] = subject_core.apply(self.add_age, axis=1, result_type="expand")
-        subject_core[[f"{k}_weight" for k in NUMERIC_FIELDS]] = subject_core.apply(self.add_weight, axis=1, result_type="expand")
+        for measurement_type in  ["age","weight"]:
+            subject_extra = subject_core.apply(self._add, args=(measurement_type, ), axis=1, result_type="expand")
+            if subject_extra.empty:
+                subject_core[[f"{k}_{measurement_type}" for k in NUMERIC_FIELDS]] = tuple([np.nan for _ in NUMERIC_FIELDS])
+            else:
+                subject_core[[f"{k}_{measurement_type}" for k in NUMERIC_FIELDS]] = subject_extra
+
         return subject_core
 
-    def add_extra_info(self):
+    def add_extra_info(self, replacements):
         self.results["unit_category"] = self.results[["per_bw", "intervention_per_bw"]].apply(
             figure_category, axis=1)
         self.results["y"] = self.results[["mean", "median", "value"]].max(axis=1)
@@ -131,7 +129,15 @@ class MetaAnalysis(object):
         self.results["subject_count"] = self.results["group_count"].fillna(1)
 
         self.results["url"] = self.results["study_sid"].apply(lambda x: f"{self.url}/studies/{x}")
+        #self.results = self.results.replace({"NR", "not reported"}, regex=True)
 
+        for column, replace_dict in replacements.items():
+            self.results[column] = self.results[column].replace(replace_dict)
+
+
+
+        #self.results["intervention_route"] = self.results["intervention_route"].replace({"iv", "intravenous"})
+        #self.results = self.results.replace({"NR", "not reported"}, regex=True)
 
     def create_results_base(self):
         results = self.pkdata.outputs.copy()
@@ -161,10 +167,8 @@ class MetaAnalysis(object):
     def add_subject_info(self):
         self.results = self.individual_results().df.append(self.group_results())
 
-    def infer_from_body_weight(self):
-
-
-        results_inferred = infer_weight(self.results)
+    def infer_from_body_weight(self,  by_intervention=True, by_output=True):
+        results_inferred = infer_weight(self.results, by_intervention, by_output)
         results_inferred["marker"] = results_inferred.apply(markers, axis=1)
         results_inferred["data_type"] = results_inferred.apply(data_type, axis=1)
         self.results = results_inferred
