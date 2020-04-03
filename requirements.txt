@@ -12,6 +12,8 @@ papermill>=1.2.1
 coloredlogs>=10.0
 scikit-learn>=0.22.1
 ipykernel>=5.1.4
+openpyxl
 
 pytest>=5.3.2
 pytest-cov>=2.8.1
+

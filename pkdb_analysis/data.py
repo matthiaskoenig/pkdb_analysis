@@ -391,7 +391,7 @@ class PKData(object):
         :return: PKDataFrame of groups contained in this PKData instance .
         :rtype: PKDataFrame
         """
-        return self._df_core("groups", core_fields=["group_name", "group_count"])
+        return self._df_core("groups", core_fields=["study_name","group_name", "group_count"])
 
     @property
     def individuals_mi(self) -> pd.DataFrame:
@@ -409,7 +409,7 @@ class PKData(object):
         :return: PKDataFrame of individuals contained in this PKData instance .
         :rtype: PKDataFrame
         """
-        return self._df_core("individuals", core_fields=["individual_name"])
+        return self._df_core("individuals", core_fields=["study_name","individual_name"])
 
     @property
     def interventions_mi(self) -> pd.DataFrame:

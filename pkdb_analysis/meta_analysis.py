@@ -34,7 +34,7 @@ def data_type(d):
     if d["calculated"]:
         return "from timecourse"
     elif d["inferred"]:
-        return "from body weight"
+        return "from bodyweight"
     else:
         return "publication"
 
@@ -117,7 +117,6 @@ class MetaAnalysis(object):
         self.results["y_min"] = self.results["y"] - self.results["sd"]
         self.results["y_max"] = self.results["y"] + self.results["sd"]
 
-
         self.results["weight"] = self.results[["mean_weight", "median_weight", "value_weight"]].max(axis=1)
         self.results["min_sd_weight"] = self.results["weight"] - self.results["sd_weight"]
         self.results["max_sd_weight"] = self.results["weight"] + self.results["sd_weight"]
@@ -133,11 +132,6 @@ class MetaAnalysis(object):
 
         for column, replace_dict in replacements.items():
             self.results[column] = self.results[column].replace(replace_dict)
-
-
-
-        #self.results["intervention_route"] = self.results["intervention_route"].replace({"iv", "intravenous"})
-        #self.results = self.results.replace({"NR", "not reported"}, regex=True)
 
     def create_results_base(self):
         results = self.pkdata.outputs.copy()
