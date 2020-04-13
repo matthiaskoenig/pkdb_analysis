@@ -281,24 +281,24 @@ class TimecoursePK(object):
 
         The max half is the timepoint before reaching the maximal value.
 
-        The tmax depends on the value of both the absorption rate constant (ka)
-        and the elimination rate constant (kel).
-
         :return: tuple (tmax, cmax)
         """
-        idx = np.nanargmax(c)
-        if idx == len(c) - 1:
-            warnings.warn("No MAXIMUM reached within time course, last value used.")
-        if idx == 0:
-            # no maximum in time course
+        try:
+            idx = np.nanargmax(c)
+            if idx == len(c) - 1:
+                warnings.warn("No MAXIMUM reached within time course, last value used.")
+            if idx == 0:
+                # no maximum in time course
+                return self.Q_(np.nan, t.units), self.Q_(np.nan, c.units)
+
+            cmax = c[idx]
+            tnew = t[:idx]
+            cnew = np.abs(c[:idx] - 0.5 * cmax)
+            idx_half = np.nanargmin(cnew)
+            return tnew[idx_half], c[idx_half]
+        except ValueError:
+            # often only NaN values before maximum (e.g., iv dosing)
             return self.Q_(np.nan, t.units), self.Q_(np.nan, c.units)
-
-        cmax = c[idx]
-        tnew = t[:idx]
-        cnew = np.abs(c[:idx] - 0.5 * cmax)
-        idx_half = np.nanargmin(cnew)
-
-        return tnew[idx_half], c[idx_half]
 
     def _kel(self, slope):
         """

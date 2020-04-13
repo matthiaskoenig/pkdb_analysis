@@ -1,10 +1,10 @@
 import pytest
 import numpy as np
-from pkdb_analysis.pk.pharmacokinetics_example import example0, example1, example2, example_Kim2011_Fig2, show_results
+from pkdb_analysis.pk.pharmacokinetics_example import example0, example1, example2, \
+    example_Kim2011_Fig2, example_Divoll1982_Fig1, show_results
 from pkdb_analysis.pk.pharmacokinetics import TimecoursePK
 from pint import UnitRegistry
 from matplotlib import pyplot as plt
-
 
 
 def test_pharmacokinetics():
@@ -156,6 +156,10 @@ def test_example2():
     show_results(results)
 
 
-def test_example_Kim2011_Fig2():
-    results = example_Kim2011_Fig2()
+def test_example_Divoll1982_Fig1():
+    results = example_Divoll1982_Fig1()
+    pk = results[0].pk
+    assert np.isnan(pk.cmaxhalf.magnitude)
+    assert np.isnan(pk.tmaxhalf.magnitude)
+
     show_results(results)
