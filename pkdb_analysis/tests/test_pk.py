@@ -156,6 +156,11 @@ def test_example2():
     show_results(results)
 
 
+def test_example_Kim2011_Fig2():
+    results = example_Kim2011_Fig2()
+    show_results(results)
+
+
 def test_example_Divoll1982_Fig1():
     results = example_Divoll1982_Fig1()
     pk = results[0].pk
