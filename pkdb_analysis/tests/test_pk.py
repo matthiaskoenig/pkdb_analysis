@@ -1,10 +1,10 @@
 import pytest
 import numpy as np
-from pkdb_analysis.pk.pharmacokinetics_example import example0, example1, example2, example_Kim2011_Fig2, show_results
+from pkdb_analysis.pk.pharmacokinetics_example import example0, example1, example2, \
+    example_Kim2011_Fig2, example_Divoll1982_Fig1, show_results
 from pkdb_analysis.pk.pharmacokinetics import TimecoursePK
 from pint import UnitRegistry
 from matplotlib import pyplot as plt
-
 
 
 def test_pharmacokinetics():
@@ -18,6 +18,30 @@ def test_pharmacokinetics():
 
     tcpk = TimecoursePK(time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"),
                          dose=dose, ureg=ureg)
+    pk = tcpk.pk
+    assert pk.kel.magnitude == kel
+    assert pk.dose == Q_(0.01, "mole")
+    assert pk.tmax == Q_(0.0, "hr")
+    assert pk.cmax == Q_(10.0, "nmol/l")
+    assert pk.vd.units == ureg.Unit("liter")
+
+
+def test_pharmacokinetics_small_values():
+    """Test pharmacokinetics with very small values.
+
+    This results of replacement of the values with NaN.
+    This also tests the NaN regression.
+    """
+    ureg = UnitRegistry()
+    Q_ = ureg.Quantity
+    t = np.linspace(0, 100, num=50)
+    kel = 1.0
+    c0 = 10.0
+    dose = Q_(10.0, "mg") * Q_(1.0, "mole/g")
+    c = c0 * np.exp(-kel * t)
+
+    tcpk = TimecoursePK(time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"),
+                        dose=dose, ureg=ureg)
     pk = tcpk.pk
     assert pk.kel.magnitude == kel
     assert pk.dose == Q_(0.01, "mole")
@@ -134,4 +158,13 @@ def test_example2():
 
 def test_example_Kim2011_Fig2():
     results = example_Kim2011_Fig2()
+    show_results(results)
+
+
+def test_example_Divoll1982_Fig1():
+    results = example_Divoll1982_Fig1()
+    pk = results[0].pk
+    assert np.isnan(pk.cmaxhalf.magnitude)
+    assert np.isnan(pk.tmaxhalf.magnitude)
+
     show_results(results)

@@ -64,7 +64,8 @@ class TimecoursePK(object):
     def __init__(self, time: Quantity, concentration: Quantity,
                  dose: Quantity, ureg: UnitRegistry,
                  intervention_time: Quantity = None,
-                 substance: str = "substance", **kwargs):
+                 substance: str = "substance",
+                 min_treshold=1E12, **kwargs):
         """Pharmacokinetics parameters are calculated for a single dose experiment.
 
         TODO: support errors on concentrations which are then used in calculation
@@ -107,7 +108,17 @@ class TimecoursePK(object):
                           f"Check that dose units are correct.")
             raise ValueError(f"Incorrect dimensionality '{dr.dimensionality}' for dose: {dose.units}")
 
+        # check concentration is fitting to time
         assert time.size == concentration.size
+
+        # for numerical simulations problems in calculations can arise
+        # if values are getting too small
+        c_min = np.nanmin(concentration)
+        c_max = np.nanmax(concentration)
+        if min_treshold * c_min < c_max:
+            warnings.warn(f"Very small concentrations values are set to "
+                          f"NaN.")
+            concentration[concentration * min_treshold < c_max] = np.nan
 
         # convert dosing time to units of timecourse
         intervention_time = intervention_time.to(time.units)
@@ -196,7 +207,7 @@ class TimecoursePK(object):
         slope_units = self.ureg.Unit(f"1/{t.units}")
         intercept_units = self.ureg.Unit(c.units)
 
-        max_index = np.argmax(c)
+        max_index = np.nanargmax(c)
         # at least three data points after maximum are required for a regression
         if max_index > (len(c) - 4):
             warnings.warn("Regression could not be calculated, "
@@ -207,7 +218,9 @@ class TimecoursePK(object):
         x = t.magnitude[max_index + 1:]
         y = np.log(c.magnitude[max_index + 1:])
 
-        slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+        # using mask to remove nan values
+        mask = ~np.isnan(x) & ~np.isnan(y)
+        slope, intercept, r_value, p_value, std_err = stats.linregress(x[mask], y[mask])
 
         # handle possible regression issues
         if np.isnan(slope) or np.isnan(intercept):
@@ -268,24 +281,24 @@ class TimecoursePK(object):
 
         The max half is the timepoint before reaching the maximal value.
 
-        The tmax depends on the value of both the absorption rate constant (ka)
-        and the elimination rate constant (kel).
-
         :return: tuple (tmax, cmax)
         """
-        idx = np.argmax(c)
-        if idx == len(c) - 1:
-            warnings.warn("No MAXIMUM reached within time course, last value used.")
-        if idx == 0:
-            # no maximum in time course
+        try:
+            idx = np.nanargmax(c)
+            if idx == len(c) - 1:
+                warnings.warn("No MAXIMUM reached within time course, last value used.")
+            if idx == 0:
+                # no maximum in time course
+                return self.Q_(np.nan, t.units), self.Q_(np.nan, c.units)
+
+            cmax = c[idx]
+            tnew = t[:idx]
+            cnew = np.abs(c[:idx] - 0.5 * cmax)
+            idx_half = np.nanargmin(cnew)
+            return tnew[idx_half], c[idx_half]
+        except ValueError:
+            # often only NaN values before maximum (e.g., iv dosing)
             return self.Q_(np.nan, t.units), self.Q_(np.nan, c.units)
-
-        cmax = c[idx]
-        tnew = t[:idx]
-        cnew = np.abs(c[:idx] - 0.5 * cmax)
-        idx_half = np.argmin(cnew)
-
-        return tnew[idx_half], c[idx_half]
 
     def _kel(self, slope):
         """
