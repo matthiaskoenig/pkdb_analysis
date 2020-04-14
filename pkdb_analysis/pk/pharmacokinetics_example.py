@@ -178,6 +178,35 @@ def example_Divoll1982_Fig1() -> List[TimecoursePK]:
 
     return results
 
+def example_midazolam() -> List[TimecoursePK]:
+    """ Example for pharmacokinetics calculation.
+
+    :return:
+    """
+    results = []
+    df = pd.read_csv(DATA_PATH / "pk" / "midazolam.tsv", sep="\t", na_values="NA")
+
+    # ------------------------------------------
+    # Pharmacokinetic parameter for acetaminophen
+    # ------------------------------------------
+    # get caffeine data
+    dose = Q_(7.5, "mg")
+    substance = "midazolam"
+
+    # calculate pharmacokinetic information
+    t = Q_(df.time.values, "min")
+    c = Q_(df["Cve_mid"].values, "mmole/litre")
+    tcpk = TimecoursePK(
+        time=t,
+        concentration=c,
+        substance=substance,
+        dose=dose,
+        ureg=ureg
+    )
+    results.append(tcpk)
+
+    return results
+
 
 def show_results(results: List[TimecoursePK]):
     """Show given results."""
@@ -202,5 +231,8 @@ if __name__ == "__main__":
 
     r4 = example_Divoll1982_Fig1()
     show_results(r4)
+
+    r5 = example_midazolam()
+    show_results(r5)
 
     plt.show()

@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 from pkdb_analysis.pk.pharmacokinetics_example import example0, example1, example2, \
-    example_Kim2011_Fig2, example_Divoll1982_Fig1, show_results
+    example_Kim2011_Fig2, example_Divoll1982_Fig1, show_results, example_midazolam
 from pkdb_analysis.pk.pharmacokinetics import TimecoursePK
 from pint import UnitRegistry
 from matplotlib import pyplot as plt
@@ -19,7 +19,7 @@ def test_pharmacokinetics():
     tcpk = TimecoursePK(time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"),
                          dose=dose, ureg=ureg)
     pk = tcpk.pk
-    assert pk.kel.magnitude == kel
+    assert pytest.approx(pk.kel.magnitude, kel)
     assert pk.dose == Q_(0.01, "mole")
     assert pk.tmax == Q_(0.0, "hr")
     assert pk.cmax == Q_(10.0, "nmol/l")
@@ -43,7 +43,7 @@ def test_pharmacokinetics_small_values():
     tcpk = TimecoursePK(time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"),
                         dose=dose, ureg=ureg)
     pk = tcpk.pk
-    assert pk.kel.magnitude == kel
+    assert pytest.approx(pk.kel.magnitude, kel)
     assert pk.dose == Q_(0.01, "mole")
     assert pk.tmax == Q_(0.0, "hr")
     assert pk.cmax == Q_(10.0, "nmol/l")
@@ -115,7 +115,7 @@ def test_pharmacokinetics_per_bodyweight2():
     tcpk = TimecoursePK(time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"),
                         dose=dose, ureg=ureg)
     pk = tcpk.pk
-    assert pk.kel.magnitude == kel
+    assert pytest.approx(pk.kel.magnitude, kel)
     assert pk.dose == Q_(10.0, "mg/kg")
     assert pk.tmax == Q_(0.0, "hr")
     assert pk.cmax == Q_(10.0, "nmol/l")
@@ -168,3 +168,12 @@ def test_example_Divoll1982_Fig1():
     assert np.isnan(pk.tmaxhalf.magnitude)
 
     show_results(results)
+
+
+def test_example_midazolam():
+    results = example_midazolam()
+    pk = results[0].pk
+    print(pk)
+    assert not np.isnan(pk.auc.magnitude)
+    assert not np.isnan(pk.aucinf.magnitude)
+    assert not np.isnan(pk.vd.magnitude)

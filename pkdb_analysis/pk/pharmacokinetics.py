@@ -65,7 +65,7 @@ class TimecoursePK(object):
                  dose: Quantity, ureg: UnitRegistry,
                  intervention_time: Quantity = None,
                  substance: str = "substance",
-                 min_treshold=1E12, **kwargs):
+                 min_treshold=1E6, **kwargs):
         """Pharmacokinetics parameters are calculated for a single dose experiment.
 
         TODO: support errors on concentrations which are then used in calculation
@@ -113,12 +113,11 @@ class TimecoursePK(object):
 
         # for numerical simulations problems in calculations can arise
         # if values are getting too small
-        c_min = np.nanmin(concentration)
-        c_max = np.nanmax(concentration)
-        if min_treshold * c_min < c_max:
-            warnings.warn(f"Very small concentrations values are set to "
-                          f"NaN.")
-            concentration[concentration * min_treshold < c_max] = np.nan
+        cmin = np.nanmin(concentration[np.nonzero(concentration)])  # only take non-zero values
+        cmax = np.nanmax(concentration)
+        if (min_treshold * cmin) < cmax:
+            warnings.warn(f"Very small concentrations values are set to NaN.")
+            concentration[concentration * min_treshold < cmax] = np.nan
 
         # convert dosing time to units of timecourse
         intervention_time = intervention_time.to(time.units)
@@ -209,6 +208,8 @@ class TimecoursePK(object):
 
         max_index = np.nanargmax(c)
         # at least three data points after maximum are required for a regression
+
+        # FIXME:
         if max_index > (len(c) - 4):
             warnings.warn("Regression could not be calculated, "
                           "at least 3 data points after maximum required.")
