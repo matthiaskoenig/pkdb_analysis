@@ -13,7 +13,7 @@ from typing import Dict, Union, List
 @dataclass
 class Parameter:
     measurement_types: Union[str, List]
-    value_field: str = "choice"
+    value_field: Union[str, List] = "choice"
     substance: str = "any"
 
 
@@ -27,7 +27,7 @@ def all_size(study, pkdata):
     return study
 
 
-def _has_info(df: pd.DataFrame, instance_id: str, parameter: Parameter, on):
+def _has_info(df: pd.DataFrame, instance_id: str, parameter: Parameter):
     has_info = []
     if len(df) == 0:
         return None
@@ -46,7 +46,14 @@ def _has_info(df: pd.DataFrame, instance_id: str, parameter: Parameter, on):
                 has_array = True
                 choices = {True}
         if not has_array:
-            choices = set([i for i in specific_info[parameter.value_field] if i is not None])
+            if isinstance(parameter.value_field, list):
+                this_series = specific_info[parameter.value_field].max(axis=1)
+            else:
+                this_series = specific_info[parameter.value_field]
+
+
+
+            choices = set([i for i in this_series if i is not None])
 
 
         if len(choices) == 0:
@@ -57,27 +64,34 @@ def _has_info(df: pd.DataFrame, instance_id: str, parameter: Parameter, on):
             has_info.append(True)
 
     if not any(has_info) or len(has_info) == 0:
-        return "-"
+        return " "
     elif all(has_info):
-        return "✔️️"
+        return "✓"
     else:
-        return "0"
+        return "⅟"
 
 
-def _add_information(study, pkdata, measurement_types: Dict, table: str, on="choice"):
-    this_table = getattr(pkdata, table)
-    this_table_df = this_table.df
+def _add_information(study, pkdata, measurement_types: Dict, table: str):
 
+    additional_dict = {}
 
-    study_this_table = this_table_df[this_table_df["study_sid"] == study.sid]
-
-    additional_dict = {key: _has_info(study_this_table, this_table.pk, name, on) for key, name in
-                       measurement_types.items()}
+    used_pkdata = pkdata.filter_study(lambda x: x["sid"] == study.sid)
+    this_table = getattr(used_pkdata, table)
 
     if table == "groups":
-        all_group = study_this_table[study_this_table["group_name"] == "all"]
+        group_df = getattr(pkdata, table)
+        group_df_df = group_df.df
+        study_group_df = group_df_df[group_df_df["study_sid"] == study.sid]
+        all_group = study_group_df[study_group_df["group_name"] == "all"]
         subject_size = all_group.group_count.unique()
-        additional_dict["Subject size"] = subject_size[0]
+        additional_dict["Subjects_groups"] = len(this_table.pks)
+        additional_dict["Subjects_individual"] = subject_size[0]
+
+
+
+    additional_dict = {**{key: _has_info(this_table, this_table.pk, name) for key, name in
+                       measurement_types.items()}, **additional_dict}
+
 
 
 
@@ -85,19 +99,19 @@ def _add_information(study, pkdata, measurement_types: Dict, table: str, on="cho
 
 
 def and_logic(series):
-    elements = set([values for values in series.values if values is not None])
+    elements = set(series.dropna().values)
     if len(elements) == 1:
         return list(elements)[0]
     else:
-        return "0"
+        return "⅟"
 
 
 def any_logic(series):
     elements = set([values for values in series.values if values is not None])
-    if "✔️️" in elements:
-        return "✔️️"
+    if "✓" in elements:
+        return "✓"
     else:
-        return "-"
+        return " "
 
 
 
@@ -129,12 +143,11 @@ def reporting_summary(pkdata: PKData, path: Path, report_type="basic", substance
 
         subject_info = {
             "sex": Parameter(measurement_types=["sex"]),
-            "age":Parameter(measurement_types=["age"]),
-            "weight":Parameter(measurement_types=["weight"]),
-            "height":Parameter(measurement_types=["height"]),
-            "body mass index":Parameter(measurement_types=[ "bmi"]),
+            "age":Parameter(measurement_types=["age"], value_field=["mean","median","value"]),
+            "weight":Parameter(measurement_types=["weight"], value_field=["mean","median","value"]),
+            "height":Parameter(measurement_types=["height"], value_field=["mean","median","value"]),
+            "body mass index":Parameter(measurement_types=[ "bmi"], value_field=["mean","median","value"]),
             "ethnicity":Parameter(measurement_types=["ethnicity"]),
-            "CYP1A2 genotype":Parameter(measurement_types=["CYP1A2 genotype"]),
 
             # pk effecting factors
             "healthy":Parameter(measurement_types=["healthy"]),
@@ -142,7 +155,8 @@ def reporting_summary(pkdata: PKData, path: Path, report_type="basic", substance
             "smoking":Parameter(measurement_types=["smoking"]),
             "oral contraceptives":Parameter(measurement_types=["oral contraceptives"]),
             "overnight fast":Parameter(measurement_types=["overnight fast"]),
-            "abstinence alcohol":Parameter(measurement_types=["abstinence alcohol"])
+            "CYP1A2 genotype": Parameter(measurement_types=["CYP1A2 genotype"]),
+            "abstinence alcohol":Parameter(measurement_types=["abstinence alcohol"], value_field=["mean","median","value","min","max"])
         }
         s_keys = list(subject_info.keys())
 
@@ -160,11 +174,12 @@ def reporting_summary(pkdata: PKData, path: Path, report_type="basic", substance
         }
         o_keys = list(outputs_info.keys())
 
-        studies_keys.extend(["Name",
-                             "PKDB identifier",
+        studies_keys.extend(["PKDB identifier",
+                             "Name",
                              "PMID",
                              "publication date",
-                             "Subject size"])
+                             "Subjects_individual",
+                             "Subjects_groups"])
 
         for keys in [s_keys, i_keys, o_keys]:
             studies_keys.extend(copy(keys))
@@ -175,13 +190,21 @@ def reporting_summary(pkdata: PKData, path: Path, report_type="basic", substance
 
         studies_interventions = studies.df.apply(_add_information, args=(pkdata, intervention_info, "interventions"), axis=1)
         studies_group = studies.df.apply(_add_information, args=(pkdata, subject_info, "groups"), axis=1)
+        studies_group[["Subjects_individual", "Subjects_groups"]] = studies_group[["Subjects_individual", "Subjects_groups"]].astype(int)
         studies_individuals = studies.df.apply(_add_information, args=(pkdata, subject_info, "individuals"), axis=1)
-        studies = pd.merge(studies, _combine(studies_group[[*s_keys, "Subject size"]], studies_individuals[s_keys]), on="sid")
+        studies = pd.merge(studies, _combine(studies_group[[*s_keys, "Subjects_individual", "Subjects_groups"]], studies_individuals[s_keys]), on="sid")
         studies = pd.merge(studies, studies_interventions[i_keys], on="sid")
         studies_outputs = studies.df.apply(_add_information, args=(pkdata, outputs_info, "outputs"), axis=1)
         studies_timecourses = studies.df.apply(_add_information, args=(pkdata, outputs_info, "timecourses"), axis=1)
         studies = pd.merge(studies, _combine(studies_outputs[o_keys], studies_timecourses[o_keys]))
+
+
         studies = studies.rename(columns={"sid": "PKDB identifier", "name": "Name", "reference_date":"publication date"})
+
+
+        studies["PKDB identifier"] = studies["PKDB identifier"].apply(lambda x :f'=HYPERLINK("https://develop.pk-db.com/{x}/";"{x}")')
+        studies["PMID"] = studies["PMID"].apply(lambda x :f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}";"{x}")')
+
         studies.sort_values(by="publication date", inplace=True)
 
 
@@ -201,12 +224,15 @@ def reporting_summary(pkdata: PKData, path: Path, report_type="basic", substance
         studies = studies.rename(columns={"sid": "PKDB identifier", "name": "Name"})
 
         studies_keys.extend(["Name","PKDB identifier",*timecourse_info.keys()])
-        studies = studies.fillna("-")
+        studies = studies.fillna(" ")
 
+    if str(path).endswith(".xlsx"):
+        studies[studies_keys].to_excel(path)
 
-    studies[studies_keys].to_excel(path)
-
-
+    elif str(path).endswith(".tsv"):
+        studies[studies_keys].to_csv(path, sep='\t')
+    else:
+        raise AssertionError("wrong path ending (tsv and xlsx are supported")
 
 
 

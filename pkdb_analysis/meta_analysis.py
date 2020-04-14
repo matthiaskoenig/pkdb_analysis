@@ -150,15 +150,22 @@ class MetaAnalysis(object):
         individual = "individuals"
         individual_table = self.create_subject_table(individual)
         individual_results = self.results[self.results.group_pk == -1]
-        return pd.merge(individual_results, individual_table, on=self.individual_pk, how="left")
+        unique_individual_columns = set(individual_table.columns).difference(individual_results.columns)
+
+        unique_individual_columns = [*unique_individual_columns,self.individual_pk]
+
+        return pd.merge(individual_results, individual_table[unique_individual_columns], on=self.individual_pk, how="left")
 
     def group_results(self):
         group = "groups"
         group_table = self.create_subject_table(group)
         group_results = self.results[self.results.group_pk != -1]
-        return pd.merge(group_results, group_table, on=self.group_pk, how="left")
+        unique_group_columns = set(group_table.columns).difference(group_results.columns)
+        unique_group_columns = [*unique_group_columns,self.group_pk]
+        return pd.merge(group_results, group_table[unique_group_columns], on=self.group_pk, how="left")
 
     def add_subject_info(self):
+
         self.results = self.individual_results().df.append(self.group_results())
 
     def infer_from_body_weight(self,  by_intervention=True, by_output=True):
