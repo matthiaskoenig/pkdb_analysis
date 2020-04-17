@@ -12,12 +12,13 @@ from typing import Dict, Union, List, Sequence
 
 @dataclass
 class Parameter:
-    measurement_types: Union[str, List]
-    value_field: Sequence
+    measurement_types: Union[str, List] = "any"
+    value_field: Sequence = "choice"
     substance: str = "any"
     values: Sequence = ("any",)
     only_group: bool = False
     only_individual: bool = False
+    groupby: bool = True
 
 def all_size(study, pkdata):
     all_groups = pkdata.groups_core[pkdata.groups_core["group_name"] == "all"]
@@ -37,16 +38,19 @@ def _has_info(df: pd.DataFrame, instance_id: str, parameter: Parameter, Subjects
         
     if parameter.only_group:
         df = df[df["individual_pk"] == -1]
+        
         instance_id = "group_pk"
         compare_length = Subjects_groups
+   
         
     if parameter.only_individual:
-
+        
         df = df[df["group_pk"] == -1]
         instance_id = "individual_pk"
         compare_length = Subjects_individual
         
-
+    if not parameter.groupby:
+        instance_id = "study_name"
     if len(df) == 0:
         return None
 
@@ -71,12 +75,7 @@ def _has_info(df: pd.DataFrame, instance_id: str, parameter: Parameter, Subjects
             choices = set([i for i in this_series.dropna() if i is not None])
             
         if "any" not in parameter.values:
-            print(choices)
             choices = choices & set(parameter.values)
-            print(choices)
-            print(set(parameter.values))
-
-
         if len(choices) == 0:
             has_info.append(False)
         elif "NR" in set(choices):
@@ -166,22 +165,8 @@ def extend_study_keys(study_keys):
                              "Subjects_individual",
                              "Subjects_groups"])
 
+def basics_table(studies, substances, pkdata, study_keys):
 
-def reporting_summary(pkdata: PKData, path: Path, report_type="basic", substances=[]):
-    """ creates a summary table from a pkdata objects  and saves it to path
-    :param pkdata:
-    :return:
-    """
-    # rename
-    studies = pkdata.studies
-    studies["PMID"] = studies.reference.apply(lambda x: x["sid"])
-    study_keys = []
-    study_keys.extend(["PKDB identifier",
-                       "Name",
-                       "PMID",
-                       "publication date",])
-    
-    if report_type == "basic":
         if len(substances) != 0:
             raise AssertionError("substance are not allowed on basic reporting type")
 
@@ -203,20 +188,19 @@ def reporting_summary(pkdata: PKData, path: Path, report_type="basic", substance
             "CYP1A2 genotype": Parameter(measurement_types=["CYP1A2 genotype"],value_field=["choice"]),
             "abstinence alcohol":Parameter(measurement_types=["abstinence alcohol"], value_field=["mean","median","value","min","max"])
         }
-        s_keys = list(subject_info.keys())
-
-
 
         intervention_info = {
             "dosing amount": Parameter(measurement_types=["dosing", "qualitative dosing"], value_field=["value"]),
             "dosing route": Parameter(measurement_types=["dosing", "qualitative dosing"], value_field=["route"]),
             "dosing form": Parameter(measurement_types=["dosing", "qualitative dosing"], value_field=["form"]),
         }
-        i_keys = list(intervention_info.keys())
 
         outputs_info = {
             "quantification method": Parameter(measurement_types="any", value_field=["method"]),
         }
+
+        s_keys = list(subject_info.keys())
+        i_keys = list(intervention_info.keys())
         o_keys = list(outputs_info.keys())
 
         study_keys.extend(["Subjects_individual",
@@ -225,7 +209,6 @@ def reporting_summary(pkdata: PKData, path: Path, report_type="basic", substance
         for keys in [s_keys, i_keys, o_keys]:
             study_keys.extend(copy(keys))
             keys.append("sid")
-
 
 
 
@@ -238,49 +221,225 @@ def reporting_summary(pkdata: PKData, path: Path, report_type="basic", substance
         studies_outputs = studies.df.apply(_add_information, args=(pkdata, outputs_info, "outputs"), axis=1)
         studies_timecourses = studies.df.apply(_add_information, args=(pkdata, outputs_info, "timecourses"), axis=1)
         studies = pd.merge(studies, _combine(studies_outputs[o_keys], studies_timecourses[o_keys]))
+        return studies, study_keys
+
+def timecourses_table(studies, substances, pkdata, study_keys):
+    timecourse_fields = {
+        "individual": {"value_field": ["value"], "only_individual": True},
+        "group": {"value_field": ["mean", "median"], "only_group": True},
+        "error": {"value_field": ["sd", "se", "cv"], "only_group": True},
+        "plasma/blood": {"value_field": ["tissue"], "values": ["plasma", "blood", "serum"], "groupby": False},
+        "urine": {"value_field": ["tissue"], "values": ["urine"], "groupby": False},
+        "saliva": {"value_field": ["tissue"], "values": ["saliva"], "groupby": False},
+    }
+    timecourse_info = {}
+    for substance in substances:
+        for key, p_kwargs in timecourse_fields.items():
+            this_key = f"{substance}_timecourses_{key}"
+            timecourse_info[this_key] = Parameter(measurement_types="any", substance=substance, **p_kwargs)
+            study_keys.append(this_key)
+
+    studies = studies.df.apply(_add_information, args=(pkdata, timecourse_info, "timecourses"), axis=1)
+    studies = studies.fillna(" ")
+
+    return studies, study_keys
+
+def pks_table(studies, substances, pkdata, study_keys):
+
+    pks_info = {
+        "caffeine_plasma/blood": Parameter(substance="caffeine", value_field=["tissue"],values=["plasma", "blood", "serum"], groupby= False),
+        "caffeine_urine": Parameter(substance="caffeine", value_field=["tissue"],values=["urine"], groupby= False),
+        "caffeine_saliva": Parameter(substance="caffeine", value_field=["tissue"],values=["saliva"], groupby= False),
+        "caffeine_vd_individual": Parameter(measurement_types=["vd"], substance="caffeine", value_field=["value"], only_individual=True),
+        "caffeine_vd_group": Parameter(measurement_types=["vd"], substance="caffeine", value_field=["mean", "median"], only_group=True),
+        "caffeine_vd_error": Parameter(measurement_types=["vd"], substance="caffeine", value_field=["sd", "se", "cv"], only_group=True),
+        "caffeine_clearance_individual": Parameter(measurement_types=["clearance"], substance="caffeine", value_field=["value"], only_individual=True),
+        "caffeine_clearance_group": Parameter(measurement_types=["clearance"], substance="caffeine", value_field=["mean", "median"],only_group=True),
+        "caffeine_clearance_error": Parameter(measurement_types=["clearance"], substance="caffeine", value_field=["sd", "se", "cv"], only_group=True),
+        "caffeine_auc_individual": Parameter(measurement_types=["auc_end", "auc_inf"], substance="caffeine",value_field=["value"], only_individual=True),
+        "caffeine_auc_group": Parameter(measurement_types=["auc_end", "auc_inf"], substance="caffeine", value_field=["mean", "median"], only_group=True),
+        "caffeine_auc_error": Parameter(measurement_types=["auc_end", "auc_inf"], substance="caffeine",value_field=["sd", "se", "cv"], only_group=True),
+        "caffeine_thalf_individual": Parameter(measurement_types=["thalf"], substance="caffeine", value_field=["value"], only_individual=True),
+        "caffeine_thalf_group": Parameter(measurement_types=["thalf"], substance="caffeine",value_field=["mean", "median"], only_group=True),
+        "caffeine_thalf_error": Parameter(measurement_types=["thalf"], substance="caffeine",value_field=["sd", "se", "cv"], only_group=True),
+        "caffeine_cmax_individual": Parameter(measurement_types=["cmax"], substance="caffeine", value_field=["value"],only_individual=True),
+        "caffeine_cmax_group": Parameter(measurement_types=["cmax"], substance="caffeine",value_field=["mean", "median"], only_group=True),
+        "caffeine_cmax_error": Parameter(measurement_types=["cmax"], substance="caffeine",value_field=["sd", "se", "cv"], only_group=True),
+        "caffeine_tmax_individual": Parameter(measurement_types=["tmax"], substance="caffeine", value_field=["value"],only_individual=True),
+        "caffeine_tmax_group": Parameter(measurement_types=["tmax"], substance="caffeine", value_field=["mean", "median"], only_group=True),
+        "caffeine_tmax_error": Parameter(measurement_types=["tmax"], substance="caffeine",value_field=["sd", "se", "cv"], only_group=True),
+        "caffeine_kel_individual": Parameter(measurement_types=["kel"], substance="caffeine", value_field=["value"],only_individual=True),
+        "caffeine_kel_group": Parameter(measurement_types=["kel"], substance="caffeine",value_field=["mean", "median"], only_group=True),
+        "caffeine_kel_error": Parameter(measurement_types=["kel"], substance="caffeine",value_field=["sd", "se", "cv"], only_group=True),
+        "caffeine_recovery_individual": Parameter(measurement_types=["recovery"], substance="caffeine", value_field=["value"], only_individual=True),
+        "caffeine_recovery_group": Parameter(measurement_types=["recovery"], substance="caffeine",value_field=["mean", "median"], only_group=True),
+        "caffeine_recovery_error": Parameter(measurement_types=["recovery"], substance="caffeine",value_field=["sd", "se", "cv"], only_group=True),
+        "caffeine_clearance_renal_individual": Parameter(measurement_types=["clearance_renal"], substance="caffeine", value_field=["value"],only_individual=True),
+        "caffeine_clearance_renal_group": Parameter(measurement_types=["clearance_renal"], substance="caffeine",value_field=["mean", "median"], only_group=True),
+        "caffeine_clearance_renal_error": Parameter(measurement_types=["clearance_renal"], substance="caffeine",value_field=["sd", "se", "cv"], only_group=True),
+        "caffeine_cumlative_amount_individual": Parameter(measurement_types=["cumulative amount"], substance="caffeine", value_field=["value"],only_individual=True),
+        "caffeine_cumlative_amount_group": Parameter(measurement_types=["cumulative amount"], substance="caffeine", value_field=["mean", "median"],only_group=True),
+        "caffeine_cumlative_amount_error": Parameter(measurement_types=["cumulative amount"], substance="caffeine", value_field=["sd", "se", "cv"],only_group=True),
+
+        #paraxanthine
+        "paraxanthine_plasma/blood": Parameter(substance="paraxanthine", value_field=["tissue"],values=["plasma", "blood", "serum"], groupby=False),
+        "paraxanthine_urine": Parameter(substance="paraxanthine", value_field=["tissue"], values=["urine"], groupby=False),
+        "paraxanthine_saliva": Parameter(substance="paraxanthine", value_field=["tissue"], values=["saliva"], groupby=False),
+        "paraxanthine_vd_individual": Parameter(measurement_types=["vd"], substance="paraxanthine", value_field=["value"],only_individual=True),
+        "paraxanthine_vd_group": Parameter(measurement_types=["vd"], substance="paraxanthine", value_field=["mean", "median"],only_group=True),
+        "paraxanthine_vd_error": Parameter(measurement_types=["vd"], substance="paraxanthine", value_field=["sd", "se", "cv"], only_group=True),
+        "paraxanthine_clearance_individual": Parameter(measurement_types=["clearance"], substance="paraxanthine", value_field=["value"], only_individual=True),
+        "paraxanthine_clearance_group": Parameter(measurement_types=["clearance"], substance="paraxanthine", value_field=["mean", "median"], only_group=True),
+        "paraxanthine_clearance_error": Parameter(measurement_types=["clearance"], substance="paraxanthine", value_field=["sd", "se", "cv"], only_group=True),
+        "paraxanthine_auc_individual": Parameter(measurement_types=["auc_end", "auc_inf"], substance="paraxanthine", value_field=["value"], only_individual=True),
+        "paraxanthine_auc_group": Parameter(measurement_types=["auc_end", "auc_inf"], substance="paraxanthine",value_field=["mean", "median"], only_group=True),
+        "paraxanthine_auc_error": Parameter(measurement_types=["auc_end", "auc_inf"], substance="paraxanthine",value_field=["sd", "se", "cv"], only_group=True),
+        "paraxanthine_thalf_individual": Parameter(measurement_types=["thalf"], substance="paraxanthine", value_field=["value"],only_individual=True),
+        "paraxanthine_thalf_group": Parameter(measurement_types=["thalf"], substance="paraxanthine", value_field=["mean", "median"], only_group=True),
+        "paraxanthine_thalf_error": Parameter(measurement_types=["thalf"], substance="paraxanthine",value_field=["sd", "se", "cv"], only_group=True),
+        "paraxanthine_cmax_individual": Parameter(measurement_types=["cmax"], substance="paraxanthine", value_field=["value"],only_individual=True),
+        "paraxanthine_cmax_group": Parameter(measurement_types=["cmax"], substance="paraxanthine",value_field=["mean", "median"], only_group=True),
+        "paraxanthine_cmax_error": Parameter(measurement_types=["cmax"], substance="paraxanthine",value_field=["sd", "se", "cv"], only_group=True),
+        "paraxanthine_tmax_individual": Parameter(measurement_types=["tmax"], substance="paraxanthine", value_field=["value"], only_individual=True),
+        "paraxanthine_tmax_group": Parameter(measurement_types=["tmax"], substance="paraxanthine",value_field=["mean", "median"], only_group=True),
+        "paraxanthine_tmax_error": Parameter(measurement_types=["tmax"], substance="paraxanthine",value_field=["sd", "se", "cv"], only_group=True),
+        "paraxanthine_kel_individual": Parameter(measurement_types=["kel"], substance="paraxanthine", value_field=["value"], only_individual=True),
+        "paraxanthine_kel_group": Parameter(measurement_types=["kel"], substance="paraxanthine", value_field=["mean", "median"],only_group=True),
+        "paraxanthine_kel_error": Parameter(measurement_types=["kel"], substance="paraxanthine", value_field=["sd", "se", "cv"],only_group=True),
+
+        # theophylline
+        "theophylline_plasma/blood": Parameter(substance="theophylline", value_field=["tissue"],
+                                               values=["plasma", "blood", "serum"], groupby=False),
+        "theophylline_urine": Parameter(substance="theophylline", value_field=["tissue"], values=["urine"],
+                                        groupby=False),
+        "theophylline_saliva": Parameter(substance="theophylline", value_field=["tissue"], values=["saliva"],
+                                         groupby=False),
+        "theophylline_vd_individual": Parameter(measurement_types=["vd"], substance="theophylline",
+                                                value_field=["value"], only_individual=True),
+        "theophylline_vd_group": Parameter(measurement_types=["vd"], substance="theophylline",
+                                           value_field=["mean", "median"], only_group=True),
+        "theophylline_vd_error": Parameter(measurement_types=["vd"], substance="theophylline",
+                                           value_field=["sd", "se", "cv"], only_group=True),
+        "theophylline_clearance_individual": Parameter(measurement_types=["clearance"], substance="theophylline",
+                                                       value_field=["value"], only_individual=True),
+        "theophylline_clearance_group": Parameter(measurement_types=["clearance"], substance="theophylline",
+                                                  value_field=["mean", "median"], only_group=True),
+        "theophylline_clearance_error": Parameter(measurement_types=["clearance"], substance="theophylline",
+                                                  value_field=["sd", "se", "cv"], only_group=True),
+        "theophylline_auc_individual": Parameter(measurement_types=["auc_end", "auc_inf"], substance="theophylline",
+                                                 value_field=["value"], only_individual=True),
+        "theophylline_auc_group": Parameter(measurement_types=["auc_end", "auc_inf"], substance="theophylline",
+                                            value_field=["mean", "median"], only_group=True),
+        "theophylline_auc_error": Parameter(measurement_types=["auc_end", "auc_inf"], substance="theophylline",
+                                            value_field=["sd", "se", "cv"], only_group=True),
+        "theophylline_thalf_individual": Parameter(measurement_types=["thalf"], substance="theophylline",
+                                                   value_field=["value"], only_individual=True),
+        "theophylline_thalf_group": Parameter(measurement_types=["thalf"], substance="theophylline",
+                                              value_field=["mean", "median"], only_group=True),
+        "theophylline_thalf_error": Parameter(measurement_types=["thalf"], substance="theophylline",
+                                              value_field=["sd", "se", "cv"], only_group=True),
+        "theophylline_cmax_individual": Parameter(measurement_types=["cmax"], substance="theophylline",
+                                                  value_field=["value"], only_individual=True),
+        "theophylline_cmax_group": Parameter(measurement_types=["cmax"], substance="theophylline",
+                                             value_field=["mean", "median"], only_group=True),
+        "theophylline_cmax_error": Parameter(measurement_types=["cmax"], substance="theophylline",
+                                             value_field=["sd", "se", "cv"], only_group=True),
+        "theophylline_tmax_individual": Parameter(measurement_types=["tmax"], substance="theophylline",
+                                                  value_field=["value"], only_individual=True),
+        "theophylline_tmax_group": Parameter(measurement_types=["tmax"], substance="theophylline",
+                                             value_field=["mean", "median"], only_group=True),
+        "theophylline_tmax_error": Parameter(measurement_types=["tmax"], substance="theophylline",
+                                             value_field=["sd", "se", "cv"], only_group=True),
+        "theophylline_kel_individual": Parameter(measurement_types=["kel"], substance="theophylline",
+                                                 value_field=["value"], only_individual=True),
+        "theophylline_kel_group": Parameter(measurement_types=["kel"], substance="theophylline",
+                                            value_field=["mean", "median"], only_group=True),
+        "theophylline_kel_error": Parameter(measurement_types=["kel"], substance="theophylline",
+                                            value_field=["sd", "se", "cv"], only_group=True),
+
+        # theobromine
+        "theobromine_plasma/blood": Parameter(substance="theobromine", value_field=["tissue"],
+                                              values=["plasma", "blood", "serum"], groupby=False),
+        "theobromine_urine": Parameter(substance="theobromine", value_field=["tissue"], values=["urine"],
+                                       groupby=False),
+        "theobromine_saliva": Parameter(substance="theobromine", value_field=["tissue"], values=["saliva"],
+                                        groupby=False),
+        "theobromine_vd_individual": Parameter(measurement_types=["vd"], substance="theobromine",
+                                               value_field=["value"], only_individual=True),
+        "theobromine_vd_group": Parameter(measurement_types=["vd"], substance="theobromine",
+                                          value_field=["mean", "median"], only_group=True),
+        "theobromine_vd_error": Parameter(measurement_types=["vd"], substance="theobromine",
+                                          value_field=["sd", "se", "cv"], only_group=True),
+        "theobromine_clearance_individual": Parameter(measurement_types=["clearance"], substance="theobromine",
+                                                      value_field=["value"], only_individual=True),
+        "theobromine_clearance_group": Parameter(measurement_types=["clearance"], substance="theobromine",
+                                                 value_field=["mean", "median"], only_group=True),
+        "theobromine_clearance_error": Parameter(measurement_types=["clearance"], substance="theobromine",
+                                                 value_field=["sd", "se", "cv"], only_group=True),
+        "theobromine_auc_individual": Parameter(measurement_types=["auc_end", "auc_inf"], substance="theobromine",
+                                                value_field=["value"], only_individual=True),
+        "theobromine_auc_group": Parameter(measurement_types=["auc_end", "auc_inf"], substance="theobromine",
+                                           value_field=["mean", "median"], only_group=True),
+        "theobromine_auc_error": Parameter(measurement_types=["auc_end", "auc_inf"], substance="theobromine",
+                                           value_field=["sd", "se", "cv"], only_group=True),
+        "theobromine_thalf_individual": Parameter(measurement_types=["thalf"], substance="theobromine",
+                                                  value_field=["value"], only_individual=True),
+        "theobromine_thalf_group": Parameter(measurement_types=["thalf"], substance="theobromine",
+                                             value_field=["mean", "median"], only_group=True),
+        "theobromine_thalf_error": Parameter(measurement_types=["thalf"], substance="theobromine",
+                                             value_field=["sd", "se", "cv"], only_group=True),
+        "theobromine_cmax_individual": Parameter(measurement_types=["cmax"], substance="theobromine",
+                                                 value_field=["value"], only_individual=True),
+        "theobromine_cmax_group": Parameter(measurement_types=["cmax"], substance="theobromine",
+                                            value_field=["mean", "median"], only_group=True),
+        "theobromine_cmax_error": Parameter(measurement_types=["cmax"], substance="theobromine",
+                                            value_field=["sd", "se", "cv"], only_group=True),
+        "theobromine_tmax_individual": Parameter(measurement_types=["tmax"], substance="theobromine",
+                                                 value_field=["value"], only_individual=True),
+        "theobromine_tmax_group": Parameter(measurement_types=["tmax"], substance="theobromine",
+                                            value_field=["mean", "median"], only_group=True),
+        "theobromine_tmax_error": Parameter(measurement_types=["tmax"], substance="theobromine",
+                                            value_field=["sd", "se", "cv"], only_group=True),
+        "theobromine_kel_individual": Parameter(measurement_types=["kel"], substance="theobromine",
+                                                value_field=["value"], only_individual=True),
+        "theobromine_kel_group": Parameter(measurement_types=["kel"], substance="theobromine",
+                                           value_field=["mean", "median"], only_group=True),
+        "theobromine_kel_error": Parameter(measurement_types=["kel"], substance="theobromine",
+                                           value_field=["sd", "se", "cv"], only_group=True),
+
+    }
+    studies = studies.df.apply(_add_information, args=(pkdata, pks_info, "outputs"), axis=1)
+    study_keys.extend(pks_info.keys())
+    studies = studies.fillna(" ")
+    return studies, study_keys
 
 
-        studies = studies.rename(columns={"sid": "PKDB identifier", "name": "Name", "reference_date":"publication date"})
+def format(studies, study_keys):
+    studies = studies.rename(columns={"reference_date": "publication date"})
+    studies["PKDB identifier"] = studies["sid"].apply(lambda x: f'=HYPERLINK("https://develop.pk-db.com/{x}/";"{x}")')
+    studies["PMID"] = studies["sid"].apply(lambda x: f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}";"{x}")')
+    study_keys = ["PKDB identifier", "name", "PMID", "publication date", ] + study_keys
+    studies.sort_values(by="publication date", inplace=True)
+    return studies, study_keys
 
+def reporting_summary(pkdata: PKData, path: Path, report_type="basic", substances=[]):
+    """ creates a summary table from a pkdata objects  and saves it to path
+    :param pkdata:
+    :return:
+    """
+    studies = pkdata.studies
+    study_keys = []
 
- 
-
-
+    if report_type == "basic":
+        studies, study_keys = basics_table(studies, substances, pkdata, study_keys)
 
     elif report_type == "timecourse":
-        timecourse_fields = {
-            "individual":{"value_field":["value"], "only_individual":True},
-            "mean": {"value_field": [ "mean", "median"], "only_group": True },
-            "error": {"value_field": ["sd", "se", "cv"], "only_group": True },
-            "plasma/blood": {"value_field": ["tissue"], "values": ["plasma","blood","serum"]},
-            "urine": {"value_field": ["tissue"], "values": ["urine"]},
-            "saliva": {"value_field": ["tissue"], "values": ["saliva"]},
-        }
+        studies, study_keys = timecourses_table(studies, substances, pkdata, study_keys)
 
-        timecourse_info = {
-            
-            
-            
-        }
-        keys = []
-        for substance in substances:
-            for key, p_kwargs in timecourse_fields.items():
-                this_key = f"{substance}_timecourses_{key}"
-                timecourse_info[this_key] =  Parameter(measurement_types="any", substance=substance, **p_kwargs)
-                keys.append(this_key)
+    elif report_type == "pks":
+        studies, study_keys = pks_table(studies, substances, pkdata, study_keys)
 
-        studies = studies.df.apply(_add_information, args=(pkdata, timecourse_info, "timecourses"), axis=1)
-        studies = studies.rename(columns={"sid": "PKDB identifier", "name": "Name"})
-        study_keys.extend(keys)
-        studies = studies.fillna(" ")
-        
-    studies = studies.rename(columns={"sid": "PKDB identifier", "name": "Name", "reference_date": "publication date"})
-
-    studies["PKDB identifier"] = studies["PKDB identifier"].apply(
-        lambda x: f'=HYPERLINK("https://develop.pk-db.com/{x}/";"{x}")')
-    studies["PMID"] = studies["PMID"].apply(lambda x: f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}";"{x}")')
-
-    studies.sort_values(by="publication date", inplace=True)
+    studies, study_keys = format(studies, study_keys)
 
     if str(path).endswith(".xlsx"):
         studies[study_keys].to_excel(path)
