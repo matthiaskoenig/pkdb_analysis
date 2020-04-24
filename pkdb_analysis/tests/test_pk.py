@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 from pkdb_analysis.pk.pharmacokinetics_example import example0, example1, example2, \
-    example_Kim2011_Fig2, example_Divoll1982_Fig1, show_results, example_midazolam
+    example_Kim2011_Fig2, example_Divoll1982_Fig1, show_results, example_midazolam, example1_NoDosing
 from pkdb_analysis.pk.pharmacokinetics import TimecoursePK
 from pint import UnitRegistry
 from matplotlib import pyplot as plt
@@ -150,6 +150,18 @@ def test_example1():
     assert pk.vd.units == tcpk.ureg.Unit("liter")
     show_results(results)
 
+def test_example1_NoDosing():
+    results = example1_NoDosing()
+    tcpk = results[0]
+
+    pk = tcpk.pk
+    assert not hasattr(pk, "dose")
+    assert not hasattr(pk, "vd")
+    assert not hasattr(pk, "vdss")
+    assert pk.tmax == tcpk.Q_(1.0, "hr")
+    assert pk.tmaxhalf == tcpk.Q_(0.5, "hr")
+    assert pk.cmax.units == tcpk.ureg.Unit("mg/l")
+    show_results(results)
 
 def test_example2():
     results = example2()

@@ -6,7 +6,7 @@ from typing import List, Dict
 import numpy as np
 import warnings
 import pandas as pd
-from pkdb_analysis.pk.pharmacokinetics import TimecoursePK
+from pkdb_analysis.pk.pharmacokinetics import TimecoursePK, TimecoursePKNoDosing
 from matplotlib import pyplot as plt
 from pkdb_analysis.tests.constants import DATA_PATH
 from pathlib import Path
@@ -70,7 +70,37 @@ def example1() -> List[TimecoursePK]:
 
     return results
 
+def example1_NoDosing() -> List[TimecoursePKNoDosing]:
+    """ Example for pharmacokinetics calculation.
 
+    :return:
+    """
+    results = []
+    df = pd.read_csv(DATA_PATH / "pk" / "data_example1.csv", sep="\t", na_values="NA")
+
+    # ------------------------------------------
+    # Pharmacokinetic parameter for caffeine
+    # ------------------------------------------
+    # get caffeine data
+    substance = "caffeine"
+
+    for tissue in df.tissue.unique():
+        for group in df.group.unique():
+            print("substance: {}".format(substance))
+            data = df[(df.tissue == tissue) & (df.group == group)]
+
+            # calculate pharmacokinetic information
+            t = Q_(data.time.values, "hr")
+            c = Q_(data.caf.values, "mg/l")
+            tcpk = TimecoursePKNoDosing(
+                time=t,
+                concentration=c,
+                substance=substance,
+                ureg=ureg
+            )
+            results.append(tcpk)
+
+    return results
 def example2() -> List[TimecoursePK]:
     """ Example for pharmacokinetics calculation.
 
@@ -116,6 +146,7 @@ def example2() -> List[TimecoursePK]:
         results.append(tcpk)
 
     return results
+
 
 
 def example_Kim2011_Fig2() -> List[TimecoursePK]:
@@ -222,6 +253,9 @@ if __name__ == "__main__":
 
     r1 = example1()
     show_results(r1)
+
+    r1_nd = example1_NoDosing()
+    show_results(r1_nd)
 
     r2 = example2()
     show_results(r2)

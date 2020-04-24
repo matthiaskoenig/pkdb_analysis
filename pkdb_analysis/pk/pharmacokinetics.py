@@ -19,7 +19,7 @@ with warnings.catch_warnings():
 
 
 @dataclass
-class PKBaseParameters:
+class PKParametersNoDosing:
     compound: str
     auc: Quantity
     aucinf: Quantity
@@ -62,7 +62,7 @@ class PKBaseParameters:
         return d
 
 @dataclass
-class PKParameters(PKBaseParameters):
+class PKParameters(PKParametersNoDosing):
     dose: Quantity
     vd: Quantity
     vdss: Quantity
@@ -73,7 +73,7 @@ class PKParameters(PKBaseParameters):
         return super().parameters + ["dose", "vd", "vdss", "cl"]
 
 
-class BaseTimecoursePK(object):
+class TimecoursePKNoDosing(object):
     """ Class for calculating pharmacokinetics from timecourses without dose information """
 
     def __init__(
@@ -117,7 +117,7 @@ class BaseTimecoursePK(object):
         self.c = concentration
         self.substance = substance
 
-    def _f_pk(self) -> PKBaseParameters:
+    def _f_pk(self) -> PKParametersNoDosing:
         """ Calculates all pk parameters from given time course.
 
         The returned data structure can be used to
@@ -136,7 +136,7 @@ class BaseTimecoursePK(object):
         thalf = self._thalf(kel=kel)
         aucinf = self._aucinf(t, c, slope=slope)
 
-        return PKBaseParameters(
+        return PKParametersNoDosing(
             compound=self.substance,
             auc=auc.to_reduced_units(),
             aucinf=aucinf.to_reduced_units(),
@@ -397,7 +397,7 @@ class BaseTimecoursePK(object):
 
 
 
-class TimecoursePK(BaseTimecoursePK):
+class TimecoursePK(TimecoursePKNoDosing):
     """ Class for calculating pharmacokinetics from timecourses. """
 
     def __init__(self, time: Quantity, concentration: Quantity,
