@@ -271,15 +271,7 @@ def pks_table(studies, substances, pkdata, study_keys):
         "caffeine_kel_individual": Parameter(measurement_types=["kel"], substance="caffeine", value_field=["value"],only_individual=True),
         "caffeine_kel_group": Parameter(measurement_types=["kel"], substance="caffeine",value_field=["mean", "median"], only_group=True),
         "caffeine_kel_error": Parameter(measurement_types=["kel"], substance="caffeine",value_field=["sd", "se", "cv"], only_group=True),
-        "caffeine_recovery_individual": Parameter(measurement_types=["recovery"], substance="caffeine", value_field=["value"], only_individual=True),
-        "caffeine_recovery_group": Parameter(measurement_types=["recovery"], substance="caffeine",value_field=["mean", "median"], only_group=True),
-        "caffeine_recovery_error": Parameter(measurement_types=["recovery"], substance="caffeine",value_field=["sd", "se", "cv"], only_group=True),
-        "caffeine_clearance_renal_individual": Parameter(measurement_types=["clearance_renal"], substance="caffeine", value_field=["value"],only_individual=True),
-        "caffeine_clearance_renal_group": Parameter(measurement_types=["clearance_renal"], substance="caffeine",value_field=["mean", "median"], only_group=True),
-        "caffeine_clearance_renal_error": Parameter(measurement_types=["clearance_renal"], substance="caffeine",value_field=["sd", "se", "cv"], only_group=True),
-        "caffeine_cumlative_amount_individual": Parameter(measurement_types=["cumulative amount"], substance="caffeine", value_field=["value"],only_individual=True),
-        "caffeine_cumlative_amount_group": Parameter(measurement_types=["cumulative amount"], substance="caffeine", value_field=["mean", "median"],only_group=True),
-        "caffeine_cumlative_amount_error": Parameter(measurement_types=["cumulative amount"], substance="caffeine", value_field=["sd", "se", "cv"],only_group=True),
+
 
         #paraxanthine
         "paraxanthine_plasma/blood": Parameter(substance="paraxanthine", value_field=["tissue"],values=["plasma", "blood", "serum"], groupby=False),

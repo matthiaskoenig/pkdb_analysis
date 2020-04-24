@@ -420,6 +420,15 @@ class PKData(object):
         """
         return self._df_mi('interventions', ['intervention_pk'])
 
+    @property
+    def interventions_core(self) -> PKDataFrame:
+        """  Core group information with unique pk per row
+
+        :return: PKDataFrame of groups contained in this PKData instance .
+        :rtype: PKDataFrame
+        """
+        return self._df_core("interventions", core_fields=["study_name", "name"])
+
 
     @property
     def outputs_mi(self) -> pd.DataFrame:
@@ -441,11 +450,27 @@ class PKData(object):
         return self._df_mi('timecourses',
                            ['timecourse_pk', 'intervention_pk', 'group_pk', 'individual_pk'])
 
+    @property
+    def timecourses_extended(self) -> pd.DataFrame:
+        """ extends the timecourse df with the core information from interventions, individuals and groups"""
+
+        timecourses = self.timecourses.df.merge(self.interventions_core,
+                                                how="left",
+                                                on="intervention_pk",
+                                                suffixes=("","interventions"))
+        timecourses = timecourses.merge(self.individuals_core,
+                                        how="left",
+                                        on="individual_pk",
+                                        suffixes=("","individuals"))
+        timecourses = timecourses.merge(self.groups_core,
+                                        how="left",
+                                        on="group_pk",
+                                        suffixes=("","groups"))
+        return timecourses
     # --- filter and exclude ---
 
     def _pk_filter(self, df_key:str, f_idx, concise:bool, *args, **kwargs) -> 'PKData':
         """ Helper class for filtering of PKData instances.
-
         :param df_key: DataFrame on which the filter (f_idx) shall be applied.
         :type df_key: str
         :param concise:

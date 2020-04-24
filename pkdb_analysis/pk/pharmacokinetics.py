@@ -19,9 +19,8 @@ with warnings.catch_warnings():
 
 
 @dataclass
-class PKParameters:
+class PKBaseParameters:
     compound: str
-    dose: Quantity
     auc: Quantity
     aucinf: Quantity
     tmax: Quantity
@@ -30,15 +29,20 @@ class PKParameters:
     cmaxhalf: Quantity
     kel: Quantity
     thalf: Quantity
-    vd: Quantity
-    vdss: Quantity
-    cl: Quantity
     slope: Quantity
     intercept: Quantity
     r_value: float
     p_value: float
     std_err: float
     max_idx: int
+
+    @property
+    def parameters(self):
+        return ["auc", "aucinf", "tmax", "cmax", "tmaxhalf", "cmaxhalf", "kel", "thalf"]
+
+    @property
+    def regression_parameters(self):
+        return ["slope", "intercept", "r_value", "p_value", "std_err", "max_idx"]
 
     def to_dict(self):
         """Convert to dictionary.
@@ -48,65 +52,55 @@ class PKParameters:
         d = {
             "compound": self.compound,
         }
-        for key in ["dose", "auc", "aucinf", "tmax", "cmax", "tmaxhalf", "cmaxhalf", "kel", "thalf", "vd", "vdss", "cl"]:
+        for key in self.parameters:
             q = getattr(self, key)
             d[key] = q.magnitude
             d[f"{key}_unit"] = q.units
 
-        for key in ["slope", "intercept", "r_value", "p_value", "std_err", "max_idx"]:
+        for key in self.regression_parameters:
             d[key] = getattr(self, key)
         return d
 
+@dataclass
+class PKParameters(PKBaseParameters):
+    dose: Quantity
+    vd: Quantity
+    vdss: Quantity
+    cl: Quantity
 
-class TimecoursePK(object):
-    """ Class for calculating pharmacokinetics from timecourses. """
+    @property
+    def parameters(self):
+        return super().parameters + ["dose", "vd", "vdss", "cl"]
 
-    def __init__(self, time: Quantity, concentration: Quantity,
-                 dose: Quantity, ureg: UnitRegistry,
-                 intervention_time: Quantity = None,
-                 substance: str = "substance",
-                 min_treshold=1E6, **kwargs):
-        """Pharmacokinetics parameters are calculated for a single dose experiment.
 
-        TODO: support errors on concentrations which are then used in calculation
-        FIXME: ctype is used in kwargs for "value", "mean", "median", but not
-         processed
+class BaseTimecoursePK(object):
+    """ Class for calculating pharmacokinetics from timecourses without dose information """
 
-        tmax values are reported relative to intervention time
+    def __init__(
+            self,
+            time: Quantity,
+            concentration: Quantity,
+            ureg: UnitRegistry,
+            substance: str = "substance",
+            min_treshold=1E6, ** kwargs):
 
-        :param time: ndarray (with units)
-        :param concentration: ndarray (with units)
-        :param dose: dose of the test substance (with units)
-        :param ureg: unit registry, allowing to calculate the pk in the respective unit system
-        :param substance: name of compound/substance
-        :param intervention_time: time of intervention (with unit)
+        self._init(time, concentration, ureg, substance, min_treshold, **kwargs)
+        self.pk = self._f_pk()
 
-        :return: pharmacokinetic parameters
-        """
+    def _init(
+            self,
+            time: Quantity,
+            concentration: Quantity,
+            ureg: UnitRegistry,
+            substance: str = "substance",
+            min_treshold=1E6, ** kwargs):
         self.ureg = ureg
         self.Q_ = ureg.Quantity
-
-        if intervention_time is None:
-            intervention_time = self.Q_(0.0, "hr")
-        if dose is None:
-            dose = self.Q_(np.nan, "mg")
 
         if not isinstance(time, Quantity):
             raise ValueError(f"'time' must be a pint Quantity: {type(time)}")
         if not isinstance(concentration, Quantity):
             raise ValueError(f"'concentration' must be a pint Quantity: {type(concentration)}")
-        if not isinstance(dose, Quantity):
-            raise ValueError(f"'dose' must be a pint Quantity: {type(dose)}")
-        if not isinstance(intervention_time, Quantity):
-            raise ValueError(f"'intervention_time' must be a pint Quantity: {type(intervention_time)}")
-
-        # check dimensionality of dose
-        dr = dose.to_base_units().to_reduced_units()  # see https://github.com/hgrecco/pint/issues/1058
-        if not (dr.check("[mass]") or dr.check("[substance]") or dr.check("[mass]/[mass]") or dr.check("[substance]/[mass]")):
-            warnings.warn(f"dose_reduced.dimensionality must either be in '[mass]', '[substance']', '[mass]/[mass]' or '[substance]/[mass]'"
-                          f"The given units are: '{dr.dimensionality}' for {dr.units}. "
-                          f"Check that dose units are correct.")
-            raise ValueError(f"Incorrect dimensionality '{dr.dimensionality}' for dose: {dose.units}")
 
         # check concentration is fitting to time
         assert time.size == concentration.size
@@ -119,18 +113,11 @@ class TimecoursePK(object):
             warnings.warn(f"Very small concentrations values are set to NaN.")
             concentration[concentration * min_treshold < cmax] = np.nan
 
-        # convert dosing time to units of timecourse
-        intervention_time = intervention_time.to(time.units)
-
         self.t = time
         self.c = concentration
-        self.dose = dose
-        self.intervention_time = intervention_time
         self.substance = substance
 
-        self.pk = self._f_pk()
-
-    def _f_pk(self) -> PKParameters:
+    def _f_pk(self) -> PKBaseParameters:
         """ Calculates all pk parameters from given time course.
 
         The returned data structure can be used to
@@ -138,44 +125,19 @@ class TimecoursePK(object):
         - create a visualization with pk_figure
 
         """
-        # calculate all results relative to the intervention time
-        t = self.t - self.intervention_time
         c = self.c
-
+        t = self.t
         # simple pk
         auc = self._auc(t, c)
         tmax, cmax = self._max(t, c)
         tmaxhalf, cmaxhalf = self._max_half(t, c)
-
         [slope, intercept, r_value, p_value, std_err, max_idx] = self._ols_regression(t, c)
-
         kel = self._kel(slope=slope)
         thalf = self._thalf(kel=kel)
         aucinf = self._aucinf(t, c, slope=slope)
 
-        if self.dose is not None and not np.isnan(self.dose.magnitude):
-            # parameters depending on dose
-            vdss = self._vdss(dose=self.dose, intercept=intercept)
-            vd = self._vd(aucinf=aucinf, dose=self.dose, kel=kel)
-            cl = kel * vd
-        else:
-            vd_units = self.dose.units/(auc.units/kel.units)
-            vdss = self.Q_(np.nan, vd_units)
-            vd = self.Q_(np.nan, vd_units)
-            cl = self.Q_(np.nan, kel.units*vd.units)
-
-        # perform unit normalization on volumes
-        vd.to_base_units().to_reduced_units(),  # see https://github.com/hgrecco/pint/issues/1058
-        vdss.to_base_units().to_reduced_units(),  # see https://github.com/hgrecco/pint/issues/1058
-        for vd_par in [vd, vdss]:
-            if vd_par.check('[length] ** 3'):
-                vd_par.ito('liter')
-            elif vd_par.check('[length] ** 3/[mass]'):
-                vd_par.ito('liter/kg')
-
-        return PKParameters(
+        return PKBaseParameters(
             compound=self.substance,
-            dose=self.dose.to_reduced_units(),
             auc=auc.to_reduced_units(),
             aucinf=aucinf.to_reduced_units(),
             tmax=tmax.to_reduced_units(),
@@ -184,9 +146,6 @@ class TimecoursePK(object):
             cmaxhalf=cmaxhalf.to_reduced_units(),
             kel=kel.to_reduced_units(),
             thalf=thalf.to_reduced_units(),
-            vd=vd,
-            vdss=vdss,
-            cl=cl.to_reduced_units(),
             slope=slope.to_reduced_units(),
             intercept=intercept.to_reduced_units(),
             r_value=r_value,
@@ -213,7 +172,7 @@ class TimecoursePK(object):
         if max_index > (len(c) - 4):
             warnings.warn("Regression could not be calculated, "
                           "at least 3 data points after maximum required.")
-            return [self.Q_(np.nan, slope_units), self.Q_(np.nan, intercept_units)] + [np.nan]*4
+            return [self.Q_(np.nan, slope_units), self.Q_(np.nan, intercept_units)] + [np.nan] * 4
 
         # linear regression start regression on data point after maximum
         x = t.magnitude[max_index + 1:]
@@ -339,42 +298,6 @@ class TimecoursePK(object):
     def _thalf_cv(self, kel_cv):
         return np.log(2) / kel_cv
 
-    def _vdss(self, dose, intercept=None):
-        """
-        Apparent volume of distribution.
-        Not a physical space, but a dilution space.
-
-        Definition: Fluid volume that would be required to contain the amount of drug present
-        in the body at the same concentration as in the plasma.
-
-        Calculation: The Vd is calculated as the ratio of the dose present in the body
-        and its plasma concentration, when the distribution of the drug between
-        the tissues and the plasma is at equilibrium. The extrapolated plasma concentration
-        at time 0, C(0), is back-extrapolated from the slope of the elimination phase of
-        the semilogarithmic plasma concentration vs. time decay curve.
-
-        If both the dose (mg/kg) and the drug concentration in plasma
-        (the Y intercept of the terminal component of the plasma drug concentration [PDC] versus time curve)
-        are known, then an "apparent" volume of distribution can be calculated from Vd = dose/PDC.
-        This theoretical volume describes the volume to which the drug must be distributed
-        if the concentration in plasma represents the concentration throughout the body
-        (i.e., distribution has reached equilibrium).
-        The term "apparent" underscores the fact that where the drug is distributed cannot be
-        determined from Vd; only that it goes somewhere.
-        """
-        return dose / self.Q_(np.exp(intercept.magnitude), intercept.units)
-
-    def _vd(self, aucinf, dose, kel):
-        """
-        Apparent volume of distribution.
-        Not a physical space, but a dilution space.
-
-        Volume of distribution is calculated via
-            vd = Dose/(AUC_inf*kel)
-        """
-        vd = dose / (aucinf*kel)
-        return vd
-
     def info(self) -> str:
         """ Information string for given pharmacokinetic information.
 
@@ -384,23 +307,10 @@ class TimecoursePK(object):
         lines.append("-" * 80)
         lines.append(self.pk.compound)
         lines.append("-" * 80)
-        for key in ["slope", "intercept", "r_value", "p_value", "std_err"]:
+        for key in self.pk.regression_parameters:
             lines.append("{:<12}: {:>3.3f}".format(key, getattr(self.pk, key)))
         lines.append("-" * 80)
-        for key in [
-            "dose",
-            "auc",
-            "aucinf",
-            "tmax",
-            "cmax",
-            "tmaxhalf",
-            "cmaxhalf",
-            "kel",
-            "thalf",
-            "vd",
-            "vdss",
-            "cl",
-        ]:
+        for key in self.pk.parameters:
             lines.append(
                 "{:<12}: {:P}".format(key, getattr(self.pk, key))
             )
@@ -483,3 +393,160 @@ class TimecoursePK(object):
             ax.set_xlim(left=0)
             ax.legend()
         return fig
+
+
+
+
+class TimecoursePK(BaseTimecoursePK):
+    """ Class for calculating pharmacokinetics from timecourses. """
+
+    def __init__(self, time: Quantity, concentration: Quantity,
+                 dose: Quantity, ureg: UnitRegistry,
+                 intervention_time: Quantity = None,
+                 substance: str = "substance",
+                 min_treshold=1E6, **kwargs):
+        """Pharmacokinetics parameters are calculated for a single dose experiment.
+
+        TODO: support errors on concentrations which are then used in calculation
+        FIXME: ctype is used in kwargs for "value", "mean", "median", but not
+         processed
+
+        tmax values are reported relative to intervention time
+
+        :param time: ndarray (with units)
+        :param concentration: ndarray (with units)
+        :param dose: dose of the test substance (with units)
+        :param ureg: unit registry, allowing to calculate the pk in the respective unit system
+        :param substance: name of compound/substance
+        :param intervention_time: time of intervention (with unit)
+
+        :return: pharmacokinetic parameters
+        """
+        self._init(time, concentration, ureg, substance, min_treshold, **kwargs)
+        if intervention_time is None:
+            intervention_time = self.Q_(0.0, "hr")
+        if dose is None:
+            dose = self.Q_(np.nan, "mg")
+        if not isinstance(dose, Quantity):
+            raise ValueError(f"'dose' must be a pint Quantity: {type(dose)}")
+        if not isinstance(intervention_time, Quantity):
+            raise ValueError(f"'intervention_time' must be a pint Quantity: {type(intervention_time)}")
+
+        # check dimensionality of dose
+        dr = dose.to_base_units().to_reduced_units()  # see https://github.com/hgrecco/pint/issues/1058
+        if not (dr.check("[mass]") or dr.check("[substance]") or dr.check("[mass]/[mass]") or dr.check("[substance]/[mass]")):
+            warnings.warn(f"dose_reduced.dimensionality must either be in '[mass]', '[substance']', '[mass]/[mass]' or '[substance]/[mass]'"
+                          f"The given units are: '{dr.dimensionality}' for {dr.units}. "
+                          f"Check that dose units are correct.")
+            raise ValueError(f"Incorrect dimensionality '{dr.dimensionality}' for dose: {dose.units}")
+
+        self.dose = dose
+        # convert dosing time to units of timecourse
+        self.intervention_time = intervention_time.to(time.units)
+        self.substance = substance
+        self.pk = self._f_pk()
+
+
+
+    def _f_pk(self) -> PKParameters:
+        """ Calculates all pk parameters from given time course.
+
+        The returned data structure can be used to
+        - create a report with pk_report
+        - create a visualization with pk_figure
+
+        """
+        # calculate all results relative to the intervention time
+        t = self.t - self.intervention_time
+        c = self.c
+
+        # simple pk
+        auc = self._auc(t, c)
+        tmax, cmax = self._max(t, c)
+        tmaxhalf, cmaxhalf = self._max_half(t, c)
+
+        [slope, intercept, r_value, p_value, std_err, max_idx] = self._ols_regression(t, c)
+
+        kel = self._kel(slope=slope)
+        thalf = self._thalf(kel=kel)
+        aucinf = self._aucinf(t, c, slope=slope)
+
+        if self.dose is not None and not np.isnan(self.dose.magnitude):
+            # parameters depending on dose
+            vdss = self._vdss(dose=self.dose, intercept=intercept)
+            vd = self._vd(aucinf=aucinf, dose=self.dose, kel=kel)
+            cl = kel * vd
+        else:
+            vd_units = self.dose.units/(auc.units/kel.units)
+            vdss = self.Q_(np.nan, vd_units)
+            vd = self.Q_(np.nan, vd_units)
+            cl = self.Q_(np.nan, kel.units*vd.units)
+
+        # perform unit normalization on volumes
+        vd.to_base_units().to_reduced_units(),  # see https://github.com/hgrecco/pint/issues/1058
+        vdss.to_base_units().to_reduced_units(),  # see https://github.com/hgrecco/pint/issues/1058
+        for vd_par in [vd, vdss]:
+            if vd_par.check('[length] ** 3'):
+                vd_par.ito('liter')
+            elif vd_par.check('[length] ** 3/[mass]'):
+                vd_par.ito('liter/kg')
+
+        return PKParameters(
+            compound=self.substance,
+            dose=self.dose.to_reduced_units(),
+            auc=auc.to_reduced_units(),
+            aucinf=aucinf.to_reduced_units(),
+            tmax=tmax.to_reduced_units(),
+            cmax=cmax.to_reduced_units(),
+            tmaxhalf=tmaxhalf.to_reduced_units(),
+            cmaxhalf=cmaxhalf.to_reduced_units(),
+            kel=kel.to_reduced_units(),
+            thalf=thalf.to_reduced_units(),
+            vd=vd,
+            vdss=vdss,
+            cl=cl.to_reduced_units(),
+            slope=slope.to_reduced_units(),
+            intercept=intercept.to_reduced_units(),
+            r_value=r_value,
+            p_value=p_value,
+            std_err=std_err,
+            max_idx=max_idx
+        )
+
+
+
+    def _vdss(self, dose, intercept=None):
+        """
+        Apparent volume of distribution.
+        Not a physical space, but a dilution space.
+
+        Definition: Fluid volume that would be required to contain the amount of drug present
+        in the body at the same concentration as in the plasma.
+
+        Calculation: The Vd is calculated as the ratio of the dose present in the body
+        and its plasma concentration, when the distribution of the drug between
+        the tissues and the plasma is at equilibrium. The extrapolated plasma concentration
+        at time 0, C(0), is back-extrapolated from the slope of the elimination phase of
+        the semilogarithmic plasma concentration vs. time decay curve.
+
+        If both the dose (mg/kg) and the drug concentration in plasma
+        (the Y intercept of the terminal component of the plasma drug concentration [PDC] versus time curve)
+        are known, then an "apparent" volume of distribution can be calculated from Vd = dose/PDC.
+        This theoretical volume describes the volume to which the drug must be distributed
+        if the concentration in plasma represents the concentration throughout the body
+        (i.e., distribution has reached equilibrium).
+        The term "apparent" underscores the fact that where the drug is distributed cannot be
+        determined from Vd; only that it goes somewhere.
+        """
+        return dose / self.Q_(np.exp(intercept.magnitude), intercept.units)
+
+    def _vd(self, aucinf, dose, kel):
+        """
+        Apparent volume of distribution.
+        Not a physical space, but a dilution space.
+
+        Volume of distribution is calculated via
+            vd = Dose/(AUC_inf*kel)
+        """
+        vd = dose / (aucinf*kel)
+        return vd

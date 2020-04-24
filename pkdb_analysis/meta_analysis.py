@@ -179,3 +179,4 @@ class MetaAnalysis(object):
         self.add_intervention_info()
         self.add_subject_info()
 
+
