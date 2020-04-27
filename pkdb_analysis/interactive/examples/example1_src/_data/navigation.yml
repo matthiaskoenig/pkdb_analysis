@@ -1,0 +1,76 @@
+- dropdown:
+  - link: /_pages/auc_end_abs_output_abs_intervention/
+    name: "Auc_end [hr\xB7\xB5g/ml] / dosing [g]"
+  - link: /_pages/auc_end_abs_output_rel_intervention/
+    name: "Auc_end [hr\xB7\xB5g/ml] / dosing [g/kg]"
+  - link: /_pages/auc_end_rel_output_abs_intervention/
+    name: "Auc_end [hr\xB7\xB5g/kg/ml] / dosing [g]"
+  - link: /_pages/auc_end_rel_output_rel_intervention/
+    name: "Auc_end [hr\xB7\xB5g/kg/ml] / dosing [g/kg]"
+  link: /#
+  name: auc_end
+- dropdown:
+  - link: /_pages/auc_inf_abs_output_abs_intervention/
+    name: "Auc_inf [g\xB7hr/l] / dosing [g]"
+  - link: /_pages/auc_inf_abs_output_rel_intervention/
+    name: "Auc_inf [g\xB7hr/l] / dosing [g/kg]"
+  - link: /_pages/auc_inf_rel_output_abs_intervention/
+    name: "Auc_inf [g\xB7hr/kg/l] / dosing [g]"
+  - link: /_pages/auc_inf_rel_output_rel_intervention/
+    name: "Auc_inf [g\xB7hr/kg/l] / dosing [g/kg]"
+  link: /#
+  name: auc_inf
+- dropdown:
+  - link: /_pages/vd_abs_output_abs_intervention/
+    name: Vd [l] / dosing [g]
+  - link: /_pages/vd_abs_output_rel_intervention/
+    name: Vd [l] / dosing [g/kg]
+  - link: /_pages/vd_rel_output_abs_intervention/
+    name: Vd [l/kg] / dosing [g]
+  - link: /_pages/vd_rel_output_rel_intervention/
+    name: Vd [l/kg] / dosing [g/kg]
+  link: /#
+  name: vd
+- dropdown:
+  - link: /_pages/thalf_abs_output_abs_intervention/
+    name: Thalf [hr] / dosing [g]
+  - link: /_pages/thalf_abs_output_rel_intervention/
+    name: Thalf [hr] / dosing [g/kg]
+  link: /#
+  name: thalf
+- dropdown:
+  - link: /_pages/clearance_abs_output_abs_intervention/
+    name: "Clearance [ml/m\xB2/min] / dosing [g]"
+  - link: /_pages/clearance_abs_output_rel_intervention/
+    name: "Clearance [ml/m\xB2/min] / dosing [g/kg]"
+  - link: /_pages/clearance_rel_output_abs_intervention/
+    name: "Clearance [ml/kg/m\xB2/min] / dosing [g]"
+  - link: /_pages/clearance_rel_output_rel_intervention/
+    name: "Clearance [ml/kg/m\xB2/min] / dosing [g/kg]"
+  link: /#
+  name: clearance
+- dropdown:
+  - link: /_pages/cmax_abs_output_abs_intervention/
+    name: "Cmax [\xB5g/ml] / dosing [g]"
+  - link: /_pages/cmax_abs_output_rel_intervention/
+    name: "Cmax [\xB5g/ml] / dosing [g/kg]"
+  link: /#
+  name: cmax
+- dropdown:
+  - link: /_pages/kel_abs_output_abs_intervention/
+    name: Kel [1/min] / dosing [g]
+  - link: /_pages/kel_abs_output_rel_intervention/
+    name: Kel [1/min] / dosing [g/kg]
+  - link: /_pages/kel_rel_output_abs_intervention/
+    name: Kel [1/kg/min] / dosing [g]
+  - link: /_pages/kel_rel_output_rel_intervention/
+    name: Kel [1/kg/min] / dosing [g/kg]
+  link: /#
+  name: kel
+- dropdown:
+  - link: /_pages/tmax_abs_output_abs_intervention/
+    name: Tmax [hr] / dosing [g]
+  - link: /_pages/tmax_abs_output_rel_intervention/
+    name: Tmax [hr] / dosing [g/kg]
+  link: /#
+  name: tmax

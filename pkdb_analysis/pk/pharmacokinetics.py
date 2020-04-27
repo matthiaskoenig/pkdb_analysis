@@ -513,8 +513,6 @@ class TimecoursePK(TimecoursePKNoDosing):
             max_idx=max_idx
         )
 
-
-
     def _vdss(self, dose, intercept=None):
         """
         Apparent volume of distribution.
