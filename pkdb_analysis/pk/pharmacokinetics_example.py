@@ -8,7 +8,7 @@ import warnings
 import pandas as pd
 from pkdb_analysis.pk.pharmacokinetics import TimecoursePK, TimecoursePKNoDosing
 from matplotlib import pyplot as plt
-from pkdb_analysis.tests.constants import DATA_PATH
+from pkdb_analysis.tests import TESTDATA_PATH
 from pathlib import Path
 
 import pint
@@ -42,7 +42,7 @@ def example1() -> List[TimecoursePK]:
     :return:
     """
     results = []
-    df = pd.read_csv(DATA_PATH / "pk" / "data_example1.csv", sep="\t", na_values="NA")
+    df = pd.read_csv(TESTDATA_PATH / "pk" / "data_example1.csv", sep="\t", na_values="NA")
 
     # ------------------------------------------
     # Pharmacokinetic parameter for caffeine
@@ -76,7 +76,7 @@ def example1_NoDosing() -> List[TimecoursePKNoDosing]:
     :return:
     """
     results = []
-    df = pd.read_csv(DATA_PATH / "pk" / "data_example1.csv", sep="\t", na_values="NA")
+    df = pd.read_csv(TESTDATA_PATH / "pk" / "data_example1.csv", sep="\t", na_values="NA")
 
     # ------------------------------------------
     # Pharmacokinetic parameter for caffeine
@@ -111,7 +111,7 @@ def example2() -> List[TimecoursePK]:
     :return:
     """
     results = []
-    df = pd.read_csv(DATA_PATH / "pk" / "data_example2.csv", sep="\t", na_values="NA")
+    df = pd.read_csv(TESTDATA_PATH / "pk" / "data_example2.csv", sep="\t", na_values="NA")
 
     # ------------------------------------------
     # Pharmacokinetic parameter for caffeine
@@ -155,7 +155,7 @@ def example_Kim2011_Fig2() -> List[TimecoursePK]:
     :return:
     """
     results = []
-    df = pd.read_csv(DATA_PATH / "pk" / "Kim2011_Fig2.tsv", sep="\t", na_values="NA")
+    df = pd.read_csv(TESTDATA_PATH / "pk" / "Kim2011_Fig2.tsv", sep="\t", na_values="NA")
     df = df[(df.interventions == "paracetamol1000mg")]
 
     # ------------------------------------------
@@ -186,7 +186,7 @@ def example_Divoll1982_Fig1() -> List[TimecoursePK]:
     :return:
     """
     results = []
-    df = pd.read_csv(DATA_PATH / "pk" / "Divoll1982_Fig1.tsv", sep="\t", na_values="NA")
+    df = pd.read_csv(TESTDATA_PATH / "pk" / "Divoll1982_Fig1.tsv", sep="\t", na_values="NA")
 
     # ------------------------------------------
     # Pharmacokinetic parameter for acetaminophen
@@ -215,7 +215,7 @@ def example_midazolam() -> List[TimecoursePK]:
     :return:
     """
     results = []
-    df = pd.read_csv(DATA_PATH / "pk" / "midazolam.tsv", sep="\t", na_values="NA")
+    df = pd.read_csv(TESTDATA_PATH / "pk" / "midazolam.tsv", sep="\t", na_values="NA")
 
     # ------------------------------------------
     # Pharmacokinetic parameter for acetaminophen

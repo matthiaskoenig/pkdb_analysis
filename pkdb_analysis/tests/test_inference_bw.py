@@ -5,7 +5,9 @@ import numpy as np
 from pkdb_analysis.data import PKData
 from pkdb_analysis.inference.body_weight import infer_output, ureg, infer_intervention, infer_weight
 from pkdb_analysis.meta_analysis import MetaAnalysis
-from pkdb_analysis.tests.data.test_data import INDIVIDUAL_OUTPUT, GROUP_OUTPUT, INDIVIDUAL_NO_BODYWEIGHT_OUTPUT
+from pkdb_analysis.tests.data.group_data import INDIVIDUAL_OUTPUT, GROUP_OUTPUT, INDIVIDUAL_NO_BODYWEIGHT_OUTPUT
+
+from pkdb_analysis.tests import TEST_HDF5
 
 
 def test_output_inference_by_body_weight1():
@@ -31,10 +33,12 @@ def test_output_inference_by_body_weight2():
     assert np.isclose(output.intervention_value, 0.8)
     assert ureg(output.intervention_unit) == ureg("ng")
 
+
 def test_output_inference_by_body_weight3():
     series = pd.Series(INDIVIDUAL_NO_BODYWEIGHT_OUTPUT)
     output = infer_output(series)
     assert output.isna().all()
+
 
 def test_intervention_inference_by_body_weight1():
     series = pd.Series(INDIVIDUAL_OUTPUT)
@@ -65,8 +69,7 @@ def test_inference_by_body_weight2():
 
 
 def test_inference_by_body_weight3():
-    h5_path = Path(".") / "data" / "test.h5"
-    test_data = PKData.from_hdf5(h5_path)
+    test_data = PKData.from_hdf5(TEST_HDF5)
     ma = MetaAnalysis(test_data, ["caffeine"], "test/url/")
     ma.create_results()
     results_inferred = infer_weight(ma.results)

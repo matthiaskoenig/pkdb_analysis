@@ -150,6 +150,7 @@ def test_example1():
     assert pk.vd.units == tcpk.ureg.Unit("liter")
     show_results(results)
 
+
 def test_example1_NoDosing():
     results = example1_NoDosing()
     tcpk = results[0]
@@ -162,6 +163,7 @@ def test_example1_NoDosing():
     assert pk.tmaxhalf == tcpk.Q_(0.5, "hr")
     assert pk.cmax.units == tcpk.ureg.Unit("mg/l")
     show_results(results)
+
 
 def test_example2():
     results = example2()

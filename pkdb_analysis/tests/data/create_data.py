@@ -1,14 +1,16 @@
 """
 Creates test data
 """
+
 from pkdb_analysis import PKData, PKFilter
 from pkdb_analysis.query import PKDB
 
 
-def load_test_studies():
-    """ loads test studies from database. Make sure test studies are uploaded to database.
-        """
+def load_test_studies() -> PKData:
+    """ Loads test studies from database.
 
+    Ensure test studies are uploaded to database before running this script.
+    """
     test_study_names = ["Test1", "Test2", "Test3", "Test4"]
     url_study_names = "__".join(test_study_names)
     pkfilter = PKFilter()
@@ -18,10 +20,7 @@ def load_test_studies():
 
 
 if __name__ == "__main__":
-    from pathlib import Path
-
-    data = load_test_studies()
-    data._concise()
-    print(data)
-    h5_path = Path(".") / "data" / "test.h5"
-    data.to_hdf5(h5_path)
+    from pkdb_analysis.tests import TEST_HDF5
+    pkdata = load_test_studies()
+    pkdata._concise()
+    pkdata.to_hdf5(TEST_HDF5)

@@ -1,5 +1,5 @@
 from pkdb_analysis.data import PKData
-from pkdb_analysis.tests.constants import TEST_HDF5
+from pkdb_analysis.tests import TEST_HDF5
 
 
 def _load_test_data():

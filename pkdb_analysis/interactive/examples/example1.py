@@ -1,20 +1,16 @@
 """
-This script creates a interactive pharmacokinetics plot.
+This script creates an interactive pharmacokinetics plot.
 """
+import pandas as pd
 from pathlib import Path
 
 from pkdb_analysis.filter import f_smoking, f_n_smoking, f_n_oc, f_effective_n_oc, f_oc
 from pkdb_analysis.interactive.create import interactive_plot_factory, PlottingParameter as PP, LegendArgs as LA
 from pkdb_analysis import PKData
 from pkdb_analysis.query import PKDB
-import pandas as pd
 
-# Path to the results
+from pkdb_analysis.tests import TEST_HDF5
 
-
-
-
-PATH = f'./example1_src/'
 
 # substances used in the interventions
 INTERVENTION_SUBSTANCES = {"caffeine"}
@@ -36,7 +32,6 @@ PLOTTING_CATEGORIES = [
 ]
 
 # Change formating on specific values in specific columns
-
 REPLACEMENTS = {
     "sex": {"NR": "not reported"},
     "intervention_route": {"iv": "intravenous"},
@@ -52,7 +47,6 @@ MULTI_LEGEND = {"Study": "study_name"}
 # The categories can be color coded.
 
 MULTI_COLOR_LEGEND = {
-
     "Data type": LA("data_type"),
     "Outlier": LA("outlier", [False, ]),
     "Sex": LA("sex"),
@@ -64,20 +58,21 @@ MULTI_COLOR_LEGEND = {
 
 }
 # Information shown on hover.
-TOOLTIP = ['study_sid:N',
-           'study_name:N',
-           "url:N",
-           'output_pk:N',
-           "group_name:N",
-           "individual_name:N",
-           'intervention_value:Q',
-           'y:Q',
-           "intervention_names:N",
-           "intervention_number:Q",
-           "weight:Q",
-           "unit_weight:N",
-           "sex:N",
-           ]
+TOOLTIP = [
+    'study_sid:N',
+    'study_name:N',
+    "url:N",
+    'output_pk:N',
+    "group_name:N",
+    "individual_name:N",
+    'intervention_value:Q',
+    'y:Q',
+    "intervention_names:N",
+    "intervention_number:Q",
+    "weight:Q",
+    "unit_weight:N",
+    "sex:N",
+]
 
 
 def outlier_studies(df):
@@ -118,15 +113,10 @@ ADDITIONAL_INFORMATION = {
 }
 
 
-def create_plots():
+def create_plots(path):
+    pkdata = PKData.from_hdf5(TEST_HDF5)
 
-    H5_PATH = Path(__file__).parent.parent.parent / "tests" / "data" / "test.h5"
-    print(H5_PATH)
-
-    #H5_PATH = "../../tests/data/test.h5"
-    pkdata = PKData.from_hdf5(H5_PATH)
-
-    KWARGS = {
+    kwargs = {
         "plotting_categories": PLOTTING_CATEGORIES,
         "intervention_substances": INTERVENTION_SUBSTANCES,
         "output_substances": OUTPUT_SUBSTANCES,
@@ -136,16 +126,14 @@ def create_plots():
         "tooltip": TOOLTIP,
         "multi_legend": MULTI_LEGEND,
         "url": URL,
-        "path": PATH,
         "create_json": True,
         "replacements": REPLACEMENTS,
-
     }
 
-    interactive_plot_factory(pkdata, **KWARGS)
+    interactive_plot_factory(pkdata, path=path, **kwargs)
 
 
 if __name__ == "__main__":
-    create_plots()
-
-
+    # !Delete the output after running!
+    output_path = f'./example1_src/'
+    create_plots(path=output_path)
