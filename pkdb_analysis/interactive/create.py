@@ -339,7 +339,7 @@ def create_navigation_file(results_dict, path):
             this_nav["dropdown"].append(this_dropdown_item)
 
         navigation.append(this_nav)
-        with open(f"{path}_data/navigation.yml", "w") as f:
+        with open(path / "_data"/ "navigation.yml", "w") as f:
             f.write(yaml.dump(navigation))
 
 
@@ -358,7 +358,7 @@ def create_pages(results_dict, path):
                 "hero_height": "80px",
                 "json": f"{measurement_type}_{group}.json"
             }
-            with open(f"{path}_pages/{measurement_type}_{group}.md", "w") as f:
+            with open(path / "_pages"/ f"{measurement_type}_{group}.md", "w") as f:
                 f.write("---\n")
                 f.write(yaml.dump(content))
                 f.write("---\n")
@@ -367,7 +367,7 @@ def create_pages(results_dict, path):
 def create_plots(results_dict,path, multi_legend, multi_color_legend, tooltip, create_json):
     for measurement_type, result_infer in results_dict.items():
         for group, df in result_infer.groupby("unit_category"):
-            file_name = f'{path}/_static/reports/{measurement_type}_{group}'
+            file_name = path / "_static" / "reports" / f"{measurement_type}_{group}"
             multi_color_legend_fields = [mc.field for mc in multi_color_legend.values()]
             check_legends(df, [*multi_color_legend_fields,*multi_legend.values()])
             create_interactive_plot(df, file_name, tooltip=tooltip, multi_legend=multi_legend, multi_color_legend=multi_color_legend, create_json=create_json)
@@ -417,7 +417,7 @@ def interactive_plot_factory(pkdata,
 
     data_dict = pkdata_by_measurement_type(pkdata, plotting_categories, intervention_substances, output_substances,exclude_study_names)
     results_dict = results(data_dict=data_dict, intervention_substances=intervention_substances, additional_information=additional_information,url=url, plotting_categories=plotting_categories, replacements=replacements)
-    copy_dir(Path(__file__).parent / "template", Path(path), "_".join(output_substances))
+    copy_dir(Path(__file__).parent / "template", path, "_".join(output_substances))
     create_navigation_file(results_dict, path)
     create_pages(results_dict, path)
     create_plots(results_dict, path, multi_legend, multi_color_legend, tooltip, create_json=create_json)

@@ -1,5 +1,4 @@
 import pytest
-from pathlib import Path
 from pkdb_analysis.interactive.examples.example1 import create_plots
 
 
