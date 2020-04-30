@@ -135,5 +135,7 @@ def create_plots(path):
 
 if __name__ == "__main__":
     # !Delete the output after running!
-    output_path = Path(__file__)/ "example1_src"
+    output_path = Path(__file__).parent / "example1_src"
+    #if not output_path.exists():
+    #    output_path.mkdir()
     create_plots(path=output_path)

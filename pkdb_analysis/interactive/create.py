@@ -339,6 +339,8 @@ def create_navigation_file(results_dict, path):
             this_nav["dropdown"].append(this_dropdown_item)
 
         navigation.append(this_nav)
+        path_data = path / "_data"
+        path_data.mkdir(exist_ok=True)
         with open(path / "_data"/ "navigation.yml", "w") as f:
             f.write(yaml.dump(navigation))
 
@@ -358,6 +360,8 @@ def create_pages(results_dict, path):
                 "hero_height": "80px",
                 "json": f"{measurement_type}_{group}.json"
             }
+            path_pages = path / "_pages"
+            path_pages.mkdir(exist_ok=True)
             with open(path / "_pages"/ f"{measurement_type}_{group}.md", "w") as f:
                 f.write("---\n")
                 f.write(yaml.dump(content))
@@ -367,7 +371,9 @@ def create_pages(results_dict, path):
 def create_plots(results_dict,path, multi_legend, multi_color_legend, tooltip, create_json):
     for measurement_type, result_infer in results_dict.items():
         for group, df in result_infer.groupby("unit_category"):
-            file_name = path / "_static" / "reports" / f"{measurement_type}_{group}"
+            path_reports = path / "_static" / "reports"
+            path_reports.mkdir(parents=True, exist_ok=True)
+            file_name = path_reports / f"{measurement_type}_{group}"
             multi_color_legend_fields = [mc.field for mc in multi_color_legend.values()]
             check_legends(df, [*multi_color_legend_fields,*multi_legend.values()])
             create_interactive_plot(df, file_name, tooltip=tooltip, multi_legend=multi_legend, multi_color_legend=multi_color_legend, create_json=create_json)
