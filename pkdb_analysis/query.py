@@ -139,7 +139,7 @@ class PKDB(object):
         ]:
             raise ValueError(f"{name} not supported")
 
-        url = os.path.join(API_URL, f'{name}/')
+        url = urlparse.urljoin(API_URL, f'{name}/')
         return cls._get_data(url, cls.get_authentication_headers(API_BASE, USER, PASSWORD), **parameters)
 
     @classmethod
@@ -152,7 +152,7 @@ class PKDB(object):
         for key, value in auth_dict.items():
             if value is None:
                 return {}
-        auth_token_url = os.path.join(api_base, "api-token-auth/")
+        auth_token_url = urlparse.urljoin(api_base, "api-token-auth/")
         try:
             response = requests.post(auth_token_url, json=auth_dict)
         except requests.exceptions.ConnectionError as e:
