@@ -140,7 +140,6 @@ class PKDB(object):
             raise ValueError(f"{name} not supported")
 
         url = API_URL + f'/{name}/'
-        print(url)
         return cls._get_data(url, cls.get_authentication_headers(API_BASE, USER, PASSWORD), **parameters)
 
     @classmethod
