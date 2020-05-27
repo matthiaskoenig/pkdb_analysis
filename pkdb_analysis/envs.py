@@ -17,7 +17,7 @@ try:
     USER = os.environ['USER']
     PASSWORD = os.environ['PASSWORD']
 
-    API_URL = API_BASE + "api/v1"
+    API_URL = API_BASE + "/api/v1"
 
 except KeyError:
 
