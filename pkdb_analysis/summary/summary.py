@@ -8,6 +8,7 @@ from pkdb_analysis.data import PKData
 from pathlib import Path
 import pandas as pd
 from typing import Dict, Union, List, Sequence
+from gspread_pandas import Spread
 
 
 @dataclass
@@ -414,7 +415,7 @@ def format(studies, study_keys):
     studies.sort_values(by="publication date", inplace=True)
     return studies, study_keys
 
-def reporting_summary(pkdata: PKData, path: Path, report_type="basic", substances=[]):
+def reporting_summary(pkdata: PKData, path: Path, google_sheets:str, report_type="Studies", substances=[]):
     """ creates a summary table from a pkdata objects  and saves it to path
     :param pkdata:
     :return:
@@ -422,22 +423,32 @@ def reporting_summary(pkdata: PKData, path: Path, report_type="basic", substance
     studies = pkdata.studies
     study_keys = []
 
-    if report_type == "basic":
+    if report_type == "Studies":
         studies, study_keys = basics_table(studies, substances, pkdata, study_keys)
+        header_start = 'A4'
 
-    elif report_type == "timecourse":
+    elif report_type == "Timecourses":
         studies, study_keys = timecourses_table(studies, substances, pkdata, study_keys)
+        header_start = 'A4'
 
-    elif report_type == "pks":
+    elif report_type == "Pharmacokinetics":
         studies, study_keys = pks_table(studies, substances, pkdata, study_keys)
+        header_start = 'A5'
+    else:
+        raise InputError("reporting_type has to be one of the following: ['Studies', 'Timecourses', 'Pharmacokinetics']")
 
     studies, study_keys = format(studies, study_keys)
+
+    if google_sheets is not None:
+        spread = Spread(google_sheets)
+        spread.df_to_sheet(studies[study_keys], index=False, headers=False, sheet=report_type, start=header_start, replace=True)
 
     if str(path).endswith(".xlsx"):
         studies[study_keys].to_excel(path)
 
     elif str(path).endswith(".tsv"):
         studies[study_keys].to_csv(path, sep='\t')
+
     else:
         raise AssertionError("wrong path ending (tsv and xlsx are supported")
 
