@@ -16,7 +16,7 @@ alt.data_transformers.disable_max_rows()
 #alt.data_transformers.enable('json')
 
 ureg = pint.UnitRegistry()
-ureg.define('yr = year')
+# ureg.define('yr = year')  # FIXME: remove
 
 
 class LegendArgs(object):

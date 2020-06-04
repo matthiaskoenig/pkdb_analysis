@@ -4,6 +4,7 @@ Functions for working with PKDB data.
 * FIXME: specify which methods modify or copy data frames
 """
 import logging
+from pathlib import Path
 from abc import ABC
 from collections import OrderedDict
 from copy import copy
@@ -260,7 +261,7 @@ class PKData(object):
         return PKData(**resulting_kwargs)
 
     @staticmethod
-    def from_hdf5(path) -> 'PKData':
+    def from_hdf5(path: Path) -> 'PKData':
         """ Load data from HDF5 serialization.
 
         :param path: path to HDF5.
@@ -277,7 +278,7 @@ class PKData(object):
 
         return PKData(**data_dict)
 
-    def to_hdf5(self, path) -> None:
+    def to_hdf5(self, path: Path) -> None:
         """ Saves data HDF5
 
         :param path: path to HDF5.
