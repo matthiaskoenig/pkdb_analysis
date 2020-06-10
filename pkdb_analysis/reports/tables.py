@@ -125,7 +125,9 @@ class TableReport(object):
                 header_size = 5
 
             spread = Spread(google_sheets)
-            sheet = spread.find_sheet(report_type)
+            sheet_name = report_type.name.lower().capitalize()
+            print(f"Writing: {google_sheets}.{sheet_name}")
+            sheet = spread.find_sheet(sheet_name)
             sheet.resize(header_size, len(table_df.columns))
 
             spread.df_to_sheet(
