@@ -5,9 +5,8 @@ import pandas as pd
 from pathlib import Path
 
 from pkdb_analysis.filter import f_smoking, f_n_smoking, f_n_oc, f_effective_n_oc, f_oc
-from pkdb_analysis.interactive.create import interactive_plot_factory, PlottingParameter as PP, LegendArgs as LA
+from pkdb_analysis.reports.interactive import interactive_plot_factory, PlottingParameter as PP, LegendArgs as LA
 from pkdb_analysis import PKData
-from pkdb_analysis.query import PKDB
 
 from pkdb_analysis.tests import TEST_HDF5
 
