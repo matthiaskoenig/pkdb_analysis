@@ -246,8 +246,38 @@ def timecourses_table(studies, substances, pkdata, study_keys):
     return studies, study_keys
 
 def pks_table(studies, substances, pkdata, study_keys):
+    pks_info = {}
+    for substance in substances:
+        pks_info_substance = {
+            f"caffeine_plasma/blood": Parameter(substance="caffeine", value_field=["tissue"],values=["plasma", "blood", "serum"], groupby= False),
+            f"{substance}_urine": Parameter(substance=f"{substance}", value_field=["tissue"],values=["urine"], groupby= False),
+            f"{substance}_saliva": Parameter(substance=f"{substance}", value_field=["tissue"],values=["saliva"], groupby= False),
+            f"{substance}_vd_individual": Parameter(measurement_types=["vd"], substance=f"{substance}", value_field=["value"], only_individual=True),
+            f"{substance}_vd_group": Parameter(measurement_types=["vd"], substance=f"{substance}", value_field=["mean", "median"], only_group=True),
+            f"{substance}_vd_error": Parameter(measurement_types=["vd"], substance=f"{substance}", value_field=["sd", "se", "cv"], only_group=True),
+            f"{substance}_clearance_individual": Parameter(measurement_types=["clearance"], substance=f"{substance}", value_field=["value"], only_individual=True),
+            f"{substance}_clearance_group": Parameter(measurement_types=["clearance"], substance=f"{substance}", value_field=["mean", "median"],only_group=True),
+            f"{substance}_clearance_error": Parameter(measurement_types=["clearance"], substance=f"{substance}", value_field=["sd", "se", "cv"], only_group=True),
+            f"{substance}_auc_individual": Parameter(measurement_types=["auc_end", "auc_inf"], substance=f"{substance}",value_field=["value"], only_individual=True),
+            f"{substance}_auc_group": Parameter(measurement_types=["auc_end", "auc_inf"], substance=f"{substance}", value_field=["mean", "median"], only_group=True),
+            f"{substance}_auc_error": Parameter(measurement_types=["auc_end", "auc_inf"], substance=f"{substance}",value_field=["sd", "se", "cv"], only_group=True),
+            f"{substance}_thalf_individual": Parameter(measurement_types=["thalf"], substance=f"{substance}", value_field=["value"], only_individual=True),
+            f"{substance}_thalf_group": Parameter(measurement_types=["thalf"], substance=f"{substance}",value_field=["mean", "median"], only_group=True),
+            f"{substance}_thalf_error": Parameter(measurement_types=["thalf"], substance=f"{substance}",value_field=["sd", "se", "cv"], only_group=True),
+            f"{substance}_cmax_individual": Parameter(measurement_types=["cmax"], substance=f"{substance}", value_field=["value"],only_individual=True),
+            f"{substance}_cmax_group": Parameter(measurement_types=["cmax"], substance=f"{substance}",value_field=["mean", "median"], only_group=True),
+            f"{substance}_cmax_error": Parameter(measurement_types=["cmax"], substance=f"{substance}",value_field=["sd", "se", "cv"], only_group=True),
+            f"{substance}_tmax_individual": Parameter(measurement_types=["tmax"], substance=f"{substance}", value_field=["value"],only_individual=True),
+            f"{substance}_tmax_group": Parameter(measurement_types=["tmax"], substance=f"{substance}", value_field=["mean", "median"], only_group=True),
+            f"{substance}_tmax_error": Parameter(measurement_types=["tmax"], substance=f"{substance}",value_field=["sd", "se", "cv"], only_group=True),
+            f"{substance}_kel_individual": Parameter(measurement_types=["kel"], substance=f"{substance}", value_field=["value"],only_individual=True),
+            f"{substance}_kel_group": Parameter(measurement_types=["kel"], substance=f"{substance}",value_field=["mean", "median"], only_group=True),
+            f"{substance}_kel_error": Parameter(measurement_types=["kel"], substance=f"{substance}",value_field=["sd", "se", "cv"], only_group=True)
+        }
+        pks_info = {**pks_info, **pks_info_substance}
 
-    pks_info = {
+    """  
+        pks_info = { 
         "caffeine_plasma/blood": Parameter(substance="caffeine", value_field=["tissue"],values=["plasma", "blood", "serum"], groupby= False),
         "caffeine_urine": Parameter(substance="caffeine", value_field=["tissue"],values=["urine"], groupby= False),
         "caffeine_saliva": Parameter(substance="caffeine", value_field=["tissue"],values=["saliva"], groupby= False),
@@ -401,6 +431,7 @@ def pks_table(studies, substances, pkdata, study_keys):
                                            value_field=["sd", "se", "cv"], only_group=True),
 
     }
+    """
     studies = studies.df.apply(_add_information, args=(pkdata, pks_info, "outputs"), axis=1)
     study_keys.extend(pks_info.keys())
     studies = studies.fillna(" ")
@@ -414,9 +445,34 @@ def format(studies, study_keys):
     study_keys = ["PKDB identifier", "name", "PMID", "publication date", ] + study_keys
     studies.sort_values(by="publication date", inplace=True)
     return studies, study_keys
+def clear_sheat(spread, header_size, column_length):
+    spread.update_cells(
+        start=(1, header_size),
+        end=(1, 1),
+        vals=["" for i in range(0, column_length * 1)],
+    )
 
 def reporting_summary(pkdata: PKData, path: Path, google_sheets:str, report_type="Studies", substances=[]):
-    """ creates a summary table from a pkdata objects  and saves it to path
+    """ creates a summary table from a pkdata objects  and saves it to path.
+    :param google_sheets:
+        The admin needs to create a excel sheet in his google drive. The name of the excel sheet has to be entered as
+        the google_sheets argument.
+        IMPORTANT:
+            For google sheets to work, ask admin for the google_secret.json and copy it in the config folder.
+            cp  ~/.config/gspread_pandas/google_secret.json
+        FOR ADMIN:
+
+            1. Go to the Google APIs Console -> https://console.developers.google.com/
+            2. Create a new project.
+            3. Click Enable API and Services. Search for and enable the Google Drive API.
+               Click Enable API and Services. Search for and enable the Google Sheets API.
+            4. Create credentials for a Web Server to access Application Data.
+            5. Name the service account and grant it a Project Role of Editor.
+            6. Download the JSON file.
+            7. Copy the JSON file to your code directory and rename it to google_secret.json
+
+
+google_sheets
     :param pkdata:
     :return:
     """
@@ -426,22 +482,28 @@ def reporting_summary(pkdata: PKData, path: Path, google_sheets:str, report_type
     if report_type == "Studies":
         studies, study_keys = basics_table(studies, substances, pkdata, study_keys)
         header_start = 'A4'
+        header_size = 4
 
     elif report_type == "Timecourses":
         studies, study_keys = timecourses_table(studies, substances, pkdata, study_keys)
         header_start = 'A4'
+        header_size = 4
 
     elif report_type == "Pharmacokinetics":
         studies, study_keys = pks_table(studies, substances, pkdata, study_keys)
         header_start = 'A5'
+        header_size = 5
+
     else:
-        raise InputError("reporting_type has to be one of the following: ['Studies', 'Timecourses', 'Pharmacokinetics']")
+        raise ValueError("reporting_type has to be one of the following: ['Studies', 'Timecourses', 'Pharmacokinetics']")
 
     studies, study_keys = format(studies, study_keys)
 
     if google_sheets is not None:
         spread = Spread(google_sheets)
-        spread.df_to_sheet(studies[study_keys], index=False, headers=False, sheet=report_type, start=header_start, replace=True)
+        sheet = spread.find_sheet(report_type)
+        sheet.resize(header_size, len(study_keys))
+        spread.df_to_sheet(studies[study_keys], index=False, headers=False, sheet=report_type, start=header_start, replace=False)
 
     if str(path).endswith(".xlsx"):
         studies[study_keys].to_excel(path)
