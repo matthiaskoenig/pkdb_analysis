@@ -457,11 +457,12 @@ def reporting_summary(pkdata: PKData, path: Path, google_sheets:str, report_type
     :param google_sheets:
         The admin needs to create a excel sheet in his google drive.
         The name of the excel sheet has to be entered as the google_sheets argument.
+
         IMPORTANT:
             For google sheets to work, ask admin for the google_secret.json and copy it in the config folder.
             cp  ~/.config/gspread_pandas/google_secret.json
-        FOR ADMIN:
 
+        FOR ADMIN:
             1. Go to the Google APIs Console -> https://console.developers.google.com/
             2. Create a new project.
             3. Click Enable API and Services. Search for and enable the Google Drive API.
