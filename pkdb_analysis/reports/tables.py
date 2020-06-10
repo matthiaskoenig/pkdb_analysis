@@ -107,11 +107,13 @@ class TableReport(object):
                 f"is: {type(report_type), report_type}"
             )
 
+        print(f"Create TableReport: {report_type}")
+
         if report_type == TableReportTypes.STUDIES:
             table_df = self.studies_table()
-        elif report_type == "Timecourses":
-            table_df = self._timecourses_table()
-        elif report_type == "Pharmacokinetics":
+        elif report_type == TableReportTypes.TIMECOURSES:
+            table_df = self.timecourses_table()
+        elif report_type == TableReportTypes.PHARMACOKINETICS:
             table_df = self.pks_table()
 
         if google_sheets is not None:
@@ -217,7 +219,7 @@ class TableReport(object):
         studies_group[["Subjects_individual", "Subjects_groups"]] = studies_group[
             ["Subjects_individual", "Subjects_groups"]].astype(int)
 
-        studies_individuals = table_df.df.apply(
+        studies_individuals = table_df.apply(
             self._add_information,
             args=(self.pkdata, subject_info, "individuals"),
             axis=1
@@ -242,7 +244,8 @@ class TableReport(object):
         # reformating things
         table_keys, table_df = self._format_table_information(table_df=table_df,
                                                               table_keys=table_keys)
-        return table_df[table_keys]
+        table_final_df = table_df[table_keys]
+        return table_final_df
 
     def timecourses_table(self) -> pd.DataFrame:
         table_keys = []
