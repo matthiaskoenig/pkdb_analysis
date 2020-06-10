@@ -455,8 +455,8 @@ def clear_sheat(spread, header_size, column_length):
 def reporting_summary(pkdata: PKData, path: Path, google_sheets:str, report_type="Studies", substances=[]):
     """ creates a summary table from a pkdata objects  and saves it to path.
     :param google_sheets:
-        The admin needs to create a excel sheet in his google drive. The name of the excel sheet has to be entered as
-        the google_sheets argument.
+        The admin needs to create a excel sheet in his google drive.
+        The name of the excel sheet has to be entered as the google_sheets argument.
         IMPORTANT:
             For google sheets to work, ask admin for the google_secret.json and copy it in the config folder.
             cp  ~/.config/gspread_pandas/google_secret.json
