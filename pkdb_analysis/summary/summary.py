@@ -472,10 +472,6 @@ def reporting_summary(pkdata: PKData, path: Path, google_sheets:str, report_type
             6. Download the JSON file.
             7. Copy the JSON file to your code directory and rename it to google_secret.json
 
-
-google_sheets
-    :param pkdata:
-    :return:
     """
     studies = pkdata.studies
     study_keys = []
