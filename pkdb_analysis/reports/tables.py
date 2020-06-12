@@ -124,15 +124,15 @@ class TableReport(object):
                 header_start = 'A5'
                 header_size = 5
 
-            spread = Spread(google_sheets)
             sheet_name = report_type.name.lower().capitalize()
             print(f"Writing: {google_sheets}.{sheet_name}")
+            spread = Spread(google_sheets)
             sheet = spread.find_sheet(sheet_name)
             sheet.resize(header_size, len(table_df.columns))
 
             spread.df_to_sheet(
                 table_df, index=False, headers=False,
-                sheet=report_type, start=header_start, replace=False
+                sheet=sheet_name, start=header_start, replace=False
             )
 
         if str(table_path).endswith(".xlsx"):
