@@ -37,6 +37,10 @@ By default the develop server is used.
 
 ## Changelog
 
+### v0.1.5
+* updated dependencies
+* bugfix pypi installation
+
 ### v0.1.4
 * packaging interactive plot resources
 * testing on installation
