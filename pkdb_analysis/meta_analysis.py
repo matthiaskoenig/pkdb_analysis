@@ -1,8 +1,9 @@
 import pandas as pd
+import numpy as np
 
 from pkdb_analysis.analysis import figure_category
 from pkdb_analysis.filter import pk_info, f_healthy, f_n_healthy
-from pkdb_analysis.weight_inference import infer_weight
+from pkdb_analysis.inference.body_weight import infer_weight
 
 INTERVENTION_FIELDS = ["substance", "value", "unit", "route", "form", "application"]
 NUMERIC_FIELDS_NO_VALUE = ["mean", "min", "max", "median", "count", "sd", "se", "unit"]
@@ -33,53 +34,42 @@ def data_type(d):
     if d["calculated"]:
         return "from timecourse"
     elif d["inferred"]:
-        return "from body weight"
+        return "from bodyweight"
     else:
-        return "from publication"
+        return "publication"
 
 class MetaAnalysis(object):
 
-    def __init__(self, pkdata,intervention_substance):
+    def __init__(self, pkdata,intervention_substances, url):
         self.pkdata = pkdata
         self.results = None
         self.group_pk = pkdata.groups.pk
         self.individual_pk = pkdata.individuals.pk
         self.intervention_pk = pkdata.interventions.pk
-        self.intervention_substance = intervention_substance
+        self.intervention_substances = intervention_substances
+        self.url = url
 
-    def specific_intervention_info(self, d):
-        print(d)
-        subset = d[d["substance"] == self.intervention_substance]
-        subset["intervention_number"] = len(d)
-        extra_info = []
-        for intervention in d.intervention.iterrows():
-            if intervention["measurement_type"] == "dosing":
-                extra_info.append(intervention[["value", "unit", "substance", "route"]])
-        subset["intervention_extra"] = extra_info
-        if len(subset) == 1:
-            return subset
 
-    def create_intervention_table(self):
-        intervention_table = pd.DataFrame()
-        for intervention_pk, df in self.pkdata.interventions.df.groupby(self.intervention_pk):
-            subset = df[df["substance"] == self.intervention_substance]
+    def _create_extra_table(self, table_name, substances):
+
+        table = getattr(self.pkdata, table_name)
+        _table = pd.DataFrame()
+        for table_pk, df in table.df.groupby(table.pk):
+            subset = df[df["substance"].isin(substances)]
             subset["number"] = len(df)
-
             if len(subset) == 1:
-                if len(df) > 1:
-                    extra_info = []
-                    for r, intervention in df.iterrows():
-                        if intervention["measurement_type"] == "dosing":
-                            extra_info.append(intervention[["value", "unit", "substance", "route"]])
-                    extra = pd.concat(extra_info, axis=1).T
+                subset = subset.iloc[0]
+                subset["extra"] = df
+                _table = _table.append(subset)
+        return _table
 
-                    subset = subset.iloc[0]
-                    subset["extra"] = extra
-                intervention_table = intervention_table.append(subset)
-        intervention_table["per_bodyweight"] = intervention_table.unit.str.endswith("/ kilogram")
-        intervention_table["pk"] = intervention_table[self.intervention_pk].astype("int")
-        del intervention_table["intervention_pk"]
-        return intervention_table
+    def _add(self,df, measurement_type):
+        age_data = df.extra[df.extra["measurement_type"] == measurement_type]
+        if len(age_data) == 1:
+            return tuple(age_data.iloc[0][NUMERIC_FIELDS].values)
+        else:
+            return tuple([np.nan for _ in NUMERIC_FIELDS])
+
 
     @property
     def healthy_data(self):
@@ -101,26 +91,31 @@ class MetaAnalysis(object):
         for categorial_field in catgorial_fields:
             detail_info = pk_info(subject_df, categorial_field, ["choice"]).rename(
                 columns={f"choice_{categorial_field}": categorial_field})
-            detail_info[categorial_field] = detail_info[categorial_field].fillna("unknown")
             subject_categorials_extra.append(detail_info)
 
         for individuals_info in [*subject_categorials_extra, *subject_numeric_extra]:
             subject_core = pd.merge(subject_core, individuals_info, on=subject_df.pk, how="left")
 
+        for categorial_field in catgorial_fields:
+            subject_core[categorial_field] = subject_core[categorial_field].fillna("unknown")
+
+        pk = subject_df.pk
+        subject_core["extra"] = getattr(subject_core,pk).apply(lambda x: subject_df[subject_df[pk] == x])
+        for measurement_type in  ["age","weight"]:
+            subject_extra = subject_core.apply(self._add, args=(measurement_type, ), axis=1, result_type="expand")
+            if subject_extra.empty:
+                subject_core[[f"{k}_{measurement_type}" for k in NUMERIC_FIELDS]] = tuple([np.nan for _ in NUMERIC_FIELDS])
+            else:
+                subject_core[[f"{k}_{measurement_type}" for k in NUMERIC_FIELDS]] = subject_extra
+
         return subject_core
 
-    def add_extra_info(self):
-        self.results["unit_category"] = self.results[["per_bodyweight", "intervention_per_bodyweight"]].apply(
+    def add_extra_info(self, replacements):
+        self.results["unit_category"] = self.results[["per_bw", "intervention_per_bw"]].apply(
             figure_category, axis=1)
         self.results["y"] = self.results[["mean", "median", "value"]].max(axis=1)
         self.results["y_min"] = self.results["y"] - self.results["sd"]
         self.results["y_max"] = self.results["y"] + self.results["sd"]
-
-        # self.results["x_min"] = self.results["value_intervention"]-self.results["se_intervention"]
-        # self.results["x_max"] = self.results["value_intervention"]+self.results["se_intervention"]
-
-        # self.results["p_unit"] = self.results["unit"].apply(lambda x: f'{ureg(x).u: ~P}')
-        # self.results["p_unit_intervention"] = self.results["unit_intervention"].apply(lambda x: f'{ureg(x).u: ~P}')
 
         self.results["weight"] = self.results[["mean_weight", "median_weight", "value_weight"]].max(axis=1)
         self.results["min_sd_weight"] = self.results["weight"] - self.results["sd_weight"]
@@ -132,17 +127,22 @@ class MetaAnalysis(object):
 
         self.results["subject_count"] = self.results["group_count"].fillna(1)
 
-        self.results["url"] = self.results["study_sid"].apply(lambda x: f"http://0.0.0.0:8081/studies/{x}")
+        self.results["url"] = self.results["study_sid"].apply(lambda x: f"{self.url}/studies/{x}")
+        #self.results = self.results.replace({"NR", "not reported"}, regex=True)
 
+        for column, replace_dict in replacements.items():
+            self.results[column] = self.results[column].replace(replace_dict)
 
     def create_results_base(self):
         results = self.pkdata.outputs.copy()
-        results["per_bodyweight"] = results.unit.str.endswith("/ kilogram")
+        results["per_bw"] = results.unit.str.endswith("/ kilogram")
         results["inferred"] = False
         self.results = results
 
     def add_intervention_info(self):
-        intervention_table = self.create_intervention_table()
+        intervention_table = self._create_extra_table("interventions", self.intervention_substances)
+        intervention_table["per_bw"] = intervention_table.unit.str.endswith("/ kilogram")
+        intervention_table = intervention_table.rename(columns={"intervention_pk":"pk"})
         self.results = pd.merge(self.results, intervention_table.add_prefix('intervention_'), on=self.intervention_pk,
                                 how="inner")
 
@@ -150,21 +150,26 @@ class MetaAnalysis(object):
         individual = "individuals"
         individual_table = self.create_subject_table(individual)
         individual_results = self.results[self.results.group_pk == -1]
-        return pd.merge(individual_results, individual_table, on=self.individual_pk, how="left")
+        unique_individual_columns = set(individual_table.columns).difference(individual_results.columns)
+
+        unique_individual_columns = [*unique_individual_columns,self.individual_pk]
+
+        return pd.merge(individual_results, individual_table[unique_individual_columns], on=self.individual_pk, how="left")
 
     def group_results(self):
         group = "groups"
         group_table = self.create_subject_table(group)
         group_results = self.results[self.results.group_pk != -1]
-        return pd.merge(group_results, group_table, on=self.group_pk, how="left")
+        unique_group_columns = set(group_table.columns).difference(group_results.columns)
+        unique_group_columns = [*unique_group_columns,self.group_pk]
+        return pd.merge(group_results, group_table[unique_group_columns], on=self.group_pk, how="left")
 
     def add_subject_info(self):
+
         self.results = self.individual_results().df.append(self.group_results())
 
-    def infer_from_body_weight(self):
-
-
-        results_inferred = infer_weight(self.results)
+    def infer_from_body_weight(self,  by_intervention=True, by_output=True):
+        results_inferred = infer_weight(self.results, by_intervention, by_output)
         results_inferred["marker"] = results_inferred.apply(markers, axis=1)
         results_inferred["data_type"] = results_inferred.apply(data_type, axis=1)
         self.results = results_inferred
@@ -173,3 +178,5 @@ class MetaAnalysis(object):
         self.create_results_base()
         self.add_intervention_info()
         self.add_subject_info()
+
+

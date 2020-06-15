@@ -4,6 +4,7 @@ Functions for working with PKDB data.
 * FIXME: specify which methods modify or copy data frames
 """
 import logging
+from pathlib import Path
 from abc import ABC
 from collections import OrderedDict
 from copy import copy
@@ -260,7 +261,7 @@ class PKData(object):
         return PKData(**resulting_kwargs)
 
     @staticmethod
-    def from_hdf5(path) -> 'PKData':
+    def from_hdf5(path: Path) -> 'PKData':
         """ Load data from HDF5 serialization.
 
         :param path: path to HDF5.
@@ -277,14 +278,14 @@ class PKData(object):
 
         return PKData(**data_dict)
 
-    def to_hdf5(self, path) -> None:
+    def to_hdf5(self, path: Path) -> None:
         """ Saves data HDF5
 
         :param path: path to HDF5.
         :type path: str
         """
         store = pd.HDFStore(path)
-        for key in ["interventions", "individuals", "groups", "outputs", "timecourses"]:
+        for key in ["studies", "interventions", "individuals", "groups", "outputs", "timecourses"]:
             df = getattr(self, key).df
             store[key] = df
         store.close()
@@ -391,7 +392,7 @@ class PKData(object):
         :return: PKDataFrame of groups contained in this PKData instance .
         :rtype: PKDataFrame
         """
-        return self._df_core("groups", core_fields=["group_name", "group_count"])
+        return self._df_core("groups", core_fields=["study_name","group_name", "group_count"])
 
     @property
     def individuals_mi(self) -> pd.DataFrame:
@@ -400,7 +401,7 @@ class PKData(object):
         :return: Multi-indexed DataFrame of individuals contained in this PKData instance.
         :rtype: pd.DataFrame
         """
-        return self._df_mi('individuals', ['individual_pk', 'characteristica_pk'])
+        return self._df_mi('individuals', ['individual_pk', 'individual_name', 'characteristica_pk'])
 
     @property
     def individuals_core(self) -> PKDataFrame:
@@ -409,7 +410,7 @@ class PKData(object):
         :return: PKDataFrame of individuals contained in this PKData instance .
         :rtype: PKDataFrame
         """
-        return self._df_core("individuals", core_fields=["individual_name"])
+        return self._df_core("individuals", core_fields=["study_name","individual_name"])
 
     @property
     def interventions_mi(self) -> pd.DataFrame:
@@ -419,6 +420,15 @@ class PKData(object):
         :rtype: pd.DataFrame
         """
         return self._df_mi('interventions', ['intervention_pk'])
+
+    @property
+    def interventions_core(self) -> PKDataFrame:
+        """  Core group information with unique pk per row
+
+        :return: PKDataFrame of groups contained in this PKData instance .
+        :rtype: PKDataFrame
+        """
+        return self._df_core("interventions", core_fields=["study_name", "name"])
 
 
     @property
@@ -441,11 +451,27 @@ class PKData(object):
         return self._df_mi('timecourses',
                            ['timecourse_pk', 'intervention_pk', 'group_pk', 'individual_pk'])
 
+    @property
+    def timecourses_extended(self) -> pd.DataFrame:
+        """ extends the timecourse df with the core information from interventions, individuals and groups"""
+
+        timecourses = self.timecourses.df.merge(self.interventions_core,
+                                                how="left",
+                                                on="intervention_pk",
+                                                suffixes=("","interventions"))
+        timecourses = timecourses.merge(self.individuals_core,
+                                        how="left",
+                                        on="individual_pk",
+                                        suffixes=("","individuals"))
+        timecourses = timecourses.merge(self.groups_core,
+                                        how="left",
+                                        on="group_pk",
+                                        suffixes=("","groups"))
+        return timecourses
     # --- filter and exclude ---
 
     def _pk_filter(self, df_key:str, f_idx, concise:bool, *args, **kwargs) -> 'PKData':
         """ Helper class for filtering of PKData instances.
-
         :param df_key: DataFrame on which the filter (f_idx) shall be applied.
         :type df_key: str
         :param concise:

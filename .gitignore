@@ -13,3 +13,4 @@ __pycache__/
 .env.production
 results/
 
+pkdb_analysis/pkdb_analysis/reports/interactive/examples/results

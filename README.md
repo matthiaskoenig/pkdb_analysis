@@ -46,4 +46,11 @@ and
 API_BASE=https://pk-db.com
 ```
 
+## Changelog
+
+### v0.1.3
+* fixing unit tests
+* refactored table factory
+* pip package
+
 &copy; 2018-2020 Jan Grzegorzewski & Matthias König.
