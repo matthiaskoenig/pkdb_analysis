@@ -1,4 +1,4 @@
-from pkdb_analysis.reports import create_interactive_plots
+from pkdb_analysis.reports.interactive.examples import example1
 
 
 def test_interactive_plot1(tmp_path):
@@ -8,4 +8,5 @@ def test_interactive_plot1(tmp_path):
     temporary directory unique to the test invocation,
     created in the base temporary directory.
     """
-    create_interactive_plots(path=tmp_path)
+    example1.create_plots(path=tmp_path)
+
