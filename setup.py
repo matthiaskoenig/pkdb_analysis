@@ -71,5 +71,7 @@ setup(
     python_requires='>=3.7',
     zip_safe=False,
     install_requires=required,
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
     extras_require={},
     **setup_kwargs)
