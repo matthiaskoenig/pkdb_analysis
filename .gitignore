@@ -13,5 +13,6 @@ __pycache__/
 .env.production
 results/
 dist/
+.eggs/
 
 pkdb_analysis/pkdb_analysis/reports/interactive/examples/results

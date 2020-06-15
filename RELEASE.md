@@ -18,10 +18,10 @@ git pull
 python setup.py sdist
 twine upload dist/*
 ```
-* test installation in virtualenv from pypi
+* test installation in virtualenv from pypi (installs and runs tests)
 ```
 mkvirtualenv test --python=python3.7
-(test) pip install pkdb_analysis
+(test) pip install pkdb-analysis --install-option test
 ```
 
 ## version bump
