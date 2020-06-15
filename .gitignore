@@ -12,5 +12,6 @@ __pycache__/
 .env.develop
 .env.production
 results/
+dist/
 
 pkdb_analysis/pkdb_analysis/reports/interactive/examples/results

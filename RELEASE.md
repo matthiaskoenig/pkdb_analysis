@@ -13,7 +13,7 @@ Steps for release are
 ## pypi
 * release on [pypi](https://pypi.python.org/pypi/sbmlutils)
 ```
-git branch master
+git checkout master
 git pull
 python setup.py sdist
 twine upload dist/*
@@ -21,7 +21,7 @@ twine upload dist/*
 * test installation in virtualenv from pypi
 ```
 mkvirtualenv test --python=python3.7
-(test) pip install sbmlutils
+(test) pip install pkdb_analysis
 ```
 
 ## version bump
