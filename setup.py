@@ -64,13 +64,43 @@ setup(
     keywords='pharmacokinetics data',
     packages=find_packages(),
     package_data={
-      '': ['../requirements.txt'],
+      '': [
+          '../requirements.txt',
+          '../LICENCE',
+          '../README.md',
+          '../.env.local',
+          'tests/data',
+          'reports/interactive/template',
+      ],
     },
     entry_points={},
     include_package_data=True,
     python_requires='>=3.7',
     zip_safe=False,
-    install_requires=required,
+    install_requires=[
+        "requests>=2.22.0",
+        "numpy>=1.18.1",
+        "pandas>=1.0.2",
+        "tables>=3.6.0",
+
+        "pint>=0.11",
+        "pyyaml>=5.3.1",
+
+        "seaborn>=0.9.0",
+        "matplotlib>3.2.0",
+        "altair>=3.2.0",
+        "selenium>=3.141.0",
+        "coloredlogs>=10.0",
+        "scikit-learn>=0.23.1",
+        "ipykernel>=5.1.4",
+
+        "openpyxl",
+        "gspread-pandas>=2.2.3",
+
+        "pytest>=5.3.2",
+        "pytest-cov>=2.8.1",
+
+    ],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
     extras_require={},
