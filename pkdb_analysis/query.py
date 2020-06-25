@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 class PKFilter(object):
     """Filter objects for PKData"""
-    KEYS = ['groups', 'individuals', "interventions", "outputs", "timecourses"]
+    KEYS = ['groups', 'individuals', "interventions", "outputs", "data"]
 
     def __init__(self, normed=True):
         """ Create new Filter instance.
@@ -30,7 +30,7 @@ class PKFilter(object):
         self.individuals = dict()
         self.interventions = dict()
         self.outputs = dict()
-        self.timecourses = dict()
+        self.data = dict()
         self.studies = dict()
 
 
@@ -50,7 +50,7 @@ class PKFilter(object):
                 normed_value = "true"
             else:
                 normed_value = "false"
-            for filter_key in ["interventions", "outputs", "timecourses"]:
+            for filter_key in ["interventions", "outputs"]:
                 d = getattr(self, filter_key)
                 d["normed"] = normed_value
 
@@ -114,8 +114,8 @@ class PKDB(object):
                                    **{**parameters, **pkfilter.get("groups", {})}),
             outputs=cls._get_subset("output_analysis",
                                     **{**parameters, **pkfilter.get("outputs", {})}),
-            timecourses=cls._get_subset("timecourse_analysis",
-                                        **{**parameters, **pkfilter.get("timecourses", {})})
+            data=cls._get_subset("data_analysis",
+                                        **{**parameters, **pkfilter.get("data", {})})
         )
 
         return cls._intervention_pk_update(pkdata)
@@ -133,7 +133,7 @@ class PKDB(object):
             "groups_analysis",  # groups
             "interventions_analysis",  # interventions
             "output_analysis",  # outputs
-            "timecourse_analysis",  # timecourses
+            "data_analysis",  # data
             "studies",  # studies
 
         ]:
@@ -207,24 +207,17 @@ class PKDB(object):
             "time"
         ]
 
-        if "timecourse" in url:
-            # every element must be converted individually
-            for column in float_columns:
-                if column in df:
-                    col_loc = df.columns.get_loc(column)
-                    for k in range(len(df)):
-                        value = df.iloc[k, col_loc]
-                        if value is not None:
-                            df.at[k, column] = np.array(value).astype(float)
-        else:
-            for column in float_columns:
+
+        for column in float_columns:
                 if column in df.columns:
                     df[column] = df[column].astype(float)
 
         # convert columns to int columns
         int_columns = [
-            "timecourse_pk",
+            "subset_pk",
+            "data_pk",
             "intervention_pk",
+            "output_pk",
             "group_pk",
             "individual_pk",
             "group_parent_pk",
@@ -239,19 +232,15 @@ class PKDB(object):
     @staticmethod
     def _map_intervention_pks(pkdata):
         interventions_output = pd.DataFrame()
-        interventions_timecourse = pd.DataFrame()
 
         if not pkdata.outputs.empty :
             interventions_output = pkdata.outputs.df.pivot_table(values="intervention_pk", index="output_pk",
                                                              aggfunc=lambda x: frozenset(x))
-        if not pkdata.timecourses.empty:
-            interventions_timecourse = pkdata.timecourses.df.pivot_table(values="intervention_pk", index="timecourse_pk",
-                                                                     aggfunc=lambda x: frozenset(x))
 
-        interventions = interventions_output.append(interventions_timecourse).drop_duplicates(
+
+        interventions = interventions_output.drop_duplicates(
             "intervention_pk").reset_index()
         interventions.index = interventions.index.set_names(['intervention_pk_updated'])
-
         return interventions["intervention_pk"].reset_index()
 
     @staticmethod
@@ -277,30 +266,15 @@ class PKDB(object):
         return pd.merge(mapping_int_pks, pkdata.outputs.df.drop_duplicates(subset="output_pk") ,how='left').drop(columns=["intervention_pk"]).rename(
             columns={"intervention_pk_updated": "intervention_pk"})
 
-    @staticmethod
-    def _update_timecourses(pkdata, mapping_int_pks):
-        mapping_int_pks = mapping_int_pks.copy()
-        interventions_timecourse = pkdata.timecourses.df.pivot_table(values="intervention_pk", index="timecourse_pk",
-                                                                     aggfunc=lambda x: frozenset(x))
-        mapping_int_pks = pd.merge(interventions_timecourse.reset_index(), mapping_int_pks, on="intervention_pk",how="left")[
-            ["timecourse_pk", "intervention_pk_updated"]]
-        result = pd.merge(mapping_int_pks, pkdata.timecourses.df.drop_duplicates(subset="timecourse_pk"), how='left').drop(columns=["intervention_pk"]).rename(
-            columns={"intervention_pk_updated": "intervention_pk"})
-
-        return result
-
     @classmethod
     def _intervention_pk_update(cls, pkdata):
-        if not pkdata.outputs.empty or not pkdata.timecourses.empty:
+        if not pkdata.outputs.empty:
             mapping_int_pks = cls._map_intervention_pks(pkdata)
 
             data_dict = pkdata.as_dict()
             data_dict["interventions"] = cls._update_interventions(pkdata, mapping_int_pks)
             if not pkdata.outputs.empty:
                 data_dict["outputs"] = cls._update_outputs(pkdata, mapping_int_pks)
-            if not pkdata.timecourses.empty:
-                data_dict["timecourses"] = cls._update_timecourses(pkdata, mapping_int_pks)
-
             return PKData(**data_dict)
         else:
             return pkdata

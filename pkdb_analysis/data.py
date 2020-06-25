@@ -152,9 +152,9 @@ class PKData(object):
     - individuals
     - interventions
     - outputs
-    - timecourses
+    - data
     """
-    KEYS = ["studies", "groups", "individuals", "interventions", "outputs", "timecourses"]
+    KEYS = ["studies", "groups", "individuals", "interventions", "outputs", "data"]
     PK_COLUMNS = {key: f"{key[:-1]}_pk" for key in KEYS}
 
     def __init__(self,
@@ -162,7 +162,7 @@ class PKData(object):
                  groups: pd.DataFrame = None,
                  individuals: pd.DataFrame = None,
                  outputs: pd.DataFrame = None,
-                 timecourses: pd.DataFrame = None,
+                 data: pd.DataFrame = None,
                  studies: pd.DataFrame = None
 
     ):
@@ -172,13 +172,13 @@ class PKData(object):
         :param individuals:
         :param groups:
         :param outputs:
-        :param timecourses:
+        :param data:
         """
         self.groups = PKDataFrame(groups, pk="group_pk")
         self.individuals = PKDataFrame(individuals, pk="individual_pk")
         self.interventions = PKDataFrame(interventions, pk="intervention_pk")
         self.outputs = PKDataFrame(outputs, pk="output_pk")
-        self.timecourses = PKDataFrame(timecourses, pk="timecourse_pk")
+        self.data = PKDataFrame(data, pk="subset_pk")
         self.studies = PKDataFrame(studies, pk="sid")
 
         if not self.individuals.empty:
@@ -285,7 +285,7 @@ class PKData(object):
         :type path: str
         """
         store = pd.HDFStore(path)
-        for key in ["studies", "interventions", "individuals", "groups", "outputs", "timecourses"]:
+        for key in ["studies", "interventions", "individuals", "groups", "outputs", "data"]:
             df = getattr(self, key).df
             store[key] = df
         store.close()
@@ -347,7 +347,7 @@ class PKData(object):
         :return: Number of timecourses contained in this PKData instance.
         :rtype: int
         """
-        return self.timecourses.pk_len
+        return self.data[self.data.data_type == "timecourse"].pk_len
 
     def _df_mi(self, field: str, index_fields: List[str]) -> pd.DataFrame:
         """ Create multi-index DataFrame
