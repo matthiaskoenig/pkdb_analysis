@@ -408,7 +408,6 @@ class TableReport(object):
         """ ??? """
 
         additional_dict = {}
-
         used_pkdata = pkdata.filter_study(lambda x: x["sid"] == study.sid)
         this_table = getattr(used_pkdata, table)
         has_info_kwargs = {"df": this_table.df, "instance_id": this_table.pk}
