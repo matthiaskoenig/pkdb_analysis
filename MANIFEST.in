@@ -1,0 +1,7 @@
+include requirements.txt
+include LICENSE
+include README.md
+include .env.local
+
+recursive-include pkdb_analysis/reports/interactive/template *
+recursive-include pkdb_analysis/tests/data *

@@ -5,7 +5,7 @@ import pandas as pd
 from pathlib import Path
 
 from pkdb_analysis.filter import f_smoking, f_n_smoking, f_n_oc, f_effective_n_oc, f_oc
-from pkdb_analysis.reports.interactive import interactive_plot_factory, PlottingParameter as PP, LegendArgs as LA
+from pkdb_analysis.reports.interactive.interactive import interactive_plot_factory, PlottingParameter as PP, LegendArgs as LA
 from pkdb_analysis import PKData
 
 from pkdb_analysis.tests import TEST_HDF5
@@ -134,7 +134,7 @@ def create_plots(path):
 
 if __name__ == "__main__":
     # !Delete the output after running!
-    output_path = Path(__file__).parent / "example1_src"
+    output_path = Path(__file__).parent / "results"
     #if not output_path.exists():
     #    output_path.mkdir()
     create_plots(path=output_path)

@@ -368,7 +368,7 @@ def create_pages(results_dict, path):
                 f.write("---\n")
 
 
-def create_plots(results_dict,path, multi_legend, multi_color_legend, tooltip, create_json):
+def create_plots(results_dict, path, multi_legend, multi_color_legend, tooltip, create_json):
     for measurement_type, result_infer in results_dict.items():
         for group, df in result_infer.groupby("unit_category"):
             path_reports = path / "_static" / "reports"
@@ -381,7 +381,7 @@ def create_plots(results_dict,path, multi_legend, multi_color_legend, tooltip, c
 
 def copy_dir(src, dst, substance):
     """
-    Recusively copies the content of the directory src to the directory dst.
+    Recursively copies the content of the directory src to the directory dst.
     If dst doesn't exist, it is created, together with all missing parent directories.
     If a file from src already exists in dst, the file in dst is overwritten.
     Files already existing in dst which don't exist in src are preserved.
