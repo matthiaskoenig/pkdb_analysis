@@ -214,10 +214,7 @@ class PKDB(object):
 
         # convert columns to int columns
         int_columns = [
-            "subset_pk",
-            "data_pk",
             "intervention_pk",
-            "output_pk",
             "group_pk",
             "individual_pk",
             "group_parent_pk",
