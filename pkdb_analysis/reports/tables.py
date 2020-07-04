@@ -42,6 +42,10 @@ def create_table_report(h5_data_path,
         query_pkdb_data(h5_path=h5_data_path)
 
     # Load data
+    if not h5_data_path.exists():
+        raise IOError(f"PKDBData in HDF5 does not exist: '{h5_data_path}'. "
+                      f"Query the data first with the `query_data=True' flag.")
+
     pkdata = PKData.from_hdf5(h5_data_path)
     study_sids = pkdata.filter_intervention(
         f_idx=filter.f_dosing_in,
