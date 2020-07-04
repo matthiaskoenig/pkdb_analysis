@@ -2,6 +2,8 @@
 Querying PK-DB
 """
 import logging
+from pathlib import Path
+from typing import List
 import os
 from copy import deepcopy
 from urllib import parse as urlparse
@@ -14,6 +16,23 @@ from pkdb_analysis.data import PKData
 from pkdb_analysis.envs import USER, PASSWORD, API_URL, API_BASE
 
 logger = logging.getLogger(__name__)
+
+
+def query_pkdb_data(h5_path: Path, study_names: List=None) -> None:
+    """ Query the complete database and store as HDF5.
+
+    Filtering by name is supported.
+
+    :param study_names: Iterable of study_names
+    """
+    if study_names is not None:
+        study_filter = PKFilter()
+        study_filter.add_to_all("study_name__in", "__".join(study_names))
+        PKDB.query(pkfilter=study_filter)
+    else:
+        pkdata = PKDB.query()
+
+    pkdata.to_hdf5(h5_path)
 
 
 class PKFilter(object):
