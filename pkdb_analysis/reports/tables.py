@@ -11,6 +11,10 @@ from dataclasses import dataclass
 from enum import Enum
 import numpy as np
 import pandas as pd
+
+
+
+
 from gspread_pandas import Spread
 
 
@@ -531,7 +535,7 @@ class TableReport(object):
         table_df["PMID"] = table_df["sid"].apply(lambda x: x)
         table_keys = ["PKDB identifier", "name", "PMID",
                       "publication date", ] + table_keys
-        table_df.sort_values(by="publication date", inplace=True)
+        table_df.sort_values(by="name", inplace=True)
         return table_keys, table_df
 
     @staticmethod
