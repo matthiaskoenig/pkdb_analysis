@@ -18,26 +18,28 @@ from pkdb_analysis.envs import USER, PASSWORD, API_URL, API_BASE
 logger = logging.getLogger(__name__)
 
 
-def query_pkdb_data(h5_path: Path, study_names: List=None) -> None:
-    """ Query the complete database and store as HDF5.
+def query_pkdb_data(h5_path: Path=None, study_names: List=None) -> PKData:
+    """ Query the complete database.
 
-    Filtering by name is supported.
+    Filtering by study name is supported.
 
-    :param study_names: Iterable of study_names
+    :param filter_study_names: Iterable of study_names to filter for.
     """
     if study_names is not None:
         study_filter = PKFilter()
         study_filter.add_to_all("study_name__in", "__".join(study_names))
-        PKDB.query(pkfilter=study_filter)
+        pkdata = PKDB.query(pkfilter=study_filter)
     else:
         pkdata = PKDB.query()
 
-    pkdata.to_hdf5(h5_path)
+    if h5_path is not None:
+        pkdata.to_hdf5(h5_path)
+    return pkdata
 
 
 class PKFilter(object):
     """Filter objects for PKData"""
-    KEYS = ['groups', 'individuals', "interventions", "outputs", "timecourses"]
+    KEYS = ['studies', 'groups', 'individuals', "interventions", "outputs", "timecourses"]
 
     def __init__(self, normed=True):
         """ Create new Filter instance.
@@ -51,7 +53,6 @@ class PKFilter(object):
         self.outputs = dict()
         self.timecourses = dict()
         self.studies = dict()
-
 
         self._set_normed(normed)
 
@@ -85,6 +86,7 @@ class PKFilter(object):
         :return: None
         """
         for filter_key in PKFilter.KEYS:
+            # FIXME: THIS IS A REPLACE, NOT A ADD !!!!
             getattr(self, filter_key)[key] = value
 
 

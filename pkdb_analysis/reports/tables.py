@@ -1,26 +1,22 @@
 """
-This module creates summary tables from a PKDATA instance.
+This module creates summary tables from a PKdata instance.
 
 Tables can be either stored to disk or uploaded to a google spreadsheet.
 """
 import logging
-from typing import Iterable, Set, Dict, Union, List, Sequence
 from pathlib import Path
+from typing import Iterable, Set, Dict, Union, List, Sequence
+
 from copy import copy
 from dataclasses import dataclass
 from enum import Enum
 import numpy as np
 import pandas as pd
-
-
-
-
 from gspread_pandas import Spread
 
 
 from pkdb_analysis.data import PKData
-from pkdb_analysis import PKDB, PKFilter, query_pkdb_data
-from pkdb_analysis import filter
+from pkdb_analysis import query_pkdb_data, filter
 
 logger = logging.getLogger(__name__)
 
@@ -28,10 +24,10 @@ logger = logging.getLogger(__name__)
 def create_table_report(h5_data_path,
                         dosing_substances: List,
                         report_substances: List,
-                        excel_path: Path=None,
-                        tsv_path: Path=None,
-                        google_sheets: str=None,
-                        query_data: bool=False):
+                        excel_path: Path = None,
+                        tsv_path: Path = None,
+                        google_sheets: str = None,
+                        query_data: bool = False):
     """Create table report for given substance
 
     h5_data_path: PKDB data in HDF5 format (via query function)

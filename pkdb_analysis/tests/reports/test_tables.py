@@ -4,8 +4,8 @@ from pkdb_analysis.tests import TEST_HDF5
 import pytest
 
 
-# FIXME: this requires the latest data
-@pytest.skip
+
+
 def test_tables(tmp_path):
     output_path = tmp_path / "tables"
     xlsx_path = output_path / "tables.xlsx"
