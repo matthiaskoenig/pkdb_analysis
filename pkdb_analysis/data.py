@@ -512,7 +512,7 @@ class PKData(object):
             raise ValueError(f"Unsupported key '{df_key}', key must be in '{PKData.KEYS}'")
 
     def filter_study(self, f_idx, concise=True, **kwargs) -> 'PKData':
-        """ Filter groups. """
+        """ Filter studies by filter function. """
         return self._pk_filter("studies", f_idx, concise, **kwargs)
 
     def filter_intervention(self, f_idx, concise=True, *args, **kwargs) -> 'PKData':

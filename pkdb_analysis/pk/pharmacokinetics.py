@@ -93,7 +93,7 @@ class TimecoursePKNoDosing(object):
             concentration: Quantity,
             ureg: UnitRegistry,
             substance: str = "substance",
-            min_treshold=1E6, ** kwargs):
+            min_treshold=1E8, ** kwargs):
         self.ureg = ureg
         self.Q_ = ureg.Quantity
 

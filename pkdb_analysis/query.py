@@ -18,13 +18,17 @@ from pkdb_analysis.envs import USER, PASSWORD, API_URL, API_BASE
 logger = logging.getLogger(__name__)
 
 
-def query_pkdb_data(h5_path: Path=None, study_names: List=None) -> PKData:
+def query_pkdb_data(h5_path: Path=None, username: str= None, study_names: List=None) -> PKData:
     """ Query the complete database.
 
     Filtering by study name is supported.
 
     :param filter_study_names: Iterable of study_names to filter for.
+    :param username: filter studies by username
     """
+    if h5_path.exists():
+        logger.warning(f"Existing data file is overwritten: {h5_path}")
+
     if study_names is not None:
         study_filter = PKFilter()
         study_filter.add_to_all("study_name__in", "__".join(study_names))
@@ -32,8 +36,16 @@ def query_pkdb_data(h5_path: Path=None, study_names: List=None) -> PKData:
     else:
         pkdata = PKDB.query()
 
+    if username is not None:
+        # Filter studies by username
+        pkdata.studies['username'] = pkdata.studies.creator.apply(pd.Series).username
+
+        pkdata = pkdata.filter_study(f_idx=lambda pkdata: pkdata['username'] == username)
+
     if h5_path is not None:
+        logger.info(f"Storing pkdb data: {h5_path}")
         pkdata.to_hdf5(h5_path)
+        
     return pkdata
 
 
