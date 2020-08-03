@@ -2,6 +2,8 @@
 Querying PK-DB
 """
 import logging
+from pathlib import Path
+from typing import List
 import os
 from copy import deepcopy
 from urllib import parse as urlparse
@@ -16,9 +18,40 @@ from pkdb_analysis.envs import USER, PASSWORD, API_URL, API_BASE
 logger = logging.getLogger(__name__)
 
 
+def query_pkdb_data(h5_path: Path=None, username: str= None, study_names: List=None) -> PKData:
+    """ Query the complete database.
+
+    Filtering by study name is supported.
+
+    :param filter_study_names: Iterable of study_names to filter for.
+    :param username: filter studies by username
+    """
+    if h5_path.exists():
+        logger.warning(f"Existing data file is overwritten: {h5_path}")
+
+    if study_names is not None:
+        study_filter = PKFilter()
+        study_filter.add_to_all("study_name__in", "__".join(study_names))
+        pkdata = PKDB.query(pkfilter=study_filter)
+    else:
+        pkdata = PKDB.query()
+
+    if username is not None:
+        # Filter studies by username
+        pkdata.studies['username'] = pkdata.studies.creator.apply(pd.Series).username
+
+        pkdata = pkdata.filter_study(f_idx=lambda pkdata: pkdata['username'] == username)
+
+    if h5_path is not None:
+        logger.info(f"Storing pkdb data: {h5_path}")
+        pkdata.to_hdf5(h5_path)
+        
+    return pkdata
+
+
 class PKFilter(object):
     """Filter objects for PKData"""
-    KEYS = ['groups', 'individuals', "interventions", "outputs", "timecourses"]
+    KEYS = ['studies', 'groups', 'individuals', "interventions", "outputs", "timecourses"]
 
     def __init__(self, normed=True):
         """ Create new Filter instance.
@@ -32,7 +65,6 @@ class PKFilter(object):
         self.outputs = dict()
         self.timecourses = dict()
         self.studies = dict()
-
 
         self._set_normed(normed)
 
@@ -66,6 +98,7 @@ class PKFilter(object):
         :return: None
         """
         for filter_key in PKFilter.KEYS:
+            # FIXME: THIS IS A REPLACE, NOT A ADD !!!!
             getattr(self, filter_key)[key] = value
 
 

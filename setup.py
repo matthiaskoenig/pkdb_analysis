@@ -70,7 +70,7 @@ setup(
         "pandas>=1.0.2",
         "tables>=3.6.1",
 
-        "pint>=0.11",
+        "pint>=0.14",
         "pyyaml>=5.3.1",
 
         "seaborn>=0.10.1",

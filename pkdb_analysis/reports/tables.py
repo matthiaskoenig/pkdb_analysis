@@ -1,22 +1,74 @@
 """
-This module creates summary tables from a pkdata instance.
+This module creates summary tables from a PKdata instance.
 
 Tables can be either stored to disk or uploaded to a google spreadsheet.
 """
 import logging
-from typing import Iterable
 from pathlib import Path
+from typing import Iterable, Set, Dict, Union, List, Sequence
+
 from copy import copy
 from dataclasses import dataclass
-
-import numpy as np
-from pkdb_analysis.data import PKData
-import pandas as pd
-from typing import Dict, Union, List, Sequence
-from gspread_pandas import Spread
 from enum import Enum
+import numpy as np
+import pandas as pd
+from gspread_pandas import Spread
+
+
+from pkdb_analysis.data import PKData
+from pkdb_analysis import query_pkdb_data, filter
 
 logger = logging.getLogger(__name__)
+
+
+def create_table_report(h5_data_path,
+                        dosing_substances: List,
+                        report_substances: List,
+                        excel_path: Path = None,
+                        tsv_path: Path = None,
+                        google_sheets: str = None,
+                        query_data: bool = False):
+    """Create table report for given substance
+
+    h5_data_path: PKDB data in HDF5 format (via query function)
+    dosing_substances: Set of substances used in Dosing, e.g. {torasemide}
+    report_substances: Set of substances in reports
+    excel_path: Path to excel file to write the report to
+    tsv_path: Path to directory to to which the tsv are written
+    google_sheets: Google sheets name for report
+    query_data: boolean flag to query the data
+    """
+    if query_data:
+        query_pkdb_data(h5_path=h5_data_path)
+
+    # Load data
+    if not h5_data_path.exists():
+        raise IOError(f"PKDBData in HDF5 does not exist: '{h5_data_path}'. "
+                      f"Query the data first with the `query_data=True' flag.")
+
+    pkdata = PKData.from_hdf5(h5_data_path)
+    study_sids = pkdata.filter_intervention(
+        f_idx=filter.f_dosing_in,
+        substances=dosing_substances,
+        concise=False
+    ).interventions.study_sids
+
+    pkdata = pkdata.filter_study(lambda x: x["sid"].isin(study_sids), concise=False)
+
+    # Create table report
+    table_report = TableReport(
+        pkdata=pkdata,
+        substances=report_substances
+    )
+    table_report.create_tables()
+
+    # serialize table report
+    if excel_path is not None:
+        table_report.to_excel(excel_path)
+    if tsv_path is not None:
+        table_report.to_tsv(tsv_path)
+    if google_sheets is not None:
+        table_report.to_google_sheet(google_sheets)
 
 @dataclass
 class Parameter:
@@ -45,26 +97,6 @@ class TableReport(object):
 
     Data is provided as PKData object.
     Export formats are table files or google spreadsheets.
-
-    **Google Spreadsheets**
-    Set the `google_sheets` argument to use this option. The admin needs to
-    create a google sheet in his google drive account.
-    The name of the sheet has to be entered as the `google_sheets` argument.
-
-    IMPORTANT:
-    For google sheets to work, ask admin for the google_secret.json and
-    copy it in your local config folder.
-        cp  ~/.config/gspread_pandas/google_secret.json
-
-    FOR ADMIN:
-        1. Go to the Google APIs Console -> https://console.developers.google.com/
-        2. Create a new project.
-        3. Click Enable API and Services. Search for and enable the Google Drive API.
-           Click Enable API and Services. Search for and enable the Google Sheets API.
-        4. Create credentials for a Web Server to access Application Data.
-        5. Name the service account and grant it a Project Role of Editor.
-        6. Download the JSON file.
-        7. Copy the JSON file to your code directory and rename it to google_secret.json
     """
     def __init__(self, pkdata: PKData, substances: Iterable=None):
         self.pkdata = pkdata
@@ -72,31 +104,114 @@ class TableReport(object):
             substances = tuple()
         self.substances = substances
 
-    def create_tables(self, output_path: Path, google_sheets: str=None):
-        """Creates all output tables in given output_path."""
-        if not output_path.exists():
-            logger.warning(f"Output path created: '{output_path.resolve()}'")
-            output_path.mkdir()
+        self.df_studies = None
+        self.df_timecourses = None
+        self.df_pharmacokinetics = None
 
-        self.create_table(
-            table_path=output_path / "Studies.tsv",
-            google_sheets=google_sheets,
+    @staticmethod
+    def _create_path(path_output):
+        """Create folder."""
+        if not path_output.exists():
+            logger.warning(f"Path created: '{path_output.resolve()}'")
+            path_output.mkdir()
+
+    def to_excel(self, path_excel: Path):
+        """Write all tables excel file."""
+        self._create_path(path_excel.parent)
+
+        sheets = {
+            'studies': self.df_studies,
+            'timecourses': self.df_timecourses,
+            'pharmacokinetics': self.df_pharmacokinetics,
+        }
+
+        with pd.ExcelWriter(path_excel) as writer:
+            for key, df in sheets.items():
+                df1 = df.copy()
+                # hyperlink replacements:
+                df1["PKDB identifier"] = df1["PKDB identifier"].apply(
+                    lambda x: f'=HYPERLINK("https://develop.pk-db.com/studies/{x}", "{x}")')
+                df1["PMID"] = df1["PMID"].apply(
+                    lambda x: f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}", "{x}")')
+
+                df1.to_excel(writer, sheet_name=key, index=False)
+
+    def to_google_sheet(self, google_sheets: str):
+        """Write all tables to google calc.
+
+        **Google Spreadsheets**
+        Set the `google_sheets` argument to use this option. The admin needs to
+        create a google sheet in his google drive account.
+        The name of the sheet has to be entered as the `google_sheets` argument.
+
+        IMPORTANT:
+        For google sheets to work, ask admin for the google_secret.json and
+        copy it in your local config folder.
+            cp  ~/.config/gspread_pandas/google_secret.json
+
+        FOR ADMIN:
+            1. Go to the Google APIs Console -> https://console.developers.google.com/
+            2. Create a new project.
+            3. Click Enable API and Services. Search for and enable the Google Drive API.
+               Click Enable API and Services. Search for and enable the Google Sheets API.
+            4. Create credentials for a Web Server to access Application Data.
+            5. Name the service account and grant it a Project Role of Editor.
+            6. Download the JSON file.
+            7. Copy the JSON file to your code directory and rename it to google_secret.json
+        """
+        header_start = 'A4'
+        header_size = 4
+
+        for report_type in [TableReportTypes.STUDIES, TableReportTypes.TIMECOURSES, TableReportTypes.PHARMACOKINETICS]:
+            if report_type == TableReportTypes.STUDIES:
+                table_df = self.df_studies
+            elif report_type == TableReportTypes.TIMECOURSES:
+                table_df = self.df_timecourses
+            elif report_type == TableReportTypes.PHARMACOKINETICS:
+                table_df = self.df_pharmacokinetics
+                header_start = 'A5'
+                header_size = 5
+
+            # hyperlink replacements:
+            df = df.copy()
+            df["PKDB identifier"] = df["PKDB identifier"].apply(
+                lambda x: f'=HYPERLINK("https://develop.pk-db.com/studies/{x}";"{x}")'
+            )
+            df["PMID"] = df["PMID"].apply(
+                lambda x: f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}";"{x}")'
+            )
+            sheet_name = report_type.name.lower().capitalize()
+            logger.info(f"Writing: {google_sheets}.{sheet_name}")
+            spread = Spread(google_sheets)
+            sheet = spread.find_sheet(sheet_name)
+            sheet.resize(header_size, len(df.columns))
+
+            spread.df_to_sheet(
+                df, index=False, headers=False,
+                sheet=sheet_name, start=header_start, replace=False
+            )
+
+    def to_tsv(self, path_output: Path, suffix="tsv", sep="\t", index=None, **kwargs):
+        """Write all sheets to TSV."""
+        self._create_path(path_output)
+
+        self.df_studies.to_csv(path_output / f"studies.{suffix}", sep=sep, index=index, **kwargs)
+        self.df_pharmacokinetics.to_csv(path_output / f"pharmacokinetics.{suffix}", sep=sep, index=index, **kwargs)
+        self.df_timecourses.to_csv(path_output / f"timecourses.{suffix}", sep=sep, index=index, **kwargs)
+
+    def create_tables(self):
+        """Creates all output tables in given output_path."""
+        self.df_studies = self.create_table(
             report_type=TableReportTypes.STUDIES
         )
-        self.create_table(
-            table_path=output_path / "Timecourses.tsv",
-            google_sheets=google_sheets,
+        self.df_timecourses = self.create_table(
             report_type=TableReportTypes.TIMECOURSES
         )
-        self.create_table(
-            table_path=output_path / "Pharmacokinetics.tsv",
-            google_sheets=google_sheets,
+        self.df_pharmacokinetics = self.create_table(
             report_type=TableReportTypes.PHARMACOKINETICS
         )
 
-    def create_table(self, table_path: Path,
-                     report_type: TableReportTypes=TableReportTypes.STUDIES,
-                     google_sheets: str=None):
+    def create_table(self, report_type: TableReportTypes) -> pd.DataFrame:
         """Creates a summary table from PKData.
 
         :param: substances: iterable of PKDB substance ids for filtering of data
@@ -107,40 +222,14 @@ class TableReport(object):
                 f"is: {type(report_type), report_type}"
             )
 
-        print(f"Create TableReport: {report_type}")
+        logger.info(f"Create TableReport: {report_type}")
 
         if report_type == TableReportTypes.STUDIES:
-            table_df = self.studies_table()
+            return self.studies_table()
         elif report_type == TableReportTypes.TIMECOURSES:
-            table_df = self.timecourses_table()
+            return self.timecourses_table()
         elif report_type == TableReportTypes.PHARMACOKINETICS:
-            table_df = self.pks_table()
-
-        if google_sheets is not None:
-            if report_type in {TableReportTypes.STUDIES, TableReportTypes.TIMECOURSES}:
-                header_start = 'A4'
-                header_size = 4
-            elif report_type == TableReportTypes.PHARMACOKINETICS:
-                header_start = 'A5'
-                header_size = 5
-
-            sheet_name = report_type.name.lower().capitalize()
-            print(f"Writing: {google_sheets}.{sheet_name}")
-            spread = Spread(google_sheets)
-            sheet = spread.find_sheet(sheet_name)
-            sheet.resize(header_size, len(table_df.columns))
-
-            spread.df_to_sheet(
-                table_df, index=False, headers=False,
-                sheet=sheet_name, start=header_start, replace=False
-            )
-
-        if str(table_path).endswith(".xlsx"):
-            table_df.to_excel(table_path)
-        elif str(table_path).endswith(".tsv"):
-            table_df.to_csv(table_path, sep='\t')
-        else:
-            raise AssertionError("wrong format ending (tsv and xlsx are supported")
+            return self.pks_table()
 
     def studies_table(self) -> pd.DataFrame:
         """
@@ -435,13 +524,13 @@ class TableReport(object):
     def _format_table_information(table_keys, table_df):
         """Formats table information in place."""
         table_df = table_df.rename(columns={"reference_date": "publication date"})
-        table_df["PKDB identifier"] = table_df["sid"].apply(
-            lambda x: f'=HYPERLINK("https://develop.pk-db.com/{x}/";"{x}")')
-        table_df["PMID"] = table_df["sid"].apply(lambda
-                                                   x: f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}";"{x}")')
+        table_df["PKDB identifier"] = table_df["sid"].apply(lambda x: x)
+        # FIXME: this is a bug, https://github.com/matthiaskoenig/pkdb_analysis/issues/23
+        # pubmed ids do not exist (sid != pmid for curated studies with PKDB identifiers)
+        table_df["PMID"] = table_df["sid"].apply(lambda x: x)
         table_keys = ["PKDB identifier", "name", "PMID",
                       "publication date", ] + table_keys
-        table_df.sort_values(by="publication date", inplace=True)
+        table_df.sort_values(by="name", inplace=True)
         return table_keys, table_df
 
     @staticmethod
