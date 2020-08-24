@@ -18,7 +18,7 @@ from pkdb_analysis.envs import USER, PASSWORD, API_URL, API_BASE
 logger = logging.getLogger(__name__)
 
 
-def query_pkdb_data(h5_path: Path=None, username: str= None, study_names: List=None) -> PKData:
+def query_pkdb_data(h5_path: Path=None, username: str = None, study_names: List=None) -> PKData:
     """ Query the complete database.
 
     Filtering by study name is supported.
@@ -39,7 +39,6 @@ def query_pkdb_data(h5_path: Path=None, username: str= None, study_names: List=N
     if username is not None:
         # Filter studies by username
         pkdata.studies['username'] = pkdata.studies.creator.apply(pd.Series).username
-
         pkdata = pkdata.filter_study(f_idx=lambda pkdata: pkdata['username'] == username)
 
     if h5_path is not None:
