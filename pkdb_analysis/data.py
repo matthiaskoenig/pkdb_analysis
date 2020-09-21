@@ -164,7 +164,6 @@ class PKData(object):
     """
     KEYS = ["studies", "groups", "individuals", "interventions", "outputs", "data"]
 
-
     def __init__(self,
                  interventions: pd.DataFrame = None,
                  groups: pd.DataFrame = None,
@@ -193,7 +192,6 @@ class PKData(object):
             self.individuals.substance = self.individuals.substance.astype(str)
         if not self.groups.empty:
             self.groups.substance = self.groups.substance.astype(str)
-
 
     def __dict___(self):
         return {df_key: getattr(self, df_key).df for df_key in PKData.KEYS}
@@ -409,8 +407,6 @@ class PKData(object):
         pk_df = getattr(self, field)
         return pk_df.pivot_table(index=pk_df.pk, values=core_fields, aggfunc=lambda x: x.iloc[0]).reset_index()
 
-
-
     @property
     def groups_mi(self) -> pd.DataFrame:
         """Multi-index DataFrame of groups contained in this PKData instance.
@@ -419,8 +415,6 @@ class PKData(object):
         :rtype: pd.DataFrame
         """
         return self._df_mi('groups', ['group_pk', 'characteristica_pk'])
-
-
 
     @property
     def groups_core(self) -> PKDataFrame:
@@ -478,10 +472,7 @@ class PKData(object):
         return self._df_mi('outputs',
                            ['output_pk', 'intervention_pk', 'group_pk', 'individual_pk'])
 
-
-
     # --- filter and exclude ---
-
     def _pk_filter(self, df_key:str, f_idx, concise:bool, *args, **kwargs) -> 'PKData':
         """ Helper class for filtering of PKData instances.
         :param df_key: DataFrame on which the filter (f_idx) shall be applied.
@@ -524,7 +515,7 @@ class PKData(object):
             raise ValueError(f"Unsupported key '{df_key}', key must be in '{PKData.KEYS}'")
 
     def filter_study(self, f_idx, concise=True, **kwargs) -> 'PKData':
-        """ Filter groups. """
+        """ Filter studies by filter function. """
         return self._pk_filter("studies", f_idx, concise, **kwargs)
 
     def filter_intervention(self, f_idx, concise=True, *args, **kwargs) -> 'PKData':
@@ -622,7 +613,6 @@ class PKData(object):
         """
         return self._emptify("outputs", concise=concise)
 
-
     def delete_data(self, concise=True) -> 'PKData':
         """Deletes data."""
         return self._emptify("data", concise=concise)
@@ -652,8 +642,6 @@ class PKData(object):
                 df = getattr(self, df_key)
                 setattr(self, df_key, df[df["study_sid"].isin(self.studies.pks)])
 
-
-
             # concise based on interventions
             outputs_intervention_pks = set(self.outputs.intervention_pk)
             current_intervention_pks = self.interventions.pks.intersection(outputs_intervention_pks)
@@ -661,7 +649,6 @@ class PKData(object):
 
             self.interventions = self.interventions[self.interventions.intervention_pk.isin(current_intervention_pks)]
             self.outputs = self.outputs[self.outputs.intervention_pk.isin(current_intervention_pks)]
-
 
             # concise based on individuals
             outputs_individual_pks = set(self.outputs.individual_pk)

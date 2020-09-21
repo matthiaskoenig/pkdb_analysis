@@ -15,4 +15,6 @@ results/
 dist/
 .eggs/
 
+# too large due to failing filters
+pkdb_analysis/tests/data/test.h5
 pkdb_analysis/pkdb_analysis/reports/interactive/examples/results
