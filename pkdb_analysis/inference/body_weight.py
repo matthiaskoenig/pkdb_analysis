@@ -11,7 +11,9 @@ from pint import UnitRegistry, Quantity
 
 # Define unit registry for examples
 ureg = pint.UnitRegistry()
+
 Q_ = ureg.Quantity
+ureg.define('none = count')
 
 
 class InferWeight(object):
