@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 class PKDataFrame(pd.DataFrame, ABC):
     """
     Extended DataFrame which support customized filter operations.
-    Used to encode groups, individuals, interventions, outputs, timecourses on PKData.
+    Used to encode groups, individuals, interventions, outputs, data on PKData.
     """
     @property
     def _constructor(self):
@@ -142,7 +142,15 @@ class PKDataFrame(pd.DataFrame, ABC):
         return display(self.df)
 
 class PKData(object):
-    """ Consistent set of data from PK-DB.
+    PK_COLUMNS = {
+        "studies":"study_pk",
+        "groups":"group_pk",
+        "individuals": "individual_pk",
+        "interventions": "intervention_pk",
+        "outputs": "output_pk",
+        "data": "subset_pk"
+    }
+    """ Consistent set of data from PK-DB.set -a && source .env.local
 
     Information is stored as DataFrames.
 
@@ -152,17 +160,16 @@ class PKData(object):
     - individuals
     - interventions
     - outputs
-    - timecourses
+    - data
     """
-    KEYS = ["studies", "groups", "individuals", "interventions", "outputs", "timecourses"]
-    PK_COLUMNS = {key: f"{key[:-1]}_pk" for key in KEYS}
+    KEYS = ["studies", "groups", "individuals", "interventions", "outputs", "data"]
 
     def __init__(self,
                  interventions: pd.DataFrame = None,
                  groups: pd.DataFrame = None,
                  individuals: pd.DataFrame = None,
                  outputs: pd.DataFrame = None,
-                 timecourses: pd.DataFrame = None,
+                 data: pd.DataFrame = None,
                  studies: pd.DataFrame = None
 
     ):
@@ -172,21 +179,19 @@ class PKData(object):
         :param individuals:
         :param groups:
         :param outputs:
-        :param timecourses:
+        :param data:
         """
         self.groups = PKDataFrame(groups, pk="group_pk")
         self.individuals = PKDataFrame(individuals, pk="individual_pk")
         self.interventions = PKDataFrame(interventions, pk="intervention_pk")
         self.outputs = PKDataFrame(outputs, pk="output_pk")
-        self.timecourses = PKDataFrame(timecourses, pk="timecourse_pk")
+        self.data = PKDataFrame(data, pk="subset_pk")
         self.studies = PKDataFrame(studies, pk="sid")
 
         if not self.individuals.empty:
             self.individuals.substance = self.individuals.substance.astype(str)
         if not self.groups.empty:
             self.groups.substance = self.groups.substance.astype(str)
-
-        #self.choices = self.get_choices() #TODO:not working with studies. Is this still important?
 
     def __dict___(self):
         return {df_key: getattr(self, df_key).df for df_key in PKData.KEYS}
@@ -208,11 +213,14 @@ class PKData(object):
         ]
 
         for key in self.KEYS:
-            df = getattr(self, key)
-            nrows = len(df)
-            count = df.pk_len
+            if key != "data":
+                df = getattr(self, key)
+                nrows = len(df)
+                count = df.pk_len
+                lines.append(f"{key:<15} {count:>5}  ({nrows:>5})")
+            else:
+                lines.append(f"{key:<12} tc:{ self.timecourses_count:>5}  sc:{self.scatter_count:>3}")
 
-            lines.append(f"{key:<15} {count:>5}  ({nrows:>5})")
         lines.append("-" * 30)
         return "\n".join(lines)
 
@@ -285,7 +293,7 @@ class PKData(object):
         :type path: str
         """
         store = pd.HDFStore(path)
-        for key in ["studies", "interventions", "individuals", "groups", "outputs", "timecourses"]:
+        for key in ["studies", "interventions", "individuals", "groups", "outputs", "data"]:
             df = getattr(self, key).df
             store[key] = df
         store.close()
@@ -347,7 +355,34 @@ class PKData(object):
         :return: Number of timecourses contained in this PKData instance.
         :rtype: int
         """
-        return self.timecourses.pk_len
+        return self.data[self.data.data_type == "timecourse"].pk_len
+
+    @property
+    def scatter_count(self) -> int:
+        """ Number of timecourses contained in this PKData instance.
+
+        :return: Number of timecourses contained in this PKData instance.
+        :rtype: int
+        """
+        return self.data[self.data.data_type == "scatter"].pk_len
+
+    @property
+    def timecourses_extended(self) -> pd.DataFrame:
+        """ extends the timecourse df with the core information from interventions, individuals and groups"""
+
+        timecourses = self.timecourses.df.merge(self.interventions_core,
+                                                how="left",
+                                                on="intervention_pk",
+                                                suffixes=("", "interventions"))
+        timecourses = timecourses.merge(self.individuals_core,
+                                        how="left",
+                                        on="individual_pk",
+                                        suffixes=("", "individuals"))
+        timecourses = timecourses.merge(self.groups_core,
+                                        how="left",
+                                        on="group_pk",
+                                        suffixes=("", "groups"))
+        return timecourses
 
     def _df_mi(self, field: str, index_fields: List[str]) -> pd.DataFrame:
         """ Create multi-index DataFrame
@@ -372,8 +407,6 @@ class PKData(object):
         pk_df = getattr(self, field)
         return pk_df.pivot_table(index=pk_df.pk, values=core_fields, aggfunc=lambda x: x.iloc[0]).reset_index()
 
-
-
     @property
     def groups_mi(self) -> pd.DataFrame:
         """Multi-index DataFrame of groups contained in this PKData instance.
@@ -382,8 +415,6 @@ class PKData(object):
         :rtype: pd.DataFrame
         """
         return self._df_mi('groups', ['group_pk', 'characteristica_pk'])
-
-
 
     @property
     def groups_core(self) -> PKDataFrame:
@@ -441,35 +472,7 @@ class PKData(object):
         return self._df_mi('outputs',
                            ['output_pk', 'intervention_pk', 'group_pk', 'individual_pk'])
 
-    @property
-    def timecourses_mi(self) -> pd.DataFrame:
-        """Multi-index DataFrame of timecourses contained in this PKData instance.
-
-        :return: Multi-indexed DataFrame of timecourses contained in this PKData instance.
-        :rtype: pd.DataFrame
-        """
-        return self._df_mi('timecourses',
-                           ['timecourse_pk', 'intervention_pk', 'group_pk', 'individual_pk'])
-
-    @property
-    def timecourses_extended(self) -> pd.DataFrame:
-        """ extends the timecourse df with the core information from interventions, individuals and groups"""
-
-        timecourses = self.timecourses.df.merge(self.interventions_core,
-                                                how="left",
-                                                on="intervention_pk",
-                                                suffixes=("","interventions"))
-        timecourses = timecourses.merge(self.individuals_core,
-                                        how="left",
-                                        on="individual_pk",
-                                        suffixes=("","individuals"))
-        timecourses = timecourses.merge(self.groups_core,
-                                        how="left",
-                                        on="group_pk",
-                                        suffixes=("","groups"))
-        return timecourses
     # --- filter and exclude ---
-
     def _pk_filter(self, df_key:str, f_idx, concise:bool, *args, **kwargs) -> 'PKData':
         """ Helper class for filtering of PKData instances.
         :param df_key: DataFrame on which the filter (f_idx) shall be applied.
@@ -558,9 +561,9 @@ class PKData(object):
         """ Filter outputs. """
         return self._pk_filter("outputs", f_idx, concise, **kwargs)
 
-    def filter_timecourse(self, f_idx, concise=True, **kwargs) -> 'PKData':
-        """ Filter timecourses. """
-        return self._pk_filter("timecourses", f_idx, concise, **kwargs)
+    def filter_data(self, f_idx, concise=True, **kwargs) -> 'PKData':
+        """ Filter data. """
+        return self._pk_filter("data", f_idx, concise, **kwargs)
 
     def exclude_study(self, f_idx, concise=True, **kwargs) -> 'PKData':
         """ Filter groups. """
@@ -585,9 +588,9 @@ class PKData(object):
     def exclude_output(self, f_idx, concise=True, **kwargs) -> 'PKData':
         return self._pk_exclude("outputs", f_idx, concise, **kwargs)
 
-    def exclude_timecourse(self, f_idx, concise=True, **kwargs):
+    def exclude_data(self, f_idx, concise=True, **kwargs):
 
-        return self._pk_exclude("timecourses", f_idx, concise, **kwargs)
+        return self._pk_exclude("data", f_idx, concise, **kwargs)
 
     def delete_groups(self, concise=True) -> 'PKData':
         """
@@ -610,10 +613,9 @@ class PKData(object):
         """
         return self._emptify("outputs", concise=concise)
 
-
-    def delete_timecourses(self, concise=True) -> 'PKData':
-        """Deletes timecourses."""
-        return self._emptify("timecourses", concise=concise)
+    def delete_data(self, concise=True) -> 'PKData':
+        """Deletes data."""
+        return self._emptify("data", concise=concise)
 
     def _concise(self) -> None:
         """ Reduces the current PKData to a consistent subset.
@@ -627,52 +629,43 @@ class PKData(object):
 
             # concise based on studies
             outputs_study_sids = set(self.outputs.study_sid)
-            timecourses_study_sids = set(self.timecourses.study_sid)
+            data_study_sids = set(self.data.study_sid)
             interventions_study_sids = set(self.interventions.study_sid)
             groups_study_sids = set(self.groups.study_sid)
             individuals_study_sids = set(self.individuals.study_sid)
 
-            study_sid_sets = [outputs_study_sids, timecourses_study_sids, interventions_study_sids, groups_study_sids,individuals_study_sids]
+            study_sid_sets = [outputs_study_sids, data_study_sids, interventions_study_sids, groups_study_sids,individuals_study_sids]
+
             current_study_sid_sets = set().union(*study_sid_sets)
             self.studies =  self.studies[self.studies.sid.isin(current_study_sid_sets)]
-            for df_key in ["interventions", "groups", "individuals", "timecourses", "outputs"]:
+            for df_key in ["interventions", "groups", "individuals", "data", "outputs"]:
                 df = getattr(self, df_key)
                 setattr(self, df_key, df[df["study_sid"].isin(self.studies.pks)])
 
-
             # concise based on interventions
             outputs_intervention_pks = set(self.outputs.intervention_pk)
-            timecourses_intervention_pks = set(self.timecourses.intervention_pk)
-
-            current_intervention_pks = (self.interventions.pks.intersection(outputs_intervention_pks)).union(
-                self.interventions.pks.intersection(timecourses_intervention_pks))
+            current_intervention_pks = self.interventions.pks.intersection(outputs_intervention_pks)
+            current_intervention_pks.add(-1)
 
             self.interventions = self.interventions[self.interventions.intervention_pk.isin(current_intervention_pks)]
-            self.timecourses = self.timecourses[self.timecourses.intervention_pk.isin(current_intervention_pks)]
             self.outputs = self.outputs[self.outputs.intervention_pk.isin(current_intervention_pks)]
 
             # concise based on individuals
             outputs_individual_pks = set(self.outputs.individual_pk)
-            timecourses_individual_pks = set(self.timecourses.individual_pk)
-
-            current_individual_pks = (self.individuals.pks.intersection(outputs_individual_pks)).union(
-                                     self.individuals.pks.intersection(timecourses_individual_pks))
+            current_individual_pks = self.individuals.pks.intersection(outputs_individual_pks)
             current_individual_pks.add(-1)
 
-            for df_key in ["individuals", "timecourses", "outputs"]:
+            for df_key in ["individuals", "outputs"]:
                 df = getattr(self, df_key)
                 setattr(self, df_key, df[df["individual_pk"].isin(current_individual_pks)])
 
             # concise based on groups
             outputs_group_pks = set(self.outputs.group_pk)
-            timecourses_group_pks = set(self.timecourses.group_pk)
 
-            current_group_pks = (self.groups.pks.intersection(outputs_group_pks)).union(
-                                self.groups.pks.intersection(timecourses_group_pks))
-
+            current_group_pks = self.groups.pks.intersection(outputs_group_pks)
             current_group_pks.add(-1)
 
-            for df_key in ["groups", "timecourses", "outputs"]:
+            for df_key in ["groups", "outputs"]:
                 df = getattr(self, df_key)
                 setattr(self, df_key, df[df.group_pk.isin(current_group_pks)])
 
@@ -692,10 +685,6 @@ class PKData(object):
             choices = OrderedDict()
             for key in df.columns:
                 if df[key].dtype in ['bool', 'object']:
-                    if df_key == "timecourses":
-                        if key in ["time", "value", "mean", "median", "sd", "se", "min", "max", "cv"]:
-                            continue
-
                     # remove None so sorting is working
                     values = [c for c in set(df[key]) if c is not None]
                     choices[key] = sorted(values)

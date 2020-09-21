@@ -6,10 +6,10 @@ Tables can be either stored to disk or uploaded to a google spreadsheet.
 import logging
 from pathlib import Path
 from typing import Iterable, Set, Dict, Union, List, Sequence
-
 from copy import copy
 from dataclasses import dataclass
 from enum import Enum
+
 import numpy as np
 import pandas as pd
 from gspread_pandas import Spread
@@ -100,6 +100,7 @@ class TableReport(object):
     """
     def __init__(self, pkdata: PKData, substances: Iterable=None):
         self.pkdata = pkdata
+        self.pkdata_concised = pkdata.copy()._concise()
         if substances is None:
             substances = tuple()
         self.substances = substances
@@ -304,7 +305,7 @@ class TableReport(object):
         )
         studies_group = table_df.apply(
             self._add_information,
-            args=(self.pkdata, subject_info, "groups"),
+            args=(self.pkdata, self.pkdata_concised, subject_info, "groups"),
             axis=1
         )
         studies_group[["Subjects_individual", "Subjects_groups"]] = studies_group[
@@ -321,12 +322,12 @@ class TableReport(object):
         table_df = pd.merge(table_df, studies_interventions[i_keys], on="sid")
         studies_outputs = table_df.apply(
             self._add_information,
-            args=(self.pkdata, outputs_info, "outputs"),
+            args=(self.pkdata, self.pkdata_concised, outputs_info, "outputs"),
             axis=1
         )
         studies_timecourses = table_df.apply(
             self._add_information,
-            args=(self.pkdata, outputs_info, "timecourses"),
+            args=(self.pkdata,  self.pkdata_concised, outputs_info, "timecourses"),
             axis=1
         )
         table_df = pd.merge(
@@ -365,7 +366,7 @@ class TableReport(object):
 
         table_df = table_df.apply(
             self._add_information,
-            args=(self.pkdata, timecourse_info, "timecourses"),
+            args=(self.pkdata, self.pkdata_concised, timecourse_info, "timecourses"),
             axis=1
         )
         table_df = table_df.fillna(" ")
@@ -481,7 +482,7 @@ class TableReport(object):
 
         table_df = table_df.apply(
             self._add_information,
-            args=(self.pkdata, pks_info, "outputs"),
+            args=(self.pkdata,  self.pkdata_concised,pks_info, "outputs"),
             axis=1
         )
         table_keys.extend(pks_info.keys())
@@ -493,12 +494,15 @@ class TableReport(object):
 
 
     @staticmethod
-    def _add_information(study, pkdata, measurement_types: Dict, table: str):
+    def _add_information(study, pkdata, pkdata_concised, measurement_types: Dict, table: str):
         """ ??? """
 
         additional_dict = {}
+        #used_pkdata = pkdata.filter_study(lambda x: x["sid"] == study.sid)
+        used_pkdata  = pkdata_concised
+        for key in ["groups", table]:
+                used_pkdata[key] = [used_pkdata[key].study_sid == study.sid]
 
-        used_pkdata = pkdata.filter_study(lambda x: x["sid"] == study.sid)
         this_table = getattr(used_pkdata, table)
         has_info_kwargs = {"df": this_table.df, "instance_id": this_table.pk}
         group_df_df = pkdata.groups.df
