@@ -12,23 +12,25 @@ from typing import Dict, Iterable, List, Sequence, Union
 
 import numpy as np
 import pandas as pd
-from gspread_pandas import Spread
 
 from pkdb_analysis import filter, query_pkdb_data
 from pkdb_analysis.data import PKData
 
 
+# from gspread_pandas import Spread -> removing gspread support for now
+Spread = None
+
 logger = logging.getLogger(__name__)
 
 
 def create_table_report(
-        h5_data_path,
-        dosing_substances: List,
-        report_substances: List,
-        excel_path: Path = None,
-        tsv_path: Path = None,
-        google_sheets: str = None,
-        query_data: bool = False
+    h5_data_path,
+    dosing_substances: List,
+    report_substances: List,
+    excel_path: Path = None,
+    tsv_path: Path = None,
+    google_sheets: str = None,
+    query_data: bool = False,
 ):
     """Create table report for given substance.
 
@@ -46,23 +48,20 @@ def create_table_report(
 
     # Load data
     if not h5_data_path.exists():
-        raise IOError(f"PKDBData in HDF5 does not exist: '{h5_data_path}'. "
-                      f"Query the data first with the `query_data=True' flag.")
+        raise IOError(
+            f"PKDBData in HDF5 does not exist: '{h5_data_path}'. "
+            f"Query the data first with the `query_data=True' flag."
+        )
 
     pkdata = PKData.from_hdf5(h5_data_path)
     study_sids = pkdata.filter_intervention(
-        f_idx=filter.f_dosing_in,
-        substances=dosing_substances,
-        concise=False
+        f_idx=filter.f_dosing_in, substances=dosing_substances, concise=False
     ).interventions.study_sids
 
     pkdata = pkdata.filter_study(lambda x: x["sid"].isin(study_sids), concise=False)
 
     # Create table report
-    table_report = TableReport(
-        pkdata=pkdata,
-        substances=report_substances
-    )
+    table_report = TableReport(pkdata=pkdata, substances=report_substances)
     table_report.create_tables()
 
     # serialize table report
@@ -71,12 +70,17 @@ def create_table_report(
     if tsv_path is not None:
         table_report.to_tsv(tsv_path)
     if google_sheets is not None:
+        logger.error(
+            f"NO SUPPORT FOR GOOGLE SHEETS: see "
+            f"https://github.com/matthiaskoenig/pkdb_analysis/issues/36"
+        )
         table_report.to_google_sheet(google_sheets)
 
 
 @dataclass
 class Parameter:
     """FIXME: Document."""
+
     measurement_types: Union[str, List] = "any"
     value_field: Sequence = "choice"
     substance: str = "any"
@@ -88,13 +92,14 @@ class Parameter:
 
 class TableReportTypes(Enum):
     """Allowed types of table reports"""
+
     STUDIES = 1  # overview study content
     TIMECOURSES = 2  # overview timecourse content
     PHARMACOKINETICS = 3  # overview pharmacokinetics content
 
 
 class TableReport(object):
-    """ Summary table for a collection of studies in PK-DB.
+    """Summary table for a collection of studies in PK-DB.
 
     Data is provided as PKData object.
     Export formats are table files or google spreadsheets.
@@ -123,9 +128,9 @@ class TableReport(object):
         self._create_path(path_excel.parent)
 
         sheets = {
-            'studies': self.df_studies,
-            'timecourses': self.df_timecourses,
-            'pharmacokinetics': self.df_pharmacokinetics,
+            "studies": self.df_studies,
+            "timecourses": self.df_timecourses,
+            "pharmacokinetics": self.df_pharmacokinetics,
         }
 
         with pd.ExcelWriter(path_excel) as writer:
@@ -133,11 +138,11 @@ class TableReport(object):
                 df1 = df.copy()
                 # hyperlink replacements:
                 df1["PKDB identifier"] = df1["PKDB identifier"].apply(
-                    lambda
-                        x: f'=HYPERLINK("https://develop.pk-db.com/studies/{x}", "{x}")')
+                    lambda x: f'=HYPERLINK("https://develop.pk-db.com/studies/{x}", "{x}")'
+                )
                 df1["PMID"] = df1["PMID"].apply(
-                    lambda
-                        x: f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}", "{x}")')
+                    lambda x: f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}", "{x}")'
+                )
 
                 df1.to_excel(writer, sheet_name=key, index=False)
 
@@ -164,18 +169,21 @@ class TableReport(object):
             6. Download the JSON file.
             7. Copy the JSON file to your code directory and rename it to google_secret.json
         """
-        header_start = 'A4'
+        header_start = "A4"
         header_size = 4
 
-        for report_type in [TableReportTypes.STUDIES, TableReportTypes.TIMECOURSES,
-                            TableReportTypes.PHARMACOKINETICS]:
+        for report_type in [
+            TableReportTypes.STUDIES,
+            TableReportTypes.TIMECOURSES,
+            TableReportTypes.PHARMACOKINETICS,
+        ]:
             if report_type == TableReportTypes.STUDIES:
                 table_df = self.df_studies
             elif report_type == TableReportTypes.TIMECOURSES:
                 table_df = self.df_timecourses
             elif report_type == TableReportTypes.PHARMACOKINETICS:
                 table_df = self.df_pharmacokinetics
-                header_start = 'A5'
+                header_start = "A5"
                 header_size = 5
 
             # hyperlink replacements:
@@ -193,26 +201,31 @@ class TableReport(object):
             sheet.resize(header_size, len(df.columns))
 
             spread.df_to_sheet(
-                df, index=False, headers=False,
-                sheet=sheet_name, start=header_start, replace=False
+                df,
+                index=False,
+                headers=False,
+                sheet=sheet_name,
+                start=header_start,
+                replace=False,
             )
 
     def to_tsv(self, path_output: Path, suffix="tsv", sep="\t", index=None, **kwargs):
         """Write all sheets to TSV."""
         self._create_path(path_output)
 
-        self.df_studies.to_csv(path_output / f"studies.{suffix}", sep=sep, index=index,
-                               **kwargs)
-        self.df_pharmacokinetics.to_csv(path_output / f"pharmacokinetics.{suffix}",
-                                        sep=sep, index=index, **kwargs)
-        self.df_timecourses.to_csv(path_output / f"timecourses.{suffix}", sep=sep,
-                                   index=index, **kwargs)
+        self.df_studies.to_csv(
+            path_output / f"studies.{suffix}", sep=sep, index=index, **kwargs
+        )
+        self.df_pharmacokinetics.to_csv(
+            path_output / f"pharmacokinetics.{suffix}", sep=sep, index=index, **kwargs
+        )
+        self.df_timecourses.to_csv(
+            path_output / f"timecourses.{suffix}", sep=sep, index=index, **kwargs
+        )
 
     def create_tables(self):
         """Creates all output tables in given output_path."""
-        self.df_studies = self.create_table(
-            report_type=TableReportTypes.STUDIES
-        )
+        self.df_studies = self.create_table(report_type=TableReportTypes.STUDIES)
         self.df_timecourses = self.create_table(
             report_type=TableReportTypes.TIMECOURSES
         )
@@ -250,57 +263,66 @@ class TableReport(object):
 
         subject_info = {
             "sex": Parameter(measurement_types=["sex"], value_field=["choice"]),
-            "age": Parameter(measurement_types=["age"],
-                             value_field=["mean", "median", "value"]),
-            "weight": Parameter(measurement_types=["weight"],
-                                value_field=["mean", "median", "value"]),
-            "height": Parameter(measurement_types=["height"],
-                                value_field=["mean", "median", "value"]),
-            "body mass index": Parameter(measurement_types=["bmi"],
-                                         value_field=["mean", "median", "value"]),
-            "ethnicity": Parameter(measurement_types=["ethnicity"],
-                                   value_field=["choice"]),
-
+            "age": Parameter(
+                measurement_types=["age"], value_field=["mean", "median", "value"]
+            ),
+            "weight": Parameter(
+                measurement_types=["weight"], value_field=["mean", "median", "value"]
+            ),
+            "height": Parameter(
+                measurement_types=["height"], value_field=["mean", "median", "value"]
+            ),
+            "body mass index": Parameter(
+                measurement_types=["bmi"], value_field=["mean", "median", "value"]
+            ),
+            "ethnicity": Parameter(
+                measurement_types=["ethnicity"], value_field=["choice"]
+            ),
             # pk effecting factors
-            "healthy": Parameter(measurement_types=["healthy"],
-                                 value_field=["choice"]),
-            "medication": Parameter(measurement_types=["medication"],
-                                    value_field=["choice"]),
-            "smoking": Parameter(measurement_types=["smoking"],
-                                 value_field=["choice"]),
+            "healthy": Parameter(measurement_types=["healthy"], value_field=["choice"]),
+            "medication": Parameter(
+                measurement_types=["medication"], value_field=["choice"]
+            ),
+            "smoking": Parameter(measurement_types=["smoking"], value_field=["choice"]),
             "oral contraceptives": Parameter(
-                measurement_types=["oral contraceptives"], value_field=["choice"]),
-            "overnight fast": Parameter(measurement_types=["overnight fast"],
-                                        value_field=["choice"]),
-            "CYP1A2 genotype": Parameter(measurement_types=["CYP1A2 genotype"],
-                                         value_field=["choice"]),
+                measurement_types=["oral contraceptives"], value_field=["choice"]
+            ),
+            "overnight fast": Parameter(
+                measurement_types=["overnight fast"], value_field=["choice"]
+            ),
+            "CYP1A2 genotype": Parameter(
+                measurement_types=["CYP1A2 genotype"], value_field=["choice"]
+            ),
             "abstinence alcohol": Parameter(
                 measurement_types=["abstinence alcohol"],
-                value_field=["mean", "median", "value", "min", "max"])
+                value_field=["mean", "median", "value", "min", "max"],
+            ),
         }
 
         intervention_info = {
             "dosing amount": Parameter(
                 measurement_types=["dosing", "qualitative dosing"],
-                value_field=["value"]),
+                value_field=["value"],
+            ),
             "dosing route": Parameter(
                 measurement_types=["dosing", "qualitative dosing"],
-                value_field=["route"]),
+                value_field=["route"],
+            ),
             "dosing form": Parameter(
-                measurement_types=["dosing", "qualitative dosing"],
-                value_field=["form"]),
+                measurement_types=["dosing", "qualitative dosing"], value_field=["form"]
+            ),
         }
         outputs_info = {
-            "quantification method": Parameter(measurement_types="any",
-                                               value_field=["method"]),
+            "quantification method": Parameter(
+                measurement_types="any", value_field=["method"]
+            ),
         }
 
         s_keys = list(subject_info.keys())
         i_keys = list(intervention_info.keys())
         o_keys = list(outputs_info.keys())
 
-        table_keys.extend(["Subjects_individual",
-                           "Subjects_groups"])
+        table_keys.extend(["Subjects_individual", "Subjects_groups"])
 
         for keys in [s_keys, i_keys, o_keys]:
             table_keys.extend(copy(keys))
@@ -309,42 +331,49 @@ class TableReport(object):
         studies_interventions = table_df.apply(
             self._add_information,
             args=(self.pkdata, intervention_info, "interventions"),
-            axis=1
+            axis=1,
         )
         studies_group = table_df.apply(
             self._add_information,
             args=(self.pkdata, self.pkdata_concised, subject_info, "groups"),
-            axis=1
+            axis=1,
         )
         studies_group[["Subjects_individual", "Subjects_groups"]] = studies_group[
-            ["Subjects_individual", "Subjects_groups"]].astype(int)
+            ["Subjects_individual", "Subjects_groups"]
+        ].astype(int)
 
         studies_individuals = table_df.apply(
             self._add_information,
             args=(self.pkdata, subject_info, "individuals"),
-            axis=1
+            axis=1,
         )
-        table_df = pd.merge(table_df, self._combine(
-            studies_group[[*s_keys, "Subjects_individual", "Subjects_groups"]],
-            studies_individuals[s_keys]), on="sid")
+        table_df = pd.merge(
+            table_df,
+            self._combine(
+                studies_group[[*s_keys, "Subjects_individual", "Subjects_groups"]],
+                studies_individuals[s_keys],
+            ),
+            on="sid",
+        )
         table_df = pd.merge(table_df, studies_interventions[i_keys], on="sid")
         studies_outputs = table_df.apply(
             self._add_information,
             args=(self.pkdata, self.pkdata_concised, outputs_info, "outputs"),
-            axis=1
+            axis=1,
         )
         studies_timecourses = table_df.apply(
             self._add_information,
             args=(self.pkdata, self.pkdata_concised, outputs_info, "timecourses"),
-            axis=1
+            axis=1,
         )
         table_df = pd.merge(
             table_df,
-            self._combine(studies_outputs[o_keys], studies_timecourses[o_keys])
+            self._combine(studies_outputs[o_keys], studies_timecourses[o_keys]),
         )
         # reformating things
-        table_keys, table_df = self._format_table_information(table_df=table_df,
-                                                              table_keys=table_keys)
+        table_keys, table_df = self._format_table_information(
+            table_df=table_df, table_keys=table_keys
+        )
         table_final_df = table_df[table_keys]
         return table_final_df
 
@@ -356,33 +385,38 @@ class TableReport(object):
             "individual": {"value_field": ["value"], "only_individual": True},
             "group": {"value_field": ["mean", "median"], "only_group": True},
             "error": {"value_field": ["sd", "se", "cv"], "only_group": True},
-            "plasma/blood": {"value_field": ["tissue"],
-                             "values": ["plasma", "blood", "serum"],
-                             "groupby": False},
-            "urine": {"value_field": ["tissue"], "values": ["urine"],
-                      "groupby": False},
-            "saliva": {"value_field": ["tissue"], "values": ["saliva"],
-                       "groupby": False},
+            "plasma/blood": {
+                "value_field": ["tissue"],
+                "values": ["plasma", "blood", "serum"],
+                "groupby": False,
+            },
+            "urine": {"value_field": ["tissue"], "values": ["urine"], "groupby": False},
+            "saliva": {
+                "value_field": ["tissue"],
+                "values": ["saliva"],
+                "groupby": False,
+            },
         }
         timecourse_info = {}
         for substance in self.substances:
             for key, p_kwargs in timecourse_fields.items():
                 this_key = f"{substance}_timecourses_{key}"
-                timecourse_info[this_key] = Parameter(measurement_types="any",
-                                                      substance=substance,
-                                                      **p_kwargs)
+                timecourse_info[this_key] = Parameter(
+                    measurement_types="any", substance=substance, **p_kwargs
+                )
                 table_keys.append(this_key)
 
         table_df = table_df.apply(
             self._add_information,
             args=(self.pkdata, self.pkdata_concised, timecourse_info, "timecourses"),
-            axis=1
+            axis=1,
         )
         table_df = table_df.fillna(" ")
 
         # reformating things
-        table_keys, table_df = self._format_table_information(table_df=table_df,
-                                                              table_keys=table_keys)
+        table_keys, table_df = self._format_table_information(
+            table_df=table_df, table_keys=table_keys
+        )
         return table_df[table_keys]
 
     def pks_table(self) -> pd.DataFrame:
@@ -391,119 +425,170 @@ class TableReport(object):
         pks_info = {}
         for substance in self.substances:
             pks_info_substance = {
-                f"{substance}_plasma/blood": Parameter(substance=f"{substance}",
-                                                       value_field=["tissue"],
-                                                       values=["plasma", "blood",
-                                                               "serum"],
-                                                       groupby=False),
-                f"{substance}_urine": Parameter(substance=f"{substance}",
-                                                value_field=["tissue"],
-                                                values=["urine"],
-                                                groupby=False),
-                f"{substance}_saliva": Parameter(substance=f"{substance}",
-                                                 value_field=["tissue"],
-                                                 values=["saliva"],
-                                                 groupby=False),
+                f"{substance}_plasma/blood": Parameter(
+                    substance=f"{substance}",
+                    value_field=["tissue"],
+                    values=["plasma", "blood", "serum"],
+                    groupby=False,
+                ),
+                f"{substance}_urine": Parameter(
+                    substance=f"{substance}",
+                    value_field=["tissue"],
+                    values=["urine"],
+                    groupby=False,
+                ),
+                f"{substance}_saliva": Parameter(
+                    substance=f"{substance}",
+                    value_field=["tissue"],
+                    values=["saliva"],
+                    groupby=False,
+                ),
                 f"{substance}_vd_individual": Parameter(
-                    measurement_types=["vd"], substance=f"{substance}",
-                    value_field=["value"], only_individual=True),
-                f"{substance}_vd_group": Parameter(measurement_types=["vd"],
-                                                   substance=f"{substance}",
-                                                   value_field=["mean",
-                                                                "median"],
-                                                   only_group=True),
-                f"{substance}_vd_error": Parameter(measurement_types=["vd"],
-                                                   substance=f"{substance}",
-                                                   value_field=["sd", "se",
-                                                                "cv"],
-                                                   only_group=True),
+                    measurement_types=["vd"],
+                    substance=f"{substance}",
+                    value_field=["value"],
+                    only_individual=True,
+                ),
+                f"{substance}_vd_group": Parameter(
+                    measurement_types=["vd"],
+                    substance=f"{substance}",
+                    value_field=["mean", "median"],
+                    only_group=True,
+                ),
+                f"{substance}_vd_error": Parameter(
+                    measurement_types=["vd"],
+                    substance=f"{substance}",
+                    value_field=["sd", "se", "cv"],
+                    only_group=True,
+                ),
                 f"{substance}_clearance_individual": Parameter(
-                    measurement_types=["clearance"], substance=f"{substance}",
-                    value_field=["value"], only_individual=True),
+                    measurement_types=["clearance"],
+                    substance=f"{substance}",
+                    value_field=["value"],
+                    only_individual=True,
+                ),
                 f"{substance}_clearance_group": Parameter(
-                    measurement_types=["clearance"], substance=f"{substance}",
-                    value_field=["mean", "median"], only_group=True),
+                    measurement_types=["clearance"],
+                    substance=f"{substance}",
+                    value_field=["mean", "median"],
+                    only_group=True,
+                ),
                 f"{substance}_clearance_error": Parameter(
-                    measurement_types=["clearance"], substance=f"{substance}",
-                    value_field=["sd", "se", "cv"], only_group=True),
+                    measurement_types=["clearance"],
+                    substance=f"{substance}",
+                    value_field=["sd", "se", "cv"],
+                    only_group=True,
+                ),
                 f"{substance}_auc_individual": Parameter(
                     measurement_types=["auc_end", "auc_inf"],
-                    substance=f"{substance}", value_field=["value"],
-                    only_individual=True),
+                    substance=f"{substance}",
+                    value_field=["value"],
+                    only_individual=True,
+                ),
                 f"{substance}_auc_group": Parameter(
                     measurement_types=["auc_end", "auc_inf"],
-                    substance=f"{substance}", value_field=["mean", "median"],
-                    only_group=True),
+                    substance=f"{substance}",
+                    value_field=["mean", "median"],
+                    only_group=True,
+                ),
                 f"{substance}_auc_error": Parameter(
                     measurement_types=["auc_end", "auc_inf"],
-                    substance=f"{substance}", value_field=["sd", "se", "cv"],
-                    only_group=True),
+                    substance=f"{substance}",
+                    value_field=["sd", "se", "cv"],
+                    only_group=True,
+                ),
                 f"{substance}_thalf_individual": Parameter(
-                    measurement_types=["thalf"], substance=f"{substance}",
-                    value_field=["value"], only_individual=True),
+                    measurement_types=["thalf"],
+                    substance=f"{substance}",
+                    value_field=["value"],
+                    only_individual=True,
+                ),
                 f"{substance}_thalf_group": Parameter(
-                    measurement_types=["thalf"], substance=f"{substance}",
-                    value_field=["mean", "median"], only_group=True),
+                    measurement_types=["thalf"],
+                    substance=f"{substance}",
+                    value_field=["mean", "median"],
+                    only_group=True,
+                ),
                 f"{substance}_thalf_error": Parameter(
-                    measurement_types=["thalf"], substance=f"{substance}",
-                    value_field=["sd", "se", "cv"], only_group=True),
+                    measurement_types=["thalf"],
+                    substance=f"{substance}",
+                    value_field=["sd", "se", "cv"],
+                    only_group=True,
+                ),
                 f"{substance}_cmax_individual": Parameter(
-                    measurement_types=["cmax"], substance=f"{substance}",
-                    value_field=["value"], only_individual=True),
-                f"{substance}_cmax_group": Parameter(measurement_types=["cmax"],
-                                                     substance=f"{substance}",
-                                                     value_field=["mean",
-                                                                  "median"],
-                                                     only_group=True),
-                f"{substance}_cmax_error": Parameter(measurement_types=["cmax"],
-                                                     substance=f"{substance}",
-                                                     value_field=["sd", "se",
-                                                                  "cv"],
-                                                     only_group=True),
+                    measurement_types=["cmax"],
+                    substance=f"{substance}",
+                    value_field=["value"],
+                    only_individual=True,
+                ),
+                f"{substance}_cmax_group": Parameter(
+                    measurement_types=["cmax"],
+                    substance=f"{substance}",
+                    value_field=["mean", "median"],
+                    only_group=True,
+                ),
+                f"{substance}_cmax_error": Parameter(
+                    measurement_types=["cmax"],
+                    substance=f"{substance}",
+                    value_field=["sd", "se", "cv"],
+                    only_group=True,
+                ),
                 f"{substance}_tmax_individual": Parameter(
-                    measurement_types=["tmax"], substance=f"{substance}",
-                    value_field=["value"], only_individual=True),
-                f"{substance}_tmax_group": Parameter(measurement_types=["tmax"],
-                                                     substance=f"{substance}",
-                                                     value_field=["mean",
-                                                                  "median"],
-                                                     only_group=True),
-                f"{substance}_tmax_error": Parameter(measurement_types=["tmax"],
-                                                     substance=f"{substance}",
-                                                     value_field=["sd", "se",
-                                                                  "cv"],
-                                                     only_group=True),
+                    measurement_types=["tmax"],
+                    substance=f"{substance}",
+                    value_field=["value"],
+                    only_individual=True,
+                ),
+                f"{substance}_tmax_group": Parameter(
+                    measurement_types=["tmax"],
+                    substance=f"{substance}",
+                    value_field=["mean", "median"],
+                    only_group=True,
+                ),
+                f"{substance}_tmax_error": Parameter(
+                    measurement_types=["tmax"],
+                    substance=f"{substance}",
+                    value_field=["sd", "se", "cv"],
+                    only_group=True,
+                ),
                 f"{substance}_kel_individual": Parameter(
-                    measurement_types=["kel"], substance=f"{substance}",
-                    value_field=["value"], only_individual=True),
-                f"{substance}_kel_group": Parameter(measurement_types=["kel"],
-                                                    substance=f"{substance}",
-                                                    value_field=["mean",
-                                                                 "median"],
-                                                    only_group=True),
-                f"{substance}_kel_error": Parameter(measurement_types=["kel"],
-                                                    substance=f"{substance}",
-                                                    value_field=["sd", "se",
-                                                                 "cv"],
-                                                    only_group=True)
+                    measurement_types=["kel"],
+                    substance=f"{substance}",
+                    value_field=["value"],
+                    only_individual=True,
+                ),
+                f"{substance}_kel_group": Parameter(
+                    measurement_types=["kel"],
+                    substance=f"{substance}",
+                    value_field=["mean", "median"],
+                    only_group=True,
+                ),
+                f"{substance}_kel_error": Parameter(
+                    measurement_types=["kel"],
+                    substance=f"{substance}",
+                    value_field=["sd", "se", "cv"],
+                    only_group=True,
+                ),
             }
             pks_info = {**pks_info, **pks_info_substance}
 
         table_df = table_df.apply(
             self._add_information,
             args=(self.pkdata, self.pkdata_concised, pks_info, "outputs"),
-            axis=1
+            axis=1,
         )
         table_keys.extend(pks_info.keys())
         table_df = table_df.fillna(" ")
         # reformating things
-        table_keys, table_df = self._format_table_information(table_df=table_df,
-                                                              table_keys=table_keys)
+        table_keys, table_df = self._format_table_information(
+            table_df=table_df, table_keys=table_keys
+        )
         return table_df[table_keys]
 
     @staticmethod
-    def _add_information(study, pkdata, pkdata_concised, measurement_types: Dict,
-                         table: str):
+    def _add_information(
+        study, pkdata, pkdata_concised, measurement_types: Dict, table: str
+    ):
         """FIXME: document me."""
 
         additional_dict = {}
@@ -523,14 +608,17 @@ class TableReport(object):
 
         if table == "groups":
             additional_dict["Subjects_individual"] = has_info_kwargs[
-                "Subjects_individual"]
-            additional_dict["Subjects_groups"] = has_info_kwargs[
-                "Subjects_groups"]
+                "Subjects_individual"
+            ]
+            additional_dict["Subjects_groups"] = has_info_kwargs["Subjects_groups"]
 
         additional_dict = {
-            **{key: TableReport._has_info(parameter=parameter, **has_info_kwargs) for
-               key, parameter in
-               measurement_types.items()}, **additional_dict}
+            **{
+                key: TableReport._has_info(parameter=parameter, **has_info_kwargs)
+                for key, parameter in measurement_types.items()
+            },
+            **additional_dict,
+        }
 
         return study.append(pd.Series(additional_dict))
 
@@ -542,14 +630,18 @@ class TableReport(object):
         # FIXME: https://github.com/matthiaskoenig/pkdb_analysis/issues/23
         # pubmeds do not exist (sid != pmid for curated studies with PKDB identifiers)
         table_df["PMID"] = table_df["sid"].apply(lambda x: x)
-        table_keys = ["PKDB identifier", "name", "PMID",
-                      "publication date", ] + table_keys
+        table_keys = [
+            "PKDB identifier",
+            "name",
+            "PMID",
+            "publication date",
+        ] + table_keys
         table_df.sort_values(by="name", inplace=True)
         return table_keys, table_df
 
     @staticmethod
     def _add_group_all_count(study_df: pd.DataFrame, pkdata: PKData):
-        """ Adds a column with the group count of the all group for every study.
+        """Adds a column with the group count of the all group for every study.
         Changes study in place.
         """
         # get all "all" groups (FIXME: unnecessary repetition)
@@ -562,8 +654,13 @@ class TableReport(object):
         study_df["Group_all_count"] = group["group_count"]
 
     @staticmethod
-    def _has_info(df: pd.DataFrame, instance_id: str, parameter: Parameter,
-                  Subjects_groups: int = 0, Subjects_individual: int = 0):
+    def _has_info(
+        df: pd.DataFrame,
+        instance_id: str,
+        parameter: Parameter,
+        Subjects_groups: int = 0,
+        Subjects_individual: int = 0,
+    ):
         has_info = []
         compare_length = 0
         if parameter.substance != "any":
@@ -590,10 +687,12 @@ class TableReport(object):
                 specific_info = instance
             else:
                 specific_info = instance[
-                    instance["measurement_type"].isin(parameter.measurement_types)]
+                    instance["measurement_type"].isin(parameter.measurement_types)
+                ]
 
-            value_types = specific_info[parameter.value_field].applymap(
-                type).stack().unique()
+            value_types = (
+                specific_info[parameter.value_field].applymap(type).stack().unique()
+            )
 
             has_array = False
             for value in value_types:
@@ -654,19 +753,23 @@ class TableReport(object):
         merged = pd.merge(df1, df2, on="sid")
 
         for column in [c for c in df2.columns if c != "sid"]:
-            keys = [f'{column}_x', f'{column}_y']
+            keys = [f"{column}_x", f"{column}_y"]
             merged[column] = merged[keys].apply(TableReport._and_logic, axis=1)
 
         return merged[df1.columns]
 
     @staticmethod
     def _extend_study_keys(study_keys):
-        return study_keys.extend(["PKDB identifier",
-                                  "Name",
-                                  "PMID",
-                                  "publication date",
-                                  "Subjects_individual",
-                                  "Subjects_groups"])
+        return study_keys.extend(
+            [
+                "PKDB identifier",
+                "Name",
+                "PMID",
+                "publication date",
+                "Subjects_individual",
+                "Subjects_groups",
+            ]
+        )
 
     @staticmethod
     def _clear_sheat(spread, header_size, column_length):

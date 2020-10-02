@@ -1,6 +1,5 @@
-"""
-This script creates an interactive pharmacokinetics plot.
-"""
+"""Example to create interactive pharmacokinetics plot."""
+
 from pathlib import Path
 
 import pandas as pd

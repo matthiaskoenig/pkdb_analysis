@@ -12,15 +12,19 @@ def test_tables(tmp_path):
     create_table_report(
         h5_data_path=TEST_HDF5,
         dosing_substances=["torasemide"],
-        report_substances=["torasemide", "torasemide-M1", "torasemide-M3", "torasemide-M5"],
+        report_substances=[
+            "torasemide",
+            "torasemide-M1",
+            "torasemide-M3",
+            "torasemide-M5",
+        ],
         excel_path=xlsx_path,
         # google_sheets="TorasemideTables",
         tsv_path=output_path,
-        query_data=False
+        query_data=False,
     )
 
     assert xlsx_path.exists()
     assert (output_path / "studies.tsv").exists()
     assert (output_path / "pharmacokinetics.tsv").exists()
     assert (output_path / "timecourses.tsv").exists()
-
