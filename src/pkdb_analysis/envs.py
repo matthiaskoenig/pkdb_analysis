@@ -11,13 +11,13 @@ from pkdb_analysis.logging_utils import bcolors
 logger = logging.getLogger(__name__)
 
 try:
-    API_BASE = os.environ['API_BASE']
+    API_BASE = os.environ["API_BASE"]
     # fix terminal slash
-    if API_BASE.endswith('/'):
+    if API_BASE.endswith("/"):
         API_BASE = API_BASE[:-1]
 
-    USER = os.environ['USER']
-    PASSWORD = os.environ['PASSWORD']
+    USER = os.environ["USER"]
+    PASSWORD = os.environ["PASSWORD"]
 
     API_URL = API_BASE + "/api/v1"
 

@@ -9,11 +9,18 @@ from sklearn.preprocessing import Normalizer
 
 
 def _classify(df, n_clusters):
-    coocurence_matrix = df.pivot_table(index="source", columns="target", aggfunc="sum").fillna(0)
+    coocurence_matrix = df.pivot_table(
+        index="source", columns="target", aggfunc="sum"
+    ).fillna(0)
     norm_coocurence_matrix = Normalizer(norm="l2").fit_transform(coocurence_matrix)
-    norm_coocurence_matrix = pd.DataFrame(norm_coocurence_matrix, index=coocurence_matrix.index,
-                                          columns=coocurence_matrix.columns)
-    classification_model = AgglomerativeClustering(linkage="single", n_clusters=n_clusters)
+    norm_coocurence_matrix = pd.DataFrame(
+        norm_coocurence_matrix,
+        index=coocurence_matrix.index,
+        columns=coocurence_matrix.columns,
+    )
+    classification_model = AgglomerativeClustering(
+        linkage="single", n_clusters=n_clusters
+    )
     classes = classification_model.fit_predict(norm_coocurence_matrix.T.corr())
     nodes = pd.DataFrame()
     nodes["name"] = norm_coocurence_matrix.index
@@ -67,7 +74,12 @@ def show_values_on_bars(axs, bottom):
             except ValueError:
                 continue
 
-            ax.text(_x, _y, value, ha="center", )
+            ax.text(
+                _x,
+                _y,
+                value,
+                ha="center",
+            )
 
     if isinstance(axs, np.ndarray):
         for idx, ax in np.ndenumerate(axs):
@@ -89,49 +101,46 @@ def arc_plot(pkdata, n_clusters=7):
     return json_dict
 
 
-def study_overview(pkdata, title, max_values = {}, **kwargs):
+def study_overview(pkdata, title, max_values={}, **kwargs):
 
     fig, axes = plt.subplots(ncols=1, nrows=5, sharex=True, **kwargs)
     fig.suptitle(title, fontsize=16)
     sns.set_style("white")
     sns.despine(left=True, bottom=True)
     df = pkdata.studies.df.set_index("name")[
-        ['group_count', 'individual_count', 'intervention_count', 'output_count', 'output_calculated_count',
-         'timecourse_count']].replace({0,0.1})
+        [
+            "group_count",
+            "individual_count",
+            "intervention_count",
+            "output_count",
+            "output_calculated_count",
+            "timecourse_count",
+        ]
+    ].replace({0, 0.1})
 
-    colors = sns.color_palette("Set1", n_colors=8, desat=.5)
+    colors = sns.color_palette("Set1", n_colors=8, desat=0.5)
 
     plot_info = [
-        {
-            "name": "groups",
-            "col_name": "group_count",
-            "color": colors[0],
-            "ax": 0
-        },
+        {"name": "groups", "col_name": "group_count", "color": colors[0], "ax": 0},
         {
             "name": "individuals",
             "col_name": "individual_count",
             "color": colors[1],
-            "ax": 1
+            "ax": 1,
         },
         {
             "name": "interventions",
             "col_name": "intervention_count",
             "color": colors[2],
-            "ax": 2
+            "ax": 2,
         },
-        {
-            "name": "outputs",
-            "col_name": "output_count",
-            "color": colors[3],
-            "ax": 3
-        },
+        {"name": "outputs", "col_name": "output_count", "color": colors[3], "ax": 3},
         {
             "name": "timecourses",
             "col_name": "timecourse_count",
             "color": colors[4],
-            "ax": 4
-        }
+            "ax": 4,
+        },
     ]
 
     plot_info = pd.DataFrame(plot_info, columns=["ax", "name", "col_name", "color"])
@@ -141,28 +150,49 @@ def study_overview(pkdata, title, max_values = {}, **kwargs):
     for subplot in plot_info.itertuples():
         ax = axes[subplot.ax]
         if subplot.name == "outputs":
-            df["output_reported_count"] = df["output_count"] - df["output_calculated_count"]
-            data = df[["output_calculated_count", "output_reported_count"]].stack().reset_index(1).rename(
-                columns={"level_1": "type", 0: "value"}).replace(
-                {"output_calculated_count": "Calculated", "output_reported_count": "Reported"})
+            df["output_reported_count"] = (
+                df["output_count"] - df["output_calculated_count"]
+            )
+            data = (
+                df[["output_calculated_count", "output_reported_count"]]
+                .stack()
+                .reset_index(1)
+                .rename(columns={"level_1": "type", 0: "value"})
+                .replace(
+                    {
+                        "output_calculated_count": "Calculated",
+                        "output_reported_count": "Reported",
+                    }
+                )
+            )
 
-            sns.barplot(data=data, x=data.index, y="value", hue=data.type, ax=ax,
-                            palette=[color_timecourse, color_output])
+            sns.barplot(
+                data=data,
+                x=data.index,
+                y="value",
+                hue=data.type,
+                ax=ax,
+                palette=[color_timecourse, color_output],
+            )
             ax.get_legend().remove()
 
         else:
-            sns.barplot(data=df, x=df.index, y=subplot.col_name, ax=ax, color=subplot.color)
+            sns.barplot(
+                data=df, x=df.index, y=subplot.col_name, ax=ax, color=subplot.color
+            )
 
         ax.set_yscale("log")
-        param = {'bottom':0.1}
+        param = {"bottom": 0.1}
         if max_values.get(subplot.name, False):
             param["top"] = max_values.get(subplot.name)
         ax.set_ylim(**param)
 
-        ax.set_xlabel('')
+        ax.set_xlabel("")
 
-        ax.set_ylabel(subplot.name, rotation=0, labelpad=5, horizontalalignment='right')
+        ax.set_ylabel(subplot.name, rotation=0, labelpad=5, horizontalalignment="right")
         ax.set_yticks([])
         show_values_on_bars(ax, 0.2)
-    plt.setp(axes[4].get_xticklabels(), rotation=70, horizontalalignment='right', fontsize=8)
+    plt.setp(
+        axes[4].get_xticklabels(), rotation=70, horizontalalignment="right", fontsize=8
+    )
     return fig

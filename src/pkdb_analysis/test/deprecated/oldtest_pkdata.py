@@ -83,13 +83,17 @@ def test_subject_filter():
         return smoking(d) & (d["choice"] == "N")
 
     healthy_smoker_n_data = data.filter_subject([is_healthy, smoker_n])
-    individual_smoking_choices = healthy_smoker_n_data.individuals[smoking].choice.unique()
+    individual_smoking_choices = healthy_smoker_n_data.individuals[
+        smoking
+    ].choice.unique()
     group_smoking_choices = healthy_smoker_n_data.groups[smoking].choice.unique()
 
     assert "N" in individual_smoking_choices
     assert "N" in group_smoking_choices
 
-    individual_healthy_choices = healthy_smoker_n_data.individuals[healthy].choice.unique()
+    individual_healthy_choices = healthy_smoker_n_data.individuals[
+        healthy
+    ].choice.unique()
     group_healthy_choices = healthy_smoker_n_data.groups[healthy].choice.unique()
 
     assert "Y" in individual_healthy_choices
@@ -107,7 +111,9 @@ def test_subject_exclude():
 
     exclude_smoker_data = data.exclude_subject(smoker_y)
 
-    individual_smoking_choices = exclude_smoker_data.individuals[smoking].choice.unique()
+    individual_smoking_choices = exclude_smoker_data.individuals[
+        smoking
+    ].choice.unique()
     group_smoking_choices = exclude_smoker_data.groups[smoking].choice.unique()
 
     assert "Y" not in individual_smoking_choices
@@ -138,7 +144,9 @@ def test_group_filter_exclude():
     def smoker_y(d):
         return smoking(d) & choice_y(d)
 
-    healthy_smoker_n_data = data.filter_group([is_healthy, smoker_n]).exclude_group([smoker_y, disease])
+    healthy_smoker_n_data = data.filter_group([is_healthy, smoker_n]).exclude_group(
+        [smoker_y, disease]
+    )
 
     group_smoking_choices = healthy_smoker_n_data.groups[smoking].choice.unique()
 

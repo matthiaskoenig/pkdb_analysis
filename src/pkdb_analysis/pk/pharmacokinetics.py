@@ -62,6 +62,7 @@ class PKParametersNoDosing:
             d[key] = getattr(self, key)
         return d
 
+
 @dataclass
 class PKParameters(PKParametersNoDosing):
     dose: Quantity
@@ -78,37 +79,45 @@ class TimecoursePKNoDosing(object):
     """ Class for calculating pharmacokinetics from timecourses without dose information """
 
     def __init__(
-            self,
-            time: Quantity,
-            concentration: Quantity,
-            ureg: UnitRegistry,
-            substance: str = "substance",
-            min_treshold=1E6, ** kwargs):
+        self,
+        time: Quantity,
+        concentration: Quantity,
+        ureg: UnitRegistry,
+        substance: str = "substance",
+        min_treshold=1e6,
+        **kwargs,
+    ):
 
         self._init(time, concentration, ureg, substance, min_treshold, **kwargs)
         self.pk = self._f_pk()
 
     def _init(
-            self,
-            time: Quantity,
-            concentration: Quantity,
-            ureg: UnitRegistry,
-            substance: str = "substance",
-            min_treshold=1E8, ** kwargs):
+        self,
+        time: Quantity,
+        concentration: Quantity,
+        ureg: UnitRegistry,
+        substance: str = "substance",
+        min_treshold=1e8,
+        **kwargs,
+    ):
         self.ureg = ureg
         self.Q_ = ureg.Quantity
 
         if not isinstance(time, Quantity):
             raise ValueError(f"'time' must be a pint Quantity: {type(time)}")
         if not isinstance(concentration, Quantity):
-            raise ValueError(f"'concentration' must be a pint Quantity: {type(concentration)}")
+            raise ValueError(
+                f"'concentration' must be a pint Quantity: {type(concentration)}"
+            )
 
         # check concentration is fitting to time
         assert time.size == concentration.size
 
         # for numerical simulations problems in calculations can arise
         # if values are getting too small
-        cmin = np.nanmin(concentration[np.nonzero(concentration)])  # only take non-zero values
+        cmin = np.nanmin(
+            concentration[np.nonzero(concentration)]
+        )  # only take non-zero values
         cmax = np.nanmax(concentration)
         if (min_treshold * cmin) < cmax:
             warnings.warn(f"Very small concentrations values are set to NaN.")
@@ -119,7 +128,7 @@ class TimecoursePKNoDosing(object):
         self.substance = substance
 
     def _f_pk(self) -> PKParametersNoDosing:
-        """ Calculates all pk parameters from given time course.
+        """Calculates all pk parameters from given time course.
 
         The returned data structure can be used to
         - create a report with pk_report
@@ -132,7 +141,9 @@ class TimecoursePKNoDosing(object):
         auc = self._auc(t, c)
         tmax, cmax = self._max(t, c)
         tmaxhalf, cmaxhalf = self._max_half(t, c)
-        [slope, intercept, r_value, p_value, std_err, max_idx] = self._ols_regression(t, c)
+        [slope, intercept, r_value, p_value, std_err, max_idx] = self._ols_regression(
+            t, c
+        )
         kel = self._kel(slope=slope)
         thalf = self._thalf(kel=kel)
         aucinf = self._aucinf(t, c, slope=slope)
@@ -152,7 +163,7 @@ class TimecoursePKNoDosing(object):
             r_value=r_value,
             p_value=p_value,
             std_err=std_err,
-            max_idx=max_idx
+            max_idx=max_idx,
         )
 
     def _ols_regression(self, t, c):
@@ -171,13 +182,17 @@ class TimecoursePKNoDosing(object):
 
         # FIXME:
         if max_index > (len(c) - 4):
-            warnings.warn("Regression could not be calculated, "
-                          "at least 3 data points after maximum required.")
-            return [self.Q_(np.nan, slope_units), self.Q_(np.nan, intercept_units)] + [np.nan] * 4
+            warnings.warn(
+                "Regression could not be calculated, "
+                "at least 3 data points after maximum required."
+            )
+            return [self.Q_(np.nan, slope_units), self.Q_(np.nan, intercept_units)] + [
+                np.nan
+            ] * 4
 
         # linear regression start regression on data point after maximum
-        x = t.magnitude[max_index + 1:]
-        y = np.log(c.magnitude[max_index + 1:])
+        x = t.magnitude[max_index + 1 :]
+        y = np.log(c.magnitude[max_index + 1 :])
 
         # using mask to remove nan values
         mask = ~np.isnan(x) & ~np.isnan(y)
@@ -187,9 +202,11 @@ class TimecoursePKNoDosing(object):
         if np.isnan(slope) or np.isnan(intercept):
             warnings.warn("Regression could not be calculated on timecourse curve.")
         elif slope > 0.0:
-            warnings.warn("Regression gave a positive slope, "
-                          "resulting in a negative elimination rate. "
-                          "Slope is set to NaN.")
+            warnings.warn(
+                "Regression gave a positive slope, "
+                "resulting in a negative elimination rate. "
+                "Slope is set to NaN."
+            )
             slope = np.nan
             intercept = np.nan
 
@@ -204,30 +221,31 @@ class TimecoursePKNoDosing(object):
         return auc
 
     def _aucinf(self, t, c, slope=None):
-        """ Calculates the area under the curve (AUC) via trapezoid rule
-            and extrapolated to infinity """
+        """Calculates the area under the curve (AUC) via trapezoid rule
+        and extrapolated to infinity"""
         auc = self._auc(t, c)
 
         # by integrating from tend to infinity for c[-1]exp(slope * t) we get
-        auc_d = -c[-1]/slope
+        auc_d = -c[-1] / slope
 
         if auc_d > auc:
-            warnings.warn(
-                f"AUC(t-oo) > AUC(0-tend), no AUC(0-oo) calculated.")
+            warnings.warn(f"AUC(t-oo) > AUC(0-tend), no AUC(0-oo) calculated.")
             # return self.Q_(np.nan, auc.units)
 
-        if auc_d > 0.25*auc:
+        if auc_d > 0.25 * auc:
             # If the % extrapolated is greater than 20%, than the total AUC may be unreliable.
             # The unreliability of the data is not due to a calculation error. Instead it
             # indicates that more sampling is needed for an accurate estimate of the elimination
             # rate constant and the observed area under the curve.
-            warnings.warn(f"AUC(t-oo) is >25% ({round((auc_d/auc*100).magnitude, 2)}%) of total AUC, "
-                          f"calculation may be unreliable.")
+            warnings.warn(
+                f"AUC(t-oo) is >25% ({round((auc_d/auc*100).magnitude, 2)}%) of total AUC, "
+                f"calculation may be unreliable."
+            )
 
         return auc + auc_d
 
     def _max(self, t, c):
-        """ Returns timepoint of maximal value and maximal value based on curve.
+        """Returns timepoint of maximal value and maximal value based on curve.
 
         The tmax depends on the value of both the absorption rate constant (ka)
         and the elimination rate constant (kel).
@@ -238,7 +256,7 @@ class TimecoursePKNoDosing(object):
         return t[idx], c[idx]
 
     def _max_half(self, t, c):
-        """ Calculates timepoint of half maximal value.
+        """Calculates timepoint of half maximal value.
 
         The max half is the timepoint before reaching the maximal value.
 
@@ -281,7 +299,7 @@ class TimecoursePKNoDosing(object):
         return std_err / slope
 
     def _thalf(self, kel):
-        """ Calculates the half-life using the elimination constant.
+        """Calculates the half-life using the elimination constant.
 
         Definition: Time it takes for the plasma concentration or the amount
         of drug in the body to be reduced by 50%.
@@ -300,7 +318,7 @@ class TimecoursePKNoDosing(object):
         return np.log(2) / kel_cv
 
     def info(self) -> str:
-        """ Information string for given pharmacokinetic information.
+        """Information string for given pharmacokinetic information.
 
         :return:
         """
@@ -312,9 +330,7 @@ class TimecoursePKNoDosing(object):
             lines.append("{:<12}: {:>3.3f}".format(key, getattr(self.pk, key)))
         lines.append("-" * 80)
         for key in self.pk.parameters:
-            lines.append(
-                "{:<12}: {:P}".format(key, getattr(self.pk, key))
-            )
+            lines.append("{:<12}: {:P}".format(key, getattr(self.pk, key)))
         lines.append("-" * 80)
         return "\n".join(lines)
 
@@ -353,20 +369,34 @@ class TimecoursePKNoDosing(object):
         for ax in (ax1, ax2):
 
             # auc
-            ax.fill_between(t, np.zeros_like(c), c, color="green", alpha=0.2, label="AUCend")
+            ax.fill_between(
+                t, np.zeros_like(c), c, color="green", alpha=0.2, label="AUCend"
+            )
             ax.plot((tend, tend), (0, cend), linestyle="-", color="black")
 
             # aucinf
             t_aucinf = np.linspace(0, 0.3 * tend, 50)  # interpolate by 30%
             c_aucinf = cend * np.exp(slope * t_aucinf)
-            ax.fill_between(tend + t_aucinf, c_aucinf, np.zeros_like(c_aucinf),
-                            color="red", alpha=0.2, label="AUCinf")
+            ax.fill_between(
+                tend + t_aucinf,
+                c_aucinf,
+                np.zeros_like(c_aucinf),
+                color="red",
+                alpha=0.2,
+                label="AUCinf",
+            )
             ax.plot(tend + t_aucinf, c_aucinf, linestyle="-", color="black")
 
             # fit
             if not np.isnan(slope):
-                ax.plot(t, np.exp(intercept) * np.exp(slope * t), "-", color="blue", label="fit",
-                    linewidth=2.0)
+                ax.plot(
+                    t,
+                    np.exp(intercept) * np.exp(slope * t),
+                    "-",
+                    color="blue",
+                    label="fit",
+                    linewidth=2.0,
+                )
             # cmax (hline)
             ax.plot((0, tmax), (cmax, cmax), linestyle="--", color="black")
             # tmax (vline)
@@ -378,14 +408,14 @@ class TimecoursePKNoDosing(object):
             if not np.isnan(slope):
                 if max_idx < c.size - 1:
                     ax.plot(
-                        t[max_idx + 2:],
-                        c[max_idx + 2:],
+                        t[max_idx + 2 :],
+                        c[max_idx + 2 :],
                         "s",
                         color="blue",
                         linewidth=2,
-                        markersize=8
+                        markersize=8,
                     )
-            ax.annotate('(tmax, cmax)', xy=(tmax, cmax))
+            ax.annotate("(tmax, cmax)", xy=(tmax, cmax))
 
         ax1.set_ylim(bottom=0)
         ax2.set_yscale("log")
@@ -396,16 +426,20 @@ class TimecoursePKNoDosing(object):
         return fig
 
 
-
-
 class TimecoursePK(TimecoursePKNoDosing):
     """ Class for calculating pharmacokinetics from timecourses. """
 
-    def __init__(self, time: Quantity, concentration: Quantity,
-                 dose: Quantity, ureg: UnitRegistry,
-                 intervention_time: Quantity = None,
-                 substance: str = "substance",
-                 min_treshold=1E6, **kwargs):
+    def __init__(
+        self,
+        time: Quantity,
+        concentration: Quantity,
+        dose: Quantity,
+        ureg: UnitRegistry,
+        intervention_time: Quantity = None,
+        substance: str = "substance",
+        min_treshold=1e6,
+        **kwargs,
+    ):
         """Pharmacokinetics parameters are calculated for a single dose experiment.
 
         TODO: support errors on concentrations which are then used in calculation
@@ -431,15 +465,28 @@ class TimecoursePK(TimecoursePKNoDosing):
         if not isinstance(dose, Quantity):
             raise ValueError(f"'dose' must be a pint Quantity: {type(dose)}")
         if not isinstance(intervention_time, Quantity):
-            raise ValueError(f"'intervention_time' must be a pint Quantity: {type(intervention_time)}")
+            raise ValueError(
+                f"'intervention_time' must be a pint Quantity: {type(intervention_time)}"
+            )
 
         # check dimensionality of dose
-        dr = dose.to_base_units().to_reduced_units()  # see https://github.com/hgrecco/pint/issues/1058
-        if not (dr.check("[mass]") or dr.check("[substance]") or dr.check("[mass]/[mass]") or dr.check("[substance]/[mass]")):
-            warnings.warn(f"dose_reduced.dimensionality must either be in '[mass]', '[substance']', '[mass]/[mass]' or '[substance]/[mass]'"
-                          f"The given units are: '{dr.dimensionality}' for {dr.units}. "
-                          f"Check that dose units are correct.")
-            raise ValueError(f"Incorrect dimensionality '{dr.dimensionality}' for dose: {dose.units}")
+        dr = (
+            dose.to_base_units().to_reduced_units()
+        )  # see https://github.com/hgrecco/pint/issues/1058
+        if not (
+            dr.check("[mass]")
+            or dr.check("[substance]")
+            or dr.check("[mass]/[mass]")
+            or dr.check("[substance]/[mass]")
+        ):
+            warnings.warn(
+                f"dose_reduced.dimensionality must either be in '[mass]', '[substance']', '[mass]/[mass]' or '[substance]/[mass]'"
+                f"The given units are: '{dr.dimensionality}' for {dr.units}. "
+                f"Check that dose units are correct."
+            )
+            raise ValueError(
+                f"Incorrect dimensionality '{dr.dimensionality}' for dose: {dose.units}"
+            )
 
         self.dose = dose
         # convert dosing time to units of timecourse
@@ -447,10 +494,8 @@ class TimecoursePK(TimecoursePKNoDosing):
         self.substance = substance
         self.pk = self._f_pk()
 
-
-
     def _f_pk(self) -> PKParameters:
-        """ Calculates all pk parameters from given time course.
+        """Calculates all pk parameters from given time course.
 
         The returned data structure can be used to
         - create a report with pk_report
@@ -466,7 +511,9 @@ class TimecoursePK(TimecoursePKNoDosing):
         tmax, cmax = self._max(t, c)
         tmaxhalf, cmaxhalf = self._max_half(t, c)
 
-        [slope, intercept, r_value, p_value, std_err, max_idx] = self._ols_regression(t, c)
+        [slope, intercept, r_value, p_value, std_err, max_idx] = self._ols_regression(
+            t, c
+        )
 
         kel = self._kel(slope=slope)
         thalf = self._thalf(kel=kel)
@@ -478,19 +525,19 @@ class TimecoursePK(TimecoursePKNoDosing):
             vd = self._vd(aucinf=aucinf, dose=self.dose, kel=kel)
             cl = kel * vd
         else:
-            vd_units = self.dose.units/(auc.units/kel.units)
+            vd_units = self.dose.units / (auc.units / kel.units)
             vdss = self.Q_(np.nan, vd_units)
             vd = self.Q_(np.nan, vd_units)
-            cl = self.Q_(np.nan, kel.units*vd.units)
+            cl = self.Q_(np.nan, kel.units * vd.units)
 
         # perform unit normalization on volumes
         vd.to_base_units().to_reduced_units(),  # see https://github.com/hgrecco/pint/issues/1058
         vdss.to_base_units().to_reduced_units(),  # see https://github.com/hgrecco/pint/issues/1058
         for vd_par in [vd, vdss]:
-            if vd_par.check('[length] ** 3'):
-                vd_par.ito('liter')
-            elif vd_par.check('[length] ** 3/[mass]'):
-                vd_par.ito('liter/kg')
+            if vd_par.check("[length] ** 3"):
+                vd_par.ito("liter")
+            elif vd_par.check("[length] ** 3/[mass]"):
+                vd_par.ito("liter/kg")
 
         return PKParameters(
             compound=self.substance,
@@ -511,7 +558,7 @@ class TimecoursePK(TimecoursePKNoDosing):
             r_value=r_value,
             p_value=p_value,
             std_err=std_err,
-            max_idx=max_idx
+            max_idx=max_idx,
         )
 
     def _vdss(self, dose, intercept=None):
@@ -547,5 +594,5 @@ class TimecoursePK(TimecoursePKNoDosing):
         Volume of distribution is calculated via
             vd = Dose/(AUC_inf*kel)
         """
-        vd = dose / (aucinf*kel)
+        vd = dose / (aucinf * kel)
         return vd

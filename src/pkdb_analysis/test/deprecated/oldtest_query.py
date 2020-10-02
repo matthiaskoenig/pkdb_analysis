@@ -42,7 +42,9 @@ def is_admin_and_connection():
     return True
 
 
-@pytest.mark.skipif(is_admin_and_connection(), reason="Database not running or not admin user.")
+@pytest.mark.skipif(
+    is_admin_and_connection(), reason="Database not running or not admin user."
+)
 def test_data_by_study_name():
     # check existing study
     pkfilter = PKFilterFactory.by_study_name("Test1")
@@ -56,7 +58,9 @@ def test_data_by_study_name():
         assert "Test1" in study_names
 
 
-@pytest.mark.skipif(is_admin_and_connection(), reason="Database not running or not admin user.")
+@pytest.mark.skipif(
+    is_admin_and_connection(), reason="Database not running or not admin user."
+)
 def test_data_by_study_name_empty():
     # check non-existing study
     pkfilter = PKFilterFactory.by_study_name("xyzfasdfs")
@@ -64,7 +68,9 @@ def test_data_by_study_name_empty():
     _check_data_empty(data)
 
 
-@pytest.mark.skipif(is_admin_and_connection(), reason="Database not running or not admin user.")
+@pytest.mark.skipif(
+    is_admin_and_connection(), reason="Database not running or not admin user."
+)
 def test_data_by_study_sid():
     # check existing study
     pkfilter = PKFilterFactory.by_study_sid("Test1")
@@ -79,7 +85,9 @@ def test_data_by_study_sid():
         assert "Test1" in study_sids
 
 
-@pytest.mark.skipif(is_admin_and_connection(), reason="Database not running or not admin user.")
+@pytest.mark.skipif(
+    is_admin_and_connection(), reason="Database not running or not admin user."
+)
 def test_data_by_study_sid_empty():
     # check non-existing study
     pkfilter = PKFilterFactory.by_study_sid("xyzfasdfs")
@@ -87,7 +95,9 @@ def test_data_by_study_sid_empty():
     _check_data_empty(data)
 
 
-@pytest.mark.skipif(is_admin_and_connection(), reason="Database not running or not admin user.")
+@pytest.mark.skipif(
+    is_admin_and_connection(), reason="Database not running or not admin user."
+)
 def test_data_hdf5(tmp_path):
     """ Test HDF io"""
     data = PKDB.query()
@@ -101,7 +111,9 @@ def test_data_hdf5(tmp_path):
         assert len(getattr(data, key)) == len(getattr(data2, key))
 
 
-@pytest.mark.skipif(is_admin_and_connection(), reason="Database not running or not admin user.")
+@pytest.mark.skipif(
+    is_admin_and_connection(), reason="Database not running or not admin user."
+)
 def test_data_counts():
     pkfilter = PKFilterFactory.by_study_name("Test1")
     data = PKDB.query(pkfilter=pkfilter)
@@ -112,7 +124,9 @@ def test_data_counts():
     assert data.timecourses_count == 2
 
 
-@pytest.mark.skipif(is_admin_and_connection(), reason="Database not running or not admin user.")
+@pytest.mark.skipif(
+    is_admin_and_connection(), reason="Database not running or not admin user."
+)
 def test_data_mi():
     pkfilter = PKFilterFactory.by_study_name("Test1")
     data = PKDB.query(pkfilter=pkfilter)
@@ -124,7 +138,10 @@ def test_data_mi():
         # number of entries should not change
         assert len(df) == len(getattr(data, f"{field}"))
 
-@pytest.mark.skipif(is_admin_and_connection(), reason="Database not running or not admin user.")
+
+@pytest.mark.skipif(
+    is_admin_and_connection(), reason="Database not running or not admin user."
+)
 def test_data_test1():
     # check non-existing study
     pkfilter = PKFilterFactory.by_study_name("Test1")

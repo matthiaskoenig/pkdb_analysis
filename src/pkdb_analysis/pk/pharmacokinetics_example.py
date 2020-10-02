@@ -31,21 +31,24 @@ def example0() -> List[TimecoursePK]:
     kel = 1.0
     c0 = 10.0
     dose = Q_(10.0, "mg") * Q_(1.0, "mole/g")
-    c = c0 * np.exp(-kel*t)
+    c = c0 * np.exp(-kel * t)
 
-    tcpk = TimecoursePK(time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"),
-                      dose=dose, ureg=ureg)
+    tcpk = TimecoursePK(
+        time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"), dose=dose, ureg=ureg
+    )
 
     return [tcpk]
 
 
 def example1() -> List[TimecoursePK]:
-    """ Example for pharmacokinetics calculation.
+    """Example for pharmacokinetics calculation.
 
     :return:
     """
     results = []
-    df = pd.read_csv(TESTDATA_PATH / "pk" / "data_example1.csv", sep="\t", na_values="NA")
+    df = pd.read_csv(
+        TESTDATA_PATH / "pk" / "data_example1.csv", sep="\t", na_values="NA"
+    )
 
     # ------------------------------------------
     # Pharmacokinetic parameter for caffeine
@@ -63,23 +66,22 @@ def example1() -> List[TimecoursePK]:
             t = Q_(data.time.values, "hr")
             c = Q_(data.caf.values, "mg/l")
             tcpk = TimecoursePK(
-                time=t,
-                concentration=c,
-                substance=substance,
-                dose=dose,
-                ureg=ureg
+                time=t, concentration=c, substance=substance, dose=dose, ureg=ureg
             )
             results.append(tcpk)
 
     return results
 
+
 def example1_NoDosing() -> List[TimecoursePKNoDosing]:
-    """ Example for pharmacokinetics calculation.
+    """Example for pharmacokinetics calculation.
 
     :return:
     """
     results = []
-    df = pd.read_csv(TESTDATA_PATH / "pk" / "data_example1.csv", sep="\t", na_values="NA")
+    df = pd.read_csv(
+        TESTDATA_PATH / "pk" / "data_example1.csv", sep="\t", na_values="NA"
+    )
 
     # ------------------------------------------
     # Pharmacokinetic parameter for caffeine
@@ -96,10 +98,7 @@ def example1_NoDosing() -> List[TimecoursePKNoDosing]:
             t = Q_(data.time.values, "hr")
             c = Q_(data.caf.values, "mg/l")
             tcpk = TimecoursePKNoDosing(
-                time=t,
-                concentration=c,
-                substance=substance,
-                ureg=ureg
+                time=t, concentration=c, substance=substance, ureg=ureg
             )
             results.append(tcpk)
 
@@ -107,7 +106,7 @@ def example1_NoDosing() -> List[TimecoursePKNoDosing]:
 
 
 def example2() -> List[TimecoursePK]:
-    """ Example for pharmacokinetics calculation.
+    """Example for pharmacokinetics calculation.
 
     This demonstrates the extreme examples of time courses with only limited data points.
     On caffeine the regressions can be calculated, on paraxanthine this is not possible any more (only a single datapoint
@@ -116,7 +115,9 @@ def example2() -> List[TimecoursePK]:
     :return:
     """
     results = []
-    df = pd.read_csv(TESTDATA_PATH / "pk" / "data_example2.csv", sep="\t", na_values="NA")
+    df = pd.read_csv(
+        TESTDATA_PATH / "pk" / "data_example2.csv", sep="\t", na_values="NA"
+    )
 
     # ------------------------------------------
     # Pharmacokinetic parameter for caffeine
@@ -145,8 +146,9 @@ def example2() -> List[TimecoursePK]:
         t = Q_(t.values, "hr")
         c = Q_(c.values, "mg/l")
 
-        tcpk = TimecoursePK(time=t, concentration=c, substance=substance,
-                            dose=dose, ureg=ureg)
+        tcpk = TimecoursePK(
+            time=t, concentration=c, substance=substance, dose=dose, ureg=ureg
+        )
 
         results.append(tcpk)
 
@@ -154,7 +156,7 @@ def example2() -> List[TimecoursePK]:
 
 
 def example_midazolam() -> List[TimecoursePK]:
-    """ Example for pharmacokinetics calculation.
+    """Example for pharmacokinetics calculation.
 
     :return:
     """
@@ -172,23 +174,22 @@ def example_midazolam() -> List[TimecoursePK]:
     t = Q_(df.time.values, "min")
     c = Q_(df["Cve_mid"].values, "mmole/litre")
     tcpk = TimecoursePK(
-        time=t,
-        concentration=c,
-        substance=substance,
-        dose=dose,
-        ureg=ureg
+        time=t, concentration=c, substance=substance, dose=dose, ureg=ureg
     )
     results.append(tcpk)
 
     return results
 
+
 def example_Kim2011_Fig2() -> List[TimecoursePK]:
-    """ Example for pharmacokinetics calculation.
+    """Example for pharmacokinetics calculation.
 
     :return:
     """
     results = []
-    df = pd.read_csv(TESTDATA_PATH / "pk" / "Kim2011_Fig2.tsv", sep="\t", na_values="NA")
+    df = pd.read_csv(
+        TESTDATA_PATH / "pk" / "Kim2011_Fig2.tsv", sep="\t", na_values="NA"
+    )
     df = df[(df.interventions == "paracetamol1000mg")]
 
     # ------------------------------------------
@@ -202,11 +203,7 @@ def example_Kim2011_Fig2() -> List[TimecoursePK]:
     t = Q_(df.time.values, "hr")
     c = Q_(df["mean"].values, "µg/ml")
     tcpk = TimecoursePK(
-        time=t,
-        concentration=c,
-        substance=substance,
-        dose=dose,
-        ureg=ureg
+        time=t, concentration=c, substance=substance, dose=dose, ureg=ureg
     )
     results.append(tcpk)
 
@@ -214,12 +211,14 @@ def example_Kim2011_Fig2() -> List[TimecoursePK]:
 
 
 def example_Divoll1982_Fig1() -> List[TimecoursePK]:
-    """ Example for pharmacokinetics calculation.
+    """Example for pharmacokinetics calculation.
 
     :return:
     """
     results = []
-    df = pd.read_csv(TESTDATA_PATH / "pk" / "Divoll1982_Fig1.tsv", sep="\t", na_values="NA")
+    df = pd.read_csv(
+        TESTDATA_PATH / "pk" / "Divoll1982_Fig1.tsv", sep="\t", na_values="NA"
+    )
 
     # ------------------------------------------
     # Pharmacokinetic parameter for acetaminophen
@@ -232,11 +231,7 @@ def example_Divoll1982_Fig1() -> List[TimecoursePK]:
     t = Q_(df.time.values, "hr")
     c = Q_(df["apap"].values, "µg/ml")
     tcpk = TimecoursePK(
-        time=t,
-        concentration=c,
-        substance=substance,
-        dose=dose,
-        ureg=ureg
+        time=t, concentration=c, substance=substance, dose=dose, ureg=ureg
     )
     results.append(tcpk)
 
@@ -244,12 +239,14 @@ def example_Divoll1982_Fig1() -> List[TimecoursePK]:
 
 
 def example_Lane2014_Fig1() -> List[TimecoursePK]:
-    """ Example for pharmacokinetics calculation.
+    """Example for pharmacokinetics calculation.
 
     :return:
     """
     results = []
-    df = pd.read_csv(TESTDATA_PATH / "pk" / "Lane2014_Fig1.tsv", sep="\t", na_values="NA")
+    df = pd.read_csv(
+        TESTDATA_PATH / "pk" / "Lane2014_Fig1.tsv", sep="\t", na_values="NA"
+    )
 
     # ------------------------------------------
     # Pharmacokinetic parameter for acetaminophen
@@ -262,11 +259,7 @@ def example_Lane2014_Fig1() -> List[TimecoursePK]:
     t = Q_(df.time.values, "hr")
     c = Q_(df["mean"].values, "µg/ml")
     tcpk = TimecoursePK(
-        time=t,
-        concentration=c,
-        substance=substance,
-        dose=dose,
-        ureg=ureg
+        time=t, concentration=c, substance=substance, dose=dose, ureg=ureg
     )
     results.append(tcpk)
 

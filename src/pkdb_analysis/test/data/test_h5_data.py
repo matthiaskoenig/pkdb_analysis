@@ -5,7 +5,7 @@ from pkdb_analysis.test import TEST_HDF5
 
 
 def create_h5_test_data(h5_path: Path = TEST_HDF5) -> None:
-    """ Loads test studies from database.
+    """Loads test studies from database.
 
     Ensure test studies are uploaded to database before running this script.
         ./pkdb_data/management/upload_studies.py tests

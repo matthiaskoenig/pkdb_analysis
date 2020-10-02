@@ -19,8 +19,10 @@ from pkdb_analysis.envs import API_BASE, API_URL, PASSWORD, USER
 logger = logging.getLogger(__name__)
 
 
-def query_pkdb_data(h5_path: Path=None, username: str = None, study_names: List=None) -> PKData:
-    """ Query the complete database.
+def query_pkdb_data(
+    h5_path: Path = None, username: str = None, study_names: List = None
+) -> PKData:
+    """Query the complete database.
 
     Filtering by study name is supported.
 
@@ -39,22 +41,25 @@ def query_pkdb_data(h5_path: Path=None, username: str = None, study_names: List=
 
     if username is not None:
         # Filter studies by username
-        pkdata.studies['username'] = pkdata.studies.creator.apply(pd.Series).username
-        pkdata = pkdata.filter_study(f_idx=lambda pkdata: pkdata['username'] == username)
+        pkdata.studies["username"] = pkdata.studies.creator.apply(pd.Series).username
+        pkdata = pkdata.filter_study(
+            f_idx=lambda pkdata: pkdata["username"] == username
+        )
 
     if h5_path is not None:
         logger.info(f"Storing pkdb data: {h5_path}")
         pkdata.to_hdf5(h5_path)
-        
+
     return pkdata
 
 
 class PKFilter(object):
     """Filter objects for PKData"""
-    KEYS = ['groups', 'individuals', "interventions", "outputs", "data"]
+
+    KEYS = ["groups", "individuals", "interventions", "outputs", "data"]
 
     def __init__(self, normed=True):
-        """ Create new Filter instance.
+        """Create new Filter instance.
 
         :param normed: [True, False, None] return [normed data, unnormalized data,
                         normed and unnormalized data]
@@ -90,10 +95,13 @@ class PKFilter(object):
         return str(self.to_dict())
 
     def to_dict(self) -> dict:
-        return {filter_key: deepcopy(getattr(self, filter_key)) for filter_key in PKFilter.KEYS}
+        return {
+            filter_key: deepcopy(getattr(self, filter_key))
+            for filter_key in PKFilter.KEYS
+        }
 
     def add_to_all(self, key, value) -> None:
-        """ Adds entry (key, value) to all KEY dictionaries
+        """Adds entry (key, value) to all KEY dictionaries
 
         :return: None
         """
@@ -107,7 +115,7 @@ class PKFilterFactory(object):
 
     @staticmethod
     def by_study_sid(study_sid: str) -> PKFilter:
-        """ Creates filter based on study_sid.
+        """Creates filter based on study_sid.
         Only data for the given study_sid is returned.
         """
         pkfilter = PKFilter()
@@ -116,7 +124,7 @@ class PKFilterFactory(object):
 
     @staticmethod
     def by_study_name(study_name: str) -> PKFilter:
-        """ Creates filter based on study_name.
+        """Creates filter based on study_name.
         Only data for the given study_name is returned.
         """
         pkfilter = PKFilter()
@@ -129,26 +137,36 @@ class PKDB(object):
 
     @classmethod
     def query(cls, pkfilter: PKFilter = PKFilter(), page_size: int = 2000) -> "PKData":
-        """ Create a PKData representation and gets the data for the provided filters.
+        """Create a PKData representation and gets the data for the provided filters.
         If no filters are given the complete data is retrieved.
 
         :param pkfilter: Filter object to select subset of data, if no Filter is provided the complete data is returned
         :param page_size: number of entries per query
         """
         pkfilter = pkfilter.to_dict()
-        parameters = {"format": "json", 'page_size': page_size}
+        parameters = {"format": "json", "page_size": page_size}
         logger.info("*** Querying data ***")
         pkdata = PKData(
-            studies=cls._get_subset("studies", **{**parameters, **pkfilter.get("studies", {})}),
-            interventions=cls._get_subset("interventions_analysis", **{**parameters, **pkfilter.get("interventions", {})}),
-            individuals=cls._get_subset("individuals_analysis",
-                                        **{**parameters, **pkfilter.get("individuals", {})}),
-            groups=cls._get_subset("groups_analysis",
-                                   **{**parameters, **pkfilter.get("groups", {})}),
-            outputs=cls._get_subset("output_analysis",
-                                    **{**parameters, **pkfilter.get("outputs", {})}),
-            data=cls._get_subset("data_analysis",
-                                        **{**parameters, **pkfilter.get("data", {})})
+            studies=cls._get_subset(
+                "studies", **{**parameters, **pkfilter.get("studies", {})}
+            ),
+            interventions=cls._get_subset(
+                "interventions_analysis",
+                **{**parameters, **pkfilter.get("interventions", {})},
+            ),
+            individuals=cls._get_subset(
+                "individuals_analysis",
+                **{**parameters, **pkfilter.get("individuals", {})},
+            ),
+            groups=cls._get_subset(
+                "groups_analysis", **{**parameters, **pkfilter.get("groups", {})}
+            ),
+            outputs=cls._get_subset(
+                "output_analysis", **{**parameters, **pkfilter.get("outputs", {})}
+            ),
+            data=cls._get_subset(
+                "data_analysis", **{**parameters, **pkfilter.get("data", {})}
+            ),
         )
 
         return cls._intervention_pk_update(pkdata)
@@ -168,16 +186,17 @@ class PKDB(object):
             "output_analysis",  # outputs
             "data_analysis",  # data
             "studies",  # studies
-
         ]:
             raise ValueError(f"{name} not supported")
 
-        url = API_URL + f'/{name}/'
-        return cls._get_data(url, cls.get_authentication_headers(API_BASE, USER, PASSWORD), **parameters)
+        url = API_URL + f"/{name}/"
+        return cls._get_data(
+            url, cls.get_authentication_headers(API_BASE, USER, PASSWORD), **parameters
+        )
 
     @classmethod
     def get_authentication_headers(cls, api_base, username, password):
-        """ Get authentication header with token for given user.
+        """Get authentication header with token for given user.
 
         Returns admin authentication as default.
         """
@@ -190,15 +209,18 @@ class PKDB(object):
             response = requests.post(auth_token_url, json=auth_dict)
         except requests.exceptions.ConnectionError as e:
             raise requests.exceptions.InvalidURL(
-                f"Error Connecting (probably wrong url <{api_base}>): ", e)
+                f"Error Connecting (probably wrong url <{api_base}>): ", e
+            )
 
         if response.status_code != 200:
-            logger.error(f"Request headers could not be retrieved from: {auth_token_url}")
+            logger.error(
+                f"Request headers could not be retrieved from: {auth_token_url}"
+            )
             logger.warning(response.text)
             raise requests.exceptions.ConnectionError(response)
 
         token = response.json().get("token")
-        return {'Authorization': f'token {token}'}
+        return {"Authorization": f"token {token}"}
 
     @staticmethod
     def _get_data(url, headers, **parameters) -> pd.DataFrame:
@@ -240,10 +262,9 @@ class PKDB(object):
             "time",
         ]
 
-
         for column in float_columns:
-                if column in df.columns:
-                    df[column] = df[column].astype(float)
+            if column in df.columns:
+                df[column] = df[column].astype(float)
 
         # convert columns to int columns
         int_columns = [
@@ -263,38 +284,64 @@ class PKDB(object):
     def _map_intervention_pks(pkdata):
         interventions_output = pd.DataFrame()
 
-        if not pkdata.outputs.empty :
-            interventions_output = pkdata.outputs.df.pivot_table(values="intervention_pk", index="output_pk",
-                                                             aggfunc=lambda x: frozenset(x))
-
+        if not pkdata.outputs.empty:
+            interventions_output = pkdata.outputs.df.pivot_table(
+                values="intervention_pk",
+                index="output_pk",
+                aggfunc=lambda x: frozenset(x),
+            )
 
         interventions = interventions_output.drop_duplicates(
-            "intervention_pk").reset_index()
-        interventions.index = interventions.index.set_names(['intervention_pk_updated'])
+            "intervention_pk"
+        ).reset_index()
+        interventions.index = interventions.index.set_names(["intervention_pk_updated"])
         return interventions["intervention_pk"].reset_index()
 
     @staticmethod
     def _update_interventions(pkdata, mapping_int_pks):
         mapping_int_pks = mapping_int_pks.copy()
-        mapping_int_pks["intervention_pk"] = mapping_int_pks.intervention_pk.apply(lambda x: list(x))
-        mapping_int_pks = mapping_int_pks.intervention_pk.apply(pd.Series).stack().reset_index(level=-1,
-                                                                                               drop=True).astype(
-            int).reset_index()
-        mapping_int_pks = mapping_int_pks.rename(columns={"index": "intervention_pk_updated", 0: "intervention_pk"})
-        return pd.merge(mapping_int_pks, pkdata.interventions, on="intervention_pk").drop(
-            columns=["intervention_pk"]).rename(columns={"intervention_pk_updated": "intervention_pk"})
+        mapping_int_pks["intervention_pk"] = mapping_int_pks.intervention_pk.apply(
+            lambda x: list(x)
+        )
+        mapping_int_pks = (
+            mapping_int_pks.intervention_pk.apply(pd.Series)
+            .stack()
+            .reset_index(level=-1, drop=True)
+            .astype(int)
+            .reset_index()
+        )
+        mapping_int_pks = mapping_int_pks.rename(
+            columns={"index": "intervention_pk_updated", 0: "intervention_pk"}
+        )
+        return (
+            pd.merge(mapping_int_pks, pkdata.interventions, on="intervention_pk")
+            .drop(columns=["intervention_pk"])
+            .rename(columns={"intervention_pk_updated": "intervention_pk"})
+        )
 
     @staticmethod
     def _update_outputs(pkdata, mapping_int_pks):
         mapping_int_pks = mapping_int_pks.copy()
 
-        interventions_output = pkdata.outputs.df.pivot_table(values="intervention_pk", index="output_pk",
-                                                             aggfunc=lambda x: frozenset(x))
-        mapping_int_pks = pd.merge(interventions_output.reset_index(), mapping_int_pks, on="intervention_pk",how="left" )[
-            ["output_pk", "intervention_pk_updated"]]
+        interventions_output = pkdata.outputs.df.pivot_table(
+            values="intervention_pk", index="output_pk", aggfunc=lambda x: frozenset(x)
+        )
+        mapping_int_pks = pd.merge(
+            interventions_output.reset_index(),
+            mapping_int_pks,
+            on="intervention_pk",
+            how="left",
+        )[["output_pk", "intervention_pk_updated"]]
 
-        return pd.merge(mapping_int_pks, pkdata.outputs.df.drop_duplicates(subset="output_pk") ,how='left').drop(columns=["intervention_pk"]).rename(
-            columns={"intervention_pk_updated": "intervention_pk"})
+        return (
+            pd.merge(
+                mapping_int_pks,
+                pkdata.outputs.df.drop_duplicates(subset="output_pk"),
+                how="left",
+            )
+            .drop(columns=["intervention_pk"])
+            .rename(columns={"intervention_pk_updated": "intervention_pk"})
+        )
 
     @classmethod
     def _intervention_pk_update(cls, pkdata):
@@ -302,7 +349,9 @@ class PKDB(object):
             mapping_int_pks = cls._map_intervention_pks(pkdata)
 
             data_dict = pkdata.as_dict()
-            data_dict["interventions"] = cls._update_interventions(pkdata, mapping_int_pks)
+            data_dict["interventions"] = cls._update_interventions(
+                pkdata, mapping_int_pks
+            )
             if not pkdata.outputs.empty:
                 data_dict["outputs"] = cls._update_outputs(pkdata, mapping_int_pks)
             return PKData(**data_dict)

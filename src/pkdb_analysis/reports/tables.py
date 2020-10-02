@@ -1,5 +1,5 @@
 """
-This module creates summary tables from a PKdata instance.
+Summary tables from a PKdata instance.
 
 Tables can be either stored to disk or uploaded to a google spreadsheet.
 """
@@ -8,7 +8,7 @@ from copy import copy
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Dict, Iterable, List, Sequence, Set, Union
+from typing import Dict, Iterable, List, Sequence, Union
 
 import numpy as np
 import pandas as pd
@@ -17,22 +17,24 @@ from gspread_pandas import Spread
 from pkdb_analysis import filter, query_pkdb_data
 from pkdb_analysis.data import PKData
 
-
 logger = logging.getLogger(__name__)
 
 
-def create_table_report(h5_data_path,
-                        dosing_substances: List,
-                        report_substances: List,
-                        excel_path: Path = None,
-                        tsv_path: Path = None,
-                        google_sheets: str = None,
-                        query_data: bool = False):
-    """Create table report for given substance
+def create_table_report(
+        h5_data_path,
+        dosing_substances: List,
+        report_substances: List,
+        excel_path: Path = None,
+        tsv_path: Path = None,
+        google_sheets: str = None,
+        query_data: bool = False
+):
+    """Create table report for given substance.
 
     h5_data_path: PKDB data in HDF5 format (via query function)
     dosing_substances: Set of substances used in Dosing, e.g. {torasemide}
     report_substances: Set of substances in reports
+
     excel_path: Path to excel file to write the report to
     tsv_path: Path to directory to to which the tsv are written
     google_sheets: Google sheets name for report
@@ -70,12 +72,10 @@ def create_table_report(h5_data_path,
     if google_sheets is not None:
         table_report.to_google_sheet(google_sheets)
 
+
 @dataclass
 class Parameter:
-    """
-    FIXME: Document
-
-    """
+    """FIXME: Document."""
     measurement_types: Union[str, List] = "any"
     value_field: Sequence = "choice"
     substance: str = "any"
@@ -98,7 +98,8 @@ class TableReport(object):
     Data is provided as PKData object.
     Export formats are table files or google spreadsheets.
     """
-    def __init__(self, pkdata: PKData, substances: Iterable=None):
+
+    def __init__(self, pkdata: PKData, substances: Iterable = None):
         self.pkdata = pkdata
         self.pkdata_concised = pkdata.copy()._concise()
         if substances is None:
@@ -131,9 +132,11 @@ class TableReport(object):
                 df1 = df.copy()
                 # hyperlink replacements:
                 df1["PKDB identifier"] = df1["PKDB identifier"].apply(
-                    lambda x: f'=HYPERLINK("https://develop.pk-db.com/studies/{x}", "{x}")')
+                    lambda
+                        x: f'=HYPERLINK("https://develop.pk-db.com/studies/{x}", "{x}")')
                 df1["PMID"] = df1["PMID"].apply(
-                    lambda x: f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}", "{x}")')
+                    lambda
+                        x: f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}", "{x}")')
 
                 df1.to_excel(writer, sheet_name=key, index=False)
 
@@ -163,7 +166,8 @@ class TableReport(object):
         header_start = 'A4'
         header_size = 4
 
-        for report_type in [TableReportTypes.STUDIES, TableReportTypes.TIMECOURSES, TableReportTypes.PHARMACOKINETICS]:
+        for report_type in [TableReportTypes.STUDIES, TableReportTypes.TIMECOURSES,
+                            TableReportTypes.PHARMACOKINETICS]:
             if report_type == TableReportTypes.STUDIES:
                 table_df = self.df_studies
             elif report_type == TableReportTypes.TIMECOURSES:
@@ -196,9 +200,12 @@ class TableReport(object):
         """Write all sheets to TSV."""
         self._create_path(path_output)
 
-        self.df_studies.to_csv(path_output / f"studies.{suffix}", sep=sep, index=index, **kwargs)
-        self.df_pharmacokinetics.to_csv(path_output / f"pharmacokinetics.{suffix}", sep=sep, index=index, **kwargs)
-        self.df_timecourses.to_csv(path_output / f"timecourses.{suffix}", sep=sep, index=index, **kwargs)
+        self.df_studies.to_csv(path_output / f"studies.{suffix}", sep=sep, index=index,
+                               **kwargs)
+        self.df_pharmacokinetics.to_csv(path_output / f"pharmacokinetics.{suffix}",
+                                        sep=sep, index=index, **kwargs)
+        self.df_timecourses.to_csv(path_output / f"timecourses.{suffix}", sep=sep,
+                                   index=index, **kwargs)
 
     def create_tables(self):
         """Creates all output tables in given output_path."""
@@ -327,11 +334,12 @@ class TableReport(object):
         )
         studies_timecourses = table_df.apply(
             self._add_information,
-            args=(self.pkdata,  self.pkdata_concised, outputs_info, "timecourses"),
+            args=(self.pkdata, self.pkdata_concised, outputs_info, "timecourses"),
             axis=1
         )
         table_df = pd.merge(
-            table_df, self._combine(studies_outputs[o_keys], studies_timecourses[o_keys])
+            table_df,
+            self._combine(studies_outputs[o_keys], studies_timecourses[o_keys])
         )
         # reformating things
         table_keys, table_df = self._format_table_information(table_df=table_df,
@@ -383,10 +391,10 @@ class TableReport(object):
         for substance in self.substances:
             pks_info_substance = {
                 f"{substance}_plasma/blood": Parameter(substance=f"{substance}",
-                                                    value_field=["tissue"],
-                                                    values=["plasma", "blood",
-                                                            "serum"],
-                                                    groupby=False),
+                                                       value_field=["tissue"],
+                                                       values=["plasma", "blood",
+                                                               "serum"],
+                                                       groupby=False),
                 f"{substance}_urine": Parameter(substance=f"{substance}",
                                                 value_field=["tissue"],
                                                 values=["urine"],
@@ -482,7 +490,7 @@ class TableReport(object):
 
         table_df = table_df.apply(
             self._add_information,
-            args=(self.pkdata,  self.pkdata_concised,pks_info, "outputs"),
+            args=(self.pkdata, self.pkdata_concised, pks_info, "outputs"),
             axis=1
         )
         table_keys.extend(pks_info.keys())
@@ -492,16 +500,16 @@ class TableReport(object):
                                                               table_keys=table_keys)
         return table_df[table_keys]
 
-
     @staticmethod
-    def _add_information(study, pkdata, pkdata_concised, measurement_types: Dict, table: str):
-        """ ??? """
+    def _add_information(study, pkdata, pkdata_concised, measurement_types: Dict,
+                         table: str):
+        """FIXME: document me."""
 
         additional_dict = {}
-        #used_pkdata = pkdata.filter_study(lambda x: x["sid"] == study.sid)
-        used_pkdata  = pkdata_concised
+        # used_pkdata = pkdata.filter_study(lambda x: x["sid"] == study.sid)
+        used_pkdata = pkdata_concised
         for key in ["groups", table]:
-                used_pkdata[key] = [used_pkdata[key].study_sid == study.sid]
+            used_pkdata[key] = [used_pkdata[key].study_sid == study.sid]
 
         this_table = getattr(used_pkdata, table)
         has_info_kwargs = {"df": this_table.df, "instance_id": this_table.pk}
@@ -530,8 +538,8 @@ class TableReport(object):
         """Formats table information in place."""
         table_df = table_df.rename(columns={"reference_date": "publication date"})
         table_df["PKDB identifier"] = table_df["sid"].apply(lambda x: x)
-        # FIXME: this is a bug, https://github.com/matthiaskoenig/pkdb_analysis/issues/23
-        # pubmed ids do not exist (sid != pmid for curated studies with PKDB identifiers)
+        # FIXME: https://github.com/matthiaskoenig/pkdb_analysis/issues/23
+        # pubmeds do not exist (sid != pmid for curated studies with PKDB identifiers)
         table_df["PMID"] = table_df["sid"].apply(lambda x: x)
         table_keys = ["PKDB identifier", "name", "PMID",
                       "publication date", ] + table_keys
@@ -553,7 +561,8 @@ class TableReport(object):
         study_df["Group_all_count"] = group["group_count"]
 
     @staticmethod
-    def _has_info(df: pd.DataFrame, instance_id: str, parameter: Parameter, Subjects_groups: int=0 , Subjects_individual: int=0):
+    def _has_info(df: pd.DataFrame, instance_id: str, parameter: Parameter,
+                  Subjects_groups: int = 0, Subjects_individual: int = 0):
         has_info = []
         compare_length = 0
         if parameter.substance != "any":
@@ -579,14 +588,15 @@ class TableReport(object):
             if parameter.measurement_types == "any":
                 specific_info = instance
             else:
-                specific_info = instance[instance["measurement_type"].isin(parameter.measurement_types)]
+                specific_info = instance[
+                    instance["measurement_type"].isin(parameter.measurement_types)]
 
-            value_types = specific_info[parameter.value_field].applymap(type).stack().unique()
+            value_types = specific_info[parameter.value_field].applymap(
+                type).stack().unique()
 
             has_array = False
             for value in value_types:
                 if value is np.ndarray:
-
                     has_array = True
                     choices = {True}
 
@@ -651,11 +661,11 @@ class TableReport(object):
     @staticmethod
     def _extend_study_keys(study_keys):
         return study_keys.extend(["PKDB identifier",
-                                 "Name",
-                                 "PMID",
-                                 "publication date",
-                                 "Subjects_individual",
-                                 "Subjects_groups"])
+                                  "Name",
+                                  "PMID",
+                                  "publication date",
+                                  "Subjects_individual",
+                                  "Subjects_groups"])
 
     @staticmethod
     def _clear_sheat(spread, header_size, column_length):
@@ -664,7 +674,3 @@ class TableReport(object):
             end=(1, 1),
             vals=["" for i in range(0, column_length * 1)],
         )
-
-
-if __name__ == "__main__":
-    pass

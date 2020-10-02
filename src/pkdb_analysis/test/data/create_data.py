@@ -7,7 +7,7 @@ from pkdb_analysis.query import PKDB
 
 
 def load_test_studies() -> PKData:
-    """ Loads test studies from database.
+    """Loads test studies from database.
 
     Ensure test studies are uploaded to database before running this script.
     """
@@ -21,6 +21,7 @@ def load_test_studies() -> PKData:
 
 if __name__ == "__main__":
     from pkdb_analysis.test import TEST_HDF5
+
     pkdata = load_test_studies()
     pkdata._concise()
     pkdata.to_hdf5(TEST_HDF5)

@@ -25,8 +25,9 @@ def test_pharmacokinetics():
     dose = Q_(10.0, "mg") * Q_(1.0, "mole/g")
     c = c0 * np.exp(-kel * t)
 
-    tcpk = TimecoursePK(time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"),
-                         dose=dose, ureg=ureg)
+    tcpk = TimecoursePK(
+        time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"), dose=dose, ureg=ureg
+    )
     pk = tcpk.pk
     assert pytest.approx(pk.kel.magnitude, kel)
     assert pk.dose == Q_(0.01, "mole")
@@ -49,8 +50,9 @@ def test_pharmacokinetics_small_values():
     dose = Q_(10.0, "mg") * Q_(1.0, "mole/g")
     c = c0 * np.exp(-kel * t)
 
-    tcpk = TimecoursePK(time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"),
-                        dose=dose, ureg=ureg)
+    tcpk = TimecoursePK(
+        time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"), dose=dose, ureg=ureg
+    )
     pk = tcpk.pk
     assert pytest.approx(pk.kel.magnitude, kel)
     assert pk.dose == Q_(0.01, "mole")
@@ -80,14 +82,16 @@ def test_pharmacokinetics_per_bodyweight():
     dose.ito("mmole/kg")  # do a hard conversion to avoid problems with units
     c = c0 * np.exp(-kel * t)
 
-    tcpk = TimecoursePK(time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"),
-                        dose=dose, ureg=ureg)
+    tcpk = TimecoursePK(
+        time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"), dose=dose, ureg=ureg
+    )
     pk = tcpk.pk
     assert pk.kel.magnitude == pytest.approx(kel)
     assert pk.dose == Q_(0.01, "mole/kg")
     assert pk.tmax == Q_(0.0, "hr")
     assert pk.cmax == Q_(10.0, "nmol/l")
     assert pk.vd.units == ureg.Unit("liter/kg")
+
 
 def test_pharmacokinetics_shifted_intervention():
     ureg = UnitRegistry()
@@ -101,9 +105,13 @@ def test_pharmacokinetics_shifted_intervention():
     intervention_time = Q_(time_shift, "hr")
     dose = Q_(10.0, "mg") * Q_(1.0, "mole/g")
 
-    tcpk = TimecoursePK(time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"),
-                        dose=dose, ureg=ureg,
-                        intervention_time=intervention_time)
+    tcpk = TimecoursePK(
+        time=Q_(t, "hr"),
+        concentration=Q_(c, "nmol/l"),
+        dose=dose,
+        ureg=ureg,
+        intervention_time=intervention_time,
+    )
     pk = tcpk.pk
     assert pk.kel.magnitude == pytest.approx(kel)
     assert pk.dose == Q_(0.01, "mole")
@@ -121,8 +129,9 @@ def test_pharmacokinetics_per_bodyweight2():
     dose = Q_(10.0, "mg/kg")
     c = c0 * np.exp(-kel * t)
 
-    tcpk = TimecoursePK(time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"),
-                        dose=dose, ureg=ureg)
+    tcpk = TimecoursePK(
+        time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"), dose=dose, ureg=ureg
+    )
     pk = tcpk.pk
     assert pytest.approx(pk.kel.magnitude, kel)
     assert pk.dose == Q_(10.0, "mg/kg")

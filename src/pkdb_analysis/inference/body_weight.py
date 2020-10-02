@@ -14,7 +14,7 @@ from pint import Quantity, UnitRegistry
 ureg = pint.UnitRegistry()
 
 Q_ = ureg.Quantity
-ureg.define('none = count')
+ureg.define("none = count")
 
 
 class InferWeight(object):
@@ -37,9 +37,11 @@ class InferWeight(object):
         else:
             return -1
 
-    def get_weight(self,
-                   weight_fields=("value_weight", "mean_weight", "median_weight"),
-                   weight_unit_field="unit_weight") -> Tuple[Optional[Quantity], Optional[str]]:
+    def get_weight(
+        self,
+        weight_fields=("value_weight", "mean_weight", "median_weight"),
+        weight_unit_field="unit_weight",
+    ) -> Tuple[Optional[Quantity], Optional[str]]:
         """ helper function to get the weight of a subject or group"""
         for weight_field in weight_fields:
             if weight_field in self.series:
@@ -51,10 +53,12 @@ class InferWeight(object):
 
         return None, None
 
-    def bw_infer(self,
-                 unit_field="unit",
-                 infer_fields=("value", "mean", "median", "min", "max", "sd", "se"),
-                 per_bw_field="per_bw") -> pd.Series:
+    def bw_infer(
+        self,
+        unit_field="unit",
+        infer_fields=("value", "mean", "median", "min", "max", "sd", "se"),
+        per_bw_field="per_bw",
+    ) -> pd.Series:
         """ helper function to infer values from the weight of a subject or group"""
 
         per_bw = self.per_bw(unit_field)
@@ -66,8 +70,6 @@ class InferWeight(object):
             for infer_field in infer_fields:
                 if isinstance(series[infer_field], (float, np.ndarray)):
                     series[infer_field] = factor.m * series[infer_field]
-
-
 
             series[unit_field] = str(factor.u)
             series["inferred"] = True
@@ -83,19 +85,25 @@ def infer_output(series: pd.Series):
 
 
 def infer_intervention(series: pd.Series):
-    return InferWeight(series, ureg).bw_infer(unit_field="intervention_unit",
-                                              infer_fields=("intervention_value",),
-                                              per_bw_field="intervention_per_bw")
+    return InferWeight(series, ureg).bw_infer(
+        unit_field="intervention_unit",
+        infer_fields=("intervention_value",),
+        per_bw_field="intervention_per_bw",
+    )
 
 
 def infer_weight(df: pd.DataFrame, by_intervention=True, by_output=True):
     result_infer = df.dropna(subset=["unit_weight"])
     result_no_bodyweight = df[df["unit_weight"].isnull()]
     if by_output:
-        result_infer_outputs = result_infer.apply(infer_output, axis="columns").dropna(how="all")
+        result_infer_outputs = result_infer.apply(infer_output, axis="columns").dropna(
+            how="all"
+        )
         result_infer = result_infer.append(result_infer_outputs, ignore_index=True)
     if by_intervention:
-        result_infer_outputs = result_infer.apply(infer_intervention, axis="columns").dropna(how="all")
+        result_infer_outputs = result_infer.apply(
+            infer_intervention, axis="columns"
+        ).dropna(how="all")
         result_infer = result_infer.append(result_infer_outputs, ignore_index=True)
     result_infer = result_infer.append(result_no_bodyweight, ignore_index=True)
     return result_infer

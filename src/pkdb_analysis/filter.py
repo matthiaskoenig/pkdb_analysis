@@ -12,9 +12,9 @@ import numpy as np
 import pandas as pd
 
 
-PlottingParameter = collections.namedtuple('PlottingParameter',
-                                           ['measurement_type',
-                                            'units_rm'])
+PlottingParameter = collections.namedtuple(
+    "PlottingParameter", ["measurement_type", "units_rm"]
+)
 
 
 # add group_columns,
@@ -26,6 +26,7 @@ PlottingParameter = collections.namedtuple('PlottingParameter',
 
 def exclude_tests(data: PKData):
     return data.exclude_intervention(lambda d: d["study_name"].isin(TEST_STUDY_NAMES))
+
 
 def combine(args):
     args = sorted(set([str(arg) for arg in args]))
@@ -39,7 +40,6 @@ def combine(args):
         return str_value
 
 
-
 def pk_info(d, measurement_type, columns, suffix=None, concise=True, aggfunc=combine):
     if suffix is None:
         suffix_text = f"_{measurement_type}"
@@ -47,17 +47,17 @@ def pk_info(d, measurement_type, columns, suffix=None, concise=True, aggfunc=com
         suffix_text = suffix
 
     columns = [d.pk, *columns]
-    df = d[d["measurement_type"] == measurement_type][columns].set_index(d.pk).add_suffix(suffix_text).reset_index()
+    df = (
+        d[d["measurement_type"] == measurement_type][columns]
+        .set_index(d.pk)
+        .add_suffix(suffix_text)
+        .reset_index()
+    )
     if len(df) == 0:
         return df
     if concise:
-        return df.pivot_table(index=d.pk, aggfunc=aggfunc,dropna=False).reset_index()
+        return df.pivot_table(index=d.pk, aggfunc=aggfunc, dropna=False).reset_index()
     return df
-
-
-
-
-
 
 
 def f_unit(d, unit: str):
@@ -77,7 +77,7 @@ def f_mt(d, measurement_type: str):
     :param measurement_type:
     :return:
     """
-    return (d["measurement_type"] == measurement_type)
+    return d["measurement_type"] == measurement_type
 
 
 def f_substance(d, substance: str):
@@ -89,7 +89,8 @@ def f_substance(d, substance: str):
     """
     return d["substance"] == substance
 
-def f_dosing(d, substance:str):
+
+def f_dosing(d, substance: str):
     """filtering index for PKData for dosing with substance
 
     :param d: PKDataFrame or pandas.DataFrame
@@ -98,7 +99,8 @@ def f_dosing(d, substance:str):
     """
     return f_substance(d, substance) & f_mt(d, "dosing")
 
-def f_dosing_in(d, substances:List[str]):
+
+def f_dosing_in(d, substances: List[str]):
     """filtering index for PKData for dosing with substance
 
     :param d: PKDataFrame or pandas.DataFrame
@@ -108,7 +110,8 @@ def f_dosing_in(d, substances:List[str]):
     d["substance"].isin(substances)
     return d["substance"].isin(substances) & f_mt(d, "dosing")
 
-def f_mt_substance(d, measurement_type:str , substance:str):
+
+def f_mt_substance(d, measurement_type: str, substance: str):
     """filtering index for PKData for measurement_type with substance
 
     :param d: PKDataFrame or pandas.DataFrame
@@ -116,9 +119,10 @@ def f_mt_substance(d, measurement_type:str , substance:str):
     :param substance:
     :return:
     """
-    return f_mt(d,measurement_type) & f_substance(d, substance)
+    return f_mt(d, measurement_type) & f_substance(d, substance)
 
-def f_mt_in_substance_in(d, measurement_types:str , substances:str):
+
+def f_mt_in_substance_in(d, measurement_types: str, substances: str):
     """filtering index for PKData for measurement_type with substance
 
     :param d: PKDataFrame or pandas.DataFrame
@@ -126,7 +130,9 @@ def f_mt_in_substance_in(d, measurement_types:str , substances:str):
     :param substance:
     :return:
     """
-    return d["measurement_type"].isin(measurement_types) & d["substance"].isin(substances)
+    return d["measurement_type"].isin(measurement_types) & d["substance"].isin(
+        substances
+    )
 
 
 def f_choice(d, choice):
@@ -167,4 +173,3 @@ def f_healthy(d):
 
 def f_n_healthy(d):
     return f_mt(d, "healthy") & f_choice(d, "N")
-

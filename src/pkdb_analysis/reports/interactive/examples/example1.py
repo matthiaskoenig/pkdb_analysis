@@ -25,7 +25,7 @@ PLOTTING_CATEGORIES = [
     PP(["auc_inf"], []),
     PP(["vd"], []),
     PP(["thalf"], [], infer_by_output=False),
-    PP(["clearance"], ['milliliter / meter ** 2 / minute']),
+    PP(["clearance"], ["milliliter / meter ** 2 / minute"]),
     PP(["cmax"], [], infer_by_output=False),
     PP(["kel"], []),
     PP(["tmax"], [], infer_by_output=False),
@@ -49,25 +49,39 @@ MULTI_LEGEND = {"Study": "study_name"}
 
 MULTI_COLOR_LEGEND = {
     "Data type": LA("data_type"),
-    "Outlier": LA("outlier", [False, ]),
+    "Outlier": LA(
+        "outlier",
+        [
+            False,
+        ],
+    ),
     "Sex": LA("sex"),
-    "Healthy": LA("healthy", [True], ),
-    "Lifestyle": LA("life_style", ),
+    "Healthy": LA(
+        "healthy",
+        [True],
+    ),
+    "Lifestyle": LA(
+        "life_style",
+    ),
     "Administration route": LA("intervention_route"),
-    "Number of interventions": LA("intervention_number", [1, ]),
+    "Number of interventions": LA(
+        "intervention_number",
+        [
+            1,
+        ],
+    ),
     "Tissue": LA("tissue"),
-
 }
 # Information shown on hover.
 TOOLTIP = [
-    'study_sid:N',
-    'study_name:N',
+    "study_sid:N",
+    "study_name:N",
     "url:N",
-    'output_pk:N',
+    "output_pk:N",
     "group_name:N",
     "individual_name:N",
-    'intervention_value:Q',
-    'y:Q',
+    "intervention_value:Q",
+    "y:Q",
     "intervention_names:N",
     "intervention_number:Q",
     "weight:Q",
@@ -137,6 +151,6 @@ def create_plots(path):
 if __name__ == "__main__":
     # !Delete the output after running!
     output_path = Path(__file__).parent / "results"
-    #if not output_path.exists():
+    # if not output_path.exists():
     #    output_path.mkdir()
     create_plots(path=output_path)
