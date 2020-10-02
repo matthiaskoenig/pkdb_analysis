@@ -17,6 +17,7 @@ from gspread_pandas import Spread
 from pkdb_analysis import filter, query_pkdb_data
 from pkdb_analysis.data import PKData
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -672,5 +673,5 @@ class TableReport(object):
         spread.update_cells(
             start=(1, header_size),
             end=(1, 1),
-            vals=["" for i in range(0, column_length * 1)],
+            vals=["" for _ in range(0, column_length * 1)],
         )
