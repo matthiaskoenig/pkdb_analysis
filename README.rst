@@ -39,8 +39,8 @@ pkdb_analysis is a collection of python utilities to interact with
 
 How to cite
 ===========
-.. image:: https://zenodo.org/badge/3997539.svg
-   :target: https://zenodo.org/badge/latestdoi/3997539
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3997539.svg
+   :target: https://doi.org/10.5281/zenodo.3997539
    :alt: Zenodo DOI
 
 License
@@ -99,12 +99,12 @@ respective environment variables.::
 
     set -a && source .env.local
 
-The public instances of PK-DB are available from
-```
-API_BASE=https://pk-db.com
-API_BASE=https://alpha.pk-db.com
-API_BASE=https://develop.pk-db.com
-```
+The public instances of PK-DB are available from::
+
+    API_BASE=https://pk-db.com
+    API_BASE=https://alpha.pk-db.com
+    API_BASE=https://develop.pk-db.com
+
 By default the alpha server is used.
 
 
