@@ -12,6 +12,8 @@ __pycache__/
 results/
 dist/
 .eggs/
+.tox
+.coverage
 
 # too large due to failing filters
 src/pkdb_analysis/test/data/test.h5
