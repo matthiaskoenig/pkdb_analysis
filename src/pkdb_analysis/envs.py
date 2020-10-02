@@ -23,10 +23,12 @@ except KeyError:
 
     USER = None
     PASSWORD = None
-    API_BASE = "https://develop.pk-db.com"
+    API_BASE = "https://alpha.pk-db.com"
 
     API_URL = API_BASE + "/api/v1"
     logger.warning(
         f"Environment variables have not been initialized. "
         f"1. add authentication credentials; and 2. run {bcolors.OKBLUE}set -a && "
-        f"source .env.local{bcolors.ENDC}. Queries will be performed as a anonymous user.")
+        f"source .env.local{bcolors.ENDC}. "
+        f"Queries will be performed as a anonymous user."
+    )

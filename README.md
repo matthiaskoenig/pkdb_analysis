@@ -19,7 +19,8 @@ mkvirtualenv pkdb_analysis --python=python3.7
 ```
 To execute the tests on installation use
 ```
-(pkdb_analysis) pip install -e . --install-option test
+(pkdb_analysis) pip install -e .[development]
+(pkdb_analysis) tox -
 ```
 
 ## Select PK-DB endpoint
@@ -36,19 +37,5 @@ API_BASE=https://pk-db.com
 ``` 
 By default the develop server is used.
 
-## Changelog
-
-### v0.1.5
-* updated dependencies
-* bugfix pypi installation
-
-### v0.1.4
-* packaging interactive plot resources
-* testing on installation
-
-### v0.1.3
-* fixing unit tests
-* refactored table factory
-* pip package
 
 &copy; 2018-2020 Jan Grzegorzewski & Matthias König.

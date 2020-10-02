@@ -8,7 +8,7 @@ from pkdb_analysis.filter import f_smoking, f_n_smoking, f_n_oc, f_effective_n_o
 from pkdb_analysis.reports.interactive.interactive import interactive_plot_factory, PlottingParameter as PP, LegendArgs as LA
 from pkdb_analysis import PKData
 
-from pkdb_analysis.tests import TEST_HDF5
+from pkdb_analysis.test import TEST_HDF5
 
 
 # substances used in the interventions

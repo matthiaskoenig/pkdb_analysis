@@ -1,6 +1,6 @@
 from pathlib import Path
 from pkdb_analysis.query import query_pkdb_data
-from pkdb_analysis.tests import TEST_HDF5
+from pkdb_analysis.test import TEST_HDF5
 
 
 def create_h5_test_data(h5_path: Path = TEST_HDF5) -> None:

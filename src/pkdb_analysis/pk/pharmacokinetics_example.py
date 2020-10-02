@@ -8,7 +8,7 @@ import warnings
 import pandas as pd
 from pkdb_analysis.pk.pharmacokinetics import TimecoursePK, TimecoursePKNoDosing
 from matplotlib import pyplot as plt
-from pkdb_analysis.tests import TESTDATA_PATH
+from pkdb_analysis.test import TESTDATA_PATH
 from pathlib import Path
 
 import pint
@@ -101,6 +101,8 @@ def example1_NoDosing() -> List[TimecoursePKNoDosing]:
             results.append(tcpk)
 
     return results
+
+
 def example2() -> List[TimecoursePK]:
     """ Example for pharmacokinetics calculation.
 
@@ -148,6 +150,34 @@ def example2() -> List[TimecoursePK]:
     return results
 
 
+def example_midazolam() -> List[TimecoursePK]:
+    """ Example for pharmacokinetics calculation.
+
+    :return:
+    """
+    results = []
+    df = pd.read_csv(TESTDATA_PATH / "pk" / "midazolam.tsv", sep="\t", na_values="NA")
+
+    # ------------------------------------------
+    # Pharmacokinetic parameter for acetaminophen
+    # ------------------------------------------
+    # get caffeine data
+    dose = Q_(7.5, "mg")
+    substance = "midazolam"
+
+    # calculate pharmacokinetic information
+    t = Q_(df.time.values, "min")
+    c = Q_(df["Cve_mid"].values, "mmole/litre")
+    tcpk = TimecoursePK(
+        time=t,
+        concentration=c,
+        substance=substance,
+        dose=dose,
+        ureg=ureg
+    )
+    results.append(tcpk)
+
+    return results
 
 def example_Kim2011_Fig2() -> List[TimecoursePK]:
     """ Example for pharmacokinetics calculation.
@@ -209,24 +239,25 @@ def example_Divoll1982_Fig1() -> List[TimecoursePK]:
 
     return results
 
-def example_midazolam() -> List[TimecoursePK]:
+
+def example_Lane2014_Fig1() -> List[TimecoursePK]:
     """ Example for pharmacokinetics calculation.
 
     :return:
     """
     results = []
-    df = pd.read_csv(TESTDATA_PATH / "pk" / "midazolam.tsv", sep="\t", na_values="NA")
+    df = pd.read_csv(TESTDATA_PATH / "pk" / "Lane2014_Fig1.tsv", sep="\t", na_values="NA")
 
     # ------------------------------------------
     # Pharmacokinetic parameter for acetaminophen
     # ------------------------------------------
     # get caffeine data
-    dose = Q_(7.5, "mg")
-    substance = "midazolam"
+    dose = Q_(0, "mg")
+    substance = "caffeine"
 
     # calculate pharmacokinetic information
-    t = Q_(df.time.values, "min")
-    c = Q_(df["Cve_mid"].values, "mmole/litre")
+    t = Q_(df.time.values, "hr")
+    c = Q_(df["mean"].values, "µg/ml")
     tcpk = TimecoursePK(
         time=t,
         concentration=c,
@@ -248,25 +279,17 @@ def show_results(results: List[TimecoursePK]):
 
 
 if __name__ == "__main__":
-    r0 = example0()
-    show_results(r0)
-
-    r1 = example1()
-    show_results(r1)
-
-    r1_nd = example1_NoDosing()
-    show_results(r1_nd)
-
-    r2 = example2()
-    show_results(r2)
-
-    r3 = example_Kim2011_Fig2()
-    show_results(r3)
-
-    r4 = example_Divoll1982_Fig1()
-    show_results(r4)
-
-    r5 = example_midazolam()
-    show_results(r5)
+    for f_example in [
+        example0,
+        example1,
+        example1_NoDosing,
+        example2,
+        example_midazolam,
+        example_Kim2011_Fig2,
+        example_Divoll1982_Fig1,
+        example_Lane2014_Fig1,
+    ]:
+        res = f_example()
+        show_results(res)
 
     plt.show()
