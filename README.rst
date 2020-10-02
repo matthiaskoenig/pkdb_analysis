@@ -94,7 +94,7 @@ To install for development use::
 PK-DB endpoint
 ==============
 
-`pkdb_analysis` requires an existing PK-DB endpoint, which can be set by setting the
+pkdb_analysis requires an existing PK-DB endpoint, which can be set by setting the
 respective environment variables.::
 
     set -a && source .env.local
@@ -108,4 +108,4 @@ The public instances of PK-DB are available from::
 By default the alpha server is used.
 
 
-&copy; 2018-2020 Jan Grzegorzewski & Matthias König.
+© 2018-2020 Jan Grzegorzewski & Matthias König.
