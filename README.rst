@@ -33,8 +33,9 @@ pkdb_analysis: PK-DB python interface
    :target: https://github.com/ambv/black
    :alt: Black
 
-sbmlsim is a collection of python utilities to interact with
-`PK-DBL <https://pk-db.com>`__ via the available REST endpoints.
+pkdb_analysis is a collection of python utilities to interact with
+`PK-DB <https://pk-db.com>`__ via the available REST endpoints
+(`https://pk-db.com/api/v1/swagger/ <https://pk-db.com/api/v1/swagger/>`__).
 
 How to cite
 ===========
