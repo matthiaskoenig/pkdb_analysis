@@ -16,6 +16,6 @@
 ## test release
 * test installation in virtualenv from pypi (install and runs tests)
 ```
-mkvirtualenv test --python=python3.7
-(test) pip install pkdb-analysis --install-option test
+mkvirtualenv test --python=python3.8
+(test) pip install pkdb-analysis
 ```
