@@ -1,13 +1,19 @@
-import matplotlib.pyplot as plt
-from collections import namedtuple
-from matplotlib.ticker import FormatStrFormatter
-from matplotlib.lines import Line2D
-import numpy as np
-from pkdb_analysis.deprecated.utils import abs_idx,rel_idx,group_idx,individual_idx
 import os
+from collections import namedtuple
+
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.lines import Line2D
+from matplotlib.ticker import FormatStrFormatter
+
+from pkdb_analysis.deprecated.utils import abs_idx, group_idx, individual_idx, rel_idx
+
+
 plt.style.use('seaborn-white')
 import matplotlib.ticker as ticker
 import pint
+
+
 ureg = pint.UnitRegistry()
 
 plt.rcParams.update({
@@ -22,6 +28,8 @@ plt.rcParams.update({
     })
 
 import matplotlib.font_manager as font_manager
+
+
 font = font_manager.FontProperties(family='Roboto Mono',
                                    weight='normal',
                                    style='normal', size=16,)

@@ -5,14 +5,15 @@ Takes concentration~time curves in plasma as input for analysis.
 Pharmacokinetic parameters are than calculated and returned.
 """
 import warnings
+from dataclasses import dataclass
 
 import numpy as np
-from scipy import stats
-from dataclasses import dataclass
 from matplotlib import pyplot as plt
 from matplotlib.pyplot import Figure
+from pint import Quantity, UnitRegistry
+from scipy import stats
 
-from pint import UnitRegistry, Quantity
+
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     Quantity([])

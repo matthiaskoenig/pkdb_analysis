@@ -2,12 +2,13 @@
 Helper functions for body weight inferences.
 Takes PKData instance and  calculates  additional outputs based on body weights of subjects.
 """
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 import numpy as np
 import pandas as pd
 import pint
-from pint import UnitRegistry, Quantity
+from pint import Quantity, UnitRegistry
+
 
 # Define unit registry for examples
 ureg = pint.UnitRegistry()

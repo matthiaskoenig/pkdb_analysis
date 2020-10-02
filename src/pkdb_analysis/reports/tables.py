@@ -4,19 +4,19 @@ This module creates summary tables from a PKdata instance.
 Tables can be either stored to disk or uploaded to a google spreadsheet.
 """
 import logging
-from pathlib import Path
-from typing import Iterable, Set, Dict, Union, List, Sequence
 from copy import copy
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
+from typing import Dict, Iterable, List, Sequence, Set, Union
 
 import numpy as np
 import pandas as pd
 from gspread_pandas import Spread
 
-
+from pkdb_analysis import filter, query_pkdb_data
 from pkdb_analysis.data import PKData
-from pkdb_analysis import query_pkdb_data, filter
+
 
 logger = logging.getLogger(__name__)
 

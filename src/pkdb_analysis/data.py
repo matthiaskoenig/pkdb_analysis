@@ -4,17 +4,18 @@ Functions for working with PKDB data.
 * FIXME: specify which methods modify or copy data frames
 """
 import logging
-from pathlib import Path
+import warnings
 from abc import ABC
 from collections import OrderedDict
 from copy import copy
-from typing import List, Callable
+from pathlib import Path
+from typing import Callable, List
 
 import numpy as np
 import pandas as pd
-import warnings
-from pandas.errors import PerformanceWarning
 from IPython.display import display
+from pandas.errors import PerformanceWarning
+
 
 warnings.simplefilter(action='ignore', category=PerformanceWarning)
 logger = logging.getLogger(__name__)

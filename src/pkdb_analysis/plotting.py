@@ -1,3 +1,4 @@
+import math
 from itertools import combinations
 
 import matplotlib.pyplot as plt
@@ -6,7 +7,6 @@ import pandas as pd
 import seaborn as sns
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.preprocessing import Normalizer
-import math
 
 
 def _classify(df, n_clusters):

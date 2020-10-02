@@ -4,7 +4,7 @@ import requests
 
 from pkdb_analysis import PKFilterFactory
 from pkdb_analysis.data import PKData
-from pkdb_analysis.envs import USER, PASSWORD, API_BASE
+from pkdb_analysis.envs import API_BASE, PASSWORD, USER
 from pkdb_analysis.query import PKDB
 
 

@@ -1,17 +1,20 @@
 """ Module for analysis of PKData"""
 import os
+
 import matplotlib.pyplot as plt
+import numpy as np
 import pint
 from matplotlib import ticker
 from matplotlib.lines import Line2D
 from matplotlib.ticker import FormatStrFormatter
-import numpy as np
+
 
 ureg = pint.UnitRegistry()
 
 # ---- Styles for plotting ----
 
 import matplotlib.font_manager as font_manager
+
 
 font = font_manager.FontProperties(family='Roboto Mono',
                                    weight='normal',

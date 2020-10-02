@@ -2,17 +2,20 @@
 This examples shows how based on time and concentration vector the
 pharmacokinetic parameters can be calculated.
 """
-from typing import List, Dict
-import numpy as np
 import warnings
-import pandas as pd
-from pkdb_analysis.pk.pharmacokinetics import TimecoursePK, TimecoursePKNoDosing
-from matplotlib import pyplot as plt
-from pkdb_analysis.test import TESTDATA_PATH
 from pathlib import Path
+from typing import Dict, List
 
+import numpy as np
+import pandas as pd
 import pint
+from matplotlib import pyplot as plt
 from pint import Quantity
+
+from pkdb_analysis.pk.pharmacokinetics import TimecoursePK, TimecoursePKNoDosing
+from pkdb_analysis.test import TESTDATA_PATH
+
+
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     Quantity([])

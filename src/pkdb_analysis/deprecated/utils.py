@@ -1,11 +1,14 @@
-import requests
-import numpy as np
-from urllib.parse import urljoin, urlencode
-import pandas as pd
-import attr
-from pathlib import Path
 import os
+from pathlib import Path
+from urllib.parse import urlencode, urljoin
+
+import attr
+import numpy as np
+import pandas as pd
 import pint
+import requests
+
+
 ureg = pint.UnitRegistry()
 
 FPATH = os.path.realpath(__file__)

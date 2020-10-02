@@ -1,10 +1,19 @@
-import pytest
 import numpy as np
-from pkdb_analysis.pk.pharmacokinetics_example import example0, example1, example2, \
-    example_Kim2011_Fig2, example_Divoll1982_Fig1, show_results, example_midazolam, example1_NoDosing
-from pkdb_analysis.pk.pharmacokinetics import TimecoursePK
-from pint import UnitRegistry
+import pytest
 from matplotlib import pyplot as plt
+from pint import UnitRegistry
+
+from pkdb_analysis.pk.pharmacokinetics import TimecoursePK
+from pkdb_analysis.pk.pharmacokinetics_example import (
+    example0,
+    example1,
+    example1_NoDosing,
+    example2,
+    example_Divoll1982_Fig1,
+    example_Kim2011_Fig2,
+    example_midazolam,
+    show_results,
+)
 
 
 def test_pharmacokinetics():

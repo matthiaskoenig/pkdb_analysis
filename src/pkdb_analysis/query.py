@@ -2,10 +2,10 @@
 Querying PK-DB
 """
 import logging
-from pathlib import Path
-from typing import List
 import os
 from copy import deepcopy
+from pathlib import Path
+from typing import List
 from urllib import parse as urlparse
 
 import numpy as np
@@ -13,7 +13,8 @@ import pandas as pd
 import requests
 
 from pkdb_analysis.data import PKData
-from pkdb_analysis.envs import USER, PASSWORD, API_URL, API_BASE
+from pkdb_analysis.envs import API_BASE, API_URL, PASSWORD, USER
+
 
 logger = logging.getLogger(__name__)
 

@@ -1,10 +1,12 @@
 """
 Access to important environment variables.
 """
-import os
 import logging
+import os
 from urllib import parse as urlparse
+
 from pkdb_analysis.logging_utils import bcolors
+
 
 logger = logging.getLogger(__name__)
 

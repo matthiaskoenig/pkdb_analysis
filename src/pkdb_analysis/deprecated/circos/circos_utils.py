@@ -1,5 +1,6 @@
+from itertools import chain, combinations
+
 import pandas as pd
-from itertools import combinations, chain
 
 
 def study_expand(study, count_label, threshold, type_name="raw"):

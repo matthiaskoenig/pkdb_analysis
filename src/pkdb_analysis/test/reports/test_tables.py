@@ -1,7 +1,7 @@
+import pytest
+
 from pkdb_analysis.reports import create_table_report
 from pkdb_analysis.test import TEST_HDF5
-
-import pytest
 
 
 # FIXME

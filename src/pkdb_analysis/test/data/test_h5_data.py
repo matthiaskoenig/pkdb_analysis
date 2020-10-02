@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from pkdb_analysis.query import query_pkdb_data
 from pkdb_analysis.test import TEST_HDF5
 

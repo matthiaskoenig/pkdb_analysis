@@ -1,15 +1,16 @@
 import math
-import seaborn as sns
-import pandas as pd
-import pint
-import altair as alt
-import yaml
 import os
 import shutil
 from pathlib import Path
 
+import altair as alt
+import pandas as pd
+import pint
+import seaborn as sns
+import yaml
+
+from pkdb_analysis.filter import f_dosing_in, f_mt_in_substance_in
 from pkdb_analysis.meta_analysis import MetaAnalysis
-from pkdb_analysis.filter import f_mt_in_substance_in, f_dosing_in
 
 
 alt.data_transformers.disable_max_rows()

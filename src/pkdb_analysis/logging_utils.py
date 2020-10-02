@@ -3,6 +3,7 @@ Helpers related to logging
 """
 import coloredlogs
 
+
 coloredlogs.install(
     level="INFO",
     fmt='%(levelname)s %(message)s'  # "%(module)s:%(lineno)s %(funcName)s %(levelname) -10s %(message)s"

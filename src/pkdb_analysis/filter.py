@@ -1,12 +1,16 @@
 """ Defines frequently used filters for the PKData instances."""
-from pkdb_analysis.data import PKData
 from typing import List
+
+from pkdb_analysis.data import PKData
+
 
 TEST_STUDY_NAMES = ["Test1", "Test2", "Test3", "Test4"]
 import collections
-import pandas as pd
-import numpy as np
 import warnings
+
+import numpy as np
+import pandas as pd
+
 
 PlottingParameter = collections.namedtuple('PlottingParameter',
                                            ['measurement_type',
