@@ -57,8 +57,12 @@ def create_table_report(
     study_sids = pkdata.filter_intervention(
         f_idx=filter.f_dosing_in, substances=dosing_substances, concise=False
     ).interventions.study_sids
+    print("*"*100)
+    print(study_sids)
+    print("*"*100)
 
     pkdata = pkdata.filter_study(lambda x: x["sid"].isin(study_sids), concise=False)
+    print(pkdata)
 
     # Create table report
     table_report = TableReport(pkdata=pkdata, substances=report_substances)
@@ -111,6 +115,9 @@ class TableReport(object):
         if substances is None:
             substances = tuple()
         self.substances = substances
+        print("*" * 100)
+        print(self.pkdata)
+        print("*" * 100)
 
         self.df_studies = None
         self.df_timecourses = None
@@ -260,7 +267,6 @@ class TableReport(object):
         """
         table_keys = []
         table_df = self.pkdata.studies.df.copy()
-
         subject_info = {
             "sex": Parameter(measurement_types=["sex"], value_field=["choice"]),
             "age": Parameter(

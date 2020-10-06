@@ -168,12 +168,12 @@ class PKData(object):
 
     def __init__(
         self,
+        studies: pd.DataFrame = None,
         interventions: pd.DataFrame = None,
         groups: pd.DataFrame = None,
         individuals: pd.DataFrame = None,
         outputs: pd.DataFrame = None,
         timecourses: pd.DataFrame = None,
-        studies: pd.DataFrame = None,
     ):
         """Creates PKDB data object from given DataFrames.
 
@@ -181,7 +181,6 @@ class PKData(object):
         :param individuals:
         :param groups:
         :param outputs:
-        :param data:
         """
         self.groups = PKDataFrame(groups, pk="group_pk")
         self.individuals = PKDataFrame(individuals, pk="individual_pk")

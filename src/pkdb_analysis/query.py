@@ -55,7 +55,7 @@ def query_pkdb_data(
 class PKFilter(object):
     """Filter objects for PKData"""
 
-    KEYS = ["groups", "individuals", "interventions", "outputs", "data"]
+    KEYS = ["studies", "groups", "individuals", "interventions", "outputs", "timecourses"]
 
     def __init__(self, normed=True):
         """Create new Filter instance.
@@ -63,13 +63,12 @@ class PKFilter(object):
         :param normed: [True, False, None] return [normed data, unnormalized data,
                         normed and unnormalized data]
         """
+        self.studies = dict()
         self.groups = dict()
         self.individuals = dict()
         self.interventions = dict()
         self.outputs = dict()
-        #self.data = dict()
-        self.tiemcourses = dict()
-        self.studies = dict()
+        self.timecourses = dict()
 
         self._set_normed(normed)
 
@@ -165,7 +164,7 @@ class PKDB(object):
                 "pkdata/outputs", **{**parameters, **pkfilter.get("outputs", {})}
             ),
             timecourses=cls._get_subset(
-                "pkdata/timecourses", **{**parameters, **pkfilter.get("data", {})}
+                "pkdata/timecourses", **{**parameters, **pkfilter.get("timecourses", {})}
             ),
         )
 
@@ -269,8 +268,7 @@ class PKDB(object):
 
         # convert columns to int columns
         int_columns = [
-            "timecourse_pk",
-            "data_pk"
+            "subset_pk",
             "intervention_pk",
             "group_pk",
             "individual_pk",
