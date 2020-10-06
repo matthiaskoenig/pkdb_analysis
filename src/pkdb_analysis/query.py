@@ -67,7 +67,8 @@ class PKFilter(object):
         self.individuals = dict()
         self.interventions = dict()
         self.outputs = dict()
-        self.data = dict()
+        #self.data = dict()
+        self.tiemcourses = dict()
         self.studies = dict()
 
         self._set_normed(normed)
@@ -147,24 +148,24 @@ class PKDB(object):
         logger.info("*** Querying data ***")
         pkdata = PKData(
             studies=cls._get_subset(
-                "studies", **{**parameters, **pkfilter.get("studies", {})}
+                "pkdata/studies", **{**parameters, **pkfilter.get("studies", {})}
             ),
             interventions=cls._get_subset(
-                "interventions_analysis",
+                "pkdata/interventions",
                 **{**parameters, **pkfilter.get("interventions", {})},
             ),
             individuals=cls._get_subset(
-                "individuals_analysis",
+                "pkdata/individuals",
                 **{**parameters, **pkfilter.get("individuals", {})},
             ),
             groups=cls._get_subset(
-                "groups_analysis", **{**parameters, **pkfilter.get("groups", {})}
+                "pkdata/groups", **{**parameters, **pkfilter.get("groups", {})}
             ),
             outputs=cls._get_subset(
-                "output_analysis", **{**parameters, **pkfilter.get("outputs", {})}
+                "pkdata/outputs", **{**parameters, **pkfilter.get("outputs", {})}
             ),
-            data=cls._get_subset(
-                "data_analysis", **{**parameters, **pkfilter.get("data", {})}
+            timecourses=cls._get_subset(
+                "pkdata/timecourses", **{**parameters, **pkfilter.get("data", {})}
             ),
         )
 
@@ -179,12 +180,12 @@ class PKDB(object):
         :return:
         """
         if not name in [
-            "individuals_analysis",  # individuals
-            "groups_analysis",  # groups
-            "interventions_analysis",  # interventions
-            "output_analysis",  # outputs
-            #"data_analysis",  # timecourses
-            "studies",  # studies
+            "pkdata/individuals",  # individuals
+            "pkdata/groups",  # groups
+            "pkdata/interventions",  # interventions
+            "pkdata/outputs",  # outputs
+            "pkdata/timecourses",  # timecourses
+            "pkdata/studies",  # studies
         ]:
             raise ValueError(f"{name} not supported")
 
@@ -261,9 +262,10 @@ class PKDB(object):
             "time",
         ]
 
-        for column in float_columns:
-            if column in df.columns:
-                df[column] = df[column].astype(float)
+        if "timecourse" not in url:
+            for column in float_columns:
+                if column in df.columns:
+                    df[column] = df[column].astype(float)
 
         # convert columns to int columns
         int_columns = [

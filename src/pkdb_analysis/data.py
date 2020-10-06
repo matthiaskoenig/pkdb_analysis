@@ -165,7 +165,6 @@ class PKData(object):
 
     KEYS = ["studies", "groups", "individuals", "interventions", "outputs", "timecourses"]
     #PK_COLUMNS = {key: f"{key[:-1]}_pk" for key in KEYS}
-    #KEYS = ["studies", "groups", "individuals", "interventions", "outputs", "data"]
 
     def __init__(
         self,
@@ -309,7 +308,7 @@ class PKData(object):
             "individuals",
             "groups",
             "outputs",
-            "data",
+            "timecourses",
         ]:
             df = getattr(self, key).df
             store[key] = df
@@ -592,9 +591,9 @@ class PKData(object):
         """ Filter outputs. """
         return self._pk_filter("outputs", f_idx, concise, **kwargs)
 
-    def filter_data(self, f_idx, concise=True, **kwargs) -> "PKData":
-        """ Filter data. """
-        return self._pk_filter("data", f_idx, concise, **kwargs)
+    def filter_timecourse(self, f_idx, concise=True, **kwargs) -> "PKData":
+        """ Filter timecourse. """
+        return self._pk_filter("timecourses", f_idx, concise, **kwargs)
 
     def exclude_study(self, f_idx, concise=True, **kwargs) -> "PKData":
         """ Filter groups. """
@@ -619,9 +618,9 @@ class PKData(object):
     def exclude_output(self, f_idx, concise=True, **kwargs) -> "PKData":
         return self._pk_exclude("outputs", f_idx, concise, **kwargs)
 
-    def exclude_data(self, f_idx, concise=True, **kwargs):
+    def exclude_timecourse(self, f_idx, concise=True, **kwargs):
 
-        return self._pk_exclude("data", f_idx, concise, **kwargs)
+        return self._pk_exclude("timecourses", f_idx, concise, **kwargs)
 
     def delete_groups(self, concise=True) -> "PKData":
         """
@@ -644,9 +643,9 @@ class PKData(object):
         """
         return self._emptify("outputs", concise=concise)
 
-    def delete_data(self, concise=True) -> "PKData":
-        """Deletes data."""
-        return self._emptify("data", concise=concise)
+    def delete_timecourse(self, concise=True) -> "PKData":
+        """Deletes timecourse."""
+        return self._emptify("timecourses", concise=concise)
 
     def _concise(self) -> None:
         """Reduces the current PKData to a consistent subset.
@@ -660,14 +659,14 @@ class PKData(object):
 
             # concise based on studies
             outputs_study_sids = set(self.outputs.study_sid)
-            data_study_sids = set(self.data.study_sid)
+            timecourses_study_sids = set(self.timecourses.study_sid)
             interventions_study_sids = set(self.interventions.study_sid)
             groups_study_sids = set(self.groups.study_sid)
             individuals_study_sids = set(self.individuals.study_sid)
 
             study_sid_sets = [
                 outputs_study_sids,
-                data_study_sids,
+                timecourses_study_sids,
                 interventions_study_sids,
                 groups_study_sids,
                 individuals_study_sids,
@@ -675,7 +674,7 @@ class PKData(object):
 
             current_study_sid_sets = set().union(*study_sid_sets)
             self.studies = self.studies[self.studies.sid.isin(current_study_sid_sets)]
-            for df_key in ["interventions", "groups", "individuals", "data", "outputs"]:
+            for df_key in ["interventions", "groups", "individuals", "timecourses", "outputs"]:
                 df = getattr(self, df_key)
                 setattr(self, df_key, df[df["study_sid"].isin(self.studies.pks)])
 
