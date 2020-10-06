@@ -147,8 +147,8 @@ class PKDB(object):
                                    **{**parameters, **pkfilter.get("groups", {})}),
             outputs=cls._get_subset("output_analysis",
                                     **{**parameters, **pkfilter.get("outputs", {})}),
-            timecourses=cls._get_subset("timecourse_analysis",
-                                        **{**parameters, **pkfilter.get("timecourses", {})})
+            #data=cls._get_subset("subsets_analysis",
+            #                            **{**parameters, **pkfilter.get("subsets", {})})
         )
 
         return cls._intervention_pk_update(pkdata)
@@ -166,7 +166,7 @@ class PKDB(object):
             "groups_analysis",  # groups
             "interventions_analysis",  # interventions
             "output_analysis",  # outputs
-            "timecourse_analysis",  # timecourses
+            #"data_analysis",  # timecourses
             "studies",  # studies
 
         ]:
@@ -257,6 +257,7 @@ class PKDB(object):
         # convert columns to int columns
         int_columns = [
             "timecourse_pk",
+            "data_pk"
             "intervention_pk",
             "group_pk",
             "individual_pk",

@@ -162,7 +162,7 @@ class PKData(object):
                  groups: pd.DataFrame = None,
                  individuals: pd.DataFrame = None,
                  outputs: pd.DataFrame = None,
-                 timecourses: pd.DataFrame = None,
+                 #timecourses: pd.DataFrame = None,
                  studies: pd.DataFrame = None
 
     ):
@@ -178,7 +178,7 @@ class PKData(object):
         self.individuals = PKDataFrame(individuals, pk="individual_pk")
         self.interventions = PKDataFrame(interventions, pk="intervention_pk")
         self.outputs = PKDataFrame(outputs, pk="output_pk")
-        self.timecourses = PKDataFrame(timecourses, pk="timecourse_pk")
+        #self.timecourses = PKDataFrame(timecourses, pk="timecourse_pk")
         self.studies = PKDataFrame(studies, pk="sid")
 
         if not self.individuals.empty:
