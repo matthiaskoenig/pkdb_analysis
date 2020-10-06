@@ -1,12 +1,10 @@
-# Notebook Checkpoints
 .ipynb_checkpoints/
 .~lock*
-pkdb_analysis.egg-info/
+src/pkdb_analysis.egg-info
 .idea/
 
 __pycache__/
 .pytest_cache
-
 *.pyc
 .env
 .env.develop
@@ -14,7 +12,10 @@ __pycache__/
 results/
 dist/
 .eggs/
+.tox
+.coverage
+coverage.xml
 
 # too large due to failing filters
-pkdb_analysis/tests/data/test.h5
-pkdb_analysis/pkdb_analysis/reports/interactive/examples/results
+src/pkdb_analysis/test/data/test.h5
+src/pkdb_analysis/pkdb_analysis/reports/interactive/examples/results

@@ -1,28 +1,20 @@
-# Release info
-Steps for release are
-## github release
-* github: close and update issues/milestone
-* update version number in develop branch
-* fix pep8 issues (`tox -e pep8`)
-* make sure all tests run (`tox -e py37`)
+# Release information
+
+## update documentation
 * build documentation `cd docs_builder` and `./make_docs.sh 2>&1 | tee ./make_docs.log`
-* add changes to README changelog section
-* github: merge all develop changes to master via pull request
-* github: create release from master branch
 
-## pypi
-* release on [pypi](https://pypi.python.org/pypi/sbmlutils)
-```
-git checkout master
-git pull
-python setup.py sdist
-twine upload dist/*
-```
-* test installation in virtualenv from pypi (installs and runs tests)
-```
-mkvirtualenv test --python=python3.7
-(test) pip install pkdb-analysis --install-option test
-```
+## create release
+* sort imports (`isort src/pkdb_analysis`)
+* code formating (`black src/pkdb_analysis`)
+* make sure all tests run (`tox --`)
+* update release notes in `release-notes`
+* bump version (`bumpversion patch` or `bumpversion` minor)
+* `git push --tags`
 
-## version bump
-* switch to develop branch and increase version number
+
+## test release
+* test installation in virtualenv from pypi (install and runs tests)
+```
+mkvirtualenv test --python=python3.8
+(test) pip install pkdb-analysis
+```
