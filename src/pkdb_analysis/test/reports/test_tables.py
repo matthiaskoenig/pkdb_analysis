@@ -54,9 +54,9 @@ def test_create_studies(tmp_path):
 
     # Create table report
     table_report = TableReport(pkdata=pkdata, substances=report_substances)
-    #print(table_report.pkdata_concised)
 
-    """
+
+
     intervention_info = {
         "dosing amount": Parameter(
             measurement_types=["dosing", "qualitative dosing"],
@@ -75,6 +75,3 @@ def test_create_studies(tmp_path):
         args=(table_report.pkdata, table_report.pkdata_concised, intervention_info, "interventions"),
         axis=1,
     )
-    """
-
-

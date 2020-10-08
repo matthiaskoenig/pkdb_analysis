@@ -608,9 +608,8 @@ class TableReport(object):
 
         additional_dict = {}
         this_table = getattr(pkdata_concised, table)
-        print(this_table)
-        t = this_table[this_table.study_sid == study.sid]
-        has_info_kwargs = {"df": t.df, "instance_id": t.pk}
+        t = this_table.df[this_table.study_sid == study.sid]
+        has_info_kwargs = {"df": t, "instance_id": t}
         additional_dict = {
             **{
                 key: TableReport._has_info(parameter=parameter, **has_info_kwargs)
@@ -618,7 +617,6 @@ class TableReport(object):
             },
             **additional_dict,
         }
-        print(additional_dict)
 
         return study.append(pd.Series(additional_dict))
 
