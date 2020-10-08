@@ -2,10 +2,12 @@
 .~lock*
 src/pkdb_analysis.egg-info
 .idea/
+pkdb_analysis.egg-info/
 
 __pycache__/
 .pytest_cache
 *.pyc
+
 .env
 .env.develop
 .env.production
@@ -18,4 +20,6 @@ coverage.xml
 
 # too large due to failing filters
 src/pkdb_analysis/test/data/test.h5
+src/pkdb_analysis/test/data/pkdb_data.zip
+src/pkdb_analysis/test/data/pkdb_data_concised.zip
 src/pkdb_analysis/pkdb_analysis/reports/interactive/examples/results

@@ -24,13 +24,14 @@ logger = logging.getLogger(__name__)
 
 
 def create_table_report(
-    h5_data_path,
-    dosing_substances: List,
-    report_substances: List,
-    excel_path: Path = None,
-    tsv_path: Path = None,
-    google_sheets: str = None,
-    query_data: bool = False,
+        dosing_substances: List,
+        report_substances: List,
+        h5_data_path: Path = None,
+        zip_data_path: Path = None,
+        excel_path: Path = None,
+        tsv_path: Path = None,
+        google_sheets: str = None,
+        query_data: bool = False,
 ):
     """Create table report for given substance.
 
@@ -45,24 +46,29 @@ def create_table_report(
     """
     if query_data:
         query_pkdb_data(h5_path=h5_data_path)
-
     # Load data
-    if not h5_data_path.exists():
-        raise IOError(
-            f"PKDBData in HDF5 does not exist: '{h5_data_path}'. "
-            f"Query the data first with the `query_data=True' flag."
-        )
 
-    pkdata = PKData.from_hdf5(h5_data_path)
+    if zip_data_path:
+        if not zip_data_path.exists():
+            raise IOError(
+                f"Zip file does not exist: '{h5_data_path}'. "
+                f"Query the data first with the `query_data=True' flag."
+            )
+        pkdata = PKData.from_archive(zip_data_path)
+    elif h5_data_path:
+        if not h5_data_path.exists():
+            raise IOError(
+                f"PKDBData in HDF5 does not exist: '{zip_data_path}'. "
+                f"Query the data first with the `query_data=True' flag."
+            )
+        pkdata = PKData.from_hdf5(h5_data_path)
+
     study_sids = pkdata.filter_intervention(
         f_idx=filter.f_dosing_in, substances=dosing_substances, concise=False
     ).interventions.study_sids
-    print("*"*100)
-    print(study_sids)
-    print("*"*100)
+
 
     pkdata = pkdata.filter_study(lambda x: x["sid"].isin(study_sids), concise=False)
-    print(pkdata)
 
     # Create table report
     table_report = TableReport(pkdata=pkdata, substances=report_substances)
@@ -111,14 +117,14 @@ class TableReport(object):
 
     def __init__(self, pkdata: PKData, substances: Iterable = None):
         self.pkdata = pkdata
-        self.pkdata_concised = pkdata.copy()._concise()
+
+        tmp_pkdata  = pkdata.copy()
+        tmp_pkdata._concise()
+        self.pkdata_concised = tmp_pkdata
+
         if substances is None:
             substances = tuple()
         self.substances = substances
-        print("*" * 100)
-        print(self.pkdata)
-        print("*" * 100)
-
         self.df_studies = None
         self.df_timecourses = None
         self.df_pharmacokinetics = None
@@ -332,11 +338,13 @@ class TableReport(object):
 
         for keys in [s_keys, i_keys, o_keys]:
             table_keys.extend(copy(keys))
-            keys.append("sid")
+            keys.append("sid") # ?????
+
+
 
         studies_interventions = table_df.apply(
             self._add_information,
-            args=(self.pkdata, intervention_info, "interventions"),
+            args=(self.pkdata,  self.pkdata_concised, intervention_info, "interventions"),
             axis=1,
         )
         studies_group = table_df.apply(
@@ -350,7 +358,7 @@ class TableReport(object):
 
         studies_individuals = table_df.apply(
             self._add_information,
-            args=(self.pkdata, subject_info, "individuals"),
+            args=(self.pkdata, self.pkdata_concised, subject_info, "individuals"),
             axis=1,
         )
         table_df = pd.merge(
@@ -597,27 +605,12 @@ class TableReport(object):
     ):
         """FIXME: document me."""
 
+
         additional_dict = {}
-        # used_pkdata = pkdata.filter_study(lambda x: x["sid"] == study.sid)
-        used_pkdata = pkdata_concised
-        for key in ["groups", table]:
-            used_pkdata[key] = [used_pkdata[key].study_sid == study.sid]
-
-        this_table = getattr(used_pkdata, table)
-        has_info_kwargs = {"df": this_table.df, "instance_id": this_table.pk}
-        group_df_df = pkdata.groups.df
-        study_group_df = group_df_df[group_df_df["study_sid"] == study.sid]
-        all_group = study_group_df[study_group_df["group_name"] == "all"]
-        subject_size = all_group.group_count.unique()[0]
-        has_info_kwargs["Subjects_individual"] = subject_size
-        has_info_kwargs["Subjects_groups"] = len(used_pkdata.groups.pks)
-
-        if table == "groups":
-            additional_dict["Subjects_individual"] = has_info_kwargs[
-                "Subjects_individual"
-            ]
-            additional_dict["Subjects_groups"] = has_info_kwargs["Subjects_groups"]
-
+        this_table = getattr(pkdata_concised, table)
+        print(this_table)
+        t = this_table[this_table.study_sid == study.sid]
+        has_info_kwargs = {"df": t.df, "instance_id": t.pk}
         additional_dict = {
             **{
                 key: TableReport._has_info(parameter=parameter, **has_info_kwargs)
@@ -625,6 +618,7 @@ class TableReport(object):
             },
             **additional_dict,
         }
+        print(additional_dict)
 
         return study.append(pd.Series(additional_dict))
 

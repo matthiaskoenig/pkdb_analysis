@@ -5,6 +5,7 @@ Functions for working with PKDB data.
 """
 import logging
 import warnings
+import zipfile
 from abc import ABC
 from collections import OrderedDict
 from copy import copy
@@ -194,6 +195,9 @@ class PKData(object):
         if not self.groups.empty:
             self.groups.substance = self.groups.substance.astype(str)
 
+        if not self.timecourses.empty:
+            if isinstance(self.timecourses.output_pk[0], str):
+                self.timecourses.output_pk = self.timecourses.output_pk.apply(lambda x: tuple(x[1:-1].split(',')))
     def __dict___(self):
         return {df_key: getattr(self, df_key).df for df_key in PKData.KEYS}
 
@@ -277,8 +281,21 @@ class PKData(object):
         return PKData(**resulting_kwargs)
 
     @staticmethod
-    def from_hdf5(path: Path) -> "PKData":
+    def from_archive(path: Path) -> "PKData":
         """Load data from HDF5 serialization.
+
+        :param path: path to HDF5.
+        :type path: str
+        :return: PKData loaded from HDF5.
+        :rtype: PKData
+        """
+        with zipfile.ZipFile(path, 'r') as archive:
+            data_dict = {key: pd.read_csv(archive.open(f'{key}.csv'), low_memory=False) for key in PKData.KEYS}
+        return PKData(**data_dict)
+
+    @staticmethod
+    def from_hdf5(path: Path) -> "PKData":
+        """Load data from an archive as returned from the download in pk-db.com.
 
         :param path: path to HDF5.
         :type path: str
@@ -646,73 +663,56 @@ class PKData(object):
         """Deletes timecourse."""
         return self._emptify("timecourses", concise=concise)
 
+    @property
+    def ids(self):
+        return {
+            "studies": list(self.studies.pks),
+            "groups": list(self.groups.pks),
+            "individuals": list(self.individuals.pks),
+            "interventions": list(self.interventions.pks),
+            "outputs": list(self.outputs.pks),
+            "timecourses": list(self.timecourses.pks),
+            #"scatters": list(self.scatters.pks),
+        }
+
     def _concise(self) -> None:
         """Reduces the current PKData to a consistent subset.
         Modifies the DataFrame in place.
         :return:
         """
-        previous_len = np.inf
-        logger.warning("Concise DataFrames")
-        while previous_len > self._len_total:
-            previous_len = copy(self._len_total)
 
-            # concise based on studies
-            outputs_study_sids = set(self.outputs.study_sid)
-            timecourses_study_sids = set(self.timecourses.study_sid)
-            interventions_study_sids = set(self.interventions.study_sid)
-            groups_study_sids = set(self.groups.study_sid)
-            individuals_study_sids = set(self.individuals.study_sid)
 
-            study_sid_sets = [
-                outputs_study_sids,
-                timecourses_study_sids,
-                interventions_study_sids,
-                groups_study_sids,
-                individuals_study_sids,
-            ]
 
-            current_study_sid_sets = set().union(*study_sid_sets)
-            self.studies = self.studies[self.studies.sid.isin(current_study_sid_sets)]
-            for df_key in ["interventions", "groups", "individuals", "timecourses", "outputs"]:
-                df = getattr(self, df_key)
-                setattr(self, df_key, df[df["study_sid"].isin(self.studies.pks)])
+        self.outputs = self.outputs[self.outputs['group_pk'].isin(self.ids["groups"]) | self.outputs['individual_pk'].isin(self.ids["individuals"])]
+        self.outputs = self.outputs[self.outputs['intervention_pk'].isin(self.ids["interventions"])]
 
-            # concise based on interventions
-            outputs_intervention_pks = set(self.outputs.intervention_pk)
-            current_intervention_pks = self.interventions.pks.intersection(
-                outputs_intervention_pks
-            )
-            current_intervention_pks.add(-1)
+        concised_ids = {
+            "studies": list(self.outputs.study_sid.unique()),
+            "groups": list(self.outputs.group_pk.unique()),
+            "individuals": list(self.outputs.individual_pk.unique()),
+            "interventions": list(self.outputs.intervention_pk.unique()),
+            "outputs": list(self.outputs.pks),
+            "timecourses": list(self.timecourses.pks),
 
-            self.interventions = self.interventions[
-                self.interventions.intervention_pk.isin(current_intervention_pks)
-            ]
-            self.outputs = self.outputs[
-                self.outputs.intervention_pk.isin(current_intervention_pks)
-            ]
+            #"scatters": list(self.scatters.pks),
+        }
 
-            # concise based on individuals
-            outputs_individual_pks = set(self.outputs.individual_pk)
-            current_individual_pks = self.individuals.pks.intersection(
-                outputs_individual_pks
-            )
-            current_individual_pks.add(-1)
+        self.studies = self.studies[self.studies['sid'].isin(concised_ids["studies"])]
+        self.interventions = self.interventions[self.interventions['intervention_pk'].isin(concised_ids["interventions"])]
+        self.groups = self.groups[self.groups['group_pk'].isin(concised_ids["groups"])]
+        self.individuals = self.individuals[self.individuals['individual_pk'].isin(concised_ids["individuals"])]
 
-            for df_key in ["individuals", "outputs"]:
-                df = getattr(self, df_key)
-                setattr(
-                    self, df_key, df[df["individual_pk"].isin(current_individual_pks)]
-                )
+        _timecourses = pd.DataFrame(
+            {'subset_pk': np.repeat(self.timecourses.subset_pk.values, self.timecourses.output_pk.str.len()),
+             'output_pk': np.concatenate(self.timecourses.output_pk.values)})
+        _timecourses['output_pk'] = _timecourses['output_pk'].astype(int)
 
-            # concise based on groups
-            outputs_group_pks = set(self.outputs.group_pk)
+        _timecourses = _timecourses[_timecourses['output_pk'].isin(concised_ids["outputs"])]
+        self.timecourses = self.timecourses[self.timecourses['subset_pk'].isin(_timecourses.subset_pk.unique())]
 
-            current_group_pks = self.groups.pks.intersection(outputs_group_pks)
-            current_group_pks.add(-1)
 
-            for df_key in ["groups", "outputs"]:
-                df = getattr(self, df_key)
-                setattr(self, df_key, df[df.group_pk.isin(current_group_pks)])
+
+
 
     @property
     def _len_total(self):

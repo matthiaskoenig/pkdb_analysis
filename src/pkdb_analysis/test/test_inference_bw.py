@@ -2,7 +2,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import pytest
+
 
 from pkdb_analysis.data import PKData
 from pkdb_analysis.inference.body_weight import (
