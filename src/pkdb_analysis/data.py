@@ -17,7 +17,6 @@ import pandas as pd
 from IPython.display import display
 from pandas.errors import PerformanceWarning
 
-
 warnings.simplefilter(action="ignore", category=PerformanceWarning)
 logger = logging.getLogger(__name__)
 
@@ -165,16 +164,17 @@ class PKData(object):
     }
 
     KEYS = ["studies", "groups", "individuals", "interventions", "outputs", "timecourses"]
-    #PK_COLUMNS = {key: f"{key[:-1]}_pk" for key in KEYS}
+
+    # PK_COLUMNS = {key: f"{key[:-1]}_pk" for key in KEYS}
 
     def __init__(
-        self,
-        studies: pd.DataFrame = None,
-        interventions: pd.DataFrame = None,
-        groups: pd.DataFrame = None,
-        individuals: pd.DataFrame = None,
-        outputs: pd.DataFrame = None,
-        timecourses: pd.DataFrame = None,
+            self,
+            studies: pd.DataFrame = None,
+            interventions: pd.DataFrame = None,
+            groups: pd.DataFrame = None,
+            individuals: pd.DataFrame = None,
+            outputs: pd.DataFrame = None,
+            timecourses: pd.DataFrame = None,
     ):
         """Creates PKDB data object from given DataFrames.
 
@@ -196,7 +196,7 @@ class PKData(object):
             self.groups.substance = self.groups.substance.astype(str)
 
         if not self.timecourses.empty:
-            #for key in ["output_pk", "mean", "median", "value", "cv", "sd", "se", "min", "max"]:
+            # for key in ["output_pk", "mean", "median", "value", "cv", "sd", "se", "min", "max"]:
             #    values = getattr(self.timecourses, key)
             #    if isinstance(values[0], str):
             #        setattr(self.timecourses, key, values.apply(lambda x: tuple(x[1:-1].split(','))))
@@ -232,7 +232,7 @@ class PKData(object):
                 lines.append(f"{key:<15} {count:>5}  ({nrows:>5})")
             else:
                 lines.append(
-                    f"{key:<12} tc:{ self.timecourses_count:>5}  sc:{self.scatter_count:>3}"
+                    f"{key:<12} tc:{self.timecourses_count:>5}  sc:{self.scatter_count:>3}"
                 )
 
         lines.append("-" * 30)
@@ -522,7 +522,7 @@ class PKData(object):
 
     # --- filter and exclude ---
     def _pk_filter(
-        self, df_key: str, f_idx, concise: bool, *args, **kwargs
+            self, df_key: str, f_idx, concise: bool, *args, **kwargs
     ) -> "PKData":
         """Helper class for filtering of PKData instances.
         :param df_key: DataFrame on which the filter (f_idx) shall be applied.
@@ -678,7 +678,7 @@ class PKData(object):
             "interventions": list(self.interventions.pks),
             "outputs": list(self.outputs.pks),
             "timecourses": list(self.timecourses.pks),
-            #"scatters": list(self.scatters.pks),
+            # "scatters": list(self.scatters.pks),
         }
 
     def _concise(self) -> None:
@@ -687,8 +687,9 @@ class PKData(object):
         :return:
         """
 
-
-        self.outputs = self.outputs[self.outputs['group_pk'].isin(self.ids["groups"]) | self.outputs['individual_pk'].isin(self.ids["individuals"])]
+        self.outputs = self.outputs[
+            self.outputs['group_pk'].isin(self.ids["groups"]) | self.outputs['individual_pk'].isin(
+                self.ids["individuals"])]
         self.outputs = self.outputs[self.outputs['intervention_pk'].isin(self.ids["interventions"])]
 
         concised_ids = {
@@ -699,11 +700,12 @@ class PKData(object):
             "outputs": list(self.outputs.pks),
             "timecourses": list(self.timecourses.pks),
 
-            #"scatters": list(self.scatters.pks),
+            # "scatters": list(self.scatters.pks),
         }
 
         self.studies = self.studies[self.studies['sid'].isin(concised_ids["studies"])]
-        self.interventions = self.interventions[self.interventions['intervention_pk'].isin(concised_ids["interventions"])]
+        self.interventions = self.interventions[
+            self.interventions['intervention_pk'].isin(concised_ids["interventions"])]
         self.groups = self.groups[self.groups['group_pk'].isin(concised_ids["groups"])]
         self.individuals = self.individuals[self.individuals['individual_pk'].isin(concised_ids["individuals"])]
 
@@ -714,10 +716,6 @@ class PKData(object):
 
         _timecourses = _timecourses[_timecourses['output_pk'].isin(concised_ids["outputs"])]
         self.timecourses = self.timecourses[self.timecourses['subset_pk'].isin(_timecourses.subset_pk.unique())]
-
-
-
-
 
     @property
     def _len_total(self):

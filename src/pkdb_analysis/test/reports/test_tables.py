@@ -24,4 +24,3 @@ def test_tables(tmp_path):
     assert (output_path / "studies.tsv").exists()
     assert (output_path / "pharmacokinetics.tsv").exists()
     assert (output_path / "timecourses.tsv").exists()
-
