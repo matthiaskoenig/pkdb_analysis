@@ -196,8 +196,14 @@ class PKData(object):
             self.groups.substance = self.groups.substance.astype(str)
 
         if not self.timecourses.empty:
+            #for key in ["output_pk", "mean", "median", "value", "cv", "sd", "se", "min", "max"]:
+            #    values = getattr(self.timecourses, key)
+            #    if isinstance(values[0], str):
+            #        setattr(self.timecourses, key, values.apply(lambda x: tuple(x[1:-1].split(','))))
+
             if isinstance(self.timecourses.output_pk[0], str):
                 self.timecourses.output_pk = self.timecourses.output_pk.apply(lambda x: tuple(x[1:-1].split(',')))
+
     def __dict___(self):
         return {df_key: getattr(self, df_key).df for df_key in PKData.KEYS}
 
@@ -680,7 +686,6 @@ class PKData(object):
         Modifies the DataFrame in place.
         :return:
         """
-
 
 
         self.outputs = self.outputs[self.outputs['group_pk'].isin(self.ids["groups"]) | self.outputs['individual_pk'].isin(self.ids["individuals"])]

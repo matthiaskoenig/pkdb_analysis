@@ -51,7 +51,7 @@ def create_table_report(
     if zip_data_path:
         if not zip_data_path.exists():
             raise IOError(
-                f"Zip file does not exist: '{h5_data_path}'. "
+                f"Zip file does not exist: '{zip_data_path}'. "
                 f"Query the data first with the `query_data=True' flag."
             )
         pkdata = PKData.from_archive(zip_data_path)
@@ -338,27 +338,32 @@ class TableReport(object):
 
         for keys in [s_keys, i_keys, o_keys]:
             table_keys.extend(copy(keys))
-            keys.append("sid") # ?????
-
-
+            keys.append("sid")  # ?????
 
         studies_interventions = table_df.apply(
             self._add_information,
-            args=(self.pkdata,  self.pkdata_concised, intervention_info, "interventions"),
+            args=(self.pkdata_concised, intervention_info, "interventions"),
             axis=1,
         )
         studies_group = table_df.apply(
             self._add_information,
-            args=(self.pkdata, self.pkdata_concised, subject_info, "groups"),
+            args=(self.pkdata_concised, subject_info, "groups"),
             axis=1,
         )
+
+        studies_group = studies_group.apply(
+            self._add_group_and_individual_size,
+            args=(self.pkdata, self.pkdata_concised),
+            axis=1,
+        )
+
         studies_group[["Subjects_individual", "Subjects_groups"]] = studies_group[
             ["Subjects_individual", "Subjects_groups"]
         ].astype(int)
 
         studies_individuals = table_df.apply(
             self._add_information,
-            args=(self.pkdata, self.pkdata_concised, subject_info, "individuals"),
+            args=(self.pkdata_concised, subject_info, "individuals"),
             axis=1,
         )
         table_df = pd.merge(
@@ -372,12 +377,12 @@ class TableReport(object):
         table_df = pd.merge(table_df, studies_interventions[i_keys], on="sid")
         studies_outputs = table_df.apply(
             self._add_information,
-            args=(self.pkdata, self.pkdata_concised, outputs_info, "outputs"),
+            args=(self.pkdata_concised, outputs_info, "outputs"),
             axis=1,
         )
         studies_timecourses = table_df.apply(
             self._add_information,
-            args=(self.pkdata, self.pkdata_concised, outputs_info, "timecourses"),
+            args=(self.pkdata_concised, outputs_info, "timecourses"),
             axis=1,
         )
         table_df = pd.merge(
@@ -422,7 +427,7 @@ class TableReport(object):
 
         table_df = table_df.apply(
             self._add_information,
-            args=(self.pkdata, self.pkdata_concised, timecourse_info, "timecourses"),
+            args=(self.pkdata_concised, timecourse_info, "timecourses"),
             axis=1,
         )
         table_df = table_df.fillna(" ")
@@ -588,7 +593,7 @@ class TableReport(object):
 
         table_df = table_df.apply(
             self._add_information,
-            args=(self.pkdata, self.pkdata_concised, pks_info, "outputs"),
+            args=(self.pkdata_concised, pks_info, "outputs"),
             axis=1,
         )
         table_keys.extend(pks_info.keys())
@@ -601,15 +606,14 @@ class TableReport(object):
 
     @staticmethod
     def _add_information(
-        study, pkdata, pkdata_concised, measurement_types: Dict, table: str
+        study, pkdata_concised, measurement_types: Dict, table: str
     ):
         """FIXME: document me."""
-
 
         additional_dict = {}
         this_table = getattr(pkdata_concised, table)
         t = this_table.df[this_table.study_sid == study.sid]
-        has_info_kwargs = {"df": t, "instance_id": t}
+        has_info_kwargs = {"df": t, "instance_id": this_table.pk}
         additional_dict = {
             **{
                 key: TableReport._has_info(parameter=parameter, **has_info_kwargs)
@@ -617,8 +621,26 @@ class TableReport(object):
             },
             **additional_dict,
         }
+        return study.append(pd.Series(additional_dict))
+
+    @staticmethod
+    def _add_group_and_individual_size(
+        study, pkdata, pkdata_concised,
+    ):
+        additional_dict = {}
+        this_table = getattr(pkdata_concised, "groups")
+        groups_concised = this_table[this_table.study_sid == study.sid]
+        additional_dict["Subjects_groups"] = len(groups_concised.pks)
+
+        group_df = pkdata.groups.df
+        study_group_df = group_df[group_df["study_sid"] == study.sid]
+        all_group = study_group_df[study_group_df["group_name"] == "all"]
+        subject_size = all_group.group_count.unique()[0]
+        additional_dict["Subjects_individual"] = subject_size
 
         return study.append(pd.Series(additional_dict))
+
+
 
     @staticmethod
     def _format_table_information(table_keys, table_df):
