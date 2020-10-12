@@ -11,6 +11,7 @@ from pkdb_analysis.reports.interactive.interactive import PlottingParameter as P
 from pkdb_analysis.reports.interactive.interactive import interactive_plot_factory
 from pkdb_analysis.test import TEST_HDF5, TESTDATA_CONCISE_FALSE_ZIP
 
+
 # substances used in the interventions
 INTERVENTION_SUBSTANCES = {"caffeine"}
 

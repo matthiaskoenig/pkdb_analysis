@@ -12,5 +12,3 @@ TEST_HDF5 = TESTDATA_PATH / "test.h5"
 # downloaded test data using concise True/False (filter endpoint)
 TESTDATA_CONCISE_TRUE_ZIP = TESTDATA_PATH / "testdata_concise_true.zip"
 TESTDATA_CONCISE_FALSE_ZIP = TESTDATA_PATH / "testdata_concise_false.zip"
-
-

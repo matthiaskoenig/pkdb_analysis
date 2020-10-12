@@ -12,16 +12,14 @@ import pandas as pd
 import requests
 
 from pkdb_analysis.data import PKData
-from pkdb_analysis.envs import BASE_URL, API_URL, PASSWORD, USER
+from pkdb_analysis.envs import API_URL, BASE_URL, PASSWORD, USER
 
 
 logger = logging.getLogger(__name__)
 
 
 def query_pkdb_data(
-        h5_path: Path = None,
-        username: str = None,
-        study_names: List = None
+    h5_path: Path = None, username: str = None, study_names: List = None
 ) -> PKData:
     """Query the complete database.
 
@@ -57,7 +55,14 @@ def query_pkdb_data(
 class PKFilter(object):
     """Filter objects for PKData"""
 
-    KEYS = ["studies", "groups", "individuals", "interventions", "outputs", "timecourses"]
+    KEYS = [
+        "studies",
+        "groups",
+        "individuals",
+        "interventions",
+        "outputs",
+        "timecourses",
+    ]
 
     def __init__(self, normed=True):
         """Create new Filter instance.
@@ -166,7 +171,8 @@ class PKDB(object):
                 "pkdata/outputs", **{**parameters, **pkfilter.get("outputs", {})}
             ),
             timecourses=cls._get_subset(
-                "pkdata/timecourses", **{**parameters, **pkfilter.get("timecourses", {})}
+                "pkdata/timecourses",
+                **{**parameters, **pkfilter.get("timecourses", {})},
             ),
         )
 
@@ -174,7 +180,7 @@ class PKDB(object):
 
     @classmethod
     def _get_subset(cls, name, **parameters):
-        """ FIXME: document me.
+        """FIXME: document me.
 
         :param name: name of the view
         :param parameters: query parameters

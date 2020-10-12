@@ -4,7 +4,7 @@ from pkdb_analysis.query import query_pkdb_data
 from pkdb_analysis.test import TEST_HDF5, TESTDATA_PATH
 
 
-def create_h5_test_data(h5_path: Path = TEST_HDF5, test_studies:bool=True) -> None:
+def create_h5_test_data(h5_path: Path = TEST_HDF5, test_studies: bool = True) -> None:
     """Loads test studies from database.
 
     Ensure test studies are uploaded to database before running this script.

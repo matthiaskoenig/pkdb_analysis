@@ -1,5 +1,6 @@
 import pytest
-from pkdb_analysis import PKData, PKDB
+
+from pkdb_analysis import PKDB, PKData
 from pkdb_analysis.test import TESTDATA_CONCISE_FALSE_ZIP, TESTDATA_CONCISE_TRUE_ZIP
 
 
@@ -19,10 +20,3 @@ def test_concise_pks():
     assert d1.outputs.pks == d2.outputs.pks
     assert d1.timecourses.pks == d2.timecourses.pks
     assert d1.scatters.pks == d2.scatters.pks
-
-
-
-
-
-
-

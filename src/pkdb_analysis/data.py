@@ -17,6 +17,7 @@ import pandas as pd
 from IPython.display import display
 from pandas.errors import PerformanceWarning
 
+
 warnings.simplefilter(action="ignore", category=PerformanceWarning)
 logger = logging.getLogger(__name__)
 
@@ -142,18 +143,19 @@ class PKDataFrame(pd.DataFrame, ABC):
 
 
 class PKData(object):
-    """ Consistent set of data from PK-DB.set -a && source .env.local
+    """Consistent set of data from PK-DB.set -a && source .env.local
 
-       Information is stored as DataFrames.
+    Information is stored as DataFrames.
 
-       Handles:
+    Handles:
 
-       - groups
-       - individuals
-       - interventions
-       - outputs
-       - data
+    - groups
+    - individuals
+    - interventions
+    - outputs
+    - data
     """
+
     PK_COLUMNS = {
         "studies": "study_pk",
         "groups": "group_pk",
@@ -163,18 +165,25 @@ class PKData(object):
         "timecourses": "subset_pk",
     }
 
-    KEYS = ["studies", "groups", "individuals", "interventions", "outputs", "timecourses"]
+    KEYS = [
+        "studies",
+        "groups",
+        "individuals",
+        "interventions",
+        "outputs",
+        "timecourses",
+    ]
 
     # PK_COLUMNS = {key: f"{key[:-1]}_pk" for key in KEYS}
 
     def __init__(
-            self,
-            studies: pd.DataFrame = None,
-            interventions: pd.DataFrame = None,
-            groups: pd.DataFrame = None,
-            individuals: pd.DataFrame = None,
-            outputs: pd.DataFrame = None,
-            timecourses: pd.DataFrame = None,
+        self,
+        studies: pd.DataFrame = None,
+        interventions: pd.DataFrame = None,
+        groups: pd.DataFrame = None,
+        individuals: pd.DataFrame = None,
+        outputs: pd.DataFrame = None,
+        timecourses: pd.DataFrame = None,
     ):
         """Creates PKDB data object from given DataFrames.
 
@@ -202,7 +211,9 @@ class PKData(object):
             #        setattr(self.timecourses, key, values.apply(lambda x: tuple(x[1:-1].split(','))))
 
             if isinstance(self.timecourses.output_pk[0], str):
-                self.timecourses.output_pk = self.timecourses.output_pk.apply(lambda x: tuple(x[1:-1].split(',')))
+                self.timecourses.output_pk = self.timecourses.output_pk.apply(
+                    lambda x: tuple(x[1:-1].split(","))
+                )
 
     def __dict___(self):
         return {df_key: getattr(self, df_key).df for df_key in PKData.KEYS}
@@ -295,8 +306,11 @@ class PKData(object):
         :return: PKData loaded from HDF5.
         :rtype: PKData
         """
-        with zipfile.ZipFile(path, 'r') as archive:
-            data_dict = {key: pd.read_csv(archive.open(f'{key}.csv'), low_memory=False) for key in PKData.KEYS}
+        with zipfile.ZipFile(path, "r") as archive:
+            data_dict = {
+                key: pd.read_csv(archive.open(f"{key}.csv"), low_memory=False)
+                for key in PKData.KEYS
+            }
         return PKData(**data_dict)
 
     @staticmethod
@@ -522,7 +536,7 @@ class PKData(object):
 
     # --- filter and exclude ---
     def _pk_filter(
-            self, df_key: str, f_idx, concise: bool, *args, **kwargs
+        self, df_key: str, f_idx, concise: bool, *args, **kwargs
     ) -> "PKData":
         """Helper class for filtering of PKData instances.
         :param df_key: DataFrame on which the filter (f_idx) shall be applied.
@@ -688,9 +702,12 @@ class PKData(object):
         """
 
         self.outputs = self.outputs[
-            self.outputs['group_pk'].isin(self.ids["groups"]) | self.outputs['individual_pk'].isin(
-                self.ids["individuals"])]
-        self.outputs = self.outputs[self.outputs['intervention_pk'].isin(self.ids["interventions"])]
+            self.outputs["group_pk"].isin(self.ids["groups"])
+            | self.outputs["individual_pk"].isin(self.ids["individuals"])
+        ]
+        self.outputs = self.outputs[
+            self.outputs["intervention_pk"].isin(self.ids["interventions"])
+        ]
 
         concised_ids = {
             "studies": list(self.outputs.study_sid.unique()),
@@ -699,24 +716,36 @@ class PKData(object):
             "interventions": list(self.outputs.intervention_pk.unique()),
             "outputs": list(self.outputs.pks),
             "timecourses": list(self.timecourses.pks),
-
             # "scatters": list(self.scatters.pks),
         }
 
-        self.studies = self.studies[self.studies['sid'].isin(concised_ids["studies"])]
+        self.studies = self.studies[self.studies["sid"].isin(concised_ids["studies"])]
         self.interventions = self.interventions[
-            self.interventions['intervention_pk'].isin(concised_ids["interventions"])]
-        self.groups = self.groups[self.groups['group_pk'].isin(concised_ids["groups"])]
-        self.individuals = self.individuals[self.individuals['individual_pk'].isin(concised_ids["individuals"])]
+            self.interventions["intervention_pk"].isin(concised_ids["interventions"])
+        ]
+        self.groups = self.groups[self.groups["group_pk"].isin(concised_ids["groups"])]
+        self.individuals = self.individuals[
+            self.individuals["individual_pk"].isin(concised_ids["individuals"])
+        ]
 
         if not self.timecourses.empty:
             _timecourses = pd.DataFrame(
-                {'subset_pk': np.repeat(self.timecourses.subset_pk.values, self.timecourses.output_pk.str.len()),
-                 'output_pk': np.concatenate(self.timecourses.output_pk.values)})
-            _timecourses['output_pk'] = _timecourses['output_pk'].astype(int)
+                {
+                    "subset_pk": np.repeat(
+                        self.timecourses.subset_pk.values,
+                        self.timecourses.output_pk.str.len(),
+                    ),
+                    "output_pk": np.concatenate(self.timecourses.output_pk.values),
+                }
+            )
+            _timecourses["output_pk"] = _timecourses["output_pk"].astype(int)
 
-            _timecourses = _timecourses[_timecourses['output_pk'].isin(concised_ids["outputs"])]
-            self.timecourses = self.timecourses[self.timecourses['subset_pk'].isin(_timecourses.subset_pk.unique())]
+            _timecourses = _timecourses[
+                _timecourses["output_pk"].isin(concised_ids["outputs"])
+            ]
+            self.timecourses = self.timecourses[
+                self.timecourses["subset_pk"].isin(_timecourses.subset_pk.unique())
+            ]
 
     @property
     def _len_total(self):

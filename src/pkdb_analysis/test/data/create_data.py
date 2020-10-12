@@ -14,7 +14,14 @@ def load_test_studies() -> PKData:
     test_study_names = ["Test1", "Test2", "Test3", "Test4"]
     url_study_names = "__".join(test_study_names)
     pkfilter = PKFilter()
-    for df_key in ["studies", "groups", "individuals", "interventions", "outputs", "timecourses"]:
+    for df_key in [
+        "studies",
+        "groups",
+        "individuals",
+        "interventions",
+        "outputs",
+        "timecourses",
+    ]:
         setattr(pkfilter, df_key, {"study_name__in": url_study_names})
     return PKDB.query(pkfilter=pkfilter)
 
@@ -23,7 +30,7 @@ if __name__ == "__main__":
     from pkdb_analysis.test import TEST_HDF5
 
     pkdata = load_test_studies()
-    #pkdata._concise()
+    # pkdata._concise()
     pkdata.to_hdf5(TEST_HDF5)
     print(pkdata)
     pkdata.from_hdf5(TEST_HDF5)

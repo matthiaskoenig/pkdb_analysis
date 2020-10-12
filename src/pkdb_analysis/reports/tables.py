@@ -24,14 +24,14 @@ logger = logging.getLogger(__name__)
 
 
 def create_table_report(
-        dosing_substances: List,
-        report_substances: List,
-        h5_data_path: Path = None,
-        zip_data_path: Path = None,
-        excel_path: Path = None,
-        tsv_path: Path = None,
-        google_sheets: str = None,
-        query_data: bool = False,
+    dosing_substances: List,
+    report_substances: List,
+    h5_data_path: Path = None,
+    zip_data_path: Path = None,
+    excel_path: Path = None,
+    tsv_path: Path = None,
+    google_sheets: str = None,
+    query_data: bool = False,
 ):
     """Create table report for given substance.
 
@@ -66,7 +66,6 @@ def create_table_report(
     study_sids = pkdata.filter_intervention(
         f_idx=filter.f_dosing_in, substances=dosing_substances, concise=False
     ).interventions.study_sids
-
 
     pkdata = pkdata.filter_study(lambda x: x["sid"].isin(study_sids), concise=False)
 
@@ -118,7 +117,7 @@ class TableReport(object):
     def __init__(self, pkdata: PKData, substances: Iterable = None):
         self.pkdata = pkdata
 
-        tmp_pkdata  = pkdata.copy()
+        tmp_pkdata = pkdata.copy()
         tmp_pkdata._concise()
         self.pkdata_concised = tmp_pkdata
 
@@ -605,9 +604,7 @@ class TableReport(object):
         return table_df[table_keys]
 
     @staticmethod
-    def _add_information(
-        study, pkdata_concised, measurement_types: Dict, table: str
-    ):
+    def _add_information(study, pkdata_concised, measurement_types: Dict, table: str):
         """FIXME: document me."""
 
         additional_dict = {}
@@ -625,7 +622,9 @@ class TableReport(object):
 
     @staticmethod
     def _add_group_and_individual_size(
-        study, pkdata, pkdata_concised,
+        study,
+        pkdata,
+        pkdata_concised,
     ):
         additional_dict = {}
         this_table = getattr(pkdata_concised, "groups")
@@ -639,8 +638,6 @@ class TableReport(object):
         additional_dict["Subjects_individual"] = subject_size
 
         return study.append(pd.Series(additional_dict))
-
-
 
     @staticmethod
     def _format_table_information(table_keys, table_df):
