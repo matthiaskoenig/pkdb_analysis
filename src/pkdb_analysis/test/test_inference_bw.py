@@ -12,7 +12,7 @@ from pkdb_analysis.inference.body_weight import (
     ureg,
 )
 from pkdb_analysis.meta_analysis import MetaAnalysis
-from pkdb_analysis.test import TEST_HDF5, TEST_ZIP
+from pkdb_analysis.test import TEST_HDF5, TESTDATA_CONCISE_FALSE_ZIP
 from pkdb_analysis.test.data.group_data import (
     GROUP_OUTPUT,
     INDIVIDUAL_NO_BODYWEIGHT_OUTPUT,
@@ -79,7 +79,7 @@ def test_inference_by_body_weight2():
 
 
 def test_inference_by_body_weight3():
-    test_data = PKData.from_archive(TEST_ZIP)
+    test_data = PKData.from_archive(TESTDATA_CONCISE_FALSE_ZIP)
     ma = MetaAnalysis(test_data, ["caffeine"], "test/url/")
     ma.create_results()
     results_inferred = infer_weight(ma.results)

@@ -12,14 +12,16 @@ import pandas as pd
 import requests
 
 from pkdb_analysis.data import PKData
-from pkdb_analysis.envs import API_BASE, API_URL, PASSWORD, USER
+from pkdb_analysis.envs import BASE_URL, API_URL, PASSWORD, USER
 
 
 logger = logging.getLogger(__name__)
 
 
 def query_pkdb_data(
-    h5_path: Path = None, username: str = None, study_names: List = None
+        h5_path: Path = None,
+        username: str = None,
+        study_names: List = None
 ) -> PKData:
     """Query the complete database.
 
@@ -172,7 +174,7 @@ class PKDB(object):
 
     @classmethod
     def _get_subset(cls, name, **parameters):
-        """
+        """ FIXME: document me.
 
         :param name: name of the view
         :param parameters: query parameters
@@ -190,7 +192,7 @@ class PKDB(object):
 
         url = API_URL + f"/{name}/"
         return cls._get_data(
-            url, cls.get_authentication_headers(API_BASE, USER, PASSWORD), **parameters
+            url, cls.get_authentication_headers(BASE_URL, USER, PASSWORD), **parameters
         )
 
     @classmethod
@@ -283,6 +285,7 @@ class PKDB(object):
 
     @staticmethod
     def _map_intervention_pks(pkdata):
+        """FIXME: document me"""
         interventions_output = pd.DataFrame()
 
         if not pkdata.outputs.empty:
@@ -300,6 +303,7 @@ class PKDB(object):
 
     @staticmethod
     def _update_interventions(pkdata, mapping_int_pks):
+        """FIXME: document me"""
         mapping_int_pks = mapping_int_pks.copy()
         mapping_int_pks["intervention_pk"] = mapping_int_pks.intervention_pk.apply(
             lambda x: list(x)
@@ -322,6 +326,7 @@ class PKDB(object):
 
     @staticmethod
     def _update_outputs(pkdata, mapping_int_pks):
+        """FIXME: document me"""
         mapping_int_pks = mapping_int_pks.copy()
 
         interventions_output = pkdata.outputs.df.pivot_table(
@@ -346,6 +351,7 @@ class PKDB(object):
 
     @classmethod
     def _intervention_pk_update(cls, pkdata):
+        """FIXME: document me"""
         if not pkdata.outputs.empty:
             mapping_int_pks = cls._map_intervention_pks(pkdata)
 

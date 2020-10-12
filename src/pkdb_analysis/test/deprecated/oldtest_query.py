@@ -4,7 +4,7 @@ import requests
 
 from pkdb_analysis import PKFilterFactory
 from pkdb_analysis.data import PKData
-from pkdb_analysis.envs import API_BASE, PASSWORD, USER
+from pkdb_analysis.envs import BASE_URL, PASSWORD, USER
 from pkdb_analysis.query import PKDB
 
 
@@ -35,7 +35,7 @@ def _check_data_empty(data):
 def is_admin_and_connection():
     if USER == "admin":
         try:
-            PKDB.get_authentication_headers(API_BASE, USER, PASSWORD)
+            PKDB.get_authentication_headers(BASE_URL, USER, PASSWORD)
             return False
         except requests.exceptions.InvalidURL:
             return True

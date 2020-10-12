@@ -1,12 +1,12 @@
 from pkdb_analysis.reports import create_table_report
-from pkdb_analysis.test import TEST_ZIP
+from pkdb_analysis.test import TESTDATA_CONCISE_FALSE_ZIP
 
 
 def test_tables(tmp_path):
     output_path = tmp_path / "tables"
     xlsx_path = output_path / "tables.xlsx"
     create_table_report(
-        zip_data_path=TEST_ZIP,
+        zip_data_path=TESTDATA_CONCISE_FALSE_ZIP,
         dosing_substances=["torasemide"],
         report_substances=[
             "torasemide",
