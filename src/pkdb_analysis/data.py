@@ -709,13 +709,14 @@ class PKData(object):
         self.groups = self.groups[self.groups['group_pk'].isin(concised_ids["groups"])]
         self.individuals = self.individuals[self.individuals['individual_pk'].isin(concised_ids["individuals"])]
 
-        _timecourses = pd.DataFrame(
-            {'subset_pk': np.repeat(self.timecourses.subset_pk.values, self.timecourses.output_pk.str.len()),
-             'output_pk': np.concatenate(self.timecourses.output_pk.values)})
-        _timecourses['output_pk'] = _timecourses['output_pk'].astype(int)
+        if not self.timecourses.empty:
+            _timecourses = pd.DataFrame(
+                {'subset_pk': np.repeat(self.timecourses.subset_pk.values, self.timecourses.output_pk.str.len()),
+                 'output_pk': np.concatenate(self.timecourses.output_pk.values)})
+            _timecourses['output_pk'] = _timecourses['output_pk'].astype(int)
 
-        _timecourses = _timecourses[_timecourses['output_pk'].isin(concised_ids["outputs"])]
-        self.timecourses = self.timecourses[self.timecourses['subset_pk'].isin(_timecourses.subset_pk.unique())]
+            _timecourses = _timecourses[_timecourses['output_pk'].isin(concised_ids["outputs"])]
+            self.timecourses = self.timecourses[self.timecourses['subset_pk'].isin(_timecourses.subset_pk.unique())]
 
     @property
     def _len_total(self):

@@ -28,6 +28,8 @@ class InferWeight(object):
         self.weight, self.weight_field = self.get_weight()
 
     def per_bw(self, unit_field):
+        print(unit_field)
+        print(self.series[unit_field])
         return self.series[unit_field].endswith("/ kilogram")
 
     @staticmethod

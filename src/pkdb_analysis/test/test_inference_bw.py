@@ -2,7 +2,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
+import pytest
 
 from pkdb_analysis.data import PKData
 from pkdb_analysis.inference.body_weight import (
@@ -12,7 +12,7 @@ from pkdb_analysis.inference.body_weight import (
     ureg,
 )
 from pkdb_analysis.meta_analysis import MetaAnalysis
-from pkdb_analysis.test import TEST_HDF5
+from pkdb_analysis.test import TEST_HDF5, TEST_ZIP
 from pkdb_analysis.test.data.group_data import (
     GROUP_OUTPUT,
     INDIVIDUAL_NO_BODYWEIGHT_OUTPUT,
@@ -78,10 +78,8 @@ def test_inference_by_body_weight2():
         assert len(output_subset) == 2
 
 
-# FIXME
-@pytest.mark.skip("FIXME")
 def test_inference_by_body_weight3():
-    test_data = PKData.from_hdf5(TEST_HDF5)
+    test_data = PKData.from_archive(TEST_ZIP)
     ma = MetaAnalysis(test_data, ["caffeine"], "test/url/")
     ma.create_results()
     results_inferred = infer_weight(ma.results)
