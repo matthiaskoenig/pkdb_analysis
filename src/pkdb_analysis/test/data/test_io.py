@@ -1,4 +1,4 @@
-from pkdb_analysis import PKDB, PKData
+from pkdb_analysis import PKData
 from pkdb_analysis.test import TESTDATA_CONCISE_FALSE_ZIP
 
 

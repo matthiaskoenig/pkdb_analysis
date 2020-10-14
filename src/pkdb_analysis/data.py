@@ -206,7 +206,7 @@ class PKData(object):
             self.groups.substance = self.groups.substance.astype(str)
 
         if not self.timecourses.empty:
-            if isinstance(self.timecourses.output_pk[0], str):
+            if isinstance(self.timecourses.output_pk.iloc[0], str):
                 self.timecourses.output_pk = self.timecourses.output_pk.apply(
                     lambda x: tuple(x[1:-1].split(","))
                 )

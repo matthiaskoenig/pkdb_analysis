@@ -47,7 +47,7 @@ def column_to_color(column):
     mapping = {v: n for n, v in enumerate(column.unique())}
     colors = sns.color_palette(
         "colorblind",
-        8,
+        12,
     ).as_hex()
 
     return column.apply(lambda x: colors[mapping[x]])
