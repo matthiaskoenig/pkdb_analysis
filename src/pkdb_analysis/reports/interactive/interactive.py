@@ -450,6 +450,7 @@ def results(
     for measurement_type, pkd in data_dict.items():
         meta_analysis = MetaAnalysis(pkd, intervention_substances, url)
         meta_analysis.create_results()
+
         for key, additional_function in additional_information.items():
             meta_analysis.results[key] = meta_analysis.results.apply(
                 additional_function, axis=1
@@ -461,8 +462,6 @@ def results(
         meta_analysis.add_extra_info(replacements)
         results = meta_analysis.results
         results_dict[measurement_type] = results
-        print(measurement_type)
-        print(len(results))
 
     return results_dict
 

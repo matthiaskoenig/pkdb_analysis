@@ -17,7 +17,7 @@ def update_test_data(path_zip: Path, concise: bool):
     :param path_zip: Path to output zip file for storage
     :param concise: boolean flag to download concise or non-concise data
     """
-    url = f"{API_URL}/filter/?format=json&download=True&concise={concise}&studies__in=PKDB00198"
+    url = f"{API_URL}/filter/?download=true&concise="+f"{concise}".lower()#+"&studies__sid__in=PKDB00198"
     print(url)
     with requests.get(url, stream=True) as r:
         r.raise_for_status()

@@ -3,8 +3,6 @@ import pytest
 from pkdb_analysis.reports.interactive.examples import example1
 
 
-# FIXME
-@pytest.mark.skip("FIXME")
 def test_interactive_plot1(tmp_path):
     """Test plot creation.
 

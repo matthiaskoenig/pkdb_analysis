@@ -112,6 +112,7 @@ class MetaAnalysis(object):
             )
 
         pk = subject_df.pk
+
         subject_core["extra"] = getattr(subject_core, pk).apply(
             lambda x: subject_df[subject_df[pk] == x]
         )
@@ -174,9 +175,11 @@ class MetaAnalysis(object):
         intervention_table = self._create_extra_table(
             "interventions", self.intervention_substances
         )
+        #intervention_table.unit = intervention_table.unit.astype(str)
         intervention_table["per_bw"] = intervention_table.unit.str.endswith(
             "/ kilogram"
         )
+
         intervention_table = intervention_table.rename(
             columns={"intervention_pk": "pk"}
         )
@@ -207,7 +210,7 @@ class MetaAnalysis(object):
     def group_results(self):
         group = "groups"
         group_table = self.create_subject_table(group)
-        group_results = self.results[self.results.group_pk != -1]
+        group_results = self.results[self.results.individual_pk == -1]
         unique_group_columns = set(group_table.columns).difference(
             group_results.columns
         )
@@ -220,7 +223,6 @@ class MetaAnalysis(object):
         )
 
     def add_subject_info(self):
-
         self.results = self.individual_results().df.append(self.group_results())
 
     def infer_from_body_weight(self, by_intervention=True, by_output=True):

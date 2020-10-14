@@ -193,8 +193,9 @@ class PKData(object):
         :param outputs:
         """
         self.groups = PKDataFrame(groups, pk="group_pk")
+
         self.individuals = PKDataFrame(individuals, pk="individual_pk")
-        self.interventions = PKDataFrame(interventions, pk="intervention_pk")
+        self.interventions = PKDataFrame(interventions, pk="intervention_pk").replace({np.nan: None})
         self.outputs = PKDataFrame(outputs, pk="output_pk")
         self.timecourses = PKDataFrame(timecourses, pk="subset_pk")
         self.studies = PKDataFrame(studies, pk="sid")
@@ -205,11 +206,6 @@ class PKData(object):
             self.groups.substance = self.groups.substance.astype(str)
 
         if not self.timecourses.empty:
-            # for key in ["output_pk", "mean", "median", "value", "cv", "sd", "se", "min", "max"]:
-            #    values = getattr(self.timecourses, key)
-            #    if isinstance(values[0], str):
-            #        setattr(self.timecourses, key, values.apply(lambda x: tuple(x[1:-1].split(','))))
-
             if isinstance(self.timecourses.output_pk[0], str):
                 self.timecourses.output_pk = self.timecourses.output_pk.apply(
                     lambda x: tuple(x[1:-1].split(","))
@@ -297,8 +293,8 @@ class PKData(object):
 
         return PKData(**resulting_kwargs)
 
-    @staticmethod
-    def from_archive(path: Path) -> "PKData":
+    @classmethod
+    def from_archive(cls, path: Path) -> "PKData":
         """Load data from HDF5 serialization.
 
         :param path: path to HDF5.
@@ -308,10 +304,13 @@ class PKData(object):
         """
         with zipfile.ZipFile(path, "r") as archive:
             data_dict = {
-                key: pd.read_csv(archive.open(f"{key}.csv"), low_memory=False)
+                key: PKData._clean_types(
+                    pd.read_csv(archive.open(f"{key}.csv"), low_memory=False),
+                    is_timecourse=key == "timecourses")
                 for key in PKData.KEYS
             }
-        return PKData(**data_dict)
+        pkdata = PKData(**data_dict)
+        return cls._intervention_pk_update(pkdata)
 
     @staticmethod
     def from_hdf5(path: Path) -> "PKData":
@@ -798,3 +797,115 @@ class PKData(object):
             for field in fields:
                 print(f"*** {field} ***")
                 print(choices[field])
+
+    def _map_intervention_pks(self):
+        """FIXME: document me"""
+        interventions_output = pd.DataFrame()
+
+        if not self.outputs.empty:
+            interventions_output = self.outputs.df.pivot_table(
+                values="intervention_pk",
+                index="output_pk",
+                aggfunc=lambda x: frozenset(x),
+            )
+
+        interventions = interventions_output.drop_duplicates(
+            "intervention_pk"
+        ).reset_index()
+        interventions.index = interventions.index.set_names(["intervention_pk_updated"])
+        return interventions["intervention_pk"].reset_index()
+
+    def _update_interventions(self, mapping_int_pks):
+        """FIXME: document me"""
+        mapping_int_pks = mapping_int_pks.copy()
+        mapping_int_pks["intervention_pk"] = mapping_int_pks.intervention_pk.apply(
+            lambda x: list(x)
+        )
+        mapping_int_pks = (
+            mapping_int_pks.intervention_pk.apply(pd.Series)
+                .stack()
+                .reset_index(level=-1, drop=True)
+                .astype(int)
+                .reset_index()
+        )
+        mapping_int_pks = mapping_int_pks.rename(
+            columns={"index": "intervention_pk_updated", 0: "intervention_pk"}
+        )
+        return (
+            pd.merge(mapping_int_pks, self.interventions, on="intervention_pk")
+                .drop(columns=["intervention_pk"])
+                .rename(columns={"intervention_pk_updated": "intervention_pk"})
+        )
+
+
+    def _update_outputs(self, mapping_int_pks):
+        """FIXME: document me"""
+        mapping_int_pks = mapping_int_pks.copy()
+
+        interventions_output = self.outputs.df.pivot_table(
+            values="intervention_pk", index="output_pk", aggfunc=lambda x: frozenset(x)
+        )
+        mapping_int_pks = pd.merge(
+            interventions_output.reset_index(),
+            mapping_int_pks,
+            on="intervention_pk",
+            how="left",
+        )[["output_pk", "intervention_pk_updated"]]
+
+        return (
+            pd.merge(
+                mapping_int_pks,
+                self.outputs.df.drop_duplicates(subset="output_pk"),
+                how="left",
+            )
+                .drop(columns=["intervention_pk"])
+                .rename(columns={"intervention_pk_updated": "intervention_pk"})
+        )
+
+    def _intervention_pk_update(self):
+        """FIXME: document me"""
+        if not self.outputs.empty:
+            mapping_int_pks = self._map_intervention_pks()
+
+            data_dict = self.as_dict()
+            data_dict["interventions"] = self._update_interventions(mapping_int_pks)
+            if not self.outputs.empty:
+                data_dict["outputs"] = self._update_outputs(mapping_int_pks)
+            return PKData(**data_dict)
+        else:
+            return self
+
+    @staticmethod
+    def _clean_types(df: pd.DataFrame, is_timecourse):
+        # convert columns to float columns
+        float_columns = [
+            "mean",
+            "median",
+            "value",
+            "sd",
+            "se",
+            "cv",
+            "min",
+            "max",
+            "time",
+        ]
+
+        if not is_timecourse:
+            for column in float_columns:
+                if column in df.columns:
+                    df[column] = df[column].astype(float)
+
+        # convert columns to int columns
+        int_columns = [
+            "subset_pk",
+            "intervention_pk",
+            "group_pk",
+            "individual_pk",
+            "group_parent_pk",
+            "raw_pk",
+        ]
+        for column in int_columns:
+            if column in df.columns:
+                df[column] = df[column].replace({np.nan: -1}).astype(int)
+
+        return df

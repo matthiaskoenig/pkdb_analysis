@@ -28,8 +28,6 @@ class InferWeight(object):
         self.weight, self.weight_field = self.get_weight()
 
     def per_bw(self, unit_field):
-        print(unit_field)
-        print(self.series[unit_field])
         return self.series[unit_field].endswith("/ kilogram")
 
     @staticmethod
@@ -62,10 +60,9 @@ class InferWeight(object):
         per_bw_field="per_bw",
     ) -> pd.Series:
         """ helper function to infer values from the weight of a subject or group"""
-
-        per_bw = self.per_bw(unit_field)
-        per_bw_exp = self.per_bw_exp(per_bw)
-        if self.weight is not None:
+        if self.weight is not None and self.series[unit_field] is not None:
+            per_bw = self.per_bw(unit_field)
+            per_bw_exp = self.per_bw_exp(per_bw)
             series = self.series.copy()
             unit = self.ureg(series[unit_field])
             factor = unit * self.weight ** per_bw_exp

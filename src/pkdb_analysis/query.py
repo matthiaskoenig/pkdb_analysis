@@ -255,118 +255,12 @@ class PKDB(object):
 
         # convert to data frame
         df = pd.DataFrame(data)
+        is_timecourse = "timecourse" in url
 
-        # convert columns to float columns
-        float_columns = [
-            "mean",
-            "median",
-            "value",
-            "sd",
-            "se",
-            "cv",
-            "min",
-            "max",
-            "time",
-        ]
 
-        if "timecourse" not in url:
-            for column in float_columns:
-                if column in df.columns:
-                    df[column] = df[column].astype(float)
 
-        # convert columns to int columns
-        int_columns = [
-            "subset_pk",
-            "intervention_pk",
-            "group_pk",
-            "individual_pk",
-            "group_parent_pk",
-            "raw_pk",
-        ]
-        for column in int_columns:
-            if column in df.columns:
-                df[column] = df[column].replace({np.nan: -1}).astype(int)
+        return PKData._clean_types(df, is_timecourse)
 
-        return df
 
-    @staticmethod
-    def _map_intervention_pks(pkdata):
-        """FIXME: document me"""
-        interventions_output = pd.DataFrame()
 
-        if not pkdata.outputs.empty:
-            interventions_output = pkdata.outputs.df.pivot_table(
-                values="intervention_pk",
-                index="output_pk",
-                aggfunc=lambda x: frozenset(x),
-            )
 
-        interventions = interventions_output.drop_duplicates(
-            "intervention_pk"
-        ).reset_index()
-        interventions.index = interventions.index.set_names(["intervention_pk_updated"])
-        return interventions["intervention_pk"].reset_index()
-
-    @staticmethod
-    def _update_interventions(pkdata, mapping_int_pks):
-        """FIXME: document me"""
-        mapping_int_pks = mapping_int_pks.copy()
-        mapping_int_pks["intervention_pk"] = mapping_int_pks.intervention_pk.apply(
-            lambda x: list(x)
-        )
-        mapping_int_pks = (
-            mapping_int_pks.intervention_pk.apply(pd.Series)
-            .stack()
-            .reset_index(level=-1, drop=True)
-            .astype(int)
-            .reset_index()
-        )
-        mapping_int_pks = mapping_int_pks.rename(
-            columns={"index": "intervention_pk_updated", 0: "intervention_pk"}
-        )
-        return (
-            pd.merge(mapping_int_pks, pkdata.interventions, on="intervention_pk")
-            .drop(columns=["intervention_pk"])
-            .rename(columns={"intervention_pk_updated": "intervention_pk"})
-        )
-
-    @staticmethod
-    def _update_outputs(pkdata, mapping_int_pks):
-        """FIXME: document me"""
-        mapping_int_pks = mapping_int_pks.copy()
-
-        interventions_output = pkdata.outputs.df.pivot_table(
-            values="intervention_pk", index="output_pk", aggfunc=lambda x: frozenset(x)
-        )
-        mapping_int_pks = pd.merge(
-            interventions_output.reset_index(),
-            mapping_int_pks,
-            on="intervention_pk",
-            how="left",
-        )[["output_pk", "intervention_pk_updated"]]
-
-        return (
-            pd.merge(
-                mapping_int_pks,
-                pkdata.outputs.df.drop_duplicates(subset="output_pk"),
-                how="left",
-            )
-            .drop(columns=["intervention_pk"])
-            .rename(columns={"intervention_pk_updated": "intervention_pk"})
-        )
-
-    @classmethod
-    def _intervention_pk_update(cls, pkdata):
-        """FIXME: document me"""
-        if not pkdata.outputs.empty:
-            mapping_int_pks = cls._map_intervention_pks(pkdata)
-
-            data_dict = pkdata.as_dict()
-            data_dict["interventions"] = cls._update_interventions(
-                pkdata, mapping_int_pks
-            )
-            if not pkdata.outputs.empty:
-                data_dict["outputs"] = cls._update_outputs(pkdata, mapping_int_pks)
-            return PKData(**data_dict)
-        else:
-            return pkdata

@@ -98,6 +98,8 @@ def outlier_studies(df):
 
 
 def lifestyle(df):
+    print(df.extra)
+
     if not df.extra[f_smoking].empty and df.extra[f_n_smoking].empty:
         return "smoking"
     elif not df.extra[f_oc].empty and df.extra[f_n_oc].empty:
