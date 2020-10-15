@@ -690,7 +690,7 @@ class PKData(object):
         return self._emptify("outputs", concise=concise)
 
     def delete_timecourses(self, concise=True) -> "PKData":
-        """Deletes timecourse."""
+        """Deletes timecourses."""
         return self._emptify("timecourses", concise=concise)
 
     @property
