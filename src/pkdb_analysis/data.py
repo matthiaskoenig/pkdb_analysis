@@ -30,6 +30,7 @@ class PKDataFrame(pd.DataFrame, ABC):
 
     @property
     def _constructor(self):
+        """Internal  """
         return PKDataFrame._internal_ctor
 
     _metadata = ["pk"]
@@ -99,6 +100,7 @@ class PKDataFrame(pd.DataFrame, ABC):
 
     @property
     def pk_column(self):
+        """ Returns the column containing the primary value of this table"""
         return self[self.pk]
 
     @property
@@ -111,6 +113,8 @@ class PKDataFrame(pd.DataFrame, ABC):
 
     @property
     def pk_len(self) -> int:
+        """ returns number of unique identifiers within the table. This value can be smaller than the number
+          of rows. Since multiple rows can represent one instances. """
         return len(self.pks)
 
     @property
@@ -129,6 +133,7 @@ class PKDataFrame(pd.DataFrame, ABC):
         return study_sids
 
     def _emptify(self) -> "PKDataFrame":
+        """ Removes all entries from table."""
         empty_df = pd.DataFrame([], columns=self.columns)
         return PKDataFrame(empty_df, pk=self.pk)
 
@@ -212,12 +217,15 @@ class PKData(object):
                 )
 
     def __dict___(self):
+        """ serialises pkdata instance to a dict."""
         return {df_key: getattr(self, df_key).df for df_key in PKData.KEYS}
 
     def as_dict(self):
+        """ serialises pkdata instance to a dict."""
         return self.__dict___()
 
     def copy(self):
+        """creates a copy of the pkdata instance."""
         return PKData(**self.as_dict())
 
     def __str__(self):
@@ -563,6 +571,7 @@ class PKData(object):
         return pkdata
 
     def _pk_exclude(self, df_k, f_idx, concise, **kwargs) -> "PKData":
+        """ Generic function to exclude data selected by the table key (df_k) and filtered by f_idx."""
 
         dict_pkdata = self.as_dict()
         dict_pkdata[df_k] = getattr(self, df_k).pk_exclude(f_idx, **kwargs)
@@ -573,6 +582,7 @@ class PKData(object):
         return pkdata
 
     def _emptify(self, df_key, concise=True) -> "PKData":
+        """ generic function to emptify a table selected by the key."""
         self._validate_df_key(df_key)
 
         dict_pkdata = self.as_dict()
@@ -585,6 +595,7 @@ class PKData(object):
 
     @staticmethod
     def _validate_df_key(df_key):
+        """ correct key validations function"""
         if df_key not in PKData.KEYS:
             raise ValueError(
                 f"Unsupported key '{df_key}', key must be in '{PKData.KEYS}'"
@@ -618,11 +629,12 @@ class PKData(object):
 
     def filter_group(self, f_idx, concise=True, **kwargs) -> "PKData":
         """ Filter groups. """
+
         return self._pk_filter("groups", f_idx, concise, **kwargs)
 
     def filter_individual(self, f_idx, concise=True, **kwargs) -> "PKData":
-
         """ Filter individuals. """
+
         return self._pk_filter("individuals", f_idx, concise, **kwargs)
 
     def filter_subject(self, f_idx, concise=True, **kwargs) -> "PKData":
@@ -638,23 +650,37 @@ class PKData(object):
         return self._pk_filter("outputs", f_idx, concise, **kwargs)
 
     def filter_timecourse(self, f_idx, concise=True, **kwargs) -> "PKData":
-        """ Filter timecourse. """
+        """ Filter timecourses. """
         return self._pk_filter("timecourses", f_idx, concise, **kwargs)
 
     def exclude_study(self, f_idx, concise=True, **kwargs) -> "PKData":
-        """ Filter groups. """
+        """ Excludes studies which cann be selected by a filter (idx)."""
+
         return self._pk_exclude("studies", f_idx, concise, **kwargs)
 
     def exclude_intervention(self, f_idx, concise=True, **kwargs) -> "PKData":
+        """ Excludes interventions which cann be selected by a filter (idx)."""
+
         return self._pk_exclude("interventions", f_idx, concise, **kwargs)
 
     def exclude_group(self, f_idx, concise=True, **kwargs) -> "PKData":
+        """ Excludes groups which cann be selected by a filter (idx)."""
+
         return self._pk_exclude("groups", f_idx, concise, **kwargs)
 
     def exclude_individual(self, f_idx, concise=True, **kwargs):
+        """ Excludes individuals which cann be selected by a filter (idx)."""
+
         return self._pk_exclude("individuals", f_idx, concise, **kwargs)
 
     def exclude_subject(self, f_idx, concise=True, **kwargs) -> "PKData":
+        """ Excludes groups and individuals which cann be selected by a filter (idx).
+
+        :param f_idx:
+        :param concise:
+        :param kwargs:
+        :return:
+        """
         pkdata = self.exclude_group(f_idx, concise=False, **kwargs)
         pkdata = pkdata.exclude_individual(f_idx, concise=False, **kwargs)
         if concise:
@@ -695,6 +721,7 @@ class PKData(object):
 
     @property
     def ids(self):
+        """ unique ids of all tables within a pkdata instance."""
         return {
             "studies": list(self.studies.pks),
             "groups": list(self.groups.pks),
@@ -759,6 +786,7 @@ class PKData(object):
 
     @property
     def _len_total(self):
+        """ The sum of all entries in all tables."""
         return sum([len(getattr(self, df_key)) for df_key in PKData.KEYS])
 
     def get_choices(self):
@@ -810,7 +838,9 @@ class PKData(object):
                 print(choices[field])
 
     def _map_intervention_pks(self):
-        """FIXME: document me"""
+        """ Helper Function for the transformation of intervention_pk in outputs and timecourses.
+        returns a mapping of old intervetions_pks with new intervetion_pks
+        """
         interventions_output = pd.DataFrame()
 
         if not self.outputs.empty:
@@ -827,6 +857,8 @@ class PKData(object):
         return interventions["intervention_pk"].reset_index()
 
     def _update_interventions(self, mapping_int_pks):
+        """ Updates intervention_pk based on if they are beeing used in the outputs. Multiple interventions can have the same
+        intervention_pk. After the transformation each (output) row in the outputs links only to one intervention_pk. """
         """FIXME: document me"""
         mapping_int_pks = mapping_int_pks.copy()
         mapping_int_pks["intervention_pk"] = mapping_int_pks.intervention_pk.apply(
@@ -850,7 +882,7 @@ class PKData(object):
 
 
     def _update_outputs(self, mapping_int_pks):
-        """FIXME: document me"""
+        """Dates up all intervention_pk in outputs table. Thereby each row becomes a unique output."""
         mapping_int_pks = mapping_int_pks.copy()
 
         interventions_output = self.outputs.df.pivot_table(
@@ -874,7 +906,7 @@ class PKData(object):
         )
 
     def _update_timecourses(self, mapping_int_pks):
-        """FIXME: document me"""
+        """Dates up all intervention_pk in timecourse table."""
         mapping_int_pks = mapping_int_pks.copy()
         self.timecourses["intervention_pk"] = self.timecourses["intervention_pk"].apply(frozenset)
 
@@ -885,7 +917,9 @@ class PKData(object):
         ).drop(columns=["intervention_pk"]).rename(columns={"intervention_pk_updated": "intervention_pk"})
 
     def _intervention_pk_update(self):
-        """FIXME: document me"""
+        """Performs all three function necessary to update the
+         intervention pks in all three tables where they are contained (interventions, output, timecourses)."""
+
         if not self.outputs.empty:
             mapping_int_pks = self._map_intervention_pks()
 
@@ -901,6 +935,7 @@ class PKData(object):
 
     @staticmethod
     def _clean_types(df: pd.DataFrame, is_timecourse):
+        """Sets the correct datatypes for each column in the table (df)."""
         # convert columns to float columns
         float_columns = [
             "mean",
