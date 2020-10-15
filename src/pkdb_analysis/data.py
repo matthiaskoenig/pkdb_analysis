@@ -533,6 +533,17 @@ class PKData(object):
             "outputs", ["output_pk", "intervention_pk", "group_pk", "individual_pk"]
         )
 
+    @property
+    def timecourses_mi(self) -> pd.DataFrame:
+        """Multi-index DataFrame of timecourses contained in this PKData instance.
+
+        :return: Multi-indexed DataFrame of timecourses contained in this PKData instance.
+        :rtype: pd.DataFrame
+        """
+        return self._df_mi(
+            "timecourses", ["subset_pk", "intervention_pk", "group_pk", "individual_pk"]
+        )
+
     # --- filter and exclude ---
     def _pk_filter(
         self, df_key: str, f_idx, concise: bool, *args, **kwargs
@@ -862,6 +873,18 @@ class PKData(object):
                 .rename(columns={"intervention_pk_updated": "intervention_pk"})
         )
 
+    def _update_timecourses(self, mapping_int_pks):
+        """FIXME: document me"""
+        mapping_int_pks = mapping_int_pks.copy()
+        print(mapping_int_pks)
+        self.timecourses["intervention_pk"] = self.timecourses["intervention_pk"].apply(frozenset)
+
+        return pd.merge(
+            mapping_int_pks,
+            self.timecourses.df.drop_duplicates(subset="intervention_pk"),
+            how="right",
+        ).drop(columns=["intervention_pk"]).rename(columns={"intervention_pk_updated": "intervention_pk"})
+
     def _intervention_pk_update(self):
         """FIXME: document me"""
         if not self.outputs.empty:
@@ -871,6 +894,8 @@ class PKData(object):
             data_dict["interventions"] = self._update_interventions(mapping_int_pks)
             if not self.outputs.empty:
                 data_dict["outputs"] = self._update_outputs(mapping_int_pks)
+            if not self.timecourses.empty:
+                data_dict["timecourses"] = self._update_timecourses(mapping_int_pks)
             return PKData(**data_dict)
         else:
             return self
@@ -889,21 +914,21 @@ class PKData(object):
             "max",
             "time",
         ]
-
-        if not is_timecourse:
-            for column in float_columns:
-                if column in df.columns:
-                    df[column] = df[column].astype(float)
-
         # convert columns to int columns
         int_columns = [
             "subset_pk",
-            "intervention_pk",
             "group_pk",
             "individual_pk",
             "group_parent_pk",
             "raw_pk",
         ]
+
+        if not is_timecourse:
+            int_columns.append("intervention_pk")
+            for column in float_columns:
+                if column in df.columns:
+                    df[column] = df[column].astype(float)
+
         for column in int_columns:
             if column in df.columns:
                 df[column] = df[column].replace({np.nan: -1}).astype(int)

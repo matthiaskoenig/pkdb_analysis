@@ -175,8 +175,7 @@ class PKDB(object):
                 **{**parameters, **pkfilter.get("timecourses", {})},
             ),
         )
-
-        return cls._intervention_pk_update(pkdata)
+        return pkdata._intervention_pk_update()
 
     @classmethod
     def _get_subset(cls, name, **parameters):
@@ -256,10 +255,8 @@ class PKDB(object):
         # convert to data frame
         df = pd.DataFrame(data)
         is_timecourse = "timecourse" in url
-
-
-
         return PKData._clean_types(df, is_timecourse)
+
 
 
 
