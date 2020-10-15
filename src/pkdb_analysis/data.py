@@ -689,7 +689,7 @@ class PKData(object):
         """
         return self._emptify("outputs", concise=concise)
 
-    def delete_timecourse(self, concise=True) -> "PKData":
+    def delete_timecourses(self, concise=True) -> "PKData":
         """Deletes timecourse."""
         return self._emptify("timecourses", concise=concise)
 
@@ -876,7 +876,6 @@ class PKData(object):
     def _update_timecourses(self, mapping_int_pks):
         """FIXME: document me"""
         mapping_int_pks = mapping_int_pks.copy()
-        print(mapping_int_pks)
         self.timecourses["intervention_pk"] = self.timecourses["intervention_pk"].apply(frozenset)
 
         return pd.merge(
