@@ -1,0 +1,2038 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Filter data &mdash; pkdb_analysis  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> pkdb_analysis
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="query_examples.html">Query PK-DB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Working with PK-DB data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filter_examples.html">Filter data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pkdb_analysis</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Filter data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/notebooks/filter_examples_1.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
+
+<span class="c1"># install pkdb_analysis via:</span>
+<span class="c1">#     git clone https://github.com/matthiaskoenig/pkdb_analysis (private)</span>
+<span class="c1">#     cd pkdb_analysis</span>
+<span class="c1">#     pip install -e .</span>
+<span class="c1"># in future:</span>
+<span class="c1">#     pip install pkdb_analsis</span>
+
+<span class="kn">from</span> <span class="nn">pkdb_analysis</span> <span class="kn">import</span> <span class="n">PKDB</span><span class="p">,</span> <span class="n">PKData</span><span class="p">,</span> <span class="n">PKFilter</span>
+<span class="kn">from</span> <span class="nn">pkdb_analysis.test</span> <span class="kn">import</span> <span class="n">TESTDATA_CONCISE_FALSE_ZIP</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">janek</span><span class="o">/.</span><span class="n">virtualenvs</span><span class="o">/</span><span class="n">pkdb_analysis</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python</span>
+<span class="mf">3.7</span><span class="o">.</span><span class="mi">9</span> <span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">Aug</span> <span class="mi">18</span> <span class="mi">2020</span><span class="p">,</span> <span class="mi">02</span><span class="p">:</span><span class="mi">07</span><span class="p">:</span><span class="mi">21</span><span class="p">)</span>
+<span class="p">[</span><span class="n">GCC</span> <span class="mf">9.3</span><span class="o">.</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">(</span><span class="n">major</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">minor</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">micro</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">releaselevel</span><span class="o">=</span><span class="s1">&#39;final&#39;</span><span class="p">,</span> <span class="n">serial</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="filter-data">
+<h1>Filter data<a class="headerlink" href="#filter-data" title="Permalink to this headline">¶</a></h1>
+<p>A recurring task is to filter data for a certain question. E.g. to
+compare two groups, or get the subset of data for all healthy smokers.</p>
+<p>We work again with our test data set and will filter various subsets
+from it.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#test_data = PKDB.query()</span>
+<span class="c1">#TEST_HDF5 =&quot;./test_data.hdf5&quot;</span>
+
+<span class="n">test_data</span> <span class="o">=</span> <span class="n">PKData</span><span class="o">.</span><span class="n">from_archive</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">TESTDATA_CONCISE_FALSE_ZIP</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INFO</span> <span class="n">NumExpr</span> <span class="n">defaulting</span> <span class="n">to</span> <span class="mi">8</span> <span class="n">threads</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span><span class="o">.</span><span class="n">_concise</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140070362791696</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>           <span class="mi">444</span>  <span class="p">(</span>  <span class="mi">444</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">932</span>  <span class="p">(</span> <span class="mi">8340</span><span class="p">)</span>
+<span class="n">individuals</span>      <span class="mi">5957</span>  <span class="p">(</span><span class="mi">53939</span><span class="p">)</span>
+<span class="n">interventions</span>    <span class="mi">1209</span>  <span class="p">(</span> <span class="mi">1865</span><span class="p">)</span>
+<span class="n">outputs</span>         <span class="mi">72206</span>  <span class="p">(</span><span class="mi">72206</span><span class="p">)</span>
+<span class="n">timecourses</span>       <span class="mi">423</span>  <span class="p">(</span>  <span class="mi">423</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_data1</span> <span class="o">=</span>  <span class="n">test_data</span><span class="o">.</span><span class="n">filter_study</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;licence&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;open&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">test_data1</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140070307177168</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>            <span class="mi">54</span>  <span class="p">(</span>   <span class="mi">54</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">932</span>  <span class="p">(</span> <span class="mi">8340</span><span class="p">)</span>
+<span class="n">individuals</span>      <span class="mi">5957</span>  <span class="p">(</span><span class="mi">53939</span><span class="p">)</span>
+<span class="n">interventions</span>    <span class="mi">1209</span>  <span class="p">(</span> <span class="mi">1865</span><span class="p">)</span>
+<span class="n">outputs</span>         <span class="mi">72206</span>  <span class="p">(</span><span class="mi">72206</span><span class="p">)</span>
+<span class="n">timecourses</span>       <span class="mi">423</span>  <span class="p">(</span>  <span class="mi">423</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">list</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">study_sids</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;PKDB00183&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;6743445&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Roberts1976&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;3335120&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;PKDB00137&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;PKDB00008&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;PKDB00281&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;PKDB00319&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;PKDB00254&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;14612892&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="section" id="filter-functions">
+<h2>Filter functions<a class="headerlink" href="#filter-functions" title="Permalink to this headline">¶</a></h2>
+<p>The main principle for filtering <code class="docutils literal notranslate"><span class="pre">PKData</span></code> is by using the <code class="docutils literal notranslate"><span class="pre">filter_*</span></code>
+and <code class="docutils literal notranslate"><span class="pre">exclude_*</span></code> functionality.</p>
+<p>A key principle are hereby filter functions which for a given DataFrame
+return a logical index.</p>
+<p>Depending on which subset of information this should be applied the
+<code class="docutils literal notranslate"><span class="pre">groups</span></code>, <code class="docutils literal notranslate"><span class="pre">individuals</span></code>, <code class="docutils literal notranslate"><span class="pre">subjects</span></code> (groups and individuals),
+<code class="docutils literal notranslate"><span class="pre">outputs</span></code> and <code class="docutils literal notranslate"><span class="pre">timecourses</span></code>.</p>
+</div>
+<div class="section" id="filter-by-study-sid">
+<h2>Filter by <code class="docutils literal notranslate"><span class="pre">study_sid</span></code><a class="headerlink" href="#filter-by-study-sid" title="Permalink to this headline">¶</a></h2>
+<p>A first example is filtering by <code class="docutils literal notranslate"><span class="pre">study_sid</span></code>, i.e. we only want the
+subset of data from a single study. An overview over the existing study
+sids in the dataset is available via</p>
+<p>Filtering a subset of data works by providing filter/selection functions
+which select a subset of the data. The filters are written on the
+<code class="docutils literal notranslate"><span class="pre">groups</span></code>, <code class="docutils literal notranslate"><span class="pre">individuals</span></code></p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">is_PKDB99999</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Filter for specific study_sid. &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">d</span><span class="o">.</span><span class="n">study_sid</span> <span class="o">==</span> <span class="s2">&quot;PKDB00198&quot;</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_intervention</span><span class="p">(</span><span class="n">is_PKDB99999</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140070307177360</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">1</span>  <span class="p">(</span>    <span class="mi">1</span><span class="p">)</span>
+<span class="n">groups</span>              <span class="mi">4</span>  <span class="p">(</span>   <span class="mi">35</span><span class="p">)</span>
+<span class="n">individuals</span>        <span class="mi">46</span>  <span class="p">(</span>  <span class="mi">400</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">1</span>  <span class="p">(</span>    <span class="mi">1</span><span class="p">)</span>
+<span class="n">outputs</span>           <span class="mi">147</span>  <span class="p">(</span>  <span class="mi">147</span><span class="p">)</span>
+<span class="n">timecourses</span>         <span class="mi">1</span>  <span class="p">(</span>    <span class="mi">1</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+<p>The PKData now only contains data for the given study_sid:</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">study_sids</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;PKDB00198&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># for instance interventions</span>
+<span class="n">display</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">interventions</span><span class="p">)</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>intervention_pk</th>
+      <th>Unnamed: 0</th>
+      <th>study_sid</th>
+      <th>study_name</th>
+      <th>raw_pk</th>
+      <th>normed</th>
+      <th>name</th>
+      <th>route</th>
+      <th>form</th>
+      <th>application</th>
+      <th>...</th>
+      <th>substance</th>
+      <th>value</th>
+      <th>mean</th>
+      <th>median</th>
+      <th>min</th>
+      <th>max</th>
+      <th>sd</th>
+      <th>se</th>
+      <th>cv</th>
+      <th>unit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>0</td>
+      <td>PKDB00198</td>
+      <td>Abernethy1982</td>
+      <td>1</td>
+      <td>True</td>
+      <td>paracetamol_iv</td>
+      <td>iv</td>
+      <td>solution</td>
+      <td>single dose</td>
+      <td>...</td>
+      <td>paracetamol</td>
+      <td>0.65</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>gram</td>
+    </tr>
+  </tbody>
+</table>
+<p>1 rows × 25 columns</p>
+</div><pre class="literal-block">   intervention_pk  Unnamed: 0  study_sid     study_name  raw_pk  normed  0                0           0  PKDB00198  Abernethy1982       1    True
+
+             name route      form  application  ...    substance value  mean  0  paracetamol_iv    iv  solution  single dose  ...  paracetamol  0.65  None
+
+  median   min   max    sd    se    cv  unit
+0   None  None  None  None  None  None  gram
+
+[1 rows x 25 columns]</pre>
+<p>One could also define this as a simple lambda function</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_intervention</span><span class="p">(</span><span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="o">.</span><span class="n">study_sid</span> <span class="o">==</span> <span class="s2">&quot;PKDB00198&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140070307219856</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">1</span>  <span class="p">(</span>    <span class="mi">1</span><span class="p">)</span>
+<span class="n">groups</span>              <span class="mi">4</span>  <span class="p">(</span>   <span class="mi">35</span><span class="p">)</span>
+<span class="n">individuals</span>        <span class="mi">46</span>  <span class="p">(</span>  <span class="mi">400</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">1</span>  <span class="p">(</span>    <span class="mi">1</span><span class="p">)</span>
+<span class="n">outputs</span>           <span class="mi">147</span>  <span class="p">(</span>  <span class="mi">147</span><span class="p">)</span>
+<span class="n">timecourses</span>         <span class="mi">1</span>  <span class="p">(</span>    <span class="mi">1</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="concise-data">
+<h2>Concise data<a class="headerlink" href="#concise-data" title="Permalink to this headline">¶</a></h2>
+<p>All operations on <code class="docutils literal notranslate"><span class="pre">PKData</span></code> leave the data in a consistent manner. E.g.
+if an intervention is filtered out also all the outputs using this
+intervention are filtered out. This behavior is controlled by the
+<code class="docutils literal notranslate"><span class="pre">concise</span></code> flag on most operations.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t1</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_intervention</span><span class="p">(</span><span class="n">is_PKDB99999</span><span class="p">)</span>
+<span class="n">t2</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_intervention</span><span class="p">(</span><span class="n">is_PKDB99999</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140070307161296</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">1</span>  <span class="p">(</span>    <span class="mi">1</span><span class="p">)</span>
+<span class="n">groups</span>              <span class="mi">4</span>  <span class="p">(</span>   <span class="mi">35</span><span class="p">)</span>
+<span class="n">individuals</span>        <span class="mi">46</span>  <span class="p">(</span>  <span class="mi">400</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">1</span>  <span class="p">(</span>    <span class="mi">1</span><span class="p">)</span>
+<span class="n">outputs</span>           <span class="mi">147</span>  <span class="p">(</span>  <span class="mi">147</span><span class="p">)</span>
+<span class="n">timecourses</span>         <span class="mi">1</span>  <span class="p">(</span>    <span class="mi">1</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140070307153232</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>           <span class="mi">444</span>  <span class="p">(</span>  <span class="mi">444</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">932</span>  <span class="p">(</span> <span class="mi">8340</span><span class="p">)</span>
+<span class="n">individuals</span>      <span class="mi">5957</span>  <span class="p">(</span><span class="mi">53939</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">1</span>  <span class="p">(</span>    <span class="mi">1</span><span class="p">)</span>
+<span class="n">outputs</span>         <span class="mi">72206</span>  <span class="p">(</span><span class="mi">72206</span><span class="p">)</span>
+<span class="n">timecourses</span>       <span class="mi">423</span>  <span class="p">(</span>  <span class="mi">423</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># FIXME: only normed data</span>
+<span class="n">t1</span><span class="o">.</span><span class="n">interventions_mi</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>study_sid</th>
+      <th>study_name</th>
+      <th>raw_pk</th>
+      <th>normed</th>
+      <th>name</th>
+      <th>route</th>
+      <th>form</th>
+      <th>application</th>
+      <th>time</th>
+      <th>...</th>
+      <th>substance</th>
+      <th>value</th>
+      <th>mean</th>
+      <th>median</th>
+      <th>min</th>
+      <th>max</th>
+      <th>sd</th>
+      <th>se</th>
+      <th>cv</th>
+      <th>unit</th>
+    </tr>
+    <tr>
+      <th>intervention_pk</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>PKDB00198</td>
+      <td>Abernethy1982</td>
+      <td>1</td>
+      <td>True</td>
+      <td>paracetamol_iv</td>
+      <td>iv</td>
+      <td>solution</td>
+      <td>single dose</td>
+      <td>0</td>
+      <td>...</td>
+      <td>paracetamol</td>
+      <td>0.65</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>gram</td>
+    </tr>
+  </tbody>
+</table>
+<p>1 rows × 24 columns</p>
+</div><pre class="literal-block">                 Unnamed: 0  study_sid     study_name  raw_pk  normed  intervention_pk
+0                         0  PKDB00198  Abernethy1982       1    True
+
+                           name route      form  application time  ...  intervention_pk                                                    ...
+0                paracetamol_iv    iv  solution  single dose    0  ...
+
+                   substance value  mean median   min   max    sd    se    cv  intervention_pk
+0                paracetamol  0.65  None   None  None  None  None  None  None
+
+                 unit
+intervention_pk
+0                gram
+
+[1 rows x 24 columns]</pre>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t2</span><span class="o">.</span><span class="n">interventions_mi</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>study_sid</th>
+      <th>study_name</th>
+      <th>raw_pk</th>
+      <th>normed</th>
+      <th>name</th>
+      <th>route</th>
+      <th>form</th>
+      <th>application</th>
+      <th>time</th>
+      <th>...</th>
+      <th>substance</th>
+      <th>value</th>
+      <th>mean</th>
+      <th>median</th>
+      <th>min</th>
+      <th>max</th>
+      <th>sd</th>
+      <th>se</th>
+      <th>cv</th>
+      <th>unit</th>
+    </tr>
+    <tr>
+      <th>intervention_pk</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>PKDB00198</td>
+      <td>Abernethy1982</td>
+      <td>1</td>
+      <td>True</td>
+      <td>paracetamol_iv</td>
+      <td>iv</td>
+      <td>solution</td>
+      <td>single dose</td>
+      <td>0</td>
+      <td>...</td>
+      <td>paracetamol</td>
+      <td>0.65</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>gram</td>
+    </tr>
+  </tbody>
+</table>
+<p>1 rows × 24 columns</p>
+</div><pre class="literal-block">                 Unnamed: 0  study_sid     study_name  raw_pk  normed  intervention_pk
+0                         0  PKDB00198  Abernethy1982       1    True
+
+                           name route      form  application time  ...  intervention_pk                                                    ...
+0                paracetamol_iv    iv  solution  single dose    0  ...
+
+                   substance value  mean median   min   max    sd    se    cv  intervention_pk
+0                paracetamol  0.65  None   None  None  None  None  None  None
+
+                 unit
+intervention_pk
+0                gram
+
+[1 rows x 24 columns]</pre>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">t2</span><span class="o">.</span><span class="n">outputs</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>output_pk</th>
+      <th>intervention_pk</th>
+      <th>Unnamed: 0</th>
+      <th>study_name</th>
+      <th>measurement_type</th>
+      <th>tissue</th>
+      <th>sd</th>
+      <th>se</th>
+      <th>min</th>
+      <th>group_pk</th>
+      <th>...</th>
+      <th>max</th>
+      <th>substance</th>
+      <th>label</th>
+      <th>individual_pk</th>
+      <th>unit</th>
+      <th>cv</th>
+      <th>median</th>
+      <th>mean</th>
+      <th>time</th>
+      <th>choice</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>21</td>
+      <td>0</td>
+      <td>6</td>
+      <td>Abernethy1982</td>
+      <td>thalf</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.9900</td>
+      <td>3</td>
+      <td>...</td>
+      <td>3.4700</td>
+      <td>paracetamol</td>
+      <td>NaN</td>
+      <td>-1</td>
+      <td>hour</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.550000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>22</td>
+      <td>0</td>
+      <td>9</td>
+      <td>Abernethy1982</td>
+      <td>vd</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>62.2000</td>
+      <td>3</td>
+      <td>...</td>
+      <td>151.4000</td>
+      <td>paracetamol</td>
+      <td>NaN</td>
+      <td>-1</td>
+      <td>liter</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>108.500000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>23</td>
+      <td>0</td>
+      <td>2</td>
+      <td>Abernethy1982</td>
+      <td>vd</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.5300</td>
+      <td>3</td>
+      <td>...</td>
+      <td>1.3100</td>
+      <td>paracetamol</td>
+      <td>NaN</td>
+      <td>-1</td>
+      <td>liter / kilogram</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.810000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>24</td>
+      <td>0</td>
+      <td>8</td>
+      <td>Abernethy1982</td>
+      <td>clearance</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>19.4400</td>
+      <td>3</td>
+      <td>...</td>
+      <td>38.7600</td>
+      <td>paracetamol</td>
+      <td>NaN</td>
+      <td>-1</td>
+      <td>liter / hour</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>29.040000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>25</td>
+      <td>0</td>
+      <td>10</td>
+      <td>Abernethy1982</td>
+      <td>clearance</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.1452</td>
+      <td>3</td>
+      <td>...</td>
+      <td>0.3156</td>
+      <td>paracetamol</td>
+      <td>NaN</td>
+      <td>-1</td>
+      <td>liter / hour / kilogram</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.224400</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>72201</th>
+      <td>153076</td>
+      <td>1208</td>
+      <td>100516</td>
+      <td>Zhang2016</td>
+      <td>kel</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1504</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>torasemide</td>
+      <td>NaN</td>
+      <td>-1</td>
+      <td>1 / minute</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.003658</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>72202</th>
+      <td>153077</td>
+      <td>1208</td>
+      <td>100342</td>
+      <td>Zhang2016</td>
+      <td>thalf</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1504</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>torasemide</td>
+      <td>NaN</td>
+      <td>-1</td>
+      <td>hour</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>3.157929</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>72203</th>
+      <td>153078</td>
+      <td>1208</td>
+      <td>100520</td>
+      <td>Zhang2016</td>
+      <td>tmax</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1504</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>torasemide</td>
+      <td>NaN</td>
+      <td>-1</td>
+      <td>hour</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.760958</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>72204</th>
+      <td>153079</td>
+      <td>1208</td>
+      <td>100463</td>
+      <td>Zhang2016</td>
+      <td>vd</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1504</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>torasemide</td>
+      <td>NaN</td>
+      <td>-1</td>
+      <td>liter</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>11.511323</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>72205</th>
+      <td>153080</td>
+      <td>1208</td>
+      <td>100494</td>
+      <td>Zhang2016</td>
+      <td>vd_ss</td>
+      <td>plasma</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1504</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>torasemide</td>
+      <td>NaN</td>
+      <td>-1</td>
+      <td>liter</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>12.039979</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+<p>72206 rows × 27 columns</p>
+</div><pre class="literal-block">       output_pk  intervention_pk  Unnamed: 0     study_name measurement_type  0             21                0           6  Abernethy1982            thalf
+1             22                0           9  Abernethy1982               vd
+2             23                0           2  Abernethy1982               vd
+3             24                0           8  Abernethy1982        clearance
+4             25                0          10  Abernethy1982        clearance
+...          ...              ...         ...            ...              ...
+72201     153076             1208      100516      Zhang2016              kel
+72202     153077             1208      100342      Zhang2016            thalf
+72203     153078             1208      100520      Zhang2016             tmax
+72204     153079             1208      100463      Zhang2016               vd
+72205     153080             1208      100494      Zhang2016            vd_ss
+
+       tissue  sd  se      min  group_pk  ...       max    substance  label  0      plasma NaN NaN   1.9900         3  ...    3.4700  paracetamol    NaN
+1      plasma NaN NaN  62.2000         3  ...  151.4000  paracetamol    NaN
+2      plasma NaN NaN   0.5300         3  ...    1.3100  paracetamol    NaN
+3      plasma NaN NaN  19.4400         3  ...   38.7600  paracetamol    NaN
+4      plasma NaN NaN   0.1452         3  ...    0.3156  paracetamol    NaN
+...       ...  ..  ..      ...       ...  ...       ...          ...    ...
+72201  plasma NaN NaN      NaN      1504  ...       NaN   torasemide    NaN
+72202  plasma NaN NaN      NaN      1504  ...       NaN   torasemide    NaN
+72203  plasma NaN NaN      NaN      1504  ...       NaN   torasemide    NaN
+72204  plasma NaN NaN      NaN      1504  ...       NaN   torasemide    NaN
+72205  plasma NaN NaN      NaN      1504  ...       NaN   torasemide    NaN
+
+       individual_pk                     unit  cv median        mean time  0                 -1                     hour NaN    NaN    2.550000  NaN
+1                 -1                    liter NaN    NaN  108.500000  NaN
+2                 -1         liter / kilogram NaN    NaN    0.810000  NaN
+3                 -1             liter / hour NaN    NaN   29.040000  NaN
+4                 -1  liter / hour / kilogram NaN    NaN    0.224400  NaN
+...              ...                      ...  ..    ...         ...  ...
+72201             -1               1 / minute NaN    NaN    0.003658  NaN
+72202             -1                     hour NaN    NaN    3.157929  NaN
+72203             -1                     hour NaN    NaN    0.760958  NaN
+72204             -1                    liter NaN    NaN   11.511323  NaN
+72205             -1                    liter NaN    NaN   12.039979  NaN
+
+      choice
+0        NaN
+1        NaN
+2        NaN
+3        NaN
+4        NaN
+...      ...
+72201    NaN
+72202    NaN
+72203    NaN
+72204    NaN
+72205    NaN
+
+[72206 rows x 27 columns]</pre>
+</div>
+<div class="section" id="query-groups-and-individuals">
+<h2>Query groups and individuals<a class="headerlink" href="#query-groups-and-individuals" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-data-for-groups-with-characteristica-keywords-x">
+<h3>2.1 Get data for groups with characteristica/keywords X<a class="headerlink" href="#get-data-for-groups-with-characteristica-keywords-x" title="Permalink to this headline">¶</a></h3>
+<p>healthy=True, smoking=N, disease=None, individual queries and
+combinations.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">is_healthy</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="c1"># healthy is reported and True</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">measurement_type</span> <span class="o">==</span> <span class="s2">&quot;healthy&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">disease</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="c1"># any disease is reported</span>
+    <span class="k">return</span>  <span class="n">d</span><span class="o">.</span><span class="n">measurement_type</span> <span class="o">==</span> <span class="s2">&quot;disease&quot;</span>
+
+<span class="k">def</span> <span class="nf">smoking</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="c1"># smoking status is curated for study (this could by Y/N/NR)</span>
+    <span class="k">return</span>  <span class="n">d</span><span class="o">.</span><span class="n">measurement_type</span> <span class="o">==</span> <span class="s2">&quot;smoking&quot;</span>
+
+<span class="k">def</span> <span class="nf">nonsmoker</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="c1"># smoking is reported and no</span>
+    <span class="k">return</span> <span class="n">smoking</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;N&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">smoker</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="c1"># smoking is reported and yes</span>
+    <span class="k">return</span> <span class="n">smoking</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span> <span class="o">=</span> <span class="n">PKData</span><span class="o">.</span><span class="n">from_archive</span><span class="p">(</span><span class="n">TESTDATA_CONCISE_FALSE_ZIP</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">f_idx</span></code> can be a single function, or a list of functions. A list of
+functions are applied successively and is equivalent to “AND logic”. “OR
+logic” can be directly applied on the index.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">healthy_nonsmoker</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_subject</span><span class="p">(</span><span class="n">f_idx</span><span class="o">=</span><span class="p">[</span><span class="n">is_healthy</span><span class="p">,</span> <span class="n">nonsmoker</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">healthy_nonsmoker</span><span class="p">)</span>
+<span class="n">healthy_nonsmoker</span><span class="o">.</span><span class="n">groups_mi</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140070307167120</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>           <span class="mi">165</span>  <span class="p">(</span>  <span class="mi">165</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">271</span>  <span class="p">(</span> <span class="mi">2774</span><span class="p">)</span>
+<span class="n">individuals</span>      <span class="mi">1989</span>  <span class="p">(</span><span class="mi">20777</span><span class="p">)</span>
+<span class="n">interventions</span>     <span class="mi">402</span>  <span class="p">(</span>  <span class="mi">633</span><span class="p">)</span>
+<span class="n">outputs</span>         <span class="mi">22886</span>  <span class="p">(</span><span class="mi">22886</span><span class="p">)</span>
+<span class="n">timecourses</span>       <span class="mi">135</span>  <span class="p">(</span>  <span class="mi">135</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>study_name</th>
+      <th>study_sid</th>
+      <th>measurement_type</th>
+      <th>group_count</th>
+      <th>group_name</th>
+      <th>max</th>
+      <th>substance</th>
+      <th>count</th>
+      <th>group_parent_pk</th>
+      <th>sd</th>
+      <th>unit</th>
+      <th>se</th>
+      <th>min</th>
+      <th>cv</th>
+      <th>median</th>
+      <th>mean</th>
+      <th>choice</th>
+      <th>value</th>
+    </tr>
+    <tr>
+      <th>group_pk</th>
+      <th>characteristica_pk</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="5" valign="top">3</th>
+      <th>5</th>
+      <td>10</td>
+      <td>Abernethy1982</td>
+      <td>PKDB00198</td>
+      <td>species</td>
+      <td>7</td>
+      <td>obese men</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>42</td>
+      <td>2</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>homo sapiens</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>11</td>
+      <td>Abernethy1982</td>
+      <td>PKDB00198</td>
+      <td>healthy</td>
+      <td>7</td>
+      <td>obese men</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>42</td>
+      <td>2</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Y</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>12</td>
+      <td>Abernethy1982</td>
+      <td>PKDB00198</td>
+      <td>obesity index</td>
+      <td>7</td>
+      <td>obese men</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>21</td>
+      <td>2</td>
+      <td>NaN</td>
+      <td>percent</td>
+      <td>NaN</td>
+      <td>133.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>13</td>
+      <td>Abernethy1982</td>
+      <td>PKDB00198</td>
+      <td>weight (categorial)</td>
+      <td>7</td>
+      <td>obese men</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>21</td>
+      <td>2</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>obese</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>14</td>
+      <td>Abernethy1982</td>
+      <td>PKDB00198</td>
+      <td>sex</td>
+      <td>7</td>
+      <td>obese men</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>7</td>
+      <td>2</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>M</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th rowspan="5" valign="top">1433</th>
+      <th>27416</th>
+      <td>11419</td>
+      <td>TubicGrozdanis2008</td>
+      <td>18213452</td>
+      <td>age</td>
+      <td>7</td>
+      <td>all</td>
+      <td>42.0</td>
+      <td>nan</td>
+      <td>7</td>
+      <td>-1</td>
+      <td>NaN</td>
+      <td>year</td>
+      <td>NaN</td>
+      <td>26.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>30.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>27417</th>
+      <td>11420</td>
+      <td>TubicGrozdanis2008</td>
+      <td>18213452</td>
+      <td>weight</td>
+      <td>7</td>
+      <td>all</td>
+      <td>84.0</td>
+      <td>nan</td>
+      <td>7</td>
+      <td>-1</td>
+      <td>NaN</td>
+      <td>kilogram</td>
+      <td>NaN</td>
+      <td>70.5</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>77.3</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>27418</th>
+      <td>11421</td>
+      <td>TubicGrozdanis2008</td>
+      <td>18213452</td>
+      <td>medication</td>
+      <td>7</td>
+      <td>all</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>7</td>
+      <td>-1</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>N</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>27419</th>
+      <td>11422</td>
+      <td>TubicGrozdanis2008</td>
+      <td>18213452</td>
+      <td>smoking</td>
+      <td>7</td>
+      <td>all</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>7</td>
+      <td>-1</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>N</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>27420</th>
+      <td>11423</td>
+      <td>TubicGrozdanis2008</td>
+      <td>18213452</td>
+      <td>fasting (duration)</td>
+      <td>7</td>
+      <td>all</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>7</td>
+      <td>-1</td>
+      <td>NaN</td>
+      <td>day</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+<p>2774 rows × 19 columns</p>
+</div><pre class="literal-block">                             Unnamed: 0          study_name  study_sid  group_pk characteristica_pk
+3        5                           10       Abernethy1982  PKDB00198
+         6                           11       Abernethy1982  PKDB00198
+         11                          12       Abernethy1982  PKDB00198
+         12                          13       Abernethy1982  PKDB00198
+         18                          14       Abernethy1982  PKDB00198
+...                                 ...                 ...        ...
+1433     27416                    11419  TubicGrozdanis2008   18213452
+         27417                    11420  TubicGrozdanis2008   18213452
+         27418                    11421  TubicGrozdanis2008   18213452
+         27419                    11422  TubicGrozdanis2008   18213452
+         27420                    11423  TubicGrozdanis2008   18213452
+
+                                measurement_type  group_count group_name  group_pk characteristica_pk
+3        5                               species            7  obese men
+         6                               healthy            7  obese men
+         11                        obesity index            7  obese men
+         12                  weight (categorial)            7  obese men
+         18                                  sex            7  obese men
+...                                          ...          ...        ...
+1433     27416                               age            7        all
+         27417                            weight            7        all
+         27418                        medication            7        all
+         27419                           smoking            7        all
+         27420                fasting (duration)            7        all
+
+                              max substance  count  group_parent_pk  sd  group_pk characteristica_pk
+3        5                    NaN       nan     42                2 NaN
+         6                    NaN       nan     42                2 NaN
+         11                   NaN       nan     21                2 NaN
+         12                   NaN       nan     21                2 NaN
+         18                   NaN       nan      7                2 NaN
+...                           ...       ...    ...              ...  ..
+1433     27416               42.0       nan      7               -1 NaN
+         27417               84.0       nan      7               -1 NaN
+         27418                NaN       nan      7               -1 NaN
+         27419                NaN       nan      7               -1 NaN
+         27420                NaN       nan      7               -1 NaN
+
+                                 unit  se    min  cv  median  mean  group_pk characteristica_pk
+3        5                        NaN NaN    NaN NaN     NaN   NaN
+         6                        NaN NaN    NaN NaN     NaN   NaN
+         11                   percent NaN  133.0 NaN     NaN   NaN
+         12                       NaN NaN    NaN NaN     NaN   NaN
+         18                       NaN NaN    NaN NaN     NaN   NaN
+...                               ...  ..    ...  ..     ...   ...
+1433     27416                   year NaN   26.0 NaN     NaN  30.0
+         27417               kilogram NaN   70.5 NaN     NaN  77.3
+         27418                    NaN NaN    NaN NaN     NaN   NaN
+         27419                    NaN NaN    NaN NaN     NaN   NaN
+         27420                    day NaN    NaN NaN     NaN   NaN
+
+                                   choice  value
+group_pk characteristica_pk
+3        5                   homo sapiens    NaN
+         6                              Y    NaN
+         11                           NaN    NaN
+         12                         obese    NaN
+         18                             M    NaN
+...                                   ...    ...
+1433     27416                        NaN    NaN
+         27417                        NaN    NaN
+         27418                          N    NaN
+         27419                          N    NaN
+         27420                        NaN    NaN
+
+[2774 rows x 19 columns]</pre>
+<p>Often attributes are mixed for groups so we have to exclude the
+opposites. In the example, the group <code class="docutils literal notranslate"><span class="pre">20</span></code> consists of 5 smokers and 1
+nonsmoker. So for a subset of the group smoking is No. We can exclude
+groups via</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">healthy_nonsmoker</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_subject</span><span class="p">([</span><span class="n">is_healthy</span><span class="p">,</span> <span class="n">nonsmoker</span><span class="p">])</span><span class="o">.</span><span class="n">exclude_subject</span><span class="p">([</span><span class="n">smoker</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">healthy_nonsmoker</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">healthy_nonsmoker</span><span class="o">.</span><span class="n">groups_mi</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140070305783440</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>           <span class="mi">140</span>  <span class="p">(</span>  <span class="mi">140</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">202</span>  <span class="p">(</span> <span class="mi">1960</span><span class="p">)</span>
+<span class="n">individuals</span>      <span class="mi">1241</span>  <span class="p">(</span><span class="mi">12212</span><span class="p">)</span>
+<span class="n">interventions</span>     <span class="mi">339</span>  <span class="p">(</span>  <span class="mi">550</span><span class="p">)</span>
+<span class="n">outputs</span>         <span class="mi">18013</span>  <span class="p">(</span><span class="mi">18013</span><span class="p">)</span>
+<span class="n">timecourses</span>       <span class="mi">115</span>  <span class="p">(</span>  <span class="mi">115</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>study_name</th>
+      <th>study_sid</th>
+      <th>measurement_type</th>
+      <th>group_count</th>
+      <th>group_name</th>
+      <th>max</th>
+      <th>substance</th>
+      <th>count</th>
+      <th>group_parent_pk</th>
+      <th>sd</th>
+      <th>unit</th>
+      <th>se</th>
+      <th>min</th>
+      <th>cv</th>
+      <th>median</th>
+      <th>mean</th>
+      <th>choice</th>
+      <th>value</th>
+    </tr>
+    <tr>
+      <th>group_pk</th>
+      <th>characteristica_pk</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="5" valign="top">4</th>
+      <th>5</th>
+      <td>19</td>
+      <td>Abernethy1982</td>
+      <td>PKDB00198</td>
+      <td>species</td>
+      <td>14</td>
+      <td>obese women</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>42</td>
+      <td>2</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>homo sapiens</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>20</td>
+      <td>Abernethy1982</td>
+      <td>PKDB00198</td>
+      <td>healthy</td>
+      <td>14</td>
+      <td>obese women</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>42</td>
+      <td>2</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Y</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>21</td>
+      <td>Abernethy1982</td>
+      <td>PKDB00198</td>
+      <td>obesity index</td>
+      <td>14</td>
+      <td>obese women</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>21</td>
+      <td>2</td>
+      <td>NaN</td>
+      <td>percent</td>
+      <td>NaN</td>
+      <td>133.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>22</td>
+      <td>Abernethy1982</td>
+      <td>PKDB00198</td>
+      <td>weight (categorial)</td>
+      <td>14</td>
+      <td>obese women</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>21</td>
+      <td>2</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>obese</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>23</td>
+      <td>Abernethy1982</td>
+      <td>PKDB00198</td>
+      <td>sex</td>
+      <td>14</td>
+      <td>obese women</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>14</td>
+      <td>2</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>F</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th rowspan="5" valign="top">1433</th>
+      <th>27416</th>
+      <td>11419</td>
+      <td>TubicGrozdanis2008</td>
+      <td>18213452</td>
+      <td>age</td>
+      <td>7</td>
+      <td>all</td>
+      <td>42.0</td>
+      <td>nan</td>
+      <td>7</td>
+      <td>-1</td>
+      <td>NaN</td>
+      <td>year</td>
+      <td>NaN</td>
+      <td>26.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>30.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>27417</th>
+      <td>11420</td>
+      <td>TubicGrozdanis2008</td>
+      <td>18213452</td>
+      <td>weight</td>
+      <td>7</td>
+      <td>all</td>
+      <td>84.0</td>
+      <td>nan</td>
+      <td>7</td>
+      <td>-1</td>
+      <td>NaN</td>
+      <td>kilogram</td>
+      <td>NaN</td>
+      <td>70.5</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>77.3</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>27418</th>
+      <td>11421</td>
+      <td>TubicGrozdanis2008</td>
+      <td>18213452</td>
+      <td>medication</td>
+      <td>7</td>
+      <td>all</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>7</td>
+      <td>-1</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>N</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>27419</th>
+      <td>11422</td>
+      <td>TubicGrozdanis2008</td>
+      <td>18213452</td>
+      <td>smoking</td>
+      <td>7</td>
+      <td>all</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>7</td>
+      <td>-1</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>N</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>27420</th>
+      <td>11423</td>
+      <td>TubicGrozdanis2008</td>
+      <td>18213452</td>
+      <td>fasting (duration)</td>
+      <td>7</td>
+      <td>all</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>7</td>
+      <td>-1</td>
+      <td>NaN</td>
+      <td>day</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+<p>1960 rows × 19 columns</p>
+</div><pre class="literal-block">                             Unnamed: 0          study_name  study_sid  group_pk characteristica_pk
+4        5                           19       Abernethy1982  PKDB00198
+         6                           20       Abernethy1982  PKDB00198
+         11                          21       Abernethy1982  PKDB00198
+         12                          22       Abernethy1982  PKDB00198
+         27                          23       Abernethy1982  PKDB00198
+...                                 ...                 ...        ...
+1433     27416                    11419  TubicGrozdanis2008   18213452
+         27417                    11420  TubicGrozdanis2008   18213452
+         27418                    11421  TubicGrozdanis2008   18213452
+         27419                    11422  TubicGrozdanis2008   18213452
+         27420                    11423  TubicGrozdanis2008   18213452
+
+                                measurement_type  group_count   group_name  group_pk characteristica_pk
+4        5                               species           14  obese women
+         6                               healthy           14  obese women
+         11                        obesity index           14  obese women
+         12                  weight (categorial)           14  obese women
+         27                                  sex           14  obese women
+...                                          ...          ...          ...
+1433     27416                               age            7          all
+         27417                            weight            7          all
+         27418                        medication            7          all
+         27419                           smoking            7          all
+         27420                fasting (duration)            7          all
+
+                              max substance  count  group_parent_pk  sd  group_pk characteristica_pk
+4        5                    NaN       nan     42                2 NaN
+         6                    NaN       nan     42                2 NaN
+         11                   NaN       nan     21                2 NaN
+         12                   NaN       nan     21                2 NaN
+         27                   NaN       nan     14                2 NaN
+...                           ...       ...    ...              ...  ..
+1433     27416               42.0       nan      7               -1 NaN
+         27417               84.0       nan      7               -1 NaN
+         27418                NaN       nan      7               -1 NaN
+         27419                NaN       nan      7               -1 NaN
+         27420                NaN       nan      7               -1 NaN
+
+                                 unit  se    min  cv  median  mean  group_pk characteristica_pk
+4        5                        NaN NaN    NaN NaN     NaN   NaN
+         6                        NaN NaN    NaN NaN     NaN   NaN
+         11                   percent NaN  133.0 NaN     NaN   NaN
+         12                       NaN NaN    NaN NaN     NaN   NaN
+         27                       NaN NaN    NaN NaN     NaN   NaN
+...                               ...  ..    ...  ..     ...   ...
+1433     27416                   year NaN   26.0 NaN     NaN  30.0
+         27417               kilogram NaN   70.5 NaN     NaN  77.3
+         27418                    NaN NaN    NaN NaN     NaN   NaN
+         27419                    NaN NaN    NaN NaN     NaN   NaN
+         27420                    day NaN    NaN NaN     NaN   NaN
+
+                                   choice  value
+group_pk characteristica_pk
+4        5                   homo sapiens    NaN
+         6                              Y    NaN
+         11                           NaN    NaN
+         12                         obese    NaN
+         27                             F    NaN
+...                                   ...    ...
+1433     27416                        NaN    NaN
+         27417                        NaN    NaN
+         27418                          N    NaN
+         27419                          N    NaN
+         27420                        NaN    NaN
+
+[1960 rows x 19 columns]</pre>
+<p>In addition often combinations of attributes have to be used to find the
+correct subjects. For instance a combination of <code class="docutils literal notranslate"><span class="pre">healthy</span></code> and reported
+<code class="docutils literal notranslate"><span class="pre">disease</span></code></p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">is_healthy</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="c1"># healthy is reported and True</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">measurement_type</span> <span class="o">==</span> <span class="s2">&quot;healthy&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">choice</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">disease</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="c1"># any disease is reported</span>
+    <span class="k">return</span>  <span class="n">d</span><span class="o">.</span><span class="n">measurement_type</span> <span class="o">==</span> <span class="s2">&quot;disease&quot;</span>
+
+<span class="n">healthy1</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_subject</span><span class="p">(</span><span class="n">is_healthy</span><span class="p">)</span>
+<span class="n">healthy2</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">exclude_subject</span><span class="p">(</span><span class="n">disease</span><span class="p">)</span>
+<span class="n">healthy3</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_subject</span><span class="p">(</span><span class="n">is_healthy</span><span class="p">)</span><span class="o">.</span><span class="n">exclude_subject</span><span class="p">(</span><span class="n">disease</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">healthy1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">healthy2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">healthy3</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140070305622992</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>           <span class="mi">409</span>  <span class="p">(</span>  <span class="mi">409</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">760</span>  <span class="p">(</span> <span class="mi">6858</span><span class="p">)</span>
+<span class="n">individuals</span>      <span class="mi">4939</span>  <span class="p">(</span><span class="mi">43337</span><span class="p">)</span>
+<span class="n">interventions</span>    <span class="mi">1088</span>  <span class="p">(</span> <span class="mi">1722</span><span class="p">)</span>
+<span class="n">outputs</span>         <span class="mi">61672</span>  <span class="p">(</span><span class="mi">61672</span><span class="p">)</span>
+<span class="n">timecourses</span>       <span class="mi">384</span>  <span class="p">(</span>  <span class="mi">384</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140070305623696</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>           <span class="mi">424</span>  <span class="p">(</span>  <span class="mi">424</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">797</span>  <span class="p">(</span> <span class="mi">7111</span><span class="p">)</span>
+<span class="n">individuals</span>      <span class="mi">5006</span>  <span class="p">(</span><span class="mi">43686</span><span class="p">)</span>
+<span class="n">interventions</span>    <span class="mi">1120</span>  <span class="p">(</span> <span class="mi">1762</span><span class="p">)</span>
+<span class="n">outputs</span>         <span class="mi">63558</span>  <span class="p">(</span><span class="mi">63558</span><span class="p">)</span>
+<span class="n">timecourses</span>       <span class="mi">402</span>  <span class="p">(</span>  <span class="mi">402</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140070307172176</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>           <span class="mi">407</span>  <span class="p">(</span>  <span class="mi">407</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">744</span>  <span class="p">(</span> <span class="mi">6670</span><span class="p">)</span>
+<span class="n">individuals</span>      <span class="mi">4869</span>  <span class="p">(</span><span class="mi">42651</span><span class="p">)</span>
+<span class="n">interventions</span>    <span class="mi">1081</span>  <span class="p">(</span> <span class="mi">1711</span><span class="p">)</span>
+<span class="n">outputs</span>         <span class="mi">60992</span>  <span class="p">(</span><span class="mi">60992</span><span class="p">)</span>
+<span class="n">timecourses</span>       <span class="mi">384</span>  <span class="p">(</span>  <span class="mi">384</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="query-interventions">
+<h2>3 Query interventions<a class="headerlink" href="#query-interventions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="get-outputs-timecourses-for-intervention-with-substance">
+<h3>3.1 Get outputs/timecourses for intervention with substance<a class="headerlink" href="#get-outputs-timecourses-for-intervention-with-substance" title="Permalink to this headline">¶</a></h3>
+<p>intervention with measurement_type “dosing” and substance “caffeine”</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">dosing_and_caffeine</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;measurement_type&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;dosing&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;substance&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;caffeine&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span> <span class="o">=</span> <span class="n">PKData</span><span class="o">.</span><span class="n">from_archive</span><span class="p">(</span><span class="n">TESTDATA_CONCISE_FALSE_ZIP</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">caffeine_data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_intervention</span><span class="p">(</span><span class="n">dosing_and_caffeine</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">caffeine_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140070306525584</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>            <span class="mi">81</span>  <span class="p">(</span>   <span class="mi">81</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">136</span>  <span class="p">(</span> <span class="mi">1336</span><span class="p">)</span>
+<span class="n">individuals</span>      <span class="mi">1022</span>  <span class="p">(</span><span class="mi">10148</span><span class="p">)</span>
+<span class="n">interventions</span>     <span class="mi">153</span>  <span class="p">(</span>  <span class="mi">260</span><span class="p">)</span>
+<span class="n">outputs</span>          <span class="mi">9864</span>  <span class="p">(</span> <span class="mi">9864</span><span class="p">)</span>
+<span class="n">timecourses</span>        <span class="mi">43</span>  <span class="p">(</span>   <span class="mi">43</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="query-outputs-timecourses">
+<h2>4 Query outputs/timecourses<a class="headerlink" href="#query-outputs-timecourses" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="query-by-measurement-type">
+<h3>4.1 query by measurement_type<a class="headerlink" href="#query-by-measurement-type" title="Permalink to this headline">¶</a></h3>
+<p>filter all outputs with measurement_type auc_inf</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">is_auc_inf</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;measurement_type&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;auc_inf&quot;</span><span class="p">)</span>
+
+<span class="n">test_data</span> <span class="o">=</span> <span class="n">PKData</span><span class="o">.</span><span class="n">from_archive</span><span class="p">(</span><span class="n">TESTDATA_CONCISE_FALSE_ZIP</span><span class="p">)</span>
+
+<span class="n">test_data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_output</span><span class="p">(</span><span class="n">is_auc_inf</span><span class="p">)</span><span class="o">.</span><span class="n">delete_timecourses</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140070325904144</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>           <span class="mi">311</span>  <span class="p">(</span>  <span class="mi">311</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">470</span>  <span class="p">(</span> <span class="mi">4492</span><span class="p">)</span>
+<span class="n">individuals</span>       <span class="mi">717</span>  <span class="p">(</span> <span class="mi">7014</span><span class="p">)</span>
+<span class="n">interventions</span>     <span class="mi">694</span>  <span class="p">(</span>  <span class="mi">998</span><span class="p">)</span>
+<span class="n">outputs</span>          <span class="mi">3324</span>  <span class="p">(</span> <span class="mi">3324</span><span class="p">)</span>
+<span class="n">timecourses</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="other-query-others">
+<h2>5 Other Query others<a class="headerlink" href="#other-query-others" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="complex">
+<h3>5.1 Complex<a class="headerlink" href="#complex" title="Permalink to this headline">¶</a></h3>
+<p>get clearance of codeine for all.h5 subjects, which have been phenotyped
+for cyp2d6.</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">is_cyp2d6_phenotyped</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="n">cyp2d6_phenotype_substances</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;spar/(2hspar+5hspar)&#39;</span><span class="p">,</span> <span class="s1">&#39;deb/4hdeb&#39;</span><span class="p">,</span> <span class="s1">&#39;dtf/dmt&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;measurement_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s2">&quot;metabolic phenotype&quot;</span><span class="p">,</span> <span class="s2">&quot;metabolic ratio&quot;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;substance&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">cyp2d6_phenotype_substances</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">codeine_clearance</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;measurement_type&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;clearance&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;substance&quot;</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;codeine&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span> <span class="o">=</span> <span class="n">PKData</span><span class="o">.</span><span class="n">from_archive</span><span class="p">(</span><span class="n">TESTDATA_CONCISE_FALSE_ZIP</span><span class="p">)</span>
+
+<span class="n">phenotyped_data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_output</span><span class="p">(</span><span class="n">is_cyp2d6_phenotyped</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span><span class="o">.</span><span class="n">groups</span> <span class="o">=</span> <span class="n">phenotyped_data</span><span class="o">.</span><span class="n">groups</span>
+<span class="n">test_data</span><span class="o">.</span><span class="n">individuals</span> <span class="o">=</span> <span class="n">phenotyped_data</span><span class="o">.</span><span class="n">individuals</span>
+<span class="n">test_data</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_output</span><span class="p">(</span><span class="n">codeine_clearance</span><span class="p">)</span><span class="o">.</span><span class="n">delete_timecourses</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">140070307222288</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>             <span class="mi">3</span>  <span class="p">(</span>    <span class="mi">3</span><span class="p">)</span>
+<span class="n">groups</span>              <span class="mi">5</span>  <span class="p">(</span>   <span class="mi">41</span><span class="p">)</span>
+<span class="n">individuals</span>        <span class="mi">14</span>  <span class="p">(</span>   <span class="mi">98</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">3</span>  <span class="p">(</span>    <span class="mi">3</span><span class="p">)</span>
+<span class="n">outputs</span>            <span class="mi">19</span>  <span class="p">(</span>   <span class="mi">19</span><span class="p">)</span>
+<span class="n">timecourses</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, Jan Grzegorzewski &amp; Matthias König
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

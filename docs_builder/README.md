@@ -7,6 +7,7 @@ To create the documentation use
 ```
 
 To create notebooks and documentation use
+(pandocs needs to be installed https://pandoc.org/installing.html)
 ```
 (pkdb_analysis) ./make_docs.sh
 ```

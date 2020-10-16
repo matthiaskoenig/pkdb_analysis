@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,27 +11,29 @@
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
@@ -48,7 +49,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> pkdb_analysis
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> pkdb_analysis
           
 
           
@@ -71,6 +72,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -88,6 +90,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -126,7 +129,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
@@ -149,40 +152,43 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Functions for working with PKDB data.</span>
 
-<span class="sd">* TODO: consistent naming of endpoints</span>
-<span class="sd">* FIXME: unclear what is modifying and what is copying the data frames</span>
+<span class="sd">* FIXME: specify which methods modify or copy data frames</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
+<span class="kn">from</span> <span class="nn">pandas.errors</span> <span class="kn">import</span> <span class="n">PerformanceWarning</span>
 
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">PerformanceWarning</span><span class="p">)</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-
-
 <span class="k">class</span> <span class="nc">PKDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
-
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extended DataFrame which support customized filter operations.</span>
-<span class="sd">    Used to encode groups, individuals, interventions, outputs, timecourses on PKData.</span>
+<span class="sd">    Used to encode groups, individuals, interventions, outputs, data on PKData.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Internal  &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">PKDataFrame</span><span class="o">.</span><span class="n">_internal_ctor</span>
 
-    <span class="n">_metadata</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">]</span>
+    <span class="n">_metadata</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;pk&quot;</span><span class="p">]</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">_internal_ctor</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;pk&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;pk&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -198,19 +204,17 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">internals</span><span class="o">.</span><span class="n">BlockManager</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">pk</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;arg pk required&quot;</span><span class="p">)</span>
 
-        <span class="nb">super</span><span class="p">(</span><span class="n">PKDataFrame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
-                                          <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span>
-                                          <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
-                                          <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
-                                          <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PKDataFrame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pk</span> <span class="o">=</span> <span class="n">pk</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_validate_not_in_columns</span><span class="p">(</span><span class="n">columns</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">columns</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="s1">&#39;pk&#39;</span> <span class="ow">in</span> <span class="n">columns</span>
+            <span class="k">assert</span> <span class="s2">&quot;pk&quot;</span> <span class="ow">in</span> <span class="n">columns</span>
 
-    <span class="k">def</span> <span class="nf">pk_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKDataFrame&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">pk_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKDataFrame&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param f_idx: function, index, list</span>
@@ -231,8 +235,7 @@
         <span class="n">df_filtered</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">df_pks</span><span class="p">)]</span>
         <span class="k">return</span> <span class="n">PKDataFrame</span><span class="p">(</span><span class="n">df_filtered</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">pk_exclude</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKDataFrame&#39;</span><span class="p">:</span>
-
+    <span class="k">def</span> <span class="nf">pk_exclude</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKDataFrame&quot;</span><span class="p">:</span>
         <span class="k">def</span> <span class="nf">ff_idx</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">f_idx</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -248,6 +251,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">pk_column</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the column containing the primary value of this table&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">]</span>
 
     <span class="nd">@property</span>
@@ -260,6 +264,8 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">pk_len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; returns number of unique identifiers within the table. This value can be smaller than the number</span>
+<span class="sd">          of rows. Since multiple rows can represent one instances. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pks</span><span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -272,19 +278,28 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">study_sids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Set of study_sids.&quot;&quot;&quot;</span>
-        <span class="n">study_sids</span> <span class="o">=</span>  <span class="nb">set</span><span class="p">([])</span>
+        <span class="n">study_sids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([])</span>
         <span class="k">if</span> <span class="s2">&quot;study_sid&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="n">study_sids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">study_sid</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">study_sids</span>
 
-
-    <span class="k">def</span> <span class="nf">_emptify</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKDataFrame&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_emptify</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKDataFrame&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Removes all entries from table.&quot;&quot;&quot;</span>
         <span class="n">empty_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([],</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">PKDataFrame</span><span class="p">(</span><span class="n">empty_df</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="PKData"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData">[docs]</a><span class="k">class</span> <span class="nc">PKData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Consistent set of data from PK-DB.</span>
+    <span class="sd">&quot;&quot;&quot;Consistent set of data from PK-DB.set -a &amp;&amp; source .env.local</span>
 
 <span class="sd">    Information is stored as DataFrames.</span>
 
@@ -294,70 +309,103 @@
 <span class="sd">    - individuals</span>
 <span class="sd">    - interventions</span>
 <span class="sd">    - outputs</span>
-<span class="sd">    - timecourses</span>
+<span class="sd">    - data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">KEYS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">,</span> <span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="s2">&quot;interventions&quot;</span><span class="p">,</span> <span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="s2">&quot;timecourses&quot;</span><span class="p">]</span>
-    <span class="n">PK_COLUMNS</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{key[:-1]}</span><span class="s2">_pk&quot;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">KEYS</span><span class="p">}</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">interventions</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">groups</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">individuals</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">outputs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                 <span class="n">timecourses</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span>
-                 <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Creates PKDB data object from given DataFrames.</span>
+    <span class="n">PK_COLUMNS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;studies&quot;</span><span class="p">:</span> <span class="s2">&quot;study_pk&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;groups&quot;</span><span class="p">:</span> <span class="s2">&quot;group_pk&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;individuals&quot;</span><span class="p">:</span> <span class="s2">&quot;individual_pk&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;interventions&quot;</span><span class="p">:</span> <span class="s2">&quot;intervention_pk&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="s2">&quot;output_pk&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;timecourses&quot;</span><span class="p">:</span> <span class="s2">&quot;subset_pk&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">KEYS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;studies&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;groups&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;individuals&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;interventions&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;outputs&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;timecourses&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="c1"># PK_COLUMNS = {key: f&quot;{key[:-1]}_pk&quot; for key in KEYS}</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">studies</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">interventions</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">groups</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">individuals</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">outputs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">timecourses</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates PKDB data object from given DataFrames.</span>
 
 <span class="sd">        :param interventions:</span>
 <span class="sd">        :param individuals:</span>
 <span class="sd">        :param groups:</span>
 <span class="sd">        :param outputs:</span>
-<span class="sd">        :param timecourses:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">groups</span> <span class="o">=</span> <span class="n">PKDataFrame</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="s2">&quot;group_pk&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span> <span class="o">=</span> <span class="n">PKDataFrame</span><span class="p">(</span><span class="n">individuals</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="s2">&quot;individual_pk&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">interventions</span> <span class="o">=</span> <span class="n">PKDataFrame</span><span class="p">(</span><span class="n">interventions</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interventions</span> <span class="o">=</span> <span class="n">PKDataFrame</span><span class="p">(</span><span class="n">interventions</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">({</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">:</span> <span class="kc">None</span><span class="p">})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="n">PKDataFrame</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="s2">&quot;output_pk&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span> <span class="o">=</span> <span class="n">PKDataFrame</span><span class="p">(</span><span class="n">timecourses</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="s2">&quot;timecourse_pk&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span> <span class="o">=</span> <span class="n">PKDataFrame</span><span class="p">(</span><span class="n">timecourses</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="s2">&quot;subset_pk&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">studies</span> <span class="o">=</span> <span class="n">PKDataFrame</span><span class="p">(</span><span class="n">studies</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="s2">&quot;sid&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="o">.</span><span class="n">substance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="o">.</span><span class="n">substance</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">substance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">substance</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">choices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_choices</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">output_pk</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">output_pk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">output_pk</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span>
+                <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__dict___</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; serialises pkdata instance to a dict.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">df_key</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_key</span><span class="p">)</span><span class="o">.</span><span class="n">df</span> <span class="k">for</span> <span class="n">df_key</span> <span class="ow">in</span> <span class="n">PKData</span><span class="o">.</span><span class="n">KEYS</span><span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict___</span><span class="p">()</span>
+<div class="viewcode-block" id="PKData.as_dict"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.as_dict">[docs]</a>    <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; serialises pkdata instance to a dict.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict___</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">PKData</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">as_dict</span><span class="p">())</span>
+<div class="viewcode-block" id="PKData.copy"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;creates a copy of the pkdata instance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">PKData</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">as_dict</span><span class="p">())</span></div>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Overview of content.</span>
+        <span class="sd">&quot;&quot;&quot;Overview of content.</span>
 
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">30</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{self.__class__.__name__}</span><span class="s2"> ({id(self)})&quot;</span><span class="p">,</span>
             <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">30</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s2">&quot;{&#39;studies&#39;:&lt;15} {len(self.study_sids):&gt;5} &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">30</span><span class="p">,</span>
         <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">KEYS</span><span class="p">:</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-            <span class="n">nrows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-            <span class="n">count</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pk_len</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                <span class="n">nrows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pk_len</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">&lt;15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">count</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">nrows</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">:</span><span class="s2">&lt;12</span><span class="si">}</span><span class="s2"> tc:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">timecourses_count</span><span class="si">:</span><span class="s2">&gt;5</span><span class="si">}</span><span class="s2">  sc:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">scatter_count</span><span class="si">:</span><span class="s2">&gt;3</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
 
-            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{key:&lt;15}</span><span class="s2"> </span><span class="si">{count:&gt;5}</span><span class="s2">  (</span><span class="si">{nrows:&gt;5}</span><span class="s2">)&quot;</span><span class="p">)</span>
         <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">30</span><span class="p">)</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__or__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;PKData&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; combines two PKData instances</span>
+    <span class="k">def</span> <span class="fm">__or__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;PKData&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;combines two PKData instances</span>
 <span class="sd">        :param other: other PkData instance</span>
 <span class="sd">        :return: PKData</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -368,14 +416,16 @@
             <span class="n">df</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_key</span><span class="p">)</span>
             <span class="n">other_df</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">df_key</span><span class="p">)</span>
             <span class="n">resulting_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">other_df</span><span class="p">)</span>
-            <span class="n">resulting_df</span> <span class="o">=</span> <span class="n">resulting_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">resulting_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)]</span>
+            <span class="n">resulting_df</span> <span class="o">=</span> <span class="n">resulting_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                <span class="o">~</span><span class="n">resulting_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">)</span>
+            <span class="p">]</span>
 
             <span class="n">resulting_kwargs</span><span class="p">[</span><span class="n">df_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">resulting_df</span>
 
         <span class="k">return</span> <span class="n">PKData</span><span class="p">(</span><span class="o">**</span><span class="n">resulting_kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__and__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s1">&#39;PKData&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; combines instances were instances have to</span>
+    <span class="k">def</span> <span class="fm">__and__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;PKData&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;combines instances were instances have to</span>
 
 <span class="sd">        param other: other PKData instance</span>
 <span class="sd">        :return: PKData</span>
@@ -395,14 +445,35 @@
             <span class="n">other_df</span> <span class="o">=</span> <span class="n">other_df</span><span class="p">[</span><span class="n">other_df</span><span class="p">[</span><span class="n">pk</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">intersection_pks</span><span class="p">)]</span>
 
             <span class="n">resulting_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">other_df</span><span class="p">)</span>
-            <span class="n">resulting_df</span> <span class="o">=</span> <span class="n">resulting_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">resulting_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">)]</span>
+            <span class="n">resulting_df</span> <span class="o">=</span> <span class="n">resulting_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                <span class="o">~</span><span class="n">resulting_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">)</span>
+            <span class="p">]</span>
             <span class="n">resulting_kwargs</span><span class="p">[</span><span class="n">df_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">resulting_df</span>
 
         <span class="k">return</span> <span class="n">PKData</span><span class="p">(</span><span class="o">**</span><span class="n">resulting_kwargs</span><span class="p">)</span>
 
+<div class="viewcode-block" id="PKData.from_archive"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.from_archive">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_archive</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Load data from HDF5 serialization.</span>
+
+<span class="sd">        :param path: path to HDF5.</span>
+<span class="sd">        :type path: str</span>
+<span class="sd">        :return: PKData loaded from HDF5.</span>
+<span class="sd">        :rtype: PKData</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">archive</span><span class="p">:</span>
+            <span class="n">data_dict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">PKData</span><span class="o">.</span><span class="n">_clean_types</span><span class="p">(</span>
+                    <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">),</span> <span class="n">low_memory</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+                    <span class="n">is_timecourse</span><span class="o">=</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;timecourses&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">PKData</span><span class="o">.</span><span class="n">KEYS</span>
+            <span class="p">}</span>
+        <span class="n">pkdata</span> <span class="o">=</span> <span class="n">PKData</span><span class="p">(</span><span class="o">**</span><span class="n">data_dict</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_intervention_pk_update</span><span class="p">(</span><span class="n">pkdata</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="PKData.from_hdf5"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.from_hdf5">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">from_hdf5</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Load data from HDF5 serialization.</span>
+    <span class="k">def</span> <span class="nf">from_hdf5</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Load data from an archive as returned from the download in pk-db.com.</span>
 
 <span class="sd">        :param path: path to HDF5.</span>
 <span class="sd">        :type path: str</span>
@@ -418,21 +489,28 @@
 
         <span class="k">return</span> <span class="n">PKData</span><span class="p">(</span><span class="o">**</span><span class="n">data_dict</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PKData.to_hdf5"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.to_hdf5">[docs]</a>    <span class="k">def</span> <span class="nf">to_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Saves data HDF5</span>
+<div class="viewcode-block" id="PKData.to_hdf5"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.to_hdf5">[docs]</a>    <span class="k">def</span> <span class="nf">to_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Saves data HDF5</span>
 
 <span class="sd">        :param path: path to HDF5.</span>
 <span class="sd">        :type path: str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">store</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;interventions&quot;</span><span class="p">,</span> <span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="s2">&quot;groups&quot;</span><span class="p">,</span> <span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="s2">&quot;timecourses&quot;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;studies&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;interventions&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;individuals&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;groups&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;outputs&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;timecourses&quot;</span><span class="p">,</span>
+        <span class="p">]:</span>
             <span class="n">df</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">df</span>
             <span class="n">store</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span>
         <span class="n">store</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">study_sids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Set of study sids contained in this PKData instance.</span>
+        <span class="sd">&quot;&quot;&quot;Set of study sids contained in this PKData instance.</span>
 
 <span class="sd">        :return: Study sids contained in this PKData instance.</span>
 <span class="sd">        :rtype: set</span>
@@ -446,7 +524,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">groups_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Number of groups contained in this PKData instance.</span>
+        <span class="sd">&quot;&quot;&quot;Number of groups contained in this PKData instance.</span>
 
 <span class="sd">        :return: Number of groups contained in this PKData instance.</span>
 <span class="sd">        :rtype: int</span>
@@ -455,16 +533,16 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">individuals_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Number of individuals contained in this PKData instance.</span>
+        <span class="sd">&quot;&quot;&quot;Number of individuals contained in this PKData instance.</span>
 
-<span class="sd">                :return: Number of individuals contained in this PKData instance.</span>
-<span class="sd">                :rtype: int</span>
+<span class="sd">        :return: Number of individuals contained in this PKData instance.</span>
+<span class="sd">        :rtype: int</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="o">.</span><span class="n">pk_len</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">interventions_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Number of interventions contained in this PKData instance.</span>
+        <span class="sd">&quot;&quot;&quot;Number of interventions contained in this PKData instance.</span>
 
 <span class="sd">        :return: Number of interventions contained in this PKData instance.</span>
 <span class="sd">        :rtype: int</span>
@@ -473,7 +551,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">outputs_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Number of outputs contained in this PKData instance.</span>
+        <span class="sd">&quot;&quot;&quot;Number of outputs contained in this PKData instance.</span>
 
 <span class="sd">        :return: Number of outputs contained in this PKData instance.</span>
 <span class="sd">        :rtype: int</span>
@@ -482,15 +560,45 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">timecourses_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Number of timecourses contained in this PKData instance.</span>
+        <span class="sd">&quot;&quot;&quot;Number of timecourses contained in this PKData instance.</span>
 
 <span class="sd">        :return: Number of timecourses contained in this PKData instance.</span>
 <span class="sd">        :rtype: int</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">pk_len</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">scatter_count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Number of timecourses contained in this PKData instance.</span>
+
+<span class="sd">        :return: Number of timecourses contained in this PKData instance.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="s2">&quot;scatter&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pk_len</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">timecourses_extended</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; extends the timecourse df with the core information from interventions, individuals and groups&quot;&quot;&quot;</span>
+
+        <span class="n">timecourses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interventions_core</span><span class="p">,</span>
+            <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+            <span class="n">on</span><span class="o">=</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">,</span>
+            <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;interventions&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">timecourses</span> <span class="o">=</span> <span class="n">timecourses</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">individuals_core</span><span class="p">,</span>
+            <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+            <span class="n">on</span><span class="o">=</span><span class="s2">&quot;individual_pk&quot;</span><span class="p">,</span>
+            <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;individuals&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">timecourses</span> <span class="o">=</span> <span class="n">timecourses</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">groups_core</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;group_pk&quot;</span><span class="p">,</span> <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;groups&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">timecourses</span>
+
     <span class="k">def</span> <span class="nf">_df_mi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">index_fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Create multi-index DataFrame</span>
+        <span class="sd">&quot;&quot;&quot;Create multi-index DataFrame</span>
 
 <span class="sd">        :param field:  #fixme rename to df_key?</span>
 <span class="sd">        :param index_fields:</span>
@@ -506,13 +614,12 @@
         <span class="k">return</span> <span class="n">df_mi</span>
 
     <span class="k">def</span> <span class="nf">_df_core</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">core_fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">PKDataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;  Core group information with unique pk per row</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Core group information with unique pk per row&quot;&quot;&quot;</span>
 
         <span class="n">pk_df</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">pk_df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">pk_df</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">core_fields</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-
-
+        <span class="k">return</span> <span class="n">pk_df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
+            <span class="n">index</span><span class="o">=</span><span class="n">pk_df</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="n">core_fields</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">groups_mi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
@@ -521,18 +628,18 @@
 <span class="sd">        :return: Multi-indexed DataFrame of groups contained in this PKData instance.</span>
 <span class="sd">        :rtype: pd.DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_mi</span><span class="p">(</span><span class="s1">&#39;groups&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;group_pk&#39;</span><span class="p">,</span> <span class="s1">&#39;characteristica_pk&#39;</span><span class="p">])</span>
-
-
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_mi</span><span class="p">(</span><span class="s2">&quot;groups&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;group_pk&quot;</span><span class="p">,</span> <span class="s2">&quot;characteristica_pk&quot;</span><span class="p">])</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">groups_core</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PKDataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;  Core group information with unique pk per row</span>
+        <span class="sd">&quot;&quot;&quot;Core group information with unique pk per row</span>
 
 <span class="sd">        :return: PKDataFrame of groups contained in this PKData instance .</span>
 <span class="sd">        :rtype: PKDataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_core</span><span class="p">(</span><span class="s2">&quot;groups&quot;</span><span class="p">,</span> <span class="n">core_fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;group_name&quot;</span><span class="p">,</span> <span class="s2">&quot;group_count&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_core</span><span class="p">(</span>
+            <span class="s2">&quot;groups&quot;</span><span class="p">,</span> <span class="n">core_fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;study_name&quot;</span><span class="p">,</span> <span class="s2">&quot;group_name&quot;</span><span class="p">,</span> <span class="s2">&quot;group_count&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">individuals_mi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
@@ -541,16 +648,20 @@
 <span class="sd">        :return: Multi-indexed DataFrame of individuals contained in this PKData instance.</span>
 <span class="sd">        :rtype: pd.DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_mi</span><span class="p">(</span><span class="s1">&#39;individuals&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;individual_pk&#39;</span><span class="p">,</span> <span class="s1">&#39;characteristica_pk&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_mi</span><span class="p">(</span>
+            <span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;individual_pk&quot;</span><span class="p">,</span> <span class="s2">&quot;individual_name&quot;</span><span class="p">,</span> <span class="s2">&quot;characteristica_pk&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">individuals_core</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PKDataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;  Core individual information with unique pk per row</span>
+        <span class="sd">&quot;&quot;&quot;Core individual information with unique pk per row</span>
 
 <span class="sd">        :return: PKDataFrame of individuals contained in this PKData instance .</span>
 <span class="sd">        :rtype: PKDataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_core</span><span class="p">(</span><span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="n">core_fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;individual_name&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_core</span><span class="p">(</span>
+            <span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="n">core_fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;study_name&quot;</span><span class="p">,</span> <span class="s2">&quot;individual_name&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">interventions_mi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
@@ -559,8 +670,16 @@
 <span class="sd">        :return: Multi-indexed DataFrame of interventions contained in this PKData instance.</span>
 <span class="sd">        :rtype: pd.DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_mi</span><span class="p">(</span><span class="s1">&#39;interventions&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;intervention_pk&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_mi</span><span class="p">(</span><span class="s2">&quot;interventions&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">])</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">interventions_core</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PKDataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Core group information with unique pk per row</span>
+
+<span class="sd">        :return: PKDataFrame of groups contained in this PKData instance .</span>
+<span class="sd">        :rtype: PKDataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_core</span><span class="p">(</span><span class="s2">&quot;interventions&quot;</span><span class="p">,</span> <span class="n">core_fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;study_name&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">])</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">outputs_mi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
@@ -569,8 +688,9 @@
 <span class="sd">        :return: Multi-indexed DataFrame of outputs contained in this PKData instance.</span>
 <span class="sd">        :rtype: pd.DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_mi</span><span class="p">(</span><span class="s1">&#39;outputs&#39;</span><span class="p">,</span>
-                           <span class="p">[</span><span class="s1">&#39;output_pk&#39;</span><span class="p">,</span> <span class="s1">&#39;intervention_pk&#39;</span><span class="p">,</span> <span class="s1">&#39;group_pk&#39;</span><span class="p">,</span> <span class="s1">&#39;individual_pk&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_mi</span><span class="p">(</span>
+            <span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;output_pk&quot;</span><span class="p">,</span> <span class="s2">&quot;intervention_pk&quot;</span><span class="p">,</span> <span class="s2">&quot;group_pk&quot;</span><span class="p">,</span> <span class="s2">&quot;individual_pk&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">timecourses_mi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
@@ -579,14 +699,15 @@
 <span class="sd">        :return: Multi-indexed DataFrame of timecourses contained in this PKData instance.</span>
 <span class="sd">        :rtype: pd.DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_mi</span><span class="p">(</span><span class="s1">&#39;timecourses&#39;</span><span class="p">,</span>
-                           <span class="p">[</span><span class="s1">&#39;timecourse_pk&#39;</span><span class="p">,</span> <span class="s1">&#39;intervention_pk&#39;</span><span class="p">,</span> <span class="s1">&#39;group_pk&#39;</span><span class="p">,</span> <span class="s1">&#39;individual_pk&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_mi</span><span class="p">(</span>
+            <span class="s2">&quot;timecourses&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;subset_pk&quot;</span><span class="p">,</span> <span class="s2">&quot;intervention_pk&quot;</span><span class="p">,</span> <span class="s2">&quot;group_pk&quot;</span><span class="p">,</span> <span class="s2">&quot;individual_pk&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
 
     <span class="c1"># --- filter and exclude ---</span>
-
-    <span class="k">def</span> <span class="nf">_pk_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_key</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">:</span><span class="nb">bool</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Helper class for filtering of PKData instances.</span>
-
+    <span class="k">def</span> <span class="nf">_pk_filter</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">df_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Helper class for filtering of PKData instances.</span>
 <span class="sd">        :param df_key: DataFrame on which the filter (f_idx) shall be applied.</span>
 <span class="sd">        :type df_key: str</span>
 <span class="sd">        :param concise:</span>
@@ -600,7 +721,8 @@
             <span class="n">pkdata</span><span class="o">.</span><span class="n">_concise</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">pkdata</span>
 
-    <span class="k">def</span> <span class="nf">_pk_exclude</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_k</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_pk_exclude</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_k</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Generic function to exclude data selected by the table key (df_k) and filtered by f_idx.&quot;&quot;&quot;</span>
 
         <span class="n">dict_pkdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
         <span class="n">dict_pkdata</span><span class="p">[</span><span class="n">df_k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_k</span><span class="p">)</span><span class="o">.</span><span class="n">pk_exclude</span><span class="p">(</span><span class="n">f_idx</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -610,7 +732,8 @@
             <span class="n">pkdata</span><span class="o">.</span><span class="n">_concise</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">pkdata</span>
 
-    <span class="k">def</span> <span class="nf">_emptify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_key</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_emptify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_key</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; generic function to emptify a table selected by the key.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_df_key</span><span class="p">(</span><span class="n">df_key</span><span class="p">)</span>
 
         <span class="n">dict_pkdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
@@ -623,10 +746,17 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_validate_df_key</span><span class="p">(</span><span class="n">df_key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; correct key validations function&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">df_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">PKData</span><span class="o">.</span><span class="n">KEYS</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported key &#39;</span><span class="si">{df_key}</span><span class="s2">&#39;, key must be in &#39;</span><span class="si">{PKData.KEYS}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unsupported key &#39;</span><span class="si">{</span><span class="n">df_key</span><span class="si">}</span><span class="s2">&#39;, key must be in &#39;</span><span class="si">{</span><span class="n">PKData</span><span class="o">.</span><span class="n">KEYS</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="p">)</span>
 
-<div class="viewcode-block" id="PKData.filter_intervention"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.filter_intervention">[docs]</a>    <span class="k">def</span> <span class="nf">filter_intervention</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
+<div class="viewcode-block" id="PKData.filter_study"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.filter_study">[docs]</a>    <span class="k">def</span> <span class="nf">filter_study</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Filter studies by filter function. &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_filter</span><span class="p">(</span><span class="s2">&quot;studies&quot;</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PKData.filter_intervention"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.filter_intervention">[docs]</a>    <span class="k">def</span> <span class="nf">filter_intervention</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Filter interventions.</span>
 
 <span class="sd">        :param f_idx: Is a filter by index of the DataFrame selected by the df_key. A similar notation as the filtering</span>
@@ -648,16 +778,17 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_filter</span><span class="p">(</span><span class="s2">&quot;interventions&quot;</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PKData.filter_group"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.filter_group">[docs]</a>    <span class="k">def</span> <span class="nf">filter_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
+<div class="viewcode-block" id="PKData.filter_group"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.filter_group">[docs]</a>    <span class="k">def</span> <span class="nf">filter_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Filter groups. &quot;&quot;&quot;</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_filter</span><span class="p">(</span><span class="s2">&quot;groups&quot;</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PKData.filter_individual"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.filter_individual">[docs]</a>    <span class="k">def</span> <span class="nf">filter_individual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
-
+<div class="viewcode-block" id="PKData.filter_individual"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.filter_individual">[docs]</a>    <span class="k">def</span> <span class="nf">filter_individual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Filter individuals. &quot;&quot;&quot;</span>
+
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_filter</span><span class="p">(</span><span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PKData.filter_subject"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.filter_subject">[docs]</a>    <span class="k">def</span> <span class="nf">filter_subject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
+<div class="viewcode-block" id="PKData.filter_subject"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.filter_subject">[docs]</a>    <span class="k">def</span> <span class="nf">filter_subject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Filter group or individual. &quot;&quot;&quot;</span>
         <span class="n">pkdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_group</span><span class="p">(</span><span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">pkdata</span> <span class="o">=</span> <span class="n">pkdata</span><span class="o">.</span><span class="n">filter_individual</span><span class="p">(</span><span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -665,115 +796,152 @@
             <span class="n">pkdata</span><span class="o">.</span><span class="n">_concise</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">pkdata</span></div>
 
-<div class="viewcode-block" id="PKData.filter_output"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.filter_output">[docs]</a>    <span class="k">def</span> <span class="nf">filter_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
+<div class="viewcode-block" id="PKData.filter_output"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.filter_output">[docs]</a>    <span class="k">def</span> <span class="nf">filter_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Filter outputs. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_filter</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PKData.filter_timecourse"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.filter_timecourse">[docs]</a>    <span class="k">def</span> <span class="nf">filter_timecourse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
+<div class="viewcode-block" id="PKData.filter_timecourse"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.filter_timecourse">[docs]</a>    <span class="k">def</span> <span class="nf">filter_timecourse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Filter timecourses. &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_filter</span><span class="p">(</span><span class="s2">&quot;timecourses&quot;</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">exclude_intervention</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_exclude</span><span class="p">(</span><span class="s2">&quot;interventions&quot;</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="viewcode-block" id="PKData.exclude_study"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.exclude_study">[docs]</a>    <span class="k">def</span> <span class="nf">exclude_study</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Excludes studies which cann be selected by a filter (idx).&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">exclude_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_exclude</span><span class="p">(</span><span class="s2">&quot;groups&quot;</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_exclude</span><span class="p">(</span><span class="s2">&quot;studies&quot;</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">exclude_individual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_exclude</span><span class="p">(</span><span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<div class="viewcode-block" id="PKData.exclude_intervention"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.exclude_intervention">[docs]</a>    <span class="k">def</span> <span class="nf">exclude_intervention</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Excludes interventions which cann be selected by a filter (idx).&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">exclude_subject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_exclude</span><span class="p">(</span><span class="s2">&quot;interventions&quot;</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PKData.exclude_group"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.exclude_group">[docs]</a>    <span class="k">def</span> <span class="nf">exclude_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Excludes groups which cann be selected by a filter (idx).&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_exclude</span><span class="p">(</span><span class="s2">&quot;groups&quot;</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PKData.exclude_individual"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.exclude_individual">[docs]</a>    <span class="k">def</span> <span class="nf">exclude_individual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Excludes individuals which cann be selected by a filter (idx).&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_exclude</span><span class="p">(</span><span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PKData.exclude_subject"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.exclude_subject">[docs]</a>    <span class="k">def</span> <span class="nf">exclude_subject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Excludes groups and individuals which cann be selected by a filter (idx).</span>
+
+<span class="sd">        :param f_idx:</span>
+<span class="sd">        :param concise:</span>
+<span class="sd">        :param kwargs:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pkdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude_group</span><span class="p">(</span><span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">pkdata</span> <span class="o">=</span> <span class="n">pkdata</span><span class="o">.</span><span class="n">exclude_individual</span><span class="p">(</span><span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">concise</span><span class="p">:</span>
             <span class="n">pkdata</span><span class="o">.</span><span class="n">_concise</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">pkdata</span>
+        <span class="k">return</span> <span class="n">pkdata</span></div>
 
-    <span class="k">def</span> <span class="nf">exclude_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">exclude_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_exclude</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">exclude_timecourse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pk_exclude</span><span class="p">(</span><span class="s2">&quot;timecourses&quot;</span><span class="p">,</span> <span class="n">f_idx</span><span class="p">,</span> <span class="n">concise</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PKData.delete_groups"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.delete_groups">[docs]</a>    <span class="k">def</span> <span class="nf">delete_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
+<div class="viewcode-block" id="PKData.delete_groups"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.delete_groups">[docs]</a>    <span class="k">def</span> <span class="nf">delete_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Deletes outputs.</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emptify</span><span class="p">(</span><span class="s2">&quot;groups&quot;</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="n">concise</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PKData.delete_individuals"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.delete_individuals">[docs]</a>    <span class="k">def</span> <span class="nf">delete_individuals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
+<div class="viewcode-block" id="PKData.delete_individuals"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.delete_individuals">[docs]</a>    <span class="k">def</span> <span class="nf">delete_individuals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Deletes outputs.</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emptify</span><span class="p">(</span><span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="n">concise</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PKData.delete_outputs"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.delete_outputs">[docs]</a>    <span class="k">def</span> <span class="nf">delete_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
+<div class="viewcode-block" id="PKData.delete_outputs"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.delete_outputs">[docs]</a>    <span class="k">def</span> <span class="nf">delete_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Deletes outputs.</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emptify</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="n">concise</span><span class="p">)</span></div>
 
-
-<div class="viewcode-block" id="PKData.delete_timecourses"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.delete_timecourses">[docs]</a>    <span class="k">def</span> <span class="nf">delete_timecourses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;PKData&#39;</span><span class="p">:</span>
+<div class="viewcode-block" id="PKData.delete_timecourses"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.delete_timecourses">[docs]</a>    <span class="k">def</span> <span class="nf">delete_timecourses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Deletes timecourses.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emptify</span><span class="p">(</span><span class="s2">&quot;timecourses&quot;</span><span class="p">,</span> <span class="n">concise</span><span class="o">=</span><span class="n">concise</span><span class="p">)</span></div>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; unique ids of all tables within a pkdata instance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;studies&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">studies</span><span class="o">.</span><span class="n">pks</span><span class="p">),</span>
+            <span class="s2">&quot;groups&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">pks</span><span class="p">),</span>
+            <span class="s2">&quot;individuals&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="o">.</span><span class="n">pks</span><span class="p">),</span>
+            <span class="s2">&quot;interventions&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interventions</span><span class="o">.</span><span class="n">pks</span><span class="p">),</span>
+            <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">pks</span><span class="p">),</span>
+            <span class="s2">&quot;timecourses&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">pks</span><span class="p">),</span>
+            <span class="c1"># &quot;scatters&quot;: list(self.scatters.pks),</span>
+        <span class="p">}</span>
+
     <span class="k">def</span> <span class="nf">_concise</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot; Reduces the current PKData to a consistent subset.</span>
+        <span class="sd">&quot;&quot;&quot;Reduces the current PKData to a consistent subset.</span>
 <span class="sd">        Modifies the DataFrame in place.</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">previous_len</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Concise DataFrames&quot;</span><span class="p">)</span>
-        <span class="k">while</span> <span class="n">previous_len</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len_total</span><span class="p">:</span>
-            <span class="n">previous_len</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_len_total</span><span class="p">)</span>
 
-            <span class="c1"># concise based on interventions</span>
-            <span class="n">outputs_intervention_pks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">intervention_pk</span><span class="p">)</span>
-            <span class="n">timecourses_intervention_pks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">intervention_pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">&quot;group_pk&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ids</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">])</span>
+            <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">&quot;individual_pk&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ids</span><span class="p">[</span><span class="s2">&quot;individuals&quot;</span><span class="p">])</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ids</span><span class="p">[</span><span class="s2">&quot;interventions&quot;</span><span class="p">])</span>
+        <span class="p">]</span>
 
-            <span class="n">current_intervention_pks</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interventions</span><span class="o">.</span><span class="n">pks</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">outputs_intervention_pks</span><span class="p">))</span><span class="o">.</span><span class="n">union</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">interventions</span><span class="o">.</span><span class="n">pks</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">timecourses_intervention_pks</span><span class="p">))</span>
+        <span class="n">concised_ids</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;studies&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">study_sid</span><span class="o">.</span><span class="n">unique</span><span class="p">()),</span>
+            <span class="s2">&quot;groups&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">group_pk</span><span class="o">.</span><span class="n">unique</span><span class="p">()),</span>
+            <span class="s2">&quot;individuals&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">individual_pk</span><span class="o">.</span><span class="n">unique</span><span class="p">()),</span>
+            <span class="s2">&quot;interventions&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">intervention_pk</span><span class="o">.</span><span class="n">unique</span><span class="p">()),</span>
+            <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">pks</span><span class="p">),</span>
+            <span class="s2">&quot;timecourses&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">pks</span><span class="p">),</span>
+            <span class="c1"># &quot;scatters&quot;: list(self.scatters.pks),</span>
+        <span class="p">}</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">interventions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interventions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">interventions</span><span class="o">.</span><span class="n">intervention_pk</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">current_intervention_pks</span><span class="p">)]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">intervention_pk</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">current_intervention_pks</span><span class="p">)]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">intervention_pk</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">current_intervention_pks</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">studies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">studies</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">studies</span><span class="p">[</span><span class="s2">&quot;sid&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">concised_ids</span><span class="p">[</span><span class="s2">&quot;studies&quot;</span><span class="p">])]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interventions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interventions</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interventions</span><span class="p">[</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">concised_ids</span><span class="p">[</span><span class="s2">&quot;interventions&quot;</span><span class="p">])</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">groups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="s2">&quot;group_pk&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">concised_ids</span><span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">])]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="p">[</span><span class="s2">&quot;individual_pk&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">concised_ids</span><span class="p">[</span><span class="s2">&quot;individuals&quot;</span><span class="p">])</span>
+        <span class="p">]</span>
 
-            <span class="c1"># concise based on individuals</span>
-            <span class="n">outputs_individual_pks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">individual_pk</span><span class="p">)</span>
-            <span class="n">timecourses_individual_pks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">individual_pk</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">_timecourses</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;subset_pk&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">subset_pk</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">output_pk</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">len</span><span class="p">(),</span>
+                    <span class="p">),</span>
+                    <span class="s2">&quot;output_pk&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">output_pk</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">_timecourses</span><span class="p">[</span><span class="s2">&quot;output_pk&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_timecourses</span><span class="p">[</span><span class="s2">&quot;output_pk&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
-            <span class="n">current_individual_pks</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="o">.</span><span class="n">pks</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">outputs_individual_pks</span><span class="p">))</span><span class="o">.</span><span class="n">union</span><span class="p">(</span>
-                                     <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span><span class="o">.</span><span class="n">pks</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">timecourses_individual_pks</span><span class="p">))</span>
-            <span class="n">current_individual_pks</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-
-            <span class="k">for</span> <span class="n">df_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="s2">&quot;timecourses&quot;</span><span class="p">,</span> <span class="s2">&quot;outputs&quot;</span><span class="p">]:</span>
-                <span class="n">df</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_key</span><span class="p">)</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_key</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;individual_pk&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">current_individual_pks</span><span class="p">)])</span>
-
-            <span class="c1"># concise based on groups</span>
-            <span class="n">outputs_group_pks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">group_pk</span><span class="p">)</span>
-            <span class="n">timecourses_group_pks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">group_pk</span><span class="p">)</span>
-
-            <span class="n">current_group_pks</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">pks</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">outputs_group_pks</span><span class="p">))</span><span class="o">.</span><span class="n">union</span><span class="p">(</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">pks</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">timecourses_group_pks</span><span class="p">))</span>
-
-            <span class="n">current_group_pks</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-
-            <span class="k">for</span> <span class="n">df_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;groups&quot;</span><span class="p">,</span> <span class="s2">&quot;timecourses&quot;</span><span class="p">,</span> <span class="s2">&quot;outputs&quot;</span><span class="p">]:</span>
-                <span class="n">df</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_key</span><span class="p">)</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_key</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">group_pk</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">current_group_pks</span><span class="p">)])</span>
+            <span class="n">_timecourses</span> <span class="o">=</span> <span class="n">_timecourses</span><span class="p">[</span>
+                <span class="n">_timecourses</span><span class="p">[</span><span class="s2">&quot;output_pk&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">concised_ids</span><span class="p">[</span><span class="s2">&quot;outputs&quot;</span><span class="p">])</span>
+            <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="p">[</span><span class="s2">&quot;subset_pk&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">_timecourses</span><span class="o">.</span><span class="n">subset_pk</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+            <span class="p">]</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_len_total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The sum of all entries in all tables.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_key</span><span class="p">))</span> <span class="k">for</span> <span class="n">df_key</span> <span class="ow">in</span> <span class="n">PKData</span><span class="o">.</span><span class="n">KEYS</span><span class="p">])</span>
 
 <div class="viewcode-block" id="PKData.get_choices"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.get_choices">[docs]</a>    <span class="k">def</span> <span class="nf">get_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; This is experimental.</span>
+        <span class="sd">&quot;&quot;&quot;This is experimental.</span>
 <span class="sd">        returns choices</span>
 
 <span class="sd">        :return:</span>
@@ -783,11 +951,7 @@
             <span class="n">df</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_key</span><span class="p">)</span>
             <span class="n">choices</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;bool&#39;</span><span class="p">,</span> <span class="s1">&#39;object&#39;</span><span class="p">]:</span>
-                    <span class="k">if</span> <span class="n">df_key</span> <span class="o">==</span> <span class="s2">&quot;timecourses&quot;</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="s2">&quot;sd&quot;</span><span class="p">,</span> <span class="s2">&quot;se&quot;</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;cv&quot;</span><span class="p">]:</span>
-                            <span class="k">continue</span>
-
+                <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;bool&quot;</span><span class="p">,</span> <span class="s2">&quot;object&quot;</span><span class="p">]:</span>
                     <span class="c1"># remove None so sorting is working</span>
                     <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
                     <span class="n">choices</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
@@ -796,7 +960,7 @@
         <span class="k">return</span> <span class="n">all_choices</span></div>
 
 <div class="viewcode-block" id="PKData.print_choices"><a class="viewcode-back" href="../../api.html#pkdb_analysis.data.PKData.print_choices">[docs]</a>    <span class="k">def</span> <span class="nf">print_choices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Prints the choices</span>
+        <span class="sd">&quot;&quot;&quot;Prints the choices</span>
 
 <span class="sd">        :param key: key of dataframe</span>
 <span class="sd">        :param field: header field</span>
@@ -813,14 +977,148 @@
             <span class="n">choices</span> <span class="o">=</span> <span class="n">all_choices</span><span class="p">[</span><span class="n">df_key</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">field</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">choices</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported field &#39;</span><span class="si">{field}</span><span class="s2">&#39;, field must be in &#39;{choices.keys()}&#39;&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Unsupported field &#39;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">&#39;, field must be in &#39;</span><span class="si">{</span><span class="n">choices</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                    <span class="p">)</span>
                 <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">fields</span> <span class="o">=</span> <span class="n">choices</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
             <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*** </span><span class="si">{field}</span><span class="s2"> ***&quot;</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">choices</span><span class="p">[</span><span class="n">field</span><span class="p">])</span></div></div>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*** </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2"> ***&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">choices</span><span class="p">[</span><span class="n">field</span><span class="p">])</span></div>
+
+    <span class="k">def</span> <span class="nf">_map_intervention_pks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Helper Function for the transformation of intervention_pk in outputs and timecourses.</span>
+<span class="sd">        returns a mapping of old intervetions_pks with new intervetion_pks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">interventions_output</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">interventions_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
+                <span class="n">values</span><span class="o">=</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="s2">&quot;output_pk&quot;</span><span class="p">,</span>
+                <span class="n">aggfunc</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="n">interventions</span> <span class="o">=</span> <span class="n">interventions_output</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span>
+            <span class="s2">&quot;intervention_pk&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">interventions</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">interventions</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">set_names</span><span class="p">([</span><span class="s2">&quot;intervention_pk_updated&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">interventions</span><span class="p">[</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_update_interventions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping_int_pks</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Updates intervention_pk based on if they are beeing used in the outputs. Multiple interventions can have the same</span>
+<span class="sd">        intervention_pk. After the transformation each (output) row in the outputs links only to one intervention_pk. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;FIXME: document me&quot;&quot;&quot;</span>
+        <span class="n">mapping_int_pks</span> <span class="o">=</span> <span class="n">mapping_int_pks</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">mapping_int_pks</span><span class="p">[</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapping_int_pks</span><span class="o">.</span><span class="n">intervention_pk</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">mapping_int_pks</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">mapping_int_pks</span><span class="o">.</span><span class="n">intervention_pk</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">stack</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">mapping_int_pks</span> <span class="o">=</span> <span class="n">mapping_int_pks</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="s2">&quot;intervention_pk_updated&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;intervention_pk&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">mapping_int_pks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">interventions</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">])</span>
+                <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;intervention_pk_updated&quot;</span><span class="p">:</span> <span class="s2">&quot;intervention_pk&quot;</span><span class="p">})</span>
+        <span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_update_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping_int_pks</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dates up all intervention_pk in outputs table. Thereby each row becomes a unique output.&quot;&quot;&quot;</span>
+        <span class="n">mapping_int_pks</span> <span class="o">=</span> <span class="n">mapping_int_pks</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">interventions_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
+            <span class="n">values</span><span class="o">=</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">&quot;output_pk&quot;</span><span class="p">,</span> <span class="n">aggfunc</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">mapping_int_pks</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+            <span class="n">interventions_output</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span>
+            <span class="n">mapping_int_pks</span><span class="p">,</span>
+            <span class="n">on</span><span class="o">=</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">,</span>
+            <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+        <span class="p">)[[</span><span class="s2">&quot;output_pk&quot;</span><span class="p">,</span> <span class="s2">&quot;intervention_pk_updated&quot;</span><span class="p">]]</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+                <span class="n">mapping_int_pks</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="s2">&quot;output_pk&quot;</span><span class="p">),</span>
+                <span class="n">how</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+                <span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">])</span>
+                <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;intervention_pk_updated&quot;</span><span class="p">:</span> <span class="s2">&quot;intervention_pk&quot;</span><span class="p">})</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_update_timecourses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping_int_pks</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dates up all intervention_pk in timecourse table.&quot;&quot;&quot;</span>
+        <span class="n">mapping_int_pks</span> <span class="o">=</span> <span class="n">mapping_int_pks</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="p">[</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="p">[</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">frozenset</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+            <span class="n">mapping_int_pks</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">),</span>
+            <span class="n">how</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;intervention_pk_updated&quot;</span><span class="p">:</span> <span class="s2">&quot;intervention_pk&quot;</span><span class="p">})</span>
+
+    <span class="k">def</span> <span class="nf">_intervention_pk_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Performs all three function necessary to update the</span>
+<span class="sd">         intervention pks in all three tables where they are contained (interventions, output, timecourses).&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">mapping_int_pks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map_intervention_pks</span><span class="p">()</span>
+
+            <span class="n">data_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
+            <span class="n">data_dict</span><span class="p">[</span><span class="s2">&quot;interventions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_interventions</span><span class="p">(</span><span class="n">mapping_int_pks</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">data_dict</span><span class="p">[</span><span class="s2">&quot;outputs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_outputs</span><span class="p">(</span><span class="n">mapping_int_pks</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">data_dict</span><span class="p">[</span><span class="s2">&quot;timecourses&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_timecourses</span><span class="p">(</span><span class="n">mapping_int_pks</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">PKData</span><span class="p">(</span><span class="o">**</span><span class="n">data_dict</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_clean_types</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">is_timecourse</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the correct datatypes for each column in the table (df).&quot;&quot;&quot;</span>
+        <span class="c1"># convert columns to float columns</span>
+        <span class="n">float_columns</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;median&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;sd&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;se&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cv&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;min&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;max&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="c1"># convert columns to int columns</span>
+        <span class="n">int_columns</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;subset_pk&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;group_pk&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;individual_pk&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;group_parent_pk&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;raw_pk&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_timecourse</span><span class="p">:</span>
+            <span class="n">int_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;intervention_pk&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">float_columns</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                    <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">int_columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">({</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">})</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span></div>
 </pre></div>
 
            </div>
@@ -833,11 +1131,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, Jan Grzegorzewski &amp; Matthias König
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -848,7 +1154,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

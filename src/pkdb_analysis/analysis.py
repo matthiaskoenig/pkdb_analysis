@@ -38,12 +38,14 @@ plt.rcParams.update(
 
 
 def _get_one(d):
+    """ return only one element if all elements are the same."""
     d = d.dropna()
     assert len(set(d)) <= 1, set(d)
     return list(set(d))[0]
 
 
 def _str_all(d):
+    """ String representation of a list."""
     d = d.dropna()
     return ", ".join(set(d))
 
