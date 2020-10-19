@@ -88,7 +88,7 @@ def create_table_report(
 
 @dataclass
 class Parameter:
-    """FIXME: Document."""
+    """Helper Class to define how an interactive value can be selected. """
 
     measurement_types: Union[str, List] = "any"
     value_field: Sequence = "choice"
@@ -678,14 +678,15 @@ class TableReport(object):
         Subjects_groups: int = 0,
         Subjects_individual: int = 0,
     ):
+
         has_info = []
         compare_length = 0
+
         if parameter.substance != "any":
             df = df[df["substance"] == parameter.substance]
-
+        if hallo:
         if parameter.only_group:
             df = df[df["individual_pk"] == -1]
-
             instance_id = "group_pk"
             compare_length = Subjects_groups
 
@@ -699,6 +700,7 @@ class TableReport(object):
         if len(df) == 0:
             return None
 
+
         for _, instance in df.groupby(instance_id):
             if parameter.measurement_types == "any":
                 specific_info = instance
@@ -710,7 +712,6 @@ class TableReport(object):
             value_types = (
                 specific_info[parameter.value_field].applymap(type).stack().unique()
             )
-
             has_array = False
             for value in value_types:
                 if value is np.ndarray:

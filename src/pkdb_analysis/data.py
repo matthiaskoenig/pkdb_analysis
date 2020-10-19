@@ -220,23 +220,16 @@ class PKData(object):
         if not self.groups.empty:
             self.groups.substance = self.groups.substance.astype(str)
 
+        def _transform_strings_tuple(value):
+            if isinstance(value, str):
+                if value.startswith("["):
+                    return tuple([z for z in value[1:-1].split(",")])
+            return value
+
         if not self.timecourses.empty:
-            if isinstance(self.timecourses.output_pk.iloc[0], str):
-                self.timecourses.output_pk = self.timecourses.output_pk.apply(
-                    lambda x: tuple([int(z) for z in x[1:-1].split(",")])
-                )
-            if isinstance(self.timecourses.intervention_pk.iloc[0], str):
-                self.timecourses.intervention_pk = self.timecourses.intervention_pk.apply(
-                    lambda x: tuple([int(z) for z in x[1:-1].split(",")])
-                )
-        #if not self.scatters.empty:
-        #    if isinstance(self.scatters.x_intervention_pk.iloc[0], str):
-        #        self.scatters.x_intervention_pk = self.scatters.x_intervention_pk.apply(
-        #            lambda x: tuple([int(z) for z in x[1:-1].split(",")])
-        #        )
-        #       self.scatters.y_intervention_pk = self.scatters.y_intervention_pk.apply(
-        #            lambda x: tuple([int(z) for z in x[1:-1].split(",")])
-        #        )
+            self.timecourses[["output_pk", "intervention_pk", "mean", "value", "sd", "se", "min", "max"]] = \
+                self.timecourses[["output_pk", "intervention_pk", "mean", "value", "sd", "se", "min", "max"]].df.applymap(_transform_strings_tuple)
+
 
     def __dict___(self):
         """ serialises pkdata instance to a dict."""
@@ -340,6 +333,7 @@ class PKData(object):
                 for key in PKData.KEYS
             }
         pkdata = PKData(**data_dict)
+
         return cls._intervention_pk_update(pkdata)
 
     @staticmethod
@@ -1004,5 +998,6 @@ class PKData(object):
         for column in int_columns:
             if column in df.columns:
                 df[column] = df[column].replace({np.nan: -1}).astype(int)
+
 
         return df

@@ -10,9 +10,9 @@ def test_tables(tmp_path):
         dosing_substances=["torasemide"],
         report_substances=[
             "torasemide",
-            "torasemide-M1",
-            "torasemide-M3",
-            "torasemide-M5",
+            "torasemide-m1",
+            "torasemide-m3",
+            "torasemide-m5",
         ],
         excel_path=xlsx_path,
         # google_sheets="TorasemideTables",
