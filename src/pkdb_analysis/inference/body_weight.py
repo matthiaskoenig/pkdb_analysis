@@ -19,7 +19,7 @@ ureg.define("none = count")
 
 class InferWeight(object):
     """
-    a helper class for inference of results from body weights of subjects.
+    A helper class for inference of results from body weights of subjects.
     """
 
     def __init__(self, series: pd.Series, ureg: UnitRegistry):

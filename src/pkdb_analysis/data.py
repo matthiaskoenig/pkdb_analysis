@@ -8,7 +8,6 @@ import warnings
 import zipfile
 from abc import ABC
 from collections import OrderedDict
-from copy import copy
 from pathlib import Path
 from typing import Callable, List
 
@@ -158,7 +157,7 @@ class PKData(object):
     - individuals
     - interventions
     - outputs
-    - data
+    - timecourses
     """
 
     PK_COLUMNS = {
@@ -168,6 +167,8 @@ class PKData(object):
         "interventions": "intervention_pk",
         "outputs": "output_pk",
         "timecourses": "subset_pk",
+        "scatters": "subset_pk",
+
     }
 
     KEYS = [
@@ -177,6 +178,7 @@ class PKData(object):
         "interventions",
         "outputs",
         "timecourses",
+        "scatters",
     ]
 
     # PK_COLUMNS = {key: f"{key[:-1]}_pk" for key in KEYS}
@@ -189,6 +191,8 @@ class PKData(object):
         individuals: pd.DataFrame = None,
         outputs: pd.DataFrame = None,
         timecourses: pd.DataFrame = None,
+        scatters: pd.DataFrame = None,
+
     ):
         """Creates PKDB data object from given DataFrames.
 
@@ -196,14 +200,20 @@ class PKData(object):
         :param individuals:
         :param groups:
         :param outputs:
-        """
-        self.groups = PKDataFrame(groups, pk="group_pk")
+        :param timecourses:
+        :param scatters:
 
+
+        """
+        self.studies = PKDataFrame(studies, pk="sid")
+
+        self.groups = PKDataFrame(groups, pk="group_pk")
         self.individuals = PKDataFrame(individuals, pk="individual_pk")
         self.interventions = PKDataFrame(interventions, pk="intervention_pk").replace({np.nan: None})
         self.outputs = PKDataFrame(outputs, pk="output_pk")
         self.timecourses = PKDataFrame(timecourses, pk="subset_pk")
-        self.studies = PKDataFrame(studies, pk="sid")
+        self.scatters = PKDataFrame(scatters, pk="subset_pk")
+
 
         if not self.individuals.empty:
             self.individuals.substance = self.individuals.substance.astype(str)
@@ -213,8 +223,20 @@ class PKData(object):
         if not self.timecourses.empty:
             if isinstance(self.timecourses.output_pk.iloc[0], str):
                 self.timecourses.output_pk = self.timecourses.output_pk.apply(
-                    lambda x: tuple(x[1:-1].split(","))
+                    lambda x: tuple([int(z) for z in x[1:-1].split(",")])
                 )
+            if isinstance(self.timecourses.intervention_pk.iloc[0], str):
+                self.timecourses.intervention_pk = self.timecourses.intervention_pk.apply(
+                    lambda x: tuple([int(z) for z in x[1:-1].split(",")])
+                )
+        #if not self.scatters.empty:
+        #    if isinstance(self.scatters.x_intervention_pk.iloc[0], str):
+        #        self.scatters.x_intervention_pk = self.scatters.x_intervention_pk.apply(
+        #            lambda x: tuple([int(z) for z in x[1:-1].split(",")])
+        #        )
+        #       self.scatters.y_intervention_pk = self.scatters.y_intervention_pk.apply(
+        #            lambda x: tuple([int(z) for z in x[1:-1].split(",")])
+        #        )
 
     def __dict___(self):
         """ serialises pkdata instance to a dict."""
@@ -314,7 +336,7 @@ class PKData(object):
             data_dict = {
                 key: PKData._clean_types(
                     pd.read_csv(archive.open(f"{key}.csv"), low_memory=False),
-                    is_timecourse=key == "timecourses")
+                    is_array=key in ["timecourses", "scatters"])
                 for key in PKData.KEYS
             }
         pkdata = PKData(**data_dict)
@@ -905,16 +927,30 @@ class PKData(object):
                 .rename(columns={"intervention_pk_updated": "intervention_pk"})
         )
 
-    def _update_timecourses(self, mapping_int_pks):
-        """Dates up all intervention_pk in timecourse table."""
-        mapping_int_pks = mapping_int_pks.copy()
-        self.timecourses["intervention_pk"] = self.timecourses["intervention_pk"].apply(frozenset)
+    def get_updated_intervention_pk(self, frozenset_intervention_pks):
+        """ return new set"""
 
-        return pd.merge(
-            mapping_int_pks,
-            self.timecourses.df.drop_duplicates(subset="intervention_pk"),
-            how="right",
-        ).drop(columns=["intervention_pk"]).rename(columns={"intervention_pk_updated": "intervention_pk"})
+    def _update_timecourses(self, mapping_int_pks):
+        """Dates up all intervention_pk in timecourses table."""
+        mapping_dict = mapping_int_pks.copy().set_index("intervention_pk")["intervention_pk_updated"].to_dict()
+        self.timecourses["intervention_pk"] = self.timecourses["intervention_pk"].apply(
+            lambda x: mapping_dict.get(frozenset(x)))
+
+        return self.timecourses
+
+    def _update_scatters(self, mapping_int_pks):
+        """Dates up all intervention_pk in scatters table."""
+        mapping_dict = mapping_int_pks.copy().set_index("intervention_pk")["intervention_pk_updated"].to_dict()
+
+        self.scatters["x_intervention_pk"] = self.scatters["x_intervention_pk"].apply(frozenset)
+        self.scatters["y_intervention_pk"] = self.scatters["y_intervention_pk"].apply(frozenset)
+
+        self.scatters["x_intervention_pk"] = self.scatters["x_intervention_pk"].apply(
+            lambda x: mapping_dict.get(frozenset(x)))
+
+        self.scatters["y_intervention_pk"] = self.scatters["y_intervention_pk"].apply(
+            lambda x: mapping_dict.get(frozenset(x)))
+
 
     def _intervention_pk_update(self):
         """Performs all three function necessary to update the
@@ -929,12 +965,14 @@ class PKData(object):
                 data_dict["outputs"] = self._update_outputs(mapping_int_pks)
             if not self.timecourses.empty:
                 data_dict["timecourses"] = self._update_timecourses(mapping_int_pks)
+            #if not self.scatters.empty:
+            #    data_dict["scatters"] = self._update_scatters(mapping_int_pks)
             return PKData(**data_dict)
         else:
             return self
 
     @staticmethod
-    def _clean_types(df: pd.DataFrame, is_timecourse):
+    def _clean_types(df: pd.DataFrame, is_array):
         """Sets the correct datatypes for each column in the table (df)."""
         # convert columns to float columns
         float_columns = [
@@ -957,7 +995,7 @@ class PKData(object):
             "raw_pk",
         ]
 
-        if not is_timecourse:
+        if not is_array:
             int_columns.append("intervention_pk")
             for column in float_columns:
                 if column in df.columns:

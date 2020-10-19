@@ -254,8 +254,9 @@ class PKDB(object):
 
         # convert to data frame
         df = pd.DataFrame(data)
-        is_timecourse = "timecourse" in url
-        return PKData._clean_types(df, is_timecourse)
+        is_array = "timecourse" in url or 'scatters' in url
+        return PKData._clean_types(df, is_array)
+
 
 
 

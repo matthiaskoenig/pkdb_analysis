@@ -2,10 +2,10 @@
 from pathlib import Path
 
 import requests
+from pkdb_analysis import PKData
 
 from pkdb_analysis.envs import API_URL
-from pkdb_analysis.test import TESTDATA_CONCISE_FALSE_ZIP, TESTDATA_CONCISE_TRUE_ZIP
-
+from pkdb_analysis.test import TESTDATA_CONCISE_FALSE_ZIP, TESTDATA_CONCISE_TRUE_ZIP, TESTDATA_PATH, TEST_HDF5
 
 API_URL = "http://localhost:8000/api/v1"
 
@@ -31,6 +31,9 @@ def update_test_data(path_zip: Path, concise: bool):
             print(path_zip)
 
 
+
 if __name__ == "__main__":
+    pkdata = PKData.from_archive(path=TESTDATA_CONCISE_FALSE_ZIP)
+    pkdata.to_hdf5(TEST_HDF5)
     update_test_data(TESTDATA_CONCISE_FALSE_ZIP, concise=False)
     update_test_data(TESTDATA_CONCISE_TRUE_ZIP, concise=True)
