@@ -710,9 +710,10 @@ class TableReport(object):
             value_types = (
                 specific_info[parameter.value_field].applymap(type).stack().unique()
             )
+
             has_array = False
             for value in value_types:
-                if value is np.ndarray:
+                if value is tuple:
                     has_array = True
                     choices = {True}
 

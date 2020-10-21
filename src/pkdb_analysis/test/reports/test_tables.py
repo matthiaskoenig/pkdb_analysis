@@ -1,3 +1,5 @@
+import pandas as pd
+
 from pkdb_analysis.reports import create_table_report
 from pkdb_analysis.test import TESTDATA_CONCISE_FALSE_ZIP
 
@@ -20,7 +22,17 @@ def test_tables(tmp_path):
         query_data=False,
     )
 
+
     assert xlsx_path.exists()
     assert (output_path / "studies.tsv").exists()
     assert (output_path / "pharmacokinetics.tsv").exists()
     assert (output_path / "timecourses.tsv").exists()
+
+    data = pd.read_csv(output_path / "timecourses.tsv", sep="\t")
+    print(data[[
+        'torasemide_timecourses_group',
+        'torasemide_timecourses_error']].values)
+
+
+
+
