@@ -21,40 +21,27 @@ from pkdb_analysis.utils import recursive_iter
 logger = logging.getLogger(__name__)
 
 
-def query_pkdb_data(
-    h5_path: Path = None, username: str = None, study_names: List = None
-) -> PKData:
+def query_pkdb_data(h5_path: Path = None, username: str = None, study_names: List = None) -> PKData:
     """Query the complete database.
 
     Filtering by study name is supported.
 
-    :param filter_study_names: Iterable of study_names to filter for.
+    :param study_names: Iterable of study_names to filter for.
     :param username: filter studies by username
     """
-    if h5_path.exists():
-        logger.warning(f"Existing data file is overwritten: {h5_path}")
-
-    if study_names is not None:
-        study_filter = PKFilter()
-        study_filter.add_to_all("study_name__in", "__".join(study_names))
-        pkdata = PKDB.query(pkfilter=study_filter)
-    else:
-        pkdata = PKDB.query()
-
+    studies_filter = {}
     if username is not None:
-        # Filter studies by username
-        pkdata.studies["username"] = pkdata.studies.creator.apply(pd.Series).username
-        pkdata = pkdata.filter_study(
-            f_idx=lambda pkdata: pkdata["username"] == username
-        )
-
+        studies_filter = {"creator": username}
+    if study_names is not None:
+        studies_filter = {"name__in": study_names, **studies_filter}
+    pkfilter = PKFilter()
+    pkfilter.studies = studies_filter
+    pkdata = PKDB.query_(pkfilter)
     if h5_path is not None:
         logger.info(f"Storing pkdb data: {h5_path}")
         pkdata.to_hdf5(h5_path)
-
     return pkdata
-
-
+    
 class PKFilter(object):
     """Filter objects for PKData"""
 

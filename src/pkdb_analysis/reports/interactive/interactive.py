@@ -412,6 +412,7 @@ def pkdata_by_measurement_type(
     # filter pkdata for given attributes
     data_dict = {}
     for plotting_category in plotting_categories:
+        
         data = pkdata.filter_intervention(
             f_dosing_in, substances=intervention_substances
         ).filter_output(
