@@ -2,6 +2,9 @@
 Querying PK-DB
 """
 import logging
+import tempfile
+import zipfile
+from io import StringIO, BytesIO
 from copy import deepcopy
 from pathlib import Path
 from typing import List
@@ -13,7 +16,7 @@ import requests
 
 from pkdb_analysis.data import PKData
 from pkdb_analysis.envs import API_URL, BASE_URL, PASSWORD, USER
-
+from pkdb_analysis.utils import recursive_iter
 
 logger = logging.getLogger(__name__)
 
@@ -62,81 +65,42 @@ class PKFilter(object):
         "interventions",
         "outputs",
         "timecourses",
+        "concise",
+        "download"
     ]
 
-    def __init__(self, normed=True):
+    def __init__(self, concise=False, download=True):
         """Create new Filter instance.
 
-        :param normed: [True, False, None] return [normed data, unnormalized data,
-                        normed and unnormalized data]
         """
+        # Filter keys
         self.studies = dict()
         self.groups = dict()
         self.individuals = dict()
         self.interventions = dict()
         self.outputs = dict()
         self.timecourses = dict()
+        #Special arguments
+        self.concise = f"{concise}".lower()
+        self.download = f"{download}".lower()
 
-        self._set_normed(normed)
+        #self._set_normed(normed)
 
-    def _set_normed(self, normed=True) -> None:
-        """Set the normed attribute
+    @property
+    def url_params(self) -> str:
+        """ Parse filters to url """
+        return "?" + urlparse.urlencode(self._flat_params())
 
-        :param normed:
-        :return: None
-        """
-        if normed not in [True, False, None]:
-            raise ValueError
-
-        if normed in [True, False]:
-            if normed:
-                normed_value = "true"
-            else:
-                normed_value = "false"
-            for filter_key in ["interventions", "outputs"]:
-                d = getattr(self, filter_key)
-                d["normed"] = normed_value
-
-    def __str__(self) -> str:
-        return str(self.to_dict())
+    def _flat_params(self) -> dict:
+        """ Helper function to parse filters to url"""
+        return {"__".join(keys): value for keys, value in recursive_iter(self.to_dict())}
 
     def to_dict(self) -> dict:
+        """ Reformat filter instance to a dictonary."""
         return {
             filter_key: deepcopy(getattr(self, filter_key))
             for filter_key in PKFilter.KEYS
         }
-
-    def add_to_all(self, key, value) -> None:
-        """Adds entry (key, value) to all KEY dictionaries
-
-        :return: None
-        """
-        for filter_key in PKFilter.KEYS:
-            # FIXME: THIS IS A REPLACE, NOT A ADD !!!!
-            getattr(self, filter_key)[key] = value
-
-
-class PKFilterFactory(object):
-    """ Factory for simple creation of PKFilters. """
-
-    @staticmethod
-    def by_study_sid(study_sid: str) -> PKFilter:
-        """Creates filter based on study_sid.
-        Only data for the given study_sid is returned.
-        """
-        pkfilter = PKFilter()
-        pkfilter.add_to_all("study_sid", study_sid)
-        return pkfilter
-
-    @staticmethod
-    def by_study_name(study_name: str) -> PKFilter:
-        """Creates filter based on study_name.
-        Only data for the given study_name is returned.
-        """
-        pkfilter = PKFilter()
-        pkfilter.add_to_all("study_name", study_name)
-        return pkfilter
-
 
 class PKDB(object):
     """ Querying PKData from PK-DB. """
@@ -150,6 +114,7 @@ class PKDB(object):
         :param page_size: number of entries per query
         """
         pkfilter = pkfilter.to_dict()
+        {data for data in pkfilter}
         parameters = {"format": "json", "page_size": page_size}
         logger.info("*** Querying data ***")
         pkdata = PKData(
@@ -201,7 +166,7 @@ class PKDB(object):
         )
 
     @classmethod
-    def get_authentication_headers(cls, api_base, username, password):
+    def get_authentication_headers(cls, api_base, username, password) -> dict:
         """Get authentication header with token for given user.
 
         Returns admin authentication as default.
@@ -256,6 +221,21 @@ class PKDB(object):
         df = pd.DataFrame(data)
         is_array = "timecourse" in url or 'scatters' in url
         return PKData._clean_types(df, is_array)
+
+    @classmethod
+    def query_(cls, pkfilter: PKFilter = PKFilter()) -> "PKData":
+        url = API_URL + "/filter/" + pkfilter.url_params
+        headers = cls.get_authentication_headers(BASE_URL, USER, PASSWORD)
+        logger.info(url)
+        with requests.get(url,  headers=headers, stream=True) as r:
+            r.raise_for_status()
+            bytes_buffer = BytesIO()
+            for chunk in r.iter_content(chunk_size=8192):
+                bytes_buffer.write(chunk)
+            return PKData.from_archive(bytes_buffer)
+
+
+
 
 
 

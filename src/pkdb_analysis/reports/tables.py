@@ -684,7 +684,6 @@ class TableReport(object):
 
         if parameter.substance != "any":
             df = df[df["substance"] == parameter.substance]
-        if hallo:
         if parameter.only_group:
             df = df[df["individual_pk"] == -1]
             instance_id = "group_pk"
@@ -699,7 +698,6 @@ class TableReport(object):
             instance_id = "study_name"
         if len(df) == 0:
             return None
-
 
         for _, instance in df.groupby(instance_id):
             if parameter.measurement_types == "any":

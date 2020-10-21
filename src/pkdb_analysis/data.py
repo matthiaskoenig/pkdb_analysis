@@ -4,12 +4,14 @@ Functions for working with PKDB data.
 * FIXME: specify which methods modify or copy data frames
 """
 import logging
+import os
 import warnings
 import zipfile
 from abc import ABC
 from collections import OrderedDict
+from io import BytesIO
 from pathlib import Path
-from typing import Callable, List
+from typing import Callable, List, Union
 
 import numpy as np
 import pandas as pd
@@ -317,7 +319,7 @@ class PKData(object):
         return PKData(**resulting_kwargs)
 
     @classmethod
-    def from_archive(cls, path: Path) -> "PKData":
+    def from_archive(cls, path: Union[BytesIO, os.PathLike]) -> "PKData":
         """Load data from HDF5 serialization.
 
         :param path: path to HDF5.
@@ -998,6 +1000,5 @@ class PKData(object):
         for column in int_columns:
             if column in df.columns:
                 df[column] = df[column].replace({np.nan: -1}).astype(int)
-
 
         return df
