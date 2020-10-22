@@ -646,7 +646,7 @@ class TableReport(object):
         table_df["PKDB identifier"] = table_df["sid"].apply(lambda x: x)
         # FIXME: https://github.com/matthiaskoenig/pkdb_analysis/issues/23
         # pubmeds do not exist (sid != pmid for curated studies with PKDB identifiers)
-        table_df["PMID"] = table_df["sid"].apply(lambda x: x)
+        table_df["PMID"] = table_df["reference_pmid"].apply(lambda x: x)
         table_keys = [
             "PKDB identifier",
             "name",
