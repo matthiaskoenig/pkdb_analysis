@@ -213,19 +213,11 @@ class PKDB(object):
     def query_(cls, pkfilter: PKFilter = PKFilter()) -> "PKData":
         url = API_URL + "/filter/" + pkfilter.url_params
         headers = cls.get_authentication_headers(BASE_URL, USER, PASSWORD)
-        logger.info(url)
+        logger.warning(url)
+
         with requests.get(url,  headers=headers, stream=True) as r:
             r.raise_for_status()
             bytes_buffer = BytesIO()
             for chunk in r.iter_content(chunk_size=8192):
                 bytes_buffer.write(chunk)
             return PKData.from_archive(bytes_buffer)
-
-
-
-
-
-
-
-
-
