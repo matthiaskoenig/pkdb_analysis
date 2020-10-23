@@ -339,7 +339,8 @@ class TableReport(object):
                 value_field=["route"],
             ),
             "dosing form": Parameter(
-                measurement_types=["dosing", "qualitative dosing"], value_field=["form"]
+                measurement_types=["dosing", "qualitative dosing"],
+                value_field=["form"]
             ),
         }
         outputs_info = {
@@ -348,64 +349,66 @@ class TableReport(object):
             ),
         }
 
+        # create extended tables for interventions, groups, ...
+        table_interventions = table_df.apply(
+            self._add_information,
+            args=(self.pkdata_concised.interventions, intervention_info),
+            axis=1,
+        )
+        table_groups = table_df.apply(
+            self._add_information,
+            args=(self.pkdata_concised.groups, subject_info),
+            axis=1,
+        )
+        table_groups = table_groups.apply(
+            self._add_group_and_individual_size,
+            args=(self.pkdata, self.pkdata_concised),
+            axis=1,
+        )
+        table_groups[["Subjects_individual", "Subjects_groups"]] = table_groups[
+            ["Subjects_individual", "Subjects_groups"]
+        ].astype(int)
+        table_keys.extend(["Subjects_individual", "Subjects_groups"])
+
+        table_individuals = table_df.apply(
+            self._add_information,
+            args=(self.pkdata_concised.individuals, subject_info),
+            axis=1,
+        )
+
+        table_outputs = table_df.apply(
+            self._add_information,
+            args=(self.pkdata_concised.outputs, outputs_info),
+            axis=1,
+        )
+        table_timecourses = table_df.apply(
+            self._add_information,
+            args=(self.pkdata_concised.timecourses, outputs_info),
+            axis=1,
+        )
+
+        # some helpers to keep order of table_keys
         s_keys = list(subject_info.keys())
         i_keys = list(intervention_info.keys())
         o_keys = list(outputs_info.keys())
-
-        table_keys.extend(["Subjects_individual", "Subjects_groups"])
 
         for keys in [s_keys, i_keys, o_keys]:
             table_keys.extend(copy(keys))
             keys.append("sid")  # ?????
 
-        studies_interventions = table_df.apply(
-            self._add_information,
-            args=(self.pkdata_concised.interventions, intervention_info),
-            axis=1,
-        )
-        studies_group = table_df.apply(
-            self._add_information,
-            args=(self.pkdata_concised.groups, subject_info),
-            axis=1,
-        )
-
-        studies_group = studies_group.apply(
-            self._add_group_and_individual_size,
-            args=(self.pkdata, self.pkdata_concised),
-            axis=1,
-        )
-
-        studies_group[["Subjects_individual", "Subjects_groups"]] = studies_group[
-            ["Subjects_individual", "Subjects_groups"]
-        ].astype(int)
-
-        studies_individuals = table_df.apply(
-            self._add_information,
-            args=(self.pkdata_concised.individuals, subject_info),
-            axis=1,
-        )
+        # merge a ton of tables
         table_df = pd.merge(
             table_df,
             self._combine(
-                studies_group[[*s_keys, "Subjects_individual", "Subjects_groups"]],
-                studies_individuals[s_keys],
+                table_groups[[*s_keys, "Subjects_individual", "Subjects_groups"]],
+                table_individuals[s_keys],
             ),
             on="sid",
         )
-        table_df = pd.merge(table_df, studies_interventions[i_keys], on="sid")
-        studies_outputs = table_df.apply(
-            self._add_information,
-            args=(self.pkdata_concised.outputs, outputs_info),
-            axis=1,
-        )
-        studies_timecourses = table_df.apply(
-            self._add_information,
-            args=(self.pkdata_concised.timecourses, outputs_info),
-            axis=1,
-        )
+        table_df = pd.merge(table_df, table_interventions[i_keys], on="sid")
         table_df = pd.merge(
             table_df,
-            self._combine(studies_outputs[o_keys], studies_timecourses[o_keys]),
+            self._combine(table_outputs[o_keys], table_timecourses[o_keys]),
         )
 
         return table_df[table_keys]
@@ -416,7 +419,7 @@ class TableReport(object):
             "individual": {"value_field": ["value"], "only_individual": True},
             "group": {"value_field": ["mean", "median"], "only_group": True},
             "error": {"value_field": ["sd", "se", "cv"], "only_group": True},
-            "plasma/blood": {
+            "plasma": {
                 "value_field": ["tissue"],
                 "values": ["plasma", "blood", "serum"],
                 "groupby": False,
@@ -428,10 +431,12 @@ class TableReport(object):
                 "groupby": False,
             },
         }
+
+        # create info dict for all substances
         timecourse_info = {}
         for substance in self.substances:
             for key, p_kwargs in timecourse_fields.items():
-                this_key = f"{substance}_timecourses_{key}"
+                this_key = f"{substance}_{key}"
                 timecourse_info[this_key] = Parameter(
                     measurement_types="any", substance=substance, **p_kwargs
                 )
@@ -450,7 +455,7 @@ class TableReport(object):
         pks_info = {}
         for substance in self.substances:
             pks_info_substance = {
-                f"{substance}_plasma/blood": Parameter(
+                f"{substance}_plasma": Parameter(
                     substance=f"{substance}",
                     value_field=["tissue"],
                     values=["plasma", "blood", "serum"],
@@ -606,26 +611,6 @@ class TableReport(object):
 
         return table_df[table_keys]
 
-    @staticmethod
-    def _add_information(study: pd.Series, table: pd.DataFrame, measurement_types: Dict):
-        """
-        :param study: series with study ids
-        :param table: subset of information
-        """
-        # FIXME: much too complicated
-
-        additional_dict = {}
-
-        t = table.df[table.study_sid == study.sid]
-        has_info_kwargs = {"df": t, "instance_id": table.pk}
-        additional_dict = {
-            **{
-                key: TableReport._has_info(parameter=parameter, **has_info_kwargs)
-                for key, parameter in measurement_types.items()
-            },
-            **additional_dict,
-        }
-        return study.append(pd.Series(additional_dict))
 
     @staticmethod
     def _add_group_and_individual_size(
@@ -661,20 +646,63 @@ class TableReport(object):
         assert len(group) == 1, (len(group), study_df.name, group)
         study_df["Group_all_count"] = group["group_count"]
 
+
     @staticmethod
-    def _has_info(
+    def _add_information(row: pd.Series, table: pd.DataFrame,
+                         measurement_types: Dict) -> pd.Series:
+        """
+        :param row: series with study ids
+        :param table: subset of information
+        """
+        # FIXME: much too complicated
+
+        # apply iterates over all rows -> returns new rows
+
+        # studies_interventions = table_df.apply(
+        #     self._add_information,
+        #     args=(self.pkdata_concised.interventions, intervention_info),
+        #     axis=1,
+        # )
+
+        # DataFrame with multiple rows from study table (e.g. multiple groups per study)
+        df_sid_subset = table.df[table.study_sid == row.sid]  # type: pd.DataFrame
+
+        d = dict()
+        for key, parameter in measurement_types.items():
+            d[key] = TableReport._cell_content(
+                parameter=parameter,
+                df=df_sid_subset,
+                instance_id=table.pk
+            )
+
+        return row.append(pd.Series(d))
+
+    CELL_NOT_REPORTED = ""
+    CELL_REPORTED = "✓"
+    CELL_PARTLY_REPORTED = "⅟"
+
+    @staticmethod
+    def _cell_content(
         df: pd.DataFrame,
         instance_id: str,
         parameter: Parameter,
         Subjects_groups: int = 0,
         Subjects_individual: int = 0,
-    ):
+    ) -> str:
+        """Creates the cell content.
+
+        :param: DataFrame on which is searched, e.g. subset of groups
+        :instance_id:
+        """
+        if len(df) == 0:
+            return TableReport.CELL_NOT_REPORTED
 
         has_info = []
         compare_length = 0
 
         if parameter.substance != "any":
             df = df[df["substance"] == parameter.substance]
+
         if parameter.only_group:
             df = df[df["individual_pk"] == -1]
             instance_id = "group_pk"
@@ -687,8 +715,6 @@ class TableReport(object):
 
         if not parameter.groupby:
             instance_id = "study_name"
-        if len(df) == 0:
-            return None
 
         for _, instance in df.groupby(instance_id):
             if parameter.measurement_types == "any":
@@ -722,15 +748,15 @@ class TableReport(object):
                 has_info.append(True)
 
         if not any(has_info) or len(has_info) == 0:
-            return " "
+            return TableReport.CELL_NOT_REPORTED
 
         elif all(has_info):
             if compare_length > 0:
                 if len(has_info) == compare_length:
-                    return "✓"
+                    return TableReport.CELL_REPORTED
             else:
-                return "✓"
-        return "⅟"
+                return TableReport.CELL_REPORTED
+        return TableReport.CELL_PARTLY_REPORTED
 
     @staticmethod
     def _strict_and_logic(series):
@@ -738,7 +764,7 @@ class TableReport(object):
         if len(elements) == 1:
             return list(elements)[0]
         else:
-            return " "
+            return TableReport.CELL_NOT_REPORTED
 
     @staticmethod
     def _and_logic(series):
@@ -746,15 +772,15 @@ class TableReport(object):
         if len(elements) == 1:
             return list(elements)[0]
         else:
-            return "⅟"
+            return TableReport.CELL_PARTLY_REPORTED
 
     @staticmethod
     def _any_logic(series):
         elements = set([values for values in series.values if values is not None])
-        if "✓" in elements:
-            return "✓"
+        if TableReport.CELL_REPORTED in elements:
+            return TableReport.CELL_REPORTED
         else:
-            return " "
+            return TableReport.CELL_NOT_REPORTED
 
     @staticmethod
     def _combine(df1, df2):
