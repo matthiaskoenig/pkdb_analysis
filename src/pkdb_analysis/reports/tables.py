@@ -112,6 +112,8 @@ class TableReport(object):
 
     Data is provided as PKData object.
     Export formats are table files or google spreadsheets.
+
+    FIXME: allow creation with different backends -> fix hyperlinks
     """
 
     def __init__(self, pkdata: PKData, substances: Iterable = None):
@@ -149,10 +151,10 @@ class TableReport(object):
             for key, df in sheets.items():
                 df1 = df.copy()
                 # hyperlink replacements:
-                df1["PKDB identifier"] = df1["PKDB identifier"].apply(
-                    lambda x: f'=HYPERLINK("https://develop.pk-db.com/studies/{x}", "{x}")'
+                df1["PKDB"] = df1["PKDB"].apply(
+                    lambda x: f'=HYPERLINK("https://alpha.pk-db.com/data/{x}", "{x}")'
                 )
-                df1["PMID"] = df1["PMID"].apply(
+                df1["Pubmed"] = df1["Pubmed"].apply(
                     lambda x: f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}", "{x}")'
                 )
 
@@ -200,10 +202,10 @@ class TableReport(object):
 
             # hyperlink replacements:
             df = df.copy()
-            df["PKDB identifier"] = df["PKDB identifier"].apply(
-                lambda x: f'=HYPERLINK("https://develop.pk-db.com/studies/{x}";"{x}")'
+            df["PKDB"] = df["PKDB"].apply(
+                lambda x: f'=HYPERLINK("https://alpha.pk-db.com/data/{x}";"{x}")'
             )
-            df["PMID"] = df["PMID"].apply(
+            df["Pubmed"] = df["Pubmed"].apply(
                 lambda x: f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}";"{x}")'
             )
             sheet_name = report_type.name.lower().capitalize()
@@ -237,7 +239,9 @@ class TableReport(object):
 
     def create_tables(self):
         """Creates all output tables in given output_path."""
-        self.df_studies = self.create_table(report_type=TableReportTypes.STUDIES)
+        self.df_studies = self.create_table(
+            report_type=TableReportTypes.STUDIES
+        )
         self.df_timecourses = self.create_table(
             report_type=TableReportTypes.TIMECOURSES
         )
@@ -258,20 +262,35 @@ class TableReport(object):
 
         logger.info(f"Create TableReport: {report_type}")
 
+        # create the base table
+        table = self.pkdata.studies.df.copy()
+        table_keys = ["sid", "name", "reference_pmid"]
+        table = table[table_keys]
+        table_kwargs = {"table_df": table, "table_keys": table_keys}
         if report_type == TableReportTypes.STUDIES:
-            return self.studies_table()
+            table = self.studies_table(**table_kwargs)
         elif report_type == TableReportTypes.TIMECOURSES:
-            return self.timecourses_table()
+            table = self.timecourses_table(**table_kwargs)
         elif report_type == TableReportTypes.PHARMACOKINETICS:
-            return self.pks_table()
+            table = self.pks_table(**table_kwargs)
 
-    def studies_table(self) -> pd.DataFrame:
+        # columns rename
+        table.rename(columns={
+            "sid": "PKDB",
+            "reference_pmid": "Pubmed",
+        }, inplace=True)
+        # sort
+        table.sort_values(by="name", inplace=True)
+        # fill NA
+        table.fillna("", inplace=True)
+
+        return table
+
+    def studies_table(self, table_df: pd.DataFrame, table_keys: List[str]) -> pd.DataFrame:
         """
         Changes studies in place.
         Changes study_keys in place.
         """
-        table_keys = []
-        table_df = self.pkdata.studies.df.copy()
         subject_info = {
             "sex": Parameter(measurement_types=["sex"], value_field=["choice"]),
             "age": Parameter(
@@ -341,12 +360,12 @@ class TableReport(object):
 
         studies_interventions = table_df.apply(
             self._add_information,
-            args=(self.pkdata_concised, intervention_info, "interventions"),
+            args=(self.pkdata_concised.interventions, intervention_info),
             axis=1,
         )
         studies_group = table_df.apply(
             self._add_information,
-            args=(self.pkdata_concised, subject_info, "groups"),
+            args=(self.pkdata_concised.groups, subject_info),
             axis=1,
         )
 
@@ -362,7 +381,7 @@ class TableReport(object):
 
         studies_individuals = table_df.apply(
             self._add_information,
-            args=(self.pkdata_concised, subject_info, "individuals"),
+            args=(self.pkdata_concised.individuals, subject_info),
             axis=1,
         )
         table_df = pd.merge(
@@ -376,29 +395,23 @@ class TableReport(object):
         table_df = pd.merge(table_df, studies_interventions[i_keys], on="sid")
         studies_outputs = table_df.apply(
             self._add_information,
-            args=(self.pkdata_concised, outputs_info, "outputs"),
+            args=(self.pkdata_concised.outputs, outputs_info),
             axis=1,
         )
         studies_timecourses = table_df.apply(
             self._add_information,
-            args=(self.pkdata_concised, outputs_info, "timecourses"),
+            args=(self.pkdata_concised.timecourses, outputs_info),
             axis=1,
         )
         table_df = pd.merge(
             table_df,
             self._combine(studies_outputs[o_keys], studies_timecourses[o_keys]),
         )
-        # reformating things
-        table_keys, table_df = self._format_table_information(
-            table_df=table_df, table_keys=table_keys
-        )
-        table_final_df = table_df[table_keys]
-        return table_final_df
 
-    def timecourses_table(self) -> pd.DataFrame:
-        table_keys = []
-        table_df = self.pkdata.studies.df.copy()
+        return table_df[table_keys]
 
+    def timecourses_table(self, table_df: pd.DataFrame, table_keys: List[str]) -> pd.DataFrame:
+        """Create timecourse table"""
         timecourse_fields = {
             "individual": {"value_field": ["value"], "only_individual": True},
             "group": {"value_field": ["mean", "median"], "only_group": True},
@@ -426,20 +439,14 @@ class TableReport(object):
 
         table_df = table_df.apply(
             self._add_information,
-            args=(self.pkdata_concised, timecourse_info, "timecourses"),
+            args=(self.pkdata_concised.timecourses, timecourse_info),
             axis=1,
-        )
-        table_df = table_df.fillna(" ")
-
-        # reformating things
-        table_keys, table_df = self._format_table_information(
-            table_df=table_df, table_keys=table_keys
         )
         return table_df[table_keys]
 
-    def pks_table(self) -> pd.DataFrame:
-        table_keys = []
-        table_df = self.pkdata.studies.df.copy()
+    def pks_table(self, table_df: pd.DataFrame, table_keys: List[str]) -> pd.DataFrame:
+        """Create pharmacokinetics table."""
+
         pks_info = {}
         for substance in self.substances:
             pks_info_substance = {
@@ -592,25 +599,25 @@ class TableReport(object):
 
         table_df = table_df.apply(
             self._add_information,
-            args=(self.pkdata_concised, pks_info, "outputs"),
+            args=(self.pkdata_concised.outputs, pks_info),
             axis=1,
         )
         table_keys.extend(pks_info.keys())
-        table_df = table_df.fillna(" ")
-        # reformating things
-        table_keys, table_df = self._format_table_information(
-            table_df=table_df, table_keys=table_keys
-        )
+
         return table_df[table_keys]
 
     @staticmethod
-    def _add_information(study, pkdata_concised, measurement_types: Dict, table: str):
-        """FIXME: document me."""
+    def _add_information(study: pd.Series, table: pd.DataFrame, measurement_types: Dict):
+        """
+        :param study: series with study ids
+        :param table: subset of information
+        """
+        # FIXME: much too complicated
 
         additional_dict = {}
-        this_table = getattr(pkdata_concised, table)
-        t = this_table.df[this_table.study_sid == study.sid]
-        has_info_kwargs = {"df": t, "instance_id": this_table.pk}
+
+        t = table.df[table.study_sid == study.sid]
+        has_info_kwargs = {"df": t, "instance_id": table.pk}
         additional_dict = {
             **{
                 key: TableReport._has_info(parameter=parameter, **has_info_kwargs)
@@ -639,22 +646,6 @@ class TableReport(object):
 
         return study.append(pd.Series(additional_dict))
 
-    @staticmethod
-    def _format_table_information(table_keys, table_df):
-        """Formats table information in place."""
-        table_df = table_df.rename(columns={"reference_date": "publication date"})
-        table_df["PKDB identifier"] = table_df["sid"].apply(lambda x: x)
-        # FIXME: https://github.com/matthiaskoenig/pkdb_analysis/issues/23
-        # pubmeds do not exist (sid != pmid for curated studies with PKDB identifiers)
-        table_df["PMID"] = table_df["reference_pmid"].apply(lambda x: int(x))
-        table_keys = [
-            "PKDB identifier",
-            "name",
-            "PMID",
-            "publication date",
-        ] + table_keys
-        table_df.sort_values(by="name", inplace=True)
-        return table_keys, table_df
 
     @staticmethod
     def _add_group_all_count(study_df: pd.DataFrame, pkdata: PKData):
