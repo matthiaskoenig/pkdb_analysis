@@ -154,7 +154,7 @@ class TableReport(object):
                 df1["PKDB"] = df1["PKDB"].apply(
                     lambda x: f'=HYPERLINK("https://alpha.pk-db.com/data/{x}", "{x}")'
                 )
-                df1["Pubmed"] = df1["Pubmed"].apply(
+                df1["pubmed"] = df1["pubmed"].apply(
                     lambda x: f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}", "{x}")'
                 )
 
@@ -205,7 +205,7 @@ class TableReport(object):
             df["PKDB"] = df["PKDB"].apply(
                 lambda x: f'=HYPERLINK("https://alpha.pk-db.com/data/{x}";"{x}")'
             )
-            df["Pubmed"] = df["Pubmed"].apply(
+            df["pubmed"] = df["pubmed"].apply(
                 lambda x: f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}";"{x}")'
             )
             sheet_name = report_type.name.lower().capitalize()
@@ -277,7 +277,7 @@ class TableReport(object):
         # columns rename
         table.rename(columns={
             "sid": "PKDB",
-            "reference_pmid": "Pubmed",
+            "reference_pmid": "pubmed",
         }, inplace=True)
         # sort
         table.sort_values(by="name", inplace=True)
@@ -365,10 +365,10 @@ class TableReport(object):
             args=(self.pkdata, self.pkdata_concised),
             axis=1,
         )
-        table_groups[["Subjects_individual", "Subjects_groups"]] = table_groups[
-            ["Subjects_individual", "Subjects_groups"]
+        table_groups[["subjects", "groups"]] = table_groups[
+            ["subjects", "groups"]
         ].astype(int)
-        table_keys.extend(["Subjects_individual", "Subjects_groups"])
+        table_keys.extend(["subjects", "groups"])
 
         table_individuals = table_df.apply(
             self._add_information,
@@ -400,7 +400,7 @@ class TableReport(object):
         table_df = pd.merge(
             table_df,
             self._combine(
-                table_groups[[*s_keys, "Subjects_individual", "Subjects_groups"]],
+                table_groups[[*s_keys, "subjects", "groups"]],
                 table_individuals[s_keys],
             ),
             on="sid",
@@ -621,13 +621,13 @@ class TableReport(object):
         additional_dict = {}
         this_table = getattr(pkdata_concised, "groups")
         groups_concised = this_table[this_table.study_sid == study.sid]
-        additional_dict["Subjects_groups"] = len(groups_concised.pks)
+        additional_dict["groups"] = len(groups_concised.pks)
 
         group_df = pkdata.groups.df
         study_group_df = group_df[group_df["study_sid"] == study.sid]
         all_group = study_group_df[study_group_df["group_name"] == "all"]
         subject_size = all_group.group_count.unique()[0]
-        additional_dict["Subjects_individual"] = subject_size
+        additional_dict["subjects"] = subject_size
 
         return study.append(pd.Series(additional_dict))
 
@@ -800,8 +800,8 @@ class TableReport(object):
                 "Name",
                 "PMID",
                 "publication date",
-                "Subjects_individual",
-                "Subjects_groups",
+                "subjects",
+                "groups",
             ]
         )
 
