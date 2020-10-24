@@ -1,5 +1,5 @@
 """ Defines frequently used filters for the PKData instances."""
-from typing import List
+from typing import List, Iterable
 
 from pkdb_analysis.data import PKData
 
@@ -70,7 +70,7 @@ def f_unit(d, unit: str):
     return d["unit"] == unit
 
 
-def f_mt(d, measurement_type: str):
+def f_measurement_type(d, measurement_type: str) -> bool:
     """
 
     :param d: PKDataFrame or pandas.DataFrame
@@ -80,35 +80,20 @@ def f_mt(d, measurement_type: str):
     return d["measurement_type"] == measurement_type
 
 
-def f_substance(d, substance: str):
-    """
-
-    :param d: PKDataFrame or pandas.DataFrame
-    :param substance:
-    :return:
-    """
+def f_substance(d, substance: str) -> bool:
     return d["substance"] == substance
 
 
-def f_dosing(d, substance: str):
-    """filtering index for PKData for dosing with substance
-
-    :param d: PKDataFrame or pandas.DataFrame
-    :param substance:
-    :return:
-    """
-    return f_substance(d, substance) & f_mt(d, "dosing")
+def f_substance_in(d, substances: Iterable[str]):
+    return d["substance"].isin(substances)
 
 
-def f_dosing_in(d, substances: List[str]):
-    """filtering index for PKData for dosing with substance
+def f_dosing(d, substance: str) -> bool:
+    return f_substance(d, substance) & f_measurement_type(d, "dosing")
 
-    :param d: PKDataFrame or pandas.DataFrame
-    :param substance:
-    :return:
-    """
-    d["substance"].isin(substances)
-    return d["substance"].isin(substances) & f_mt(d, "dosing")
+
+def f_dosing_in(d, substances: List[str]) -> bool:
+    return d["substance"].isin(substances) & f_measurement_type(d, "dosing")
 
 
 def f_mt_substance(d, measurement_type: str, substance: str):
@@ -119,7 +104,7 @@ def f_mt_substance(d, measurement_type: str, substance: str):
     :param substance:
     :return:
     """
-    return f_mt(d, measurement_type) & f_substance(d, substance)
+    return f_measurement_type(d, measurement_type) & f_substance(d, substance)
 
 
 def f_mt_in_substance_in(d, measurement_types: str, substances: str):
@@ -140,27 +125,27 @@ def f_choice(d, choice):
 
 
 def f_smoking(d):
-    return f_mt(d, "smoking") & f_choice(d, "Y")
+    return f_measurement_type(d, "smoking") & f_choice(d, "Y")
 
 
 def f_n_smoking(d):
-    return f_mt(d, "smoking") & f_choice(d, "N")
+    return f_measurement_type(d, "smoking") & f_choice(d, "N")
 
 
 def f_oc(d):
-    return f_mt(d, "oral contraceptives") & f_choice(d, "Y")
+    return f_measurement_type(d, "oral contraceptives") & f_choice(d, "Y")
 
 
 def f_n_oc(d):
-    return f_mt(d, "oral contraceptives") & f_choice(d, "N")
+    return f_measurement_type(d, "oral contraceptives") & f_choice(d, "N")
 
 
 def f_male(d):
-    return f_mt(d, "sex") & f_choice(d, "M")
+    return f_measurement_type(d, "sex") & f_choice(d, "M")
 
 
 def f_female(d):
-    return f_mt(d, "sex") & f_choice(d, "F")
+    return f_measurement_type(d, "sex") & f_choice(d, "F")
 
 
 def f_effective_n_oc(d):
@@ -168,8 +153,8 @@ def f_effective_n_oc(d):
 
 
 def f_healthy(d):
-    return f_mt(d, "healthy") & f_choice(d, "Y")
+    return f_measurement_type(d, "healthy") & f_choice(d, "Y")
 
 
 def f_n_healthy(d):
-    return f_mt(d, "healthy") & f_choice(d, "N")
+    return f_measurement_type(d, "healthy") & f_choice(d, "N")

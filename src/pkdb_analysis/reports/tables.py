@@ -63,14 +63,12 @@ def create_table_report(
             )
         pkdata = PKData.from_hdf5(h5_data_path)
 
-    study_sids = pkdata.filter_intervention(
-        f_idx=filter.f_dosing_in, substances=dosing_substances, concise=False
-    ).interventions.study_sids
-
-    pkdata = pkdata.filter_study(lambda x: x["sid"].isin(study_sids), concise=False)
-
     # Create table report
-    table_report = TableReport(pkdata=pkdata, substances=report_substances)
+    table_report = TableReport(
+        pkdata=pkdata,
+        substances_output=report_substances,
+        substances_intervention=dosing_substances
+    )
     table_report.create_tables()
 
     # serialize table report
@@ -116,16 +114,27 @@ class TableReport(object):
     FIXME: allow creation with different backends -> fix hyperlinks
     """
 
-    def __init__(self, pkdata: PKData, substances: Iterable = None):
-        self.pkdata = pkdata
+    def __init__(self, pkdata: PKData,
+                 substances_output: Iterable = None,
+                 substances_intervention: Iterable = None,
+                 ):
 
+        # filter intervention substances
+        # FIXME: better filtering
+        study_sids = pkdata.filter_intervention(
+            # f_idx=filter.f_dosing_in, substances=substances_intervention, concise=False
+            f_idx=filter.f_substance_in, substances=substances_intervention, concise=False
+
+        ).interventions.study_sids
+        pkdata = pkdata.filter_study(lambda x: x["sid"].isin(study_sids), concise=False)
+
+        self.pkdata = pkdata
         tmp_pkdata = pkdata.copy()
         tmp_pkdata._concise()
         self.pkdata_concised = tmp_pkdata
 
-        if substances is None:
-            substances = tuple()
-        self.substances = substances
+        self.substances_intervention = substances_intervention
+        self.substances = substances_output if substances_output else tuple()
         self.df_studies = None
         self.df_timecourses = None
         self.df_pharmacokinetics = None
