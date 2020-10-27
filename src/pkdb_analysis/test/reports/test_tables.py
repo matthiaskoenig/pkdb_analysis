@@ -28,10 +28,7 @@ def test_tables(tmp_path):
     assert (output_path / "pharmacokinetics.tsv").exists()
     assert (output_path / "timecourses.tsv").exists()
 
-    data = pd.read_csv(output_path / "timecourses.tsv", sep="\t")
-    print(data[[
-        'torasemide_timecourses_group',
-        'torasemide_timecourses_error']].values)
+    #data = pd.read_csv(output_path / "timecourses.tsv", sep="\t")
 
 
 

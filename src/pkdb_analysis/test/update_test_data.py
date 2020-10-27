@@ -33,7 +33,7 @@ def update_test_data(path_zip: Path, concise: bool):
 
 
 if __name__ == "__main__":
-    pkdata = PKData.from_archive(path=TESTDATA_CONCISE_FALSE_ZIP)
-    pkdata.to_hdf5(TEST_HDF5)
     update_test_data(TESTDATA_CONCISE_FALSE_ZIP, concise=False)
     update_test_data(TESTDATA_CONCISE_TRUE_ZIP, concise=True)
+    pkdata = PKData.from_archive(path=TESTDATA_CONCISE_FALSE_ZIP)
+    pkdata.to_hdf5(TEST_HDF5)

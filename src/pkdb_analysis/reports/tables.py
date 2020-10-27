@@ -26,9 +26,9 @@ logger = logging.getLogger(__name__)
 def create_table_report(
     dosing_substances: List,
     report_substances: List,
-    studies_content: List = None,
-    timecourses_content: List = None,
-    pks_content: List = None,
+    study_info: Dict = None,
+    timecourse_info: Dict = None,
+    pharmacokinetic_info: Dict = None,
     h5_data_path: Path = None,
     zip_data_path: Path = None,
     excel_path: Path = None,
@@ -70,7 +70,10 @@ def create_table_report(
     table_report = TableReport(
         pkdata=pkdata,
         substances_output=report_substances,
-        substances_intervention=dosing_substances
+        substances_intervention=dosing_substances,
+        study_info=study_info,
+        timecourse_info=timecourse_info,
+        pharmacokinetic_info=pharmacokinetic_info
     )
     table_report.create_tables()
 
@@ -176,7 +179,7 @@ class TableReport(object):
     }
 
     @staticmethod
-    def _timecourse_info_default(substances) -> Dict:
+    def timecourse_info_default(substances) -> Dict:
 
         timecourse_fields = {
             "individual": {"value_field": ["value"], "only_individual": True},
@@ -200,13 +203,11 @@ class TableReport(object):
         for substance in substances:
             for key, p_kwargs in timecourse_fields.items():
                 this_key = f"{substance}_{key}"
-                timecourse_info[this_key] = Parameter(
-                    measurement_types="any", substance=substance, **p_kwargs
-                )
+                timecourse_info[this_key] = Parameter( measurement_types="any", substance=substance, **p_kwargs)
         return timecourse_info
 
     @staticmethod
-    def _pharmacokinetic_info_default(substances) -> Dict:
+    def pharmacokinetic_info_default(substances) -> Dict:
         pks_info = {}
         for substance in substances:
             pks_info_substance = {
@@ -358,14 +359,17 @@ class TableReport(object):
             pks_info = {**pks_info, **pks_info_substance}
         return pks_info
 
+    @staticmethod
+    def study_info_default():
+        return TableReport.DEFAULT_STUDY_INFO
+
     def __init__(self,
                  pkdata: PKData,
                  substances_output: Iterable = None,
                  substances_intervention: Iterable = None,
-                 study_info: Dict = DEFAULT_STUDY_INFO,
+                 study_info: Dict = None,
                  timecourse_info: Dict = None,
                  pharmacokinetic_info: Dict = None,
-
                  ):
 
 
@@ -383,9 +387,9 @@ class TableReport(object):
 
         self.substances_intervention = substances_intervention
         self.substances = substances_output if substances_output is not None else tuple()
-        self.study_info = study_info
-        self.timecourse_info = timecourse_info if timecourse_info is not None else self._timecourse_info_default(substances_output)
-        self.pharmacokinetic_info = pharmacokinetic_info if pharmacokinetic_info is not None else self._pharmacokinetic_info_default(substances_output)
+        self.study_info = study_info if study_info is not None else self.study_info_default()
+        self.timecourse_info = timecourse_info if timecourse_info is not None else self.timecourse_info_default(substances_output)
+        self.pharmacokinetic_info = pharmacokinetic_info if pharmacokinetic_info is not None else self.pharmacokinetic_info_default(substances_output)
 
         self.df_studies = None
         self.df_timecourses = None
@@ -499,7 +503,7 @@ class TableReport(object):
             path_output / f"timecourses.{suffix}", sep=sep, index=index, **kwargs
         )
 
-    def create_tables(self, content):
+    def create_tables(self):
         """Creates all output tables in given output_path."""
         self.df_studies = self.create_table(
             report_type=TableReportTypes.STUDIES
@@ -627,6 +631,8 @@ class TableReport(object):
             args=(self.pkdata_concised.timecourses, self.timecourse_info),
             axis=1,
         )
+        table_keys.extend(self.timecourse_info.keys())
+
         return table_df[table_keys]
 
     def pk_table(self, table_df: pd.DataFrame, table_keys: List[str]) -> pd.DataFrame:
