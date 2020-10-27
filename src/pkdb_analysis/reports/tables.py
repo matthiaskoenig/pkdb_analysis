@@ -9,17 +9,13 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Dict, Iterable, List, Sequence, Union
-
-import numpy as np
 import pandas as pd
-
 from pkdb_analysis import filter, query_pkdb_data
 from pkdb_analysis.data import PKData
 
 
 # from gspread_pandas import Spread -> removing gspread support for now
 Spread = None
-
 logger = logging.getLogger(__name__)
 
 
@@ -266,19 +262,19 @@ class TableReport(object):
                     only_group=True,
                 ),
                 f"{substance}_auc_individual": Parameter(
-                    measurement_types=["auc_end", "auc_inf"],
+                    measurement_types=["auc-end", "auc-inf"],
                     substance=f"{substance}",
                     value_field=["value"],
                     only_individual=True,
                 ),
                 f"{substance}_auc_group": Parameter(
-                    measurement_types=["auc_end", "auc_inf"],
+                    measurement_types=["auc-end", "auc-inf"],
                     substance=f"{substance}",
                     value_field=["mean", "median"],
                     only_group=True,
                 ),
                 f"{substance}_auc_error": Parameter(
-                    measurement_types=["auc_end", "auc_inf"],
+                    measurement_types=["auc-end", "auc-inf"],
                     substance=f"{substance}",
                     value_field=["sd", "se", "cv"],
                     only_group=True,
