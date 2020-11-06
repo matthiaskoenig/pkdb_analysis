@@ -113,7 +113,9 @@ class TableReport(object):
     Data is provided as PKData object.
     Export formats are table files or google spreadsheets.
 
-    FIXME: allow creation with different backends -> fix hyperlinks
+    FIXME: pubmeds must be ints
+    FIXME: change order of name/pmid to name | pmid
+
     """
     DEFAULT_STUDY_INFO = {
         "subject_info": {
@@ -145,9 +147,9 @@ class TableReport(object):
             "overnight fast": Parameter(
                 measurement_types=["overnight fast"], value_field=["choice"]
             ),
-            "CYP1A2 genotype": Parameter(
-                measurement_types=["CYP1A2 genotype"], value_field=["choice"]
-            ),
+            # "CYP1A2 genotype": Parameter(
+            #    measurement_types=["CYP1A2 genotype"], value_field=["choice"]
+            #),
             "abstinence alcohol": Parameter(
                 measurement_types=["abstinence alcohol"],
                 value_field=["mean", "median", "value", "min", "max"],
@@ -368,15 +370,15 @@ class TableReport(object):
                  pharmacokinetic_info: Dict = None,
                  ):
 
-
-        # filter intervention substances
-        # FIXME: better filtering
+        # substance must occur in intervention
         study_sids = pkdata.filter_intervention(
             f_idx=filter.f_substance_in, substances=substances_intervention, concise=False
         ).interventions.study_sids
         pkdata = pkdata.filter_study(lambda x: x["sid"].isin(study_sids), concise=False)
 
         self.pkdata = pkdata
+
+        # make a conciced copy of data
         tmp_pkdata = pkdata.copy()
         tmp_pkdata._concise()
         self.pkdata_concised = tmp_pkdata
