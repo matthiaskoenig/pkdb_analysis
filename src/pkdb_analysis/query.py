@@ -4,8 +4,8 @@ Querying PK-DB
 import logging
 import tempfile
 import zipfile
-from io import StringIO, BytesIO
 from copy import deepcopy
+from io import BytesIO, StringIO
 from pathlib import Path
 from typing import List
 from urllib import parse as urlparse
@@ -18,10 +18,13 @@ from pkdb_analysis.data import PKData
 from pkdb_analysis.envs import API_URL, BASE_URL, PASSWORD, USER
 from pkdb_analysis.utils import recursive_iter
 
+
 logger = logging.getLogger(__name__)
 
 
-def query_pkdb_data(h5_path: Path = None, username: str = None, study_names: List = None) -> PKData:
+def query_pkdb_data(
+    h5_path: Path = None, username: str = None, study_names: List = None
+) -> PKData:
     """Query the complete database.
 
     Filtering by study name is supported.
@@ -41,7 +44,8 @@ def query_pkdb_data(h5_path: Path = None, username: str = None, study_names: Lis
         logger.info(f"Storing pkdb data: {h5_path}")
         pkdata.to_hdf5(h5_path)
     return pkdata
-    
+
+
 class PKFilter(object):
     """Filter objects for PKData"""
 
@@ -53,13 +57,11 @@ class PKFilter(object):
         "outputs",
         "timecourses",
         "concise",
-        "download"
+        "download",
     ]
 
     def __init__(self, concise=False, download=True):
-        """Create new Filter instance.
-
-        """
+        """Create new Filter instance."""
         # Filter keys
         self.studies = dict()
         self.groups = dict()
@@ -67,11 +69,11 @@ class PKFilter(object):
         self.interventions = dict()
         self.outputs = dict()
         self.timecourses = dict()
-        #Special arguments
+        # Special arguments
         self.concise = f"{concise}".lower()
         self.download = f"{download}".lower()
 
-        #self._set_normed(normed)
+        # self._set_normed(normed)
 
     @property
     def url_params(self) -> str:
@@ -80,7 +82,9 @@ class PKFilter(object):
 
     def _flat_params(self) -> dict:
         """ Helper function to parse filters to url"""
-        return {"__".join(keys): value for keys, value in recursive_iter(self.to_dict())}
+        return {
+            "__".join(keys): value for keys, value in recursive_iter(self.to_dict())
+        }
 
     def to_dict(self) -> dict:
         """ Reformat filter instance to a dictonary."""
@@ -88,6 +92,7 @@ class PKFilter(object):
             filter_key: deepcopy(getattr(self, filter_key))
             for filter_key in PKFilter.KEYS
         }
+
 
 class PKDB(object):
     """ Querying PKData from PK-DB. """
@@ -206,7 +211,7 @@ class PKDB(object):
 
         # convert to data frame
         df = pd.DataFrame(data)
-        is_array = "timecourse" in url or 'scatters' in url
+        is_array = "timecourse" in url or "scatters" in url
         return PKData._clean_types(df, is_array)
 
     @classmethod
@@ -215,7 +220,7 @@ class PKDB(object):
         headers = cls.get_authentication_headers(BASE_URL, USER, PASSWORD)
         logger.warning(url)
 
-        with requests.get(url,  headers=headers, stream=True) as r:
+        with requests.get(url, headers=headers, stream=True) as r:
             r.raise_for_status()
             bytes_buffer = BytesIO()
             for chunk in r.iter_content(chunk_size=8192):

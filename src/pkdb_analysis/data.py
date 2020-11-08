@@ -114,8 +114,8 @@ class PKDataFrame(pd.DataFrame, ABC):
 
     @property
     def pk_len(self) -> int:
-        """ returns number of unique identifiers within the table. This value can be smaller than the number
-          of rows. Since multiple rows can represent one instances. """
+        """returns number of unique identifiers within the table. This value can be smaller than the number
+        of rows. Since multiple rows can represent one instances."""
         return len(self.pks)
 
     @property
@@ -170,7 +170,6 @@ class PKData(object):
         "outputs": "output_pk",
         "timecourses": "subset_pk",
         "scatters": "subset_pk",
-
     }
 
     KEYS = [
@@ -194,7 +193,6 @@ class PKData(object):
         outputs: pd.DataFrame = None,
         timecourses: pd.DataFrame = None,
         scatters: pd.DataFrame = None,
-
     ):
         """Creates PKDB data object from given DataFrames.
 
@@ -211,11 +209,12 @@ class PKData(object):
 
         self.groups = PKDataFrame(groups, pk="group_pk")
         self.individuals = PKDataFrame(individuals, pk="individual_pk")
-        self.interventions = PKDataFrame(interventions, pk="intervention_pk").replace({np.nan: None})
+        self.interventions = PKDataFrame(interventions, pk="intervention_pk").replace(
+            {np.nan: None}
+        )
         self.outputs = PKDataFrame(outputs, pk="output_pk")
         self.timecourses = PKDataFrame(timecourses, pk="subset_pk")
         self.scatters = PKDataFrame(scatters, pk="subset_pk")
-
 
         if not self.individuals.empty:
             self.individuals.substance = self.individuals.substance.astype(str)
@@ -229,9 +228,31 @@ class PKData(object):
             return value
 
         if not self.timecourses.empty:
-            self.timecourses[["output_pk", "intervention_pk", "mean", "value", "sd", "se", "min", "max"]] = \
-                self.timecourses[["output_pk", "intervention_pk", "mean", "value", "sd", "se", "min", "max"]].df.applymap(_transform_strings_tuple)
-
+            self.timecourses[
+                [
+                    "output_pk",
+                    "intervention_pk",
+                    "mean",
+                    "value",
+                    "sd",
+                    "se",
+                    "min",
+                    "max",
+                ]
+            ] = self.timecourses[
+                [
+                    "output_pk",
+                    "intervention_pk",
+                    "mean",
+                    "value",
+                    "sd",
+                    "se",
+                    "min",
+                    "max",
+                ]
+            ].df.applymap(
+                _transform_strings_tuple
+            )
 
     def __dict___(self):
         """ serialises pkdata instance to a dict."""
@@ -331,7 +352,8 @@ class PKData(object):
             data_dict = {
                 key: PKData._clean_types(
                     pd.read_csv(archive.open(f"{key}.csv"), low_memory=False),
-                    is_array=key in ["timecourses", "scatters"])
+                    is_array=key in ["timecourses", "scatters"],
+                )
                 for key in PKData.KEYS
             }
         pkdata = PKData(**data_dict)
@@ -692,7 +714,7 @@ class PKData(object):
         return self._pk_exclude("individuals", f_idx, concise, **kwargs)
 
     def exclude_subject(self, f_idx, concise=True, **kwargs) -> "PKData":
-        """ Excludes groups and individuals which cann be selected by a filter (idx).
+        """Excludes groups and individuals which cann be selected by a filter (idx).
 
         :param f_idx:
         :param concise:
@@ -856,7 +878,7 @@ class PKData(object):
                 print(choices[field])
 
     def _map_intervention_pks(self):
-        """ Helper Function for the transformation of intervention_pk in outputs and timecourses.
+        """Helper Function for the transformation of intervention_pk in outputs and timecourses.
         returns a mapping of old intervetions_pks with new intervetion_pks
         """
         interventions_output = pd.DataFrame()
@@ -875,8 +897,8 @@ class PKData(object):
         return interventions["intervention_pk"].reset_index()
 
     def _update_interventions(self, mapping_int_pks):
-        """ Updates intervention_pk based on if they are beeing used in the outputs. Multiple interventions can have the same
-        intervention_pk. After the transformation each (output) row in the outputs links only to one intervention_pk. """
+        """Updates intervention_pk based on if they are beeing used in the outputs. Multiple interventions can have the same
+        intervention_pk. After the transformation each (output) row in the outputs links only to one intervention_pk."""
         """FIXME: document me"""
         mapping_int_pks = mapping_int_pks.copy()
         mapping_int_pks["intervention_pk"] = mapping_int_pks.intervention_pk.apply(
@@ -884,20 +906,19 @@ class PKData(object):
         )
         mapping_int_pks = (
             mapping_int_pks.intervention_pk.apply(pd.Series)
-                .stack()
-                .reset_index(level=-1, drop=True)
-                .astype(int)
-                .reset_index()
+            .stack()
+            .reset_index(level=-1, drop=True)
+            .astype(int)
+            .reset_index()
         )
         mapping_int_pks = mapping_int_pks.rename(
             columns={"index": "intervention_pk_updated", 0: "intervention_pk"}
         )
         return (
             pd.merge(mapping_int_pks, self.interventions, on="intervention_pk")
-                .drop(columns=["intervention_pk"])
-                .rename(columns={"intervention_pk_updated": "intervention_pk"})
+            .drop(columns=["intervention_pk"])
+            .rename(columns={"intervention_pk_updated": "intervention_pk"})
         )
-
 
     def _update_outputs(self, mapping_int_pks):
         """Dates up all intervention_pk in outputs table. Thereby each row becomes a unique output."""
@@ -919,8 +940,8 @@ class PKData(object):
                 self.outputs.df.drop_duplicates(subset="output_pk"),
                 how="left",
             )
-                .drop(columns=["intervention_pk"])
-                .rename(columns={"intervention_pk_updated": "intervention_pk"})
+            .drop(columns=["intervention_pk"])
+            .rename(columns={"intervention_pk_updated": "intervention_pk"})
         )
 
     def get_updated_intervention_pk(self, frozenset_intervention_pks):
@@ -928,29 +949,43 @@ class PKData(object):
 
     def _update_timecourses(self, mapping_int_pks):
         """Dates up all intervention_pk in timecourses table."""
-        mapping_dict = mapping_int_pks.copy().set_index("intervention_pk")["intervention_pk_updated"].to_dict()
+        mapping_dict = (
+            mapping_int_pks.copy()
+            .set_index("intervention_pk")["intervention_pk_updated"]
+            .to_dict()
+        )
         self.timecourses["intervention_pk"] = self.timecourses["intervention_pk"].apply(
-            lambda x: mapping_dict.get(frozenset(x)))
+            lambda x: mapping_dict.get(frozenset(x))
+        )
 
         return self.timecourses
 
     def _update_scatters(self, mapping_int_pks):
         """Dates up all intervention_pk in scatters table."""
-        mapping_dict = mapping_int_pks.copy().set_index("intervention_pk")["intervention_pk_updated"].to_dict()
-
-        self.scatters["x_intervention_pk"] = self.scatters["x_intervention_pk"].apply(frozenset)
-        self.scatters["y_intervention_pk"] = self.scatters["y_intervention_pk"].apply(frozenset)
+        mapping_dict = (
+            mapping_int_pks.copy()
+            .set_index("intervention_pk")["intervention_pk_updated"]
+            .to_dict()
+        )
 
         self.scatters["x_intervention_pk"] = self.scatters["x_intervention_pk"].apply(
-            lambda x: mapping_dict.get(frozenset(x)))
+            frozenset
+        )
+        self.scatters["y_intervention_pk"] = self.scatters["y_intervention_pk"].apply(
+            frozenset
+        )
+
+        self.scatters["x_intervention_pk"] = self.scatters["x_intervention_pk"].apply(
+            lambda x: mapping_dict.get(frozenset(x))
+        )
 
         self.scatters["y_intervention_pk"] = self.scatters["y_intervention_pk"].apply(
-            lambda x: mapping_dict.get(frozenset(x)))
-
+            lambda x: mapping_dict.get(frozenset(x))
+        )
 
     def _intervention_pk_update(self):
         """Performs all three function necessary to update the
-         intervention pks in all three tables where they are contained (interventions, output, timecourses)."""
+        intervention pks in all three tables where they are contained (interventions, output, timecourses)."""
 
         if not self.outputs.empty:
             mapping_int_pks = self._map_intervention_pks()
@@ -961,7 +996,7 @@ class PKData(object):
                 data_dict["outputs"] = self._update_outputs(mapping_int_pks)
             if not self.timecourses.empty:
                 data_dict["timecourses"] = self._update_timecourses(mapping_int_pks)
-            #if not self.scatters.empty:
+            # if not self.scatters.empty:
             #    data_dict["scatters"] = self._update_scatters(mapping_int_pks)
             return PKData(**data_dict)
         else:

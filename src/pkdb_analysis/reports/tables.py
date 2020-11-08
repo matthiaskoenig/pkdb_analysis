@@ -9,7 +9,9 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Dict, Iterable, List, Sequence, Union
+
 import pandas as pd
+
 from pkdb_analysis import filter, query_pkdb_data
 from pkdb_analysis.data import PKData
 
@@ -69,7 +71,7 @@ def create_table_report(
         substances_intervention=dosing_substances,
         study_info=study_info,
         timecourse_info=timecourse_info,
-        pharmacokinetic_info=pharmacokinetic_info
+        pharmacokinetic_info=pharmacokinetic_info,
     )
     table_report.create_tables()
 
@@ -117,6 +119,7 @@ class TableReport(object):
     FIXME: change order of name/pmid to name | pmid
 
     """
+
     DEFAULT_STUDY_INFO = {
         "subject_info": {
             "sex": Parameter(measurement_types=["sex"], value_field=["choice"]),
@@ -149,7 +152,7 @@ class TableReport(object):
             ),
             # "CYP1A2 genotype": Parameter(
             #    measurement_types=["CYP1A2 genotype"], value_field=["choice"]
-            #),
+            # ),
             "abstinence alcohol": Parameter(
                 measurement_types=["abstinence alcohol"],
                 value_field=["mean", "median", "value", "min", "max"],
@@ -165,15 +168,14 @@ class TableReport(object):
                 value_field=["route"],
             ),
             "dosing form": Parameter(
-                measurement_types=["dosing", "qualitative dosing"],
-                value_field=["form"]
+                measurement_types=["dosing", "qualitative dosing"], value_field=["form"]
             ),
         },
         "output_info": {
             "quantification method": Parameter(
                 measurement_types="any", value_field=["method"]
             )
-        }
+        },
     }
 
     @staticmethod
@@ -201,7 +203,9 @@ class TableReport(object):
         for substance in substances:
             for key, p_kwargs in timecourse_fields.items():
                 this_key = f"{substance}_{key}"
-                timecourse_info[this_key] = Parameter( measurement_types="any", substance=substance, **p_kwargs)
+                timecourse_info[this_key] = Parameter(
+                    measurement_types="any", substance=substance, **p_kwargs
+                )
         return timecourse_info
 
     @staticmethod
@@ -361,18 +365,21 @@ class TableReport(object):
     def study_info_default():
         return TableReport.DEFAULT_STUDY_INFO
 
-    def __init__(self,
-                 pkdata: PKData,
-                 substances_output: Iterable = None,
-                 substances_intervention: Iterable = None,
-                 study_info: Dict = None,
-                 timecourse_info: Dict = None,
-                 pharmacokinetic_info: Dict = None,
-                 ):
+    def __init__(
+        self,
+        pkdata: PKData,
+        substances_output: Iterable = None,
+        substances_intervention: Iterable = None,
+        study_info: Dict = None,
+        timecourse_info: Dict = None,
+        pharmacokinetic_info: Dict = None,
+    ):
 
         # substance must occur in intervention
         study_sids = pkdata.filter_intervention(
-            f_idx=filter.f_substance_in, substances=substances_intervention, concise=False
+            f_idx=filter.f_substance_in,
+            substances=substances_intervention,
+            concise=False,
         ).interventions.study_sids
         pkdata = pkdata.filter_study(lambda x: x["sid"].isin(study_sids), concise=False)
 
@@ -384,15 +391,26 @@ class TableReport(object):
         self.pkdata_concised = tmp_pkdata
 
         self.substances_intervention = substances_intervention
-        self.substances = substances_output if substances_output is not None else tuple()
-        self.study_info = study_info if study_info is not None else self.study_info_default()
-        self.timecourse_info = timecourse_info if timecourse_info is not None else self.timecourse_info_default(substances_output)
-        self.pharmacokinetic_info = pharmacokinetic_info if pharmacokinetic_info is not None else self.pharmacokinetic_info_default(substances_output)
+        self.substances = (
+            substances_output if substances_output is not None else tuple()
+        )
+        self.study_info = (
+            study_info if study_info is not None else self.study_info_default()
+        )
+        self.timecourse_info = (
+            timecourse_info
+            if timecourse_info is not None
+            else self.timecourse_info_default(substances_output)
+        )
+        self.pharmacokinetic_info = (
+            pharmacokinetic_info
+            if pharmacokinetic_info is not None
+            else self.pharmacokinetic_info_default(substances_output)
+        )
 
         self.df_studies = None
         self.df_timecourses = None
         self.df_pharmacokinetics = None
-
 
     @staticmethod
     def _create_path(path_output):
@@ -503,9 +521,7 @@ class TableReport(object):
 
     def create_tables(self):
         """Creates all output tables in given output_path."""
-        self.df_studies = self.create_table(
-            report_type=TableReportTypes.STUDIES
-        )
+        self.df_studies = self.create_table(report_type=TableReportTypes.STUDIES)
         self.df_timecourses = self.create_table(
             report_type=TableReportTypes.TIMECOURSES
         )
@@ -539,10 +555,13 @@ class TableReport(object):
             table = self.pk_table(**table_kwargs)
 
         # columns rename
-        table.rename(columns={
-            "sid": "PKDB",
-            "reference_pmid": "pubmed",
-        }, inplace=True)
+        table.rename(
+            columns={
+                "sid": "PKDB",
+                "reference_pmid": "pubmed",
+            },
+            inplace=True,
+        )
         # sort
         table.sort_values(by="name", inplace=True)
         # fill NA
@@ -550,17 +569,21 @@ class TableReport(object):
 
         return table
 
-    def studies_table(self, table_df: pd.DataFrame, table_keys: List[str]) -> pd.DataFrame:
+    def studies_table(
+        self, table_df: pd.DataFrame, table_keys: List[str]
+    ) -> pd.DataFrame:
         """
         Changes studies in place.
         Changes study_keys in place.
         """
 
-
         # create extended tables for interventions, groups, ...
         table_interventions = table_df.apply(
             self._add_information,
-            args=(self.pkdata_concised.interventions, self.study_info["intervention_info"]),
+            args=(
+                self.pkdata_concised.interventions,
+                self.study_info["intervention_info"],
+            ),
             axis=1,
         )
         table_groups = table_df.apply(
@@ -586,7 +609,7 @@ class TableReport(object):
 
         table_outputs = table_df.apply(
             self._add_information,
-            args=(self.pkdata_concised.outputs,self.study_info["output_info"]),
+            args=(self.pkdata_concised.outputs, self.study_info["output_info"]),
             axis=1,
         )
         table_timecourses = table_df.apply(
@@ -621,7 +644,9 @@ class TableReport(object):
 
         return table_df[table_keys]
 
-    def timecourses_table(self, table_df: pd.DataFrame, table_keys: List[str]) -> pd.DataFrame:
+    def timecourses_table(
+        self, table_df: pd.DataFrame, table_keys: List[str]
+    ) -> pd.DataFrame:
         """Create timecourse table"""
 
         table_df = table_df.apply(
@@ -636,7 +661,6 @@ class TableReport(object):
     def pk_table(self, table_df: pd.DataFrame, table_keys: List[str]) -> pd.DataFrame:
         """Create pharmacokinetics table."""
 
-
         table_df = table_df.apply(
             self._add_information,
             args=(self.pkdata_concised.outputs, self.pharmacokinetic_info),
@@ -645,7 +669,6 @@ class TableReport(object):
         table_keys.extend(self.pharmacokinetic_info.keys())
 
         return table_df[table_keys]
-
 
     @staticmethod
     def _add_group_and_individual_size(
@@ -666,7 +689,6 @@ class TableReport(object):
 
         return study.append(pd.Series(additional_dict))
 
-
     @staticmethod
     def _add_group_all_count(study_df: pd.DataFrame, pkdata: PKData):
         """Adds a column with the group count of the all group for every study.
@@ -680,10 +702,10 @@ class TableReport(object):
         assert len(group) == 1, (len(group), study_df.name, group)
         study_df["Group_all_count"] = group["group_count"]
 
-
     @staticmethod
-    def _add_information(row: pd.Series, table: pd.DataFrame,
-                         measurement_types: Dict) -> pd.Series:
+    def _add_information(
+        row: pd.Series, table: pd.DataFrame, measurement_types: Dict
+    ) -> pd.Series:
         """
         :param row: series with study ids
         :param table: subset of information
@@ -704,9 +726,7 @@ class TableReport(object):
         d = dict()
         for key, parameter in measurement_types.items():
             d[key] = TableReport._cell_content(
-                parameter=parameter,
-                df=df_sid_subset,
-                instance_id=table.pk
+                parameter=parameter, df=df_sid_subset, instance_id=table.pk
             )
 
         return row.append(pd.Series(d))

@@ -7,6 +7,7 @@ from urllib import parse as urlparse
 
 from pkdb_analysis.logging_utils import bcolors
 
+
 # FIXME: this makes changing endpoints programatically extremely difficult.
 # FIXME: better environment variable names
 
@@ -41,4 +42,3 @@ try:
 except KeyError as err:
     PASSWORD = None
     logger.warning(f"No 'PASSWORD' set, using: '{PASSWORD}'")
-

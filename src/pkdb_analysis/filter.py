@@ -1,5 +1,5 @@
 """ Defines frequently used filters for the PKData instances."""
-from typing import List, Iterable
+from typing import Iterable, List
 
 from pkdb_analysis.data import PKData
 

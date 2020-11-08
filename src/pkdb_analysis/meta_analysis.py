@@ -55,7 +55,7 @@ class MetaAnalysis(object):
         _table = pd.DataFrame()
         for table_pk, df in table.df.groupby(table.pk):
             subset = df[df["substance"].isin(substances)]
-            subset["number"] = len(df) # FIXME: fix Setting with copy issue here
+            subset["number"] = len(df)  # FIXME: fix Setting with copy issue here
             if len(subset) == 1:
                 subset = subset.iloc[0]
                 subset["extra"] = df
@@ -175,7 +175,7 @@ class MetaAnalysis(object):
         intervention_table = self._create_extra_table(
             "interventions", self.intervention_substances
         )
-        #intervention_table.unit = intervention_table.unit.astype(str)
+        # intervention_table.unit = intervention_table.unit.astype(str)
         intervention_table["per_bw"] = intervention_table.unit.str.endswith(
             "/ kilogram"
         )
