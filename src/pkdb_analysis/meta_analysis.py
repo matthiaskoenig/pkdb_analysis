@@ -40,7 +40,7 @@ def data_type(d):
 
 
 class MetaAnalysis(object):
-    def __init__(self, pkdata, intervention_substances, url):
+    def __init__(self, pkdata, intervention_substances, url=""):
         self.pkdata = pkdata
         self.results = None
         self.group_pk = pkdata.groups.pk
@@ -158,7 +158,7 @@ class MetaAnalysis(object):
         self.results["subject_count"] = self.results["group_count"].fillna(1)
 
         self.results["url"] = self.results["study_sid"].apply(
-            lambda x: f"{self.url}/studies/{x}"
+            lambda x: f"{self.url}/data/{x}"
         )
         # self.results = self.results.replace({"NR", "not reported"}, regex=True)
 

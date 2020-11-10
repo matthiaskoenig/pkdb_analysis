@@ -175,7 +175,7 @@ def create_plots(
                     alpha=0.7,
                 )
 
-        legend_elements = []
+            legend_elements = []
 
         for plotting_type, d in data_category.groupby("plotting_type"):
             individuals_data = d[d.group_pk == -1]
