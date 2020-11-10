@@ -1,4 +1,6 @@
 """ Utils for analysis """
+
+
 def recursive_iter(obj, keys=()):
     """ Creates dictionary with key:object from nested JSON data structure. """
     if isinstance(obj, dict):

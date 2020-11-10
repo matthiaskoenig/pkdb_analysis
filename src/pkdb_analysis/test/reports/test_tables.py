@@ -22,14 +22,9 @@ def test_tables(tmp_path):
         query_data=False,
     )
 
-
     assert xlsx_path.exists()
     assert (output_path / "studies.tsv").exists()
     assert (output_path / "pharmacokinetics.tsv").exists()
     assert (output_path / "timecourses.tsv").exists()
 
-    #data = pd.read_csv(output_path / "timecourses.tsv", sep="\t")
-
-
-
-
+    # data = pd.read_csv(output_path / "timecourses.tsv", sep="\t")

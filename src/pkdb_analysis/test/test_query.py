@@ -1,4 +1,4 @@
-from pkdb_analysis import PKFilter, PKDB
+from pkdb_analysis import PKDB, PKFilter
 
 
 def test_pkfilter():
