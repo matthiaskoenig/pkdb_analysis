@@ -9,9 +9,8 @@ import pint
 import seaborn as sns
 import yaml
 
-from pkdb_analysis.filter import f_dosing_in, f_mt_in_substance_in
 from pkdb_analysis.meta_analysis import MetaAnalysis
-
+from pkdb_analysis.plotting.factory import pkdata_by_measurement_type, get_pc
 
 alt.data_transformers.disable_max_rows()
 # alt.data_transformers.enable('json')
@@ -23,24 +22,6 @@ class LegendArgs(object):
     def __init__(self, field, init=None):
         self.field = field
         self.init = init
-
-
-class PlottingParameter(object):
-    def __init__(
-        self,
-        measurement_types,
-        units_rm,
-        infer_by_intervention=True,
-        infer_by_output=True,
-    ):
-        self.measurement_types = measurement_types
-        self.units_rm = units_rm
-        self.infer_by_intervention = infer_by_intervention
-        self.infer_by_output = infer_by_output
-
-    @property
-    def joined_measurement_type(self):
-        return "_".join(self.measurement_types)
 
 
 def column_to_color(column):
@@ -401,42 +382,6 @@ def create_interactive_plot(
         )
 
 
-def pkdata_by_measurement_type(
-    pkdata,
-    plotting_categories: PlottingParameter,
-    intervention_substances,
-    output_substances,
-    exclude_study_names,
-):
-
-    # filter pkdata for given attributes
-    data_dict = {}
-    for plotting_category in plotting_categories:
-
-        data = pkdata.filter_intervention(
-            f_dosing_in, substances=intervention_substances
-        ).filter_output(
-            f_mt_in_substance_in,
-            measurement_types=plotting_category.measurement_types,
-            substances=output_substances,
-        )
-        data = data.exclude_output(lambda d: d["unit"].isin(plotting_category.units_rm))
-        data = data.exclude_intervention(
-            lambda d: d["study_name"].isin(exclude_study_names)
-        )
-
-        data.outputs["measurement_type"] = plotting_category.joined_measurement_type
-        data_dict[plotting_category.joined_measurement_type] = data.copy()
-    return data_dict
-
-
-def _get_pc(measurement_type, plotting_categories):
-    for plotting_category in plotting_categories:
-        if plotting_category.joined_measurement_type == measurement_type:
-            return plotting_category
-    return
-
-
 def results(
     data_dict,
     intervention_substances,
@@ -456,7 +401,7 @@ def results(
             meta_analysis.results[key] = meta_analysis.results.apply(
                 additional_function, axis=1
             )
-        pc = _get_pc(measurement_type, plotting_categories)
+        pc = get_pc(measurement_type, plotting_categories)
         meta_analysis.infer_from_body_weight(
             by_intervention=pc.infer_by_intervention, by_output=pc.infer_by_output
         )

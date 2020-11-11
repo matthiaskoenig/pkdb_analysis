@@ -37,7 +37,7 @@ plt.rcParams.update(
 # ------------------------------
 
 
-def _get_one(d):
+def get_one(d):
     """ return only one element if all elements are the same."""
     d = d.dropna()
     assert len(set(d)) <= 1, set(d)
@@ -95,15 +95,15 @@ def create_plots(
     )
     figure, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
     axes_iter = iter(axes.flatten())
-    substance = _get_one(data.substance)
+    substance = get_one(data.substance)
     substance_intervention = _str_all(data.substance_intervention)
-    measurement_type = _get_one(data.measurement_type)
+    measurement_type = get_one(data.measurement_type)
 
     for plotting_category, data_category in data.groupby("plotting_category"):
 
-        unit = _get_one(data_category.unit)
+        unit = get_one(data_category.unit)
         u_unit = ureg(unit)
-        unit_intervention = _get_one(data_category.unit_intervention)
+        unit_intervention = get_one(data_category.unit_intervention)
         u_unit_intervention = ureg(unit_intervention)
         ax = next(axes_iter)
 
@@ -184,7 +184,7 @@ def create_plots(
             individuals_number = len(individuals_data)
             group_number = len(group_data)
             total_group_individuals = group_data["group_count"].sum()
-            color = _get_one(d.color)
+            color = get_one(d.color)
 
             label_text = f"{plotting_type:<10} I: {individuals_number:<3} G: {group_number:<2} TI: {int(total_group_individuals + individuals_number):<3}"
             label = Line2D(
