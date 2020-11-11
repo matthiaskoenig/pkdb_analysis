@@ -1,6 +1,6 @@
 # Module for static plot creation.
 
-from typing import List, Set, Dict
+from typing import List, Set, Dict, Callable
 from pathlib import Path
 import pint
 ureg = pint.UnitRegistry()
@@ -239,7 +239,7 @@ def create_plot(df,
                 file_name,
                 color_by,
                 color_label,
-                figsize=(30, 30),
+                figsize=(15, 15),
                 log_y=False):
 
     measurement_type = df["measurement_type"].unique()[0]  # fixme: multiple measurement_types are possible.
@@ -326,7 +326,7 @@ def plot_factory(
     intervention_substances: Set[str],
     output_substances: Set[str],
     exclude_study_names: Set[str],
-    additional_information: Dict[str, function],
+    additional_information: Dict[str, Callable],
     path: Path,
     color_by: str,
     color_label: str,
