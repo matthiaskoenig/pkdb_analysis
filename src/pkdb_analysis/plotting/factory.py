@@ -1,10 +1,13 @@
-# Module for static plot creation.
-
-from typing import List, Set, Dict, Callable
+"""
+Module for static plot creation.
+"""
+import logging
+from typing import List, Set, Dict, Callable, Iterable
 from pathlib import Path
 import pint
-ureg = pint.UnitRegistry()
+
 import numpy as np
+
 import warnings
 
 from pkdb_analysis.filter import f_dosing_in, f_mt_in_substance_in
@@ -18,6 +21,14 @@ from matplotlib.lines import Line2D
 from matplotlib.ticker import FormatStrFormatter
 import matplotlib.font_manager as font_manager
 from matplotlib import ticker
+
+from pkdb_analysis.units import UnitRegistry
+from pkdb_analysis.core import Sid
+
+logger = logging.getLogger(__file__)
+
+# FIXME: get rid of global module definitions! This overwrites local settings on import!
+ureg = UnitRegistry()
 
 font = font_manager.FontProperties(
     family="Roboto Mono",
@@ -38,6 +49,65 @@ plt.rcParams.update(
     }
 )
 # ------------------------------
+
+# FIXME:
+
+
+class PlotContentDefinition:
+    """Defines all settings for a given output plot.
+
+    Defines which measurement types are plotted in a single plots.
+    """
+    def __init__(
+        self,
+        sid: Sid = None,
+        units_to_remove: List[str] = None,
+        infer_by_intervention: bool = True,
+        infer_by_output: bool = True,
+    ):
+
+        if units_to_remove is None:
+            units_to_remove = list()
+
+        self.key = str(sid) if sid else None
+        self.sid = sid
+        self.units_rm = units_to_remove
+        self.infer_by_intervention = infer_by_intervention
+        self.infer_by_output = infer_by_output
+
+
+class PlotContentDefinitionMulti(PlotContentDefinition):
+    """Defines all settings for a given output plot.
+
+    Defines which measurement types are plotted in a single plots.
+    """
+    def __init__(
+        self,
+        measurement_types: List[Sid],
+        units_to_remove: List[str] = None,
+        infer_by_intervention: bool = True,
+        infer_by_output: bool = True,
+    ):
+        super().__init__(
+            sid=None,
+            measurement_types=measurement_types,
+            units_to_remove=units_to_remove,
+            infer_by_intervention=infer_by_intervention,
+            infer_by_output=infer_by_output
+        )
+        self.key = self._joined_measurement_type()
+
+    def _joined_measurement_type(self):
+        return "_".join([str(sid) for sid in self.measurement_types])
+    #
+    # @staticmethod
+    # def find_plot_content_definition(joined_measurement_type: str, plotting_categories: Iterable['PlotContentDefinition']) -> 'PlotContentDefinition':
+    #     """Find plot content definition based on joined measurement type."""
+    #     for plotting_category in plotting_categories:
+    #         if plotting_category.joined_measurement_type == joined_measurement_type:
+    #             return plotting_category
+    #
+    #     return None
 
 
 def results(
@@ -66,14 +136,16 @@ def results(
             meta_analysis.results[key] = meta_analysis.results.apply(
                 additional_function, axis=1
             )
-        pc = get_pc(measurement_type, plotting_categories)
+        pc = PlotContentDefinition.find_plot_content_definition(measurement_type, plotting_categories)
         meta_analysis.infer_from_body_weight(
             by_intervention=pc.infer_by_intervention, by_output=pc.infer_by_output
         )
         meta_analysis.add_extra_info(replacements)
         results = meta_analysis.results
         results_dict[measurement_type] = results
+
     return results_dict
+
 
 def add_legends(df, color_label, color_by,  ax):
     legend_elements = []
@@ -165,6 +237,7 @@ def add_legends(df, color_label, color_by,  ax):
     ax.add_artist(leg2)
     ax.add_artist(leg1)
 
+
 def group_values(df_group, color_by):
     x_group = df_group["intervention_value"]
 
@@ -180,6 +253,7 @@ def group_values(df_group, color_by):
     marker = df_group.marker
     return x_group, y_group, yerr_group, ms, color, marker
 
+
 def add_group_scatter(df_group, color_by, ax):
     x_group, y_group, yerr_group, ms, color, marker = group_values(df_group, color_by)
     ax.errorbar(
@@ -192,6 +266,7 @@ def add_group_scatter(df_group, color_by, ax):
         ms=ms,
         alpha=0.7,
     )
+
 
 def add_text(df_group, df_figure_x_max, df_figure_y_max, color_by, ax):
     x_group, y_group, _, _, _, _ = group_values(df_group, color_by=color_by)
@@ -278,7 +353,7 @@ def create_plot(df,
 
     color = list(individuals_data[color_by])
     marker = list(individuals_data["marker"])
-    mscatter(list(x), list(y), ax=ax, color="r", m="o", alpha=0.7, label=None, s=20)
+    mscatter(list(x), list(y), ax=ax, color=color, m=marker, alpha=0.7, label=None, s=20)
 
     for group, df_group in group_data.iterrows():
         add_group_scatter(df_group, color_by, ax)
@@ -303,35 +378,18 @@ def create_plot(df,
         format="png",
     )
 
-def create_plots(
-        results_dict, path, color_by, color_label):
+
+def create_plots(results_dict, path, color_by, color_label):
+    """FIXME: DOCUMENT ME"""
     for measurement_type, result_infer in results_dict.items():
         for group, df in result_infer.groupby("unit_category"):
             file_name = path / f"{measurement_type}_{group}.png"
             create_plot(df, file_name, color_by, color_label)
 
 
-class PlottingParameter(object):
-    def __init__(
-        self,
-        measurement_types,
-        units_rm,
-        infer_by_intervention=True,
-        infer_by_output=True,
-    ):
-        self.measurement_types = measurement_types
-        self.units_rm = units_rm
-        self.infer_by_intervention = infer_by_intervention
-        self.infer_by_output = infer_by_output
-
-    @property
-    def joined_measurement_type(self):
-        return "_".join(self.measurement_types)
-
-
 def plot_factory(
     pkdata: PKData,
-    plotting_categories: List[PlottingParameter],
+    plotting_categories: List[PlotContentDefinition],
     intervention_substances: Set[str],
     output_substances: Set[str],
     exclude_study_names: Set[str],
@@ -339,7 +397,8 @@ def plot_factory(
     path: Path,
     color_by: str,
     color_label: str,
-    replacements: Dict[str,Dict[str, str]] = {},):
+    replacements: Dict[str,Dict[str, str]] = {},
+):
 
     data_dict = pkdata_by_measurement_type(
         pkdata,
@@ -348,6 +407,7 @@ def plot_factory(
         output_substances,
         exclude_study_names,
     )
+
     results_dict = results(
         data_dict=data_dict,
         intervention_substances=intervention_substances,
@@ -358,18 +418,20 @@ def plot_factory(
 
     create_plots(
         results_dict,
-        path,
-        color_by,
-        color_label)
+        path=path,
+        color_by=color_by,
+        color_label=color_label
+    )
 
 
 def pkdata_by_measurement_type(
     pkdata,
-    plotting_categories: PlottingParameter,
+    plotting_categories: PlotContentDefinition,
     intervention_substances,
     output_substances,
     exclude_study_names,
 ):
+    """FIXME: DOCUMENT ME"""
 
     # filter pkdata for given attributes
     data_dict = {}
@@ -387,13 +449,11 @@ def pkdata_by_measurement_type(
             lambda d: d["study_name"].isin(exclude_study_names)
         )
 
-        data.outputs["measurement_type"] = plotting_category.joined_measurement_type
-        data_dict[plotting_category.joined_measurement_type] = data.copy()
+        measurement_type = plotting_category.joined_measurement_type()
+        data.outputs["measurement_type"] = measurement_type
+        data_dict[measurement_type] = data.copy()
+
     return data_dict
 
 
-def get_pc(measurement_type, plotting_categories):
-    for plotting_category in plotting_categories:
-        if plotting_category.joined_measurement_type == measurement_type:
-            return plotting_category
-    return
+

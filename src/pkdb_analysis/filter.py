@@ -3,29 +3,37 @@ from typing import Iterable, List
 
 from pkdb_analysis.data import PKData
 
-
-TEST_STUDY_NAMES = ["Test1", "Test2", "Test3", "Test4"]
-import collections
-import warnings
-
 import numpy as np
 import pandas as pd
 
+def filter_single_intervention(pkdata: PKData) -> PKData:
+    """Returns modified copy"""
+    pkdata = pkdata.copy()
+    single_interventions = []
+    for pk, co_interventions in pkdata.interventions.groupby(
+            pkdata.interventions.pk):
+        if len(co_interventions) == 1:
+            single_interventions.append(pk)
 
-PlottingParameter = collections.namedtuple(
-    "PlottingParameter", ["measurement_type", "units_rm"]
-)
+    return pkdata.filter_intervention(
+        lambda d: d[pkdata.interventions.pk].isin(single_interventions)
+    )
 
 
-# add group_columns,
-# add individual_columns,
-# add intervention_columns,
-# add output_columns,
-# add timecourse_columns
-
+def filter_healthy(pkdata: PKData) -> PKData:
+    """Returns modified copy"""
+    pkdata = pkdata.copy()
+    return pkdata.filter_subject(
+        f_healthy, concise=False
+    ).exclude_subject(f_n_healthy)
 
 def exclude_tests(data: PKData):
-    return data.exclude_intervention(lambda d: d["study_name"].isin(TEST_STUDY_NAMES))
+    """Exclude data for test studies."""
+    return data.exclude_intervention(lambda d: d["study_name"].isin(
+        ["Test1", "Test2", "Test3", "Test4"]
+    ))
+
+
 
 
 def combine(args):
@@ -35,12 +43,15 @@ def combine(args):
         return np.NAN
     try:
         return pd.to_numeric(str_value)
-
+    # FIXME TOO BROAD EXCEPTION, use the correct error (TypeError?)
     except:
         return str_value
 
 
 def pk_info(d, measurement_type, columns, suffix=None, concise=True, aggfunc=combine):
+    """FIXME: Document me? What is this
+
+    """
     if suffix is None:
         suffix_text = f"_{measurement_type}"
     else:
@@ -61,7 +72,7 @@ def pk_info(d, measurement_type, columns, suffix=None, concise=True, aggfunc=com
 
 
 def f_unit(d, unit: str):
-    """
+    """ FIXME: DOCUMENT ME
 
     :param d: PKDataFrame or pandas.DataFrame
     :param unit:
@@ -71,7 +82,7 @@ def f_unit(d, unit: str):
 
 
 def f_measurement_type(d, measurement_type: str) -> bool:
-    """
+    """ FIXME: DOCUMENT ME
 
     :param d: PKDataFrame or pandas.DataFrame
     :param measurement_type:
@@ -81,22 +92,27 @@ def f_measurement_type(d, measurement_type: str) -> bool:
 
 
 def f_substance(d, substance: str) -> bool:
+    """ FIXME: DOCUMENT ME """
     return d["substance"] == substance
 
 
 def f_substance_in(d, substances: Iterable[str]):
+    """ FIXME: DOCUMENT ME """
     return d["substance"].isin(substances)
 
 
 def f_dosing(d, substance: str) -> bool:
+    """ FIXME: DOCUMENT ME """
     return f_substance(d, substance) & f_measurement_type(d, "dosing")
 
 
 def f_dosing_in(d, substances: List[str]) -> bool:
+    """ FIXME: DOCUMENT ME """
     return d["substance"].isin(substances) & f_measurement_type(d, "dosing")
 
 
 def f_mt_substance(d, measurement_type: str, substance: str):
+    """ FIXME: DOCUMENT ME """
     """filtering index for PKData for measurement_type with substance
 
     :param d: PKDataFrame or pandas.DataFrame
@@ -108,6 +124,7 @@ def f_mt_substance(d, measurement_type: str, substance: str):
 
 
 def f_mt_in_substance_in(d, measurement_types: str, substances: str):
+    """ FIXME: DOCUMENT ME """
     """filtering index for PKData for measurement_type with substance
 
     :param d: PKDataFrame or pandas.DataFrame
@@ -120,40 +137,50 @@ def f_mt_in_substance_in(d, measurement_types: str, substances: str):
     )
 
 def f_choice(d, choice):
+    """ FIXME: DOCUMENT ME """
     return d["choice"] == choice
 
 
 def f_smoking(d):
+    """ FIXME: DOCUMENT ME """
     return f_measurement_type(d, "smoking") & f_choice(d, "Y")
 
 
 def f_n_smoking(d):
+    """ FIXME: DOCUMENT ME """
     return f_measurement_type(d, "smoking") & f_choice(d, "N")
 
 
 def f_oc(d):
+    """ FIXME: DOCUMENT ME """
     return f_measurement_type(d, "oral contraceptives") & f_choice(d, "Y")
 
 
 def f_n_oc(d):
+    """ FIXME: DOCUMENT ME """
     return f_measurement_type(d, "oral contraceptives") & f_choice(d, "N")
 
 
 def f_male(d):
+    """ FIXME: DOCUMENT ME """
     return f_measurement_type(d, "sex") & f_choice(d, "M")
 
 
 def f_female(d):
+    """ FIXME: DOCUMENT ME """
     return f_measurement_type(d, "sex") & f_choice(d, "F")
 
 
 def f_effective_n_oc(d):
+    """ FIXME: DOCUMENT ME """
     return (f_n_oc(d)) | (f_male(d))
 
 
 def f_healthy(d):
+    """ FIXME: DOCUMENT ME """
     return f_measurement_type(d, "healthy") & f_choice(d, "Y")
 
 
 def f_n_healthy(d):
+    """ FIXME: DOCUMENT ME """
     return f_measurement_type(d, "healthy") & f_choice(d, "N")

@@ -10,7 +10,7 @@ import seaborn as sns
 import yaml
 
 from pkdb_analysis.meta_analysis import MetaAnalysis
-from pkdb_analysis.plotting.factory import pkdata_by_measurement_type, get_pc
+from pkdb_analysis.plotting.factory import pkdata_by_measurement_type
 
 alt.data_transformers.disable_max_rows()
 # alt.data_transformers.enable('json')
@@ -401,6 +401,8 @@ def results(
             meta_analysis.results[key] = meta_analysis.results.apply(
                 additional_function, axis=1
             )
+
+        # FIXME: simplify this
         pc = get_pc(measurement_type, plotting_categories)
         meta_analysis.infer_from_body_weight(
             by_intervention=pc.infer_by_intervention, by_output=pc.infer_by_output

@@ -7,7 +7,7 @@ import pandas as pd
 from pkdb_analysis import PKData
 from pkdb_analysis.filter import f_effective_n_oc, f_n_oc, f_n_smoking, f_oc, f_smoking
 from pkdb_analysis.reports.interactive.interactive import LegendArgs as LA
-from pkdb_analysis.plotting.factory import PlottingParameter as PP
+from pkdb_analysis.plotting.factory import PlotContentDefinition as PP
 from pkdb_analysis.reports.interactive.interactive import interactive_plot_factory
 from pkdb_analysis.test import TEST_HDF5, TESTDATA_CONCISE_FALSE_ZIP
 
