@@ -1,4 +1,5 @@
 """ Module for analysis of PKData"""
+# FIXME: Probably deprecated
 import os
 
 import matplotlib.pyplot as plt
@@ -14,7 +15,7 @@ ureg = pint.UnitRegistry()
 # ---- Styles for plotting ----
 
 import matplotlib.font_manager as font_manager
-
+import matplotlib.markers as mmarkers
 
 font = font_manager.FontProperties(
     family="Roboto Mono",
@@ -50,10 +51,8 @@ def _str_all(d):
     return ", ".join(set(d))
 
 
-def mscatter(x, y, ax=None, m=None, **kw):
-    import matplotlib.markers as mmarkers
+def mscatter(x, y, ax, m=None, **kw):
 
-    ax = ax or plt.gca()
     sc = ax.scatter(x, y, **kw)
     if (m is not None) and (len(m) == len(x)):
         paths = []
@@ -79,7 +78,7 @@ def figure_category(d):
         return "abs_output_rel_intervention"
 
 
-def create_plots(
+def create_plots(  # FIXME: Probably deprecated
     data,
     fig_path,
     color_by=None,
@@ -264,7 +263,6 @@ def create_plots(
         ax.yaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
 
         leg1 = ax.legend(handles=legend_elements, prop=font, loc="upper right")
-
         leg2 = ax.legend(handles=legend2_elements, prop=font, loc="upper left")
         leg3 = ax.legend(
             handles=legend3_elements, prop=font, labelspacing=1.3, loc="center right"

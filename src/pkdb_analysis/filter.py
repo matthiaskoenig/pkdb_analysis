@@ -119,7 +119,6 @@ def f_mt_in_substance_in(d, measurement_types: str, substances: str):
         substances
     )
 
-
 def f_choice(d, choice):
     return d["choice"] == choice
 

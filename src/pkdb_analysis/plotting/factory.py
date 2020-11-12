@@ -5,6 +5,7 @@ from pathlib import Path
 import pint
 ureg = pint.UnitRegistry()
 import numpy as np
+import warnings
 
 from pkdb_analysis.filter import f_dosing_in, f_mt_in_substance_in
 from pkdb_analysis.analysis import mscatter, get_one
@@ -74,7 +75,7 @@ def results(
         results_dict[measurement_type] = results
     return results_dict
 
-def add_legends(df, color_label, ax):
+def add_legends(df, color_label, color_by,  ax):
     legend_elements = []
     for plotting_type, d in df.groupby(color_label):
         individuals_data = d[d.group_pk == -1]
@@ -82,7 +83,7 @@ def add_legends(df, color_label, ax):
         individuals_number = len(individuals_data)
         group_number = len(group_data)
         total_group_individuals = group_data["group_count"].sum()
-        color = get_one(d.color)
+        color = get_one(d[color_by])
 
         label_text = f"{plotting_type:<10} I: {individuals_number:<3} G: {group_number:<2} TI: {int(total_group_individuals + individuals_number):<3}"
         label = Line2D(
@@ -164,7 +165,7 @@ def add_legends(df, color_label, ax):
     ax.add_artist(leg2)
     ax.add_artist(leg1)
 
-def group_values(df_group):
+def group_values(df_group, color_by):
     x_group = df_group["intervention_value"]
 
     if np.isnan(df_group["mean"]):
@@ -173,14 +174,14 @@ def group_values(df_group):
         y_group = df_group["mean"]
 
     yerr_group = df_group.se
-
+    yerr_group = np.nan_to_num(yerr_group)
     ms = df_group.group_count + 5
-    color = df_group.color
+    color = df_group[color_by]
     marker = df_group.marker
     return x_group, y_group, yerr_group, ms, color, marker
 
-def add_group_scatter(df_group, ax):
-    x_group, y_group, yerr_group, ms, color, marker = group_values(df_group)
+def add_group_scatter(df_group, color_by, ax):
+    x_group, y_group, yerr_group, ms, color, marker = group_values(df_group, color_by)
     ax.errorbar(
         x_group,
         y_group,
@@ -192,8 +193,8 @@ def add_group_scatter(df_group, ax):
         alpha=0.7,
     )
 
-def add_text(df_group, df_figure_x_max, df_figure_y_max, ax):
-    x_group, y_group, _, _, _, _ = group_values(df_group)
+def add_text(df_group, df_figure_x_max, df_figure_y_max, color_by, ax):
+    x_group, y_group, _, _, _, _ = group_values(df_group, color_by=color_by)
     txt = df_group.study_name
     data_values = [
         x_group + (0.01 * df_figure_x_max),
@@ -249,7 +250,6 @@ def create_plot(df,
     u_unit_intervention = ureg(get_one(df["intervention_unit"]))
 
     figure, ax = plt.subplots(nrows=1, ncols=1, figsize=figsize)
-
     individuals_data = df[df.group_pk == -1]
     group_data = df[df.group_pk != -1]
 
@@ -264,28 +264,37 @@ def create_plot(df,
     df_figure_y_max = np.max(max_values) * 1.05
     df_figure_x_max = df.intervention_value.max() * 1.05
     df_figure_y_min = 0
+    rows_with_nan = individuals_data[["intervention_value","value"]].isnull().any(axis=1)
+    nan_individuals_data = individuals_data[rows_with_nan]
+    if len(nan_individuals_data) > 0:
+        for row, output in nan_individuals_data.iterrows():
+            warnings.warn(f"individual: <{output['individual_name']}> in study <{output['study_name']}> is has a nan value "
+                          f"on intervention <{output['intervention_value']}> or output <{output['value']}>,"
+                          f" which will not be displayed.")
 
+    individuals_data = individuals_data[~rows_with_nan]
     x = individuals_data.intervention_value
     y = individuals_data.value
+
     color = list(individuals_data[color_by])
     marker = list(individuals_data["marker"])
-    mscatter(x, y, ax=ax, color=color, m=marker, alpha=0.7, label=None, s=20)
+    mscatter(list(x), list(y), ax=ax, color="r", m="o", alpha=0.7, label=None, s=20)
 
     for group, df_group in group_data.iterrows():
-        add_group_scatter(df_group, ax)
-        add_text(df_group, df_figure_x_max, df_figure_y_max, ax)
+        add_group_scatter(df_group, color_by, ax)
+        add_text(df_group, df_figure_x_max, df_figure_y_max, color_by, ax)
 
-    add_legends(df, color_label, ax)
+    add_legends(df, color_label, color_by, ax)
     add_axis_config(ax,
-                    substance,
-                    substance_intervention,
-                    measurement_type,
-                    u_unit,
-                    u_unit_intervention,
-                    df_figure_x_max,
-                    df_figure_y_min,
-                    df_figure_y_max,
-                    log_y)
+                     substance,
+                     substance_intervention,
+                     measurement_type,
+                     u_unit,
+                     u_unit_intervention,
+                     df_figure_x_max,
+                     df_figure_y_min,
+                     df_figure_y_max,
+                     log_y)
 
     figure.savefig(
         file_name,

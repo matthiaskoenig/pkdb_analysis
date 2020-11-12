@@ -1,3 +1,5 @@
+import warnings
+
 import numpy as np
 import pandas as pd
 
@@ -54,12 +56,18 @@ class MetaAnalysis(object):
         table = getattr(self.pkdata, table_name)
         _table = pd.DataFrame()
         for table_pk, df in table.df.groupby(table.pk):
-            subset = df[df["substance"].isin(substances)]
-            subset["number"] = len(df)  # FIXME: fix Setting with copy issue here
+            subset = df[df["substance"].isin(substances)].copy()
+            subset["number"] = len(df)
             if len(subset) == 1:
                 subset = subset.iloc[0]
                 subset["extra"] = df
                 _table = _table.append(subset)
+            else:
+                ds = df.iloc[0]
+                warnings.warn(f"Outputs with interventions <{list(subset['name'])}> in study <{ds['study_name']}> are "
+                              f"removed from the plots. Due to the administration of one of the "
+                              f"substances <{substances}> multiple times. It is not clear how to calculated the dosage "
+                              f"and compare to a single dose application.")
         return _table
 
     def _add(self, df, measurement_type):
