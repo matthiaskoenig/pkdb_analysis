@@ -3,7 +3,7 @@ from typing import List
 import pandas as pd
 import shutil
 from pkdb_analysis.core import Sid
-
+import subprocess
 
 def create_latex_report(
     output_dir: Path,
@@ -11,7 +11,13 @@ def create_latex_report(
     substance_shorts: List[str],
     replacement_order: List[int] = None
 ):
-    """Create latex table report."""
+    """Create latex table report.
+
+    Latex files are created in the output_dir with the main latex file being
+    'main.tex'. Conversion into pdf can be done for instance with pdflatex
+        pdflatex main.tex
+
+    """
     latex_tables = LatexTables(
         output_dir=output_dir,
         substance_sids=substance_sids,
@@ -19,6 +25,7 @@ def create_latex_report(
         replacement_order=replacement_order
     )
     latex_tables.create_latex()
+    latex_tables.create_pdf()
 
 
 class LatexTables:
@@ -46,6 +53,14 @@ class LatexTables:
             raise ValueError(
                 f"length of 'substance_sids' ({substance_sids}) must match length of "
                 f"'replacement_order' ({replacement_order}), but '{len(substance_sids)} != {len(replacement_order)}'.")
+
+    def create_pdf(self):
+        """Create pdf using pdflatex.
+
+        Requires working installation on system path.
+        """
+        self.create_latex()
+        subprocess.run(["pdflatex", 'main.tex'], cwd=self.output_dir)
 
     def create_latex(self):
         """Creates all latex files."""
@@ -203,12 +218,12 @@ class LatexTables:
             with open(latex_path, "r") as f:
                 latex = f.read()
 
-            # latex = latex.replace(r"\begin{table}", "")
-            # latex = latex.replace(r"\end{table}", "")
             latex = latex.replace(r"textbackslash ", "")
             latex = latex.replace("\{", "{")
             latex = latex.replace("\}", "}")
             latex = latex.replace("⅟", "$⅟$")
+
+            n_sids = len(self.substance_sids)
 
             if table_key == "studies":
                 # rotate headers
@@ -224,7 +239,7 @@ class LatexTables:
 
                 # create a top header for each substance
 
-                n_sids = len(self.substance_sids)
+
                 n_cols = 5
                 latex = latex.replace(
                     "toprule",
@@ -249,21 +264,24 @@ class LatexTables:
                     latex = latex.replace(f"\_{pkid}", "")
 
                 # create top headers for each pk parameter
-                # FIXME: replacements
-                # if k == 0:
-                #     latex = latex.replace("toprule", "toprule\n\\rowcolor{white}\n"
-                #                              "& & \multicolumn{5}{c}{auc} && \multicolumn{5}{c}{clearance}"
-                #                              " && \multicolumn{5}{c}{cmax} && \multicolumn{5}{c}{kel}"
-                #                              "\\\\\n\cmidrule{3-7} \cmidrule{9-13} \cmidrule{15-19} \cmidrule{21-25}\n"
-                #                              "\\rowcolor{white}")
-                # else:
-                #     latex = latex.replace("toprule",
-                #                           "toprule\n\\rowcolor{white}\n"
-                #                           "& & \multicolumn{5}{c}{thalf} && \multicolumn{5}{c}{tmax}"
-                #                           " && \multicolumn{5}{c}{vd}"
-                #                           "\\\\\n\cmidrule{3-7} \cmidrule{9-13} \cmidrule{15-19}\n"
-                #                           "\\rowcolor{white}")
 
+                if k == 0:
+                    pk_keys = ["auc", "clearance", "cmax", "kel"]
+                else:
+                    pk_keys = ["thalf", "tmax", "vd"]
+
+
+                latex = latex.replace(
+                    "toprule",
+                    "toprule\n\\rowcolor{white}\n" + \
+                    "& &" + \
+                    "& &".join(["\multicolumn{" + str(n_sids) + "}{c}{" + pk + "}" for pk in pk_keys]) + \
+                    "\\\\\n" + \
+                    " ".join(["\cmidrule{" + str(3+k*(n_sids+1)) + "-" + str(3+k*(n_sids+1)+(n_sids-1)) + "}" for k in range(len(pk_keys))]) + \
+                    "\n\\rowcolor{white}"
+                )
+
+            # remove the empty columns
             for k in range(10):
                 latex = latex.replace(f"empty{k}", "")
 
