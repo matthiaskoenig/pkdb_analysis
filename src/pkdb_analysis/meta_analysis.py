@@ -1,12 +1,13 @@
 import warnings
+from typing import Set
 
 import numpy as np
 import pandas as pd
+from pkdb_analysis import PKData
 
 from pkdb_analysis.analysis import figure_category
 from pkdb_analysis.filter import f_healthy, f_n_healthy, pk_info
 from pkdb_analysis.inference.body_weight import infer_weight
-
 
 INTERVENTION_FIELDS = ["substance", "value", "unit", "route", "form", "application"]
 NUMERIC_FIELDS_NO_VALUE = ["mean", "min", "max", "median", "count", "sd", "se", "unit"]
@@ -42,7 +43,7 @@ def data_type(d):
 
 
 class MetaAnalysis(object):
-    def __init__(self, pkdata, intervention_substances, url=""):
+    def __init__(self, pkdata: PKData, intervention_substances: Set[str], url: str = ""):
         self.pkdata = pkdata
         self.results = None
         self.group_pk = pkdata.groups.pk
@@ -82,11 +83,11 @@ class MetaAnalysis(object):
         return self.pkdata.filter_subject(f_healthy).exclude_subject(f_n_healthy)
 
     def create_subject_table(
-        self,
-        subject,
-        numeric_fields=("weight", "age"),
-        catgorial_fields=("sex",),
-        add_healthy=True,
+            self,
+            subject,
+            numeric_fields=("weight", "age"),
+            categorical_fields=("sex",),
+            add_healthy=True,
     ):
 
         subject_core = getattr(self.pkdata, f"{subject}_core")
@@ -102,20 +103,20 @@ class MetaAnalysis(object):
             pk_info(subject_df, numeric_field, NUMERIC_FIELDS)
             for numeric_field in numeric_fields
         ]
-        subject_categorials_extra = []
-        for categorial_field in catgorial_fields:
-            detail_info = pk_info(subject_df, categorial_field, ["choice"]).rename(
-                columns={f"choice_{categorial_field}": categorial_field}
+        subject_categorical_extra = []
+        for categorical_field in categorical_fields:
+            detail_info = pk_info(subject_df, categorical_field, ["choice"]).rename(
+                columns={f"choice_{categorical_field}": categorical_field}
             )
-            subject_categorials_extra.append(detail_info)
+            subject_categorical_extra.append(detail_info)
 
-        for individuals_info in [*subject_categorials_extra, *subject_numeric_extra]:
+        for individuals_info in [*subject_categorical_extra, *subject_numeric_extra]:
             subject_core = pd.merge(
                 subject_core, individuals_info, on=subject_df.pk, how="left"
             )
 
-        for categorial_field in catgorial_fields:
-            subject_core[categorial_field] = subject_core[categorial_field].fillna(
+        for categorical_field in categorical_fields:
+            subject_core[categorical_field] = subject_core[categorical_field].fillna(
                 "unknown"
             )
 
@@ -151,10 +152,10 @@ class MetaAnalysis(object):
             ["mean_weight", "median_weight", "value_weight"]
         ].max(axis=1)
         self.results["min_sd_weight"] = (
-            self.results["weight"] - self.results["sd_weight"]
+                self.results["weight"] - self.results["sd_weight"]
         )
         self.results["max_sd_weight"] = (
-            self.results["weight"] + self.results["sd_weight"]
+                self.results["weight"] + self.results["sd_weight"]
         )
 
         self.results["age"] = self.results[["mean_age", "median_age", "value_age"]].max(
@@ -175,6 +176,10 @@ class MetaAnalysis(object):
 
     def create_results_base(self):
         results = self.pkdata.outputs.copy()
+        # FIXME: solve na values more generically
+        results["method"] = results["method"].fillna("unknown")
+        results["tissue"] = results["tissue"].fillna("unknown")
+
         results["per_bw"] = results.unit.str.endswith("/ kilogram")
         results["inferred"] = False
         self.results = results

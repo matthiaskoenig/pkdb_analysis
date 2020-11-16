@@ -45,7 +45,6 @@ def query_pkdb_data(
         pkdata.to_hdf5(h5_path)
     return pkdata
 
-
 class PKFilter(object):
     """Filter objects for PKData"""
 
@@ -226,3 +225,15 @@ class PKDB(object):
             for chunk in r.iter_content(chunk_size=8192):
                 bytes_buffer.write(chunk)
             return PKData.from_archive(bytes_buffer)
+
+
+    @classmethod
+    def query_info_nodes(cls) -> pd.DataFrame:
+        url = API_URL + "/info_nodes/"
+        headers = cls.get_authentication_headers(BASE_URL, USER, PASSWORD)
+        logger.warning(url)
+        df = cls._get_data(url, headers, page_size=1000)
+        return df["sid"]
+
+
+

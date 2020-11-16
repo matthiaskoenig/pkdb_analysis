@@ -2,15 +2,17 @@ import math
 import os
 import shutil
 from pathlib import Path
+from typing import List, Set, Dict, Callable
 
 import altair as alt
 import pandas as pd
 import pint
 import seaborn as sns
 import yaml
-
+from pkdb_analysis.data import PKData
+from pkdb_analysis.core import Sid
 from pkdb_analysis.meta_analysis import MetaAnalysis
-from pkdb_analysis.plotting.factory import pkdata_by_measurement_type
+from pkdb_analysis.plotting.factory import pkdata_by_plot_content, results, PlotContentDefinition
 
 alt.data_transformers.disable_max_rows()
 # alt.data_transformers.enable('json')
@@ -381,39 +383,6 @@ def create_interactive_plot(
             f"{path}.html", webdriver="firefox", embed_options={"renderer": "svg"}
         )
 
-
-def results(
-    data_dict,
-    intervention_substances,
-    additional_information,
-    url,
-    plotting_categories,
-    replacements,
-):
-    # creates one dataframe from PKData instance.
-    # infers additional results from body weights.
-    results_dict = {}
-    for measurement_type, pkd in data_dict.items():
-        meta_analysis = MetaAnalysis(pkd, intervention_substances, url)
-        meta_analysis.create_results()
-
-        for key, additional_function in additional_information.items():
-            meta_analysis.results[key] = meta_analysis.results.apply(
-                additional_function, axis=1
-            )
-
-        # FIXME: simplify this
-        pc = get_pc(measurement_type, plotting_categories)
-        meta_analysis.infer_from_body_weight(
-            by_intervention=pc.infer_by_intervention, by_output=pc.infer_by_output
-        )
-        meta_analysis.add_extra_info(replacements)
-        results = meta_analysis.results
-        results_dict[measurement_type] = results
-
-    return results_dict
-
-
 def check_legends(df, legend_keys):
     for legend_key in legend_keys:
         assert legend_key in df, f"{legend_key} is not in your data"
@@ -422,15 +391,15 @@ def check_legends(df, legend_keys):
 def create_navigation_file(results_dict, path):
     navigation = []
 
-    for measurement_type, result_infer in results_dict.items():
-        this_nav = {"name": measurement_type, "link": "/#", "dropdown": []}
+    for plot_content, result_infer in results_dict.items():
+        this_nav = {"name": plot_content.measurement_types, "link": "/#", "dropdown": []}
         for group, df in result_infer.groupby("unit_category"):
 
             u_unit = ureg(df["unit"].unique()[0])
             u_unit_intervention = ureg(df["intervention_unit"].unique()[0])
             this_dropdown_item = {
-                "name": f"{measurement_type} [{u_unit.u :~P}] / dosing [{u_unit_intervention.u :~P}]".capitalize(),
-                "link": f"/_pages/{measurement_type}_{group}/",
+                "name": f"{plot_content.measurement_types} [{u_unit.u :~P}] / dosing [{u_unit_intervention.u :~P}]".capitalize(),
+                "link": f"/_pages/{plot_content.measurement_types}_{group}/",
             }
             this_nav["dropdown"].append(this_dropdown_item)
 
@@ -442,7 +411,7 @@ def create_navigation_file(results_dict, path):
 
 
 def create_pages(results_dict, path):
-    for measurement_type, result_infer in results_dict.items():
+    for plot_content, result_infer in results_dict.items():
         for group, df in result_infer.groupby("unit_category"):
 
             u_unit = ureg(df["unit"].unique()[0])
@@ -450,15 +419,15 @@ def create_pages(results_dict, path):
             intervention_substance = df["intervention_substance"].unique()[0]
 
             content = {
-                "title": f"{measurement_type} [{u_unit.u :~P}] / dosing [{u_unit_intervention.u :~P}]".capitalize(),
-                "subtitle": f"Meta analysis of {intervention_substance} {measurement_type}",
+                "title": f"{plot_content.measurement_types} [{u_unit.u :~P}] / dosing [{u_unit_intervention.u :~P}]".capitalize(),
+                "subtitle": f"Meta analysis of {intervention_substance} {plot_content.measurement_types}",
                 "layout": "pk",
                 "hero_height": "80px",
-                "json": f"{measurement_type}_{group}.json",
+                "json": f"{plot_content.measurement_types}_{group}.json",
             }
             path_pages = path / "_pages"
             path_pages.mkdir(exist_ok=True)
-            with open(path / "_pages" / f"{measurement_type}_{group}.md", "w") as f:
+            with open(path / "_pages" / f"{plot_content.measurement_types}_{group}.md", "w") as f:
                 f.write("---\n")
                 f.write(yaml.dump(content))
                 f.write("---\n")
@@ -467,11 +436,11 @@ def create_pages(results_dict, path):
 def create_plots(
     results_dict, path, multi_legend, multi_color_legend, tooltip, create_json
 ):
-    for measurement_type, result_infer in results_dict.items():
+    for plot_content, result_infer in results_dict.items():
         for group, df in result_infer.groupby("unit_category"):
             path_reports = path / "_static" / "reports"
             path_reports.mkdir(parents=True, exist_ok=True)
-            file_name = path_reports / f"{measurement_type}_{group}"
+            file_name = path_reports / f"{plot_content.key}_{group}"
             multi_color_legend_fields = [mc.field for mc in multi_color_legend.values()]
             check_legends(df, [*multi_color_legend_fields, *multi_legend.values()])
             create_interactive_plot(
@@ -517,37 +486,38 @@ def copy_dir(src, dst, substance):
 
 
 def interactive_plot_factory(
-    pkdata,
-    plotting_categories,
-    intervention_substances,
-    output_substances,
-    exclude_study_names,
+    pkdata: PKData,
+    plotting_categories:  List[PlotContentDefinition],
+    intervention_substances: Set[Sid],
+    output_substances: Set[Sid],
+    exclude_study_names: Set[str],
+    additional_information: Dict[str, Callable],
     multi_color_legend,
     multi_legend,
-    additional_information,
     tooltip,
-    path,
-    url="http://0.0.0.0:8081",
+    path: Path,
+    url: str="http://0.0.0.0:8081",
     create_json=True,
     replacements={},
 ):
+    intervention_substances_str = {substance.sid for substance in intervention_substances}
+    output_substances_str = {substance.sid for substance in output_substances}
 
-    data_dict = pkdata_by_measurement_type(
+    data_dict = pkdata_by_plot_content(
         pkdata,
         plotting_categories,
-        intervention_substances,
-        output_substances,
+        intervention_substances_str,
+        output_substances_str,
         exclude_study_names,
     )
     results_dict = results(
         data_dict=data_dict,
-        intervention_substances=intervention_substances,
+        intervention_substances=intervention_substances_str,
         additional_information=additional_information,
         url=url,
-        plotting_categories=plotting_categories,
         replacements=replacements,
     )
-    copy_dir(Path(__file__).parent / "template", path, "_".join(output_substances))
+    copy_dir(Path(__file__).parent / "template", path, "_".join(output_substances_str))
     create_navigation_file(results_dict, path)
     create_pages(results_dict, path)
     create_plots(

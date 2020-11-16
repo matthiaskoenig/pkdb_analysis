@@ -24,7 +24,6 @@ from matplotlib import ticker
 
 from pkdb_analysis.units import UnitRegistry
 from pkdb_analysis.core import Sid
-
 logger = logging.getLogger(__file__)
 
 # FIXME: get rid of global module definitions! This overwrites local settings on import!
@@ -75,6 +74,9 @@ class PlotContentDefinition:
         self.infer_by_intervention = infer_by_intervention
         self.infer_by_output = infer_by_output
 
+    @property
+    def measurement_types(self):
+        return [self.sid.sid]
 
 class PlotContentDefinitionMulti(PlotContentDefinition):
     """Defines all settings for a given output plot.
@@ -83,22 +85,26 @@ class PlotContentDefinitionMulti(PlotContentDefinition):
     """
     def __init__(
         self,
-        measurement_types: List[Sid],
+        sids: List[Sid],
         units_to_remove: List[str] = None,
         infer_by_intervention: bool = True,
         infer_by_output: bool = True,
     ):
         super().__init__(
             sid=None,
-            measurement_types=measurement_types,
             units_to_remove=units_to_remove,
             infer_by_intervention=infer_by_intervention,
             infer_by_output=infer_by_output
         )
+        self.sids = sids
         self.key = self._joined_measurement_type()
 
+    @property
+    def measurement_types(self):
+        return [sid.sid for sid in self.sids]
+
     def _joined_measurement_type(self):
-        return "_".join([str(sid) for sid in self.measurement_types])
+        return "_".join([str(sid.sid) for sid in self.measurement_types])
     #
     # @staticmethod
     # def find_plot_content_definition(joined_measurement_type: str, plotting_categories: Iterable['PlotContentDefinition']) -> 'PlotContentDefinition':
@@ -114,7 +120,7 @@ def results(
     data_dict,
     intervention_substances,
     additional_information,
-    plotting_categories,
+    url,
     replacements,
 ):
     """ Creates  dataframes  for different measurement_types and infers additional results from body weight.
@@ -122,27 +128,26 @@ def results(
     :param data_dict:
     :param intervention_substances:
     :param additional_information:
-    :param plotting_categories:
+    :param url:
     :param replacements:
     :return:
     """
 
     results_dict = {}
-    for measurement_type, pkd in data_dict.items():
-        meta_analysis = MetaAnalysis(pkd, intervention_substances, "")
+    for plot_concent, pkd in data_dict.items():
+        meta_analysis = MetaAnalysis(pkd, intervention_substances, url)
         meta_analysis.create_results()
 
         for key, additional_function in additional_information.items():
             meta_analysis.results[key] = meta_analysis.results.apply(
                 additional_function, axis=1
             )
-        pc = PlotContentDefinition.find_plot_content_definition(measurement_type, plotting_categories)
         meta_analysis.infer_from_body_weight(
-            by_intervention=pc.infer_by_intervention, by_output=pc.infer_by_output
+            by_intervention=plot_concent.infer_by_intervention, by_output=plot_concent.infer_by_output
         )
         meta_analysis.add_extra_info(replacements)
         results = meta_analysis.results
-        results_dict[measurement_type] = results
+        results_dict[plot_concent] = results
 
     return results_dict
 
@@ -381,17 +386,17 @@ def create_plot(df,
 
 def create_plots(results_dict, path, color_by, color_label):
     """FIXME: DOCUMENT ME"""
-    for measurement_type, result_infer in results_dict.items():
+    for plot_content, result_infer in results_dict.items():
         for group, df in result_infer.groupby("unit_category"):
-            file_name = path / f"{measurement_type}_{group}.png"
+            file_name = path / f"{plot_content.measurement_types}_{group}.png"
             create_plot(df, file_name, color_by, color_label)
 
 
 def plot_factory(
     pkdata: PKData,
     plotting_categories: List[PlotContentDefinition],
-    intervention_substances: Set[str],
-    output_substances: Set[str],
+    intervention_substances: Set[Sid],
+    output_substances: Set[Sid],
     exclude_study_names: Set[str],
     additional_information: Dict[str, Callable],
     path: Path,
@@ -399,20 +404,22 @@ def plot_factory(
     color_label: str,
     replacements: Dict[str,Dict[str, str]] = {},
 ):
+    intervention_substances_str = {substance.sid for substance in intervention_substances}
+    output_substances_str = {substance.sid for substance in output_substances}
 
-    data_dict = pkdata_by_measurement_type(
+    data_dict = pkdata_by_plot_content(
         pkdata,
         plotting_categories,
-        intervention_substances,
-        output_substances,
+        intervention_substances_str,
+        output_substances_str,
         exclude_study_names,
     )
 
     results_dict = results(
         data_dict=data_dict,
-        intervention_substances=intervention_substances,
+        intervention_substances=intervention_substances_str,
         additional_information=additional_information,
-        plotting_categories=plotting_categories,
+        url=None,
         replacements=replacements,
     )
 
@@ -424,12 +431,12 @@ def plot_factory(
     )
 
 
-def pkdata_by_measurement_type(
-    pkdata,
-    plotting_categories: PlotContentDefinition,
-    intervention_substances,
-    output_substances,
-    exclude_study_names,
+def pkdata_by_plot_content(
+    pkdata: PKData,
+    plotting_categories: List[PlotContentDefinition],
+    intervention_substances: Set[str],
+    output_substances: Set[str],
+    exclude_study_names: Set[str],
 ):
     """FIXME: DOCUMENT ME"""
 
@@ -449,8 +456,8 @@ def pkdata_by_measurement_type(
             lambda d: d["study_name"].isin(exclude_study_names)
         )
 
-        measurement_type = plotting_category.joined_measurement_type()
-        data.outputs["measurement_type"] = measurement_type
+        measurement_type = plotting_category
+        data.outputs["measurement_type"] = plotting_category.key
         data_dict[measurement_type] = data.copy()
 
     return data_dict
