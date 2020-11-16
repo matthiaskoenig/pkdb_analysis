@@ -53,10 +53,7 @@ plt.rcParams.update(
 
 
 class PlotContentDefinition:
-    """Defines all settings for a given output plot.
-
-    Defines which measurement types are plotted in a single plots.
-    """
+    """Defines all settings for a given output plot. """
     def __init__(
         self,
         sid: Sid = None,
@@ -78,11 +75,10 @@ class PlotContentDefinition:
     def measurement_types(self):
         return [self.sid.sid]
 
-class PlotContentDefinitionMulti(PlotContentDefinition):
-    """Defines all settings for a given output plot.
 
-    Defines which measurement types are plotted in a single plots.
-    """
+class PlotContentDefinitionMulti(PlotContentDefinition):
+    """Defines all settings for a given output plot with multiple measurement types plotted together on the y axis."""
+
     def __init__(
         self,
         sids: List[Sid],
@@ -105,15 +101,6 @@ class PlotContentDefinitionMulti(PlotContentDefinition):
 
     def _joined_measurement_type(self):
         return "_".join([str(sid.sid) for sid in self.measurement_types])
-    #
-    # @staticmethod
-    # def find_plot_content_definition(joined_measurement_type: str, plotting_categories: Iterable['PlotContentDefinition']) -> 'PlotContentDefinition':
-    #     """Find plot content definition based on joined measurement type."""
-    #     for plotting_category in plotting_categories:
-    #         if plotting_category.joined_measurement_type == joined_measurement_type:
-    #             return plotting_category
-    #
-    #     return None
 
 
 def results(
@@ -123,18 +110,10 @@ def results(
     url,
     replacements,
 ):
-    """ Creates  dataframes  for different measurement_types and infers additional results from body weight.
-
-    :param data_dict:
-    :param intervention_substances:
-    :param additional_information:
-    :param url:
-    :param replacements:
-    :return:
-    """
+    """ Creates  dataframes for different measurement_types and infers additional results from body weight. """
 
     results_dict = {}
-    for plot_concent, pkd in data_dict.items():
+    for plot_content, pkd in data_dict.items():
         meta_analysis = MetaAnalysis(pkd, intervention_substances, url)
         meta_analysis.create_results()
 
@@ -143,11 +122,10 @@ def results(
                 additional_function, axis=1
             )
         meta_analysis.infer_from_body_weight(
-            by_intervention=plot_concent.infer_by_intervention, by_output=plot_concent.infer_by_output
+            by_intervention=plot_content.infer_by_intervention, by_output=plot_content.infer_by_output
         )
         meta_analysis.add_extra_info(replacements)
-        results = meta_analysis.results
-        results_dict[plot_concent] = results
+        results_dict[plot_content] = meta_analysis.results
 
     return results_dict
 

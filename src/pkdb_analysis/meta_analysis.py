@@ -1,5 +1,5 @@
 import warnings
-from typing import Set, Tuple
+from typing import Set, Tuple, Dict
 
 import numpy as np
 import pandas as pd
@@ -80,14 +80,12 @@ class MetaAnalysis(object):
 
     @staticmethod
     def subject_numeric_info(df: pd.DataFrame, measurement_type: str) -> Tuple:
-        """ returns values for a measurement types which are numeric (e.g weight , height, age) """
+        """ Returns values for a numeric measurement type (e.g weight , height, age) """
         measurement_data = df.extra[df.extra["measurement_type"] == measurement_type]
         if len(measurement_data) == 1:
             return tuple(measurement_data.iloc[0][NUMERIC_FIELDS].values)
         else:
             return tuple([np.nan for _ in NUMERIC_FIELDS])
-
-
 
     def create_subject_table(
             self,
@@ -96,7 +94,7 @@ class MetaAnalysis(object):
             categorical_fields: Tuple[str] = ("sex",),
             add_healthy: bool = True,
     ) -> pd.DataFrame:
-        """ Creates  """
+        """ Creates a table with subject information compatible with outputs table. """
 
         subject_core = getattr(self.pkdata, f"{subject}_core")
         subject_df = getattr(self.pkdata, subject)
@@ -145,10 +143,9 @@ class MetaAnalysis(object):
                 ] = subject_extra
         return subject_core
 
-    def add_extra_info(self, replacements):
-        self.results["unit_category"] = self.results[
-            ["per_bw", "intervention_per_bw"]
-        ].apply(figure_category, axis=1)
+    def add_extra_info(self, replacements: Dict[str, Dict[str, str]]):
+        """ a generic function to """
+        self.results["unit_category"] = self.results[["per_bw", "intervention_per_bw"]].apply(figure_category, axis=1)
         self.results["y"] = self.results[["mean", "median", "value"]].max(axis=1)
         self.results["y_min"] = self.results["y"] - self.results["sd"]
         self.results["y_max"] = self.results["y"] + self.results["sd"]
@@ -171,9 +168,7 @@ class MetaAnalysis(object):
 
         self.results["subject_count"] = self.results["group_count"].fillna(1)
 
-        self.results["url"] = self.results["study_sid"].apply(
-            lambda x: f"{self.url}/data/{x}"
-        )
+        self.results["url"] = self.results["study_sid"].apply(lambda x: f"{self.url}/data/{x}")
         # self.results = self.results.replace({"NR", "not reported"}, regex=True)
 
         for column, replace_dict in replacements.items():
