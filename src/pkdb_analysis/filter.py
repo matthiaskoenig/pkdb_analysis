@@ -1,12 +1,10 @@
 """ Defines frequently used filters for the PKData instances."""
 from typing import Iterable, List
-
-from pkdb_analysis.data import PKData
-
 import numpy as np
 import pandas as pd
 
-def filter_single_intervention(pkdata: PKData) -> PKData:
+
+def filter_single_intervention(pkdata: 'PKData') -> 'PKData':
     """Returns modified copy"""
     pkdata = pkdata.copy()
     single_interventions = []
@@ -20,20 +18,19 @@ def filter_single_intervention(pkdata: PKData) -> PKData:
     )
 
 
-def filter_healthy(pkdata: PKData) -> PKData:
+def filter_healthy(pkdata: 'PKData') -> 'PKData':
     """Returns modified copy"""
     pkdata = pkdata.copy()
     return pkdata.filter_subject(
         f_healthy, concise=False
     ).exclude_subject(f_n_healthy)
 
-def exclude_tests(data: PKData):
+
+def exclude_tests(data: 'PKData'):
     """Exclude data for test studies."""
     return data.exclude_intervention(lambda d: d["study_name"].isin(
         ["Test1", "Test2", "Test3", "Test4"]
     ))
-
-
 
 
 def combine(args):
@@ -60,9 +57,9 @@ def pk_info(d, measurement_type, columns, suffix=None, concise=True, aggfunc=com
     columns = [d.pk, *columns]
     df = (
         d[d["measurement_type"] == measurement_type][columns]
-        .set_index(d.pk)
-        .add_suffix(suffix_text)
-        .reset_index()
+            .set_index(d.pk)
+            .add_suffix(suffix_text)
+            .reset_index()
     )
     if len(df) == 0:
         return df
@@ -135,6 +132,7 @@ def f_mt_in_substance_in(d, measurement_types: str, substances: str):
     return d["measurement_type"].isin(measurement_types) & d["substance"].isin(
         substances
     )
+
 
 def f_choice(d, choice):
     """ FIXME: DOCUMENT ME """

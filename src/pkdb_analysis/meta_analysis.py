@@ -1,5 +1,5 @@
 import warnings
-from typing import Set
+from typing import Set, Tuple
 
 import numpy as np
 import pandas as pd
@@ -12,28 +12,23 @@ from pkdb_analysis.inference.body_weight import infer_weight
 INTERVENTION_FIELDS = ["substance", "value", "unit", "route", "form", "application"]
 NUMERIC_FIELDS_NO_VALUE = ["mean", "min", "max", "median", "count", "sd", "se", "unit"]
 NUMERIC_FIELDS = ["value"] + NUMERIC_FIELDS_NO_VALUE
+MISSING_VALUE = "unknown"
 
 
-def one_intervention(d):
+def len1(d: pd.DataFrame) -> pd.DataFrame:
+    """ return DataFrame if length 1 """
     if len(d) == 1:
         return d
 
 
-def validate_1len(d):
+def validate_len1(d: pd.DataFrame) -> pd.DataFrame:
+    """ validates Dataframe has the length of 1. """
     assert 1 == len(d[d]), d
     return d
 
 
-def markers(d):
-    if d["calculated"]:
-        return "s"
-    elif d["inferred"]:
-        return "v"
-    else:
-        return "o"
-
-
-def data_type(d):
+def data_type(d: pd.Series) -> str:
+    """ returns values for a new column called data_type."""
     if d["calculated"]:
         return "from timecourse"
     elif d["inferred"]:
@@ -42,7 +37,19 @@ def data_type(d):
         return "publication"
 
 
+def markers(d: pd.Series) -> str:
+    """ returns markers depending on data_type for plotting."""
+    if d["calculated"]:
+        return "s"
+    elif d["inferred"]:
+        return "v"
+    else:
+        return "o"
+
+
 class MetaAnalysis(object):
+    """ Main class for meta analysis. Main functionality of the class is to merge the tables of an PKData objet into
+    one Dataframe (self.results). The result is used for interactive plots, static plots, and table reports."""
     def __init__(self, pkdata: PKData, intervention_substances: Set[str], url: str = ""):
         self.pkdata = pkdata
         self.results = None
@@ -52,12 +59,12 @@ class MetaAnalysis(object):
         self.intervention_substances = intervention_substances
         self.url = url
 
-    def _create_extra_table(self, table_name, substances):
-
-        table = getattr(self.pkdata, table_name)
+    def create_intervention_extra(self):
+        """ Returns the 'intervention_extra' column with complete information on intervention."""
+        table = self.pkdata.interventions
         _table = pd.DataFrame()
         for table_pk, df in table.df.groupby(table.pk):
-            subset = df[df["substance"].isin(substances)].copy()
+            subset = df[df["substance"].isin(self.intervention_substances)].copy()
             subset["number"] = len(df)
             if len(subset) == 1:
                 subset = subset.iloc[0]
@@ -67,34 +74,35 @@ class MetaAnalysis(object):
                 ds = df.iloc[0]
                 warnings.warn(f"Outputs with interventions <{list(subset['name'])}> in study <{ds['study_name']}> are "
                               f"removed from the plots. Due to the administration of one of the "
-                              f"substances <{substances}> multiple times. It is not clear how to calculated the dosage "
-                              f"and compare to a single dose application.")
+                              f"substances <{self.intervention_substances}> multiple times. It is not clear how to "
+                              f"calculated the dosage and compare to a single dose application.")
         return _table
 
-    def _add(self, df, measurement_type):
-        age_data = df.extra[df.extra["measurement_type"] == measurement_type]
-        if len(age_data) == 1:
-            return tuple(age_data.iloc[0][NUMERIC_FIELDS].values)
+    @staticmethod
+    def subject_numeric_info(df: pd.DataFrame, measurement_type: str) -> Tuple:
+        """ returns values for a measurement types which are numeric (e.g weight , height, age) """
+        measurement_data = df.extra[df.extra["measurement_type"] == measurement_type]
+        if len(measurement_data) == 1:
+            return tuple(measurement_data.iloc[0][NUMERIC_FIELDS].values)
         else:
             return tuple([np.nan for _ in NUMERIC_FIELDS])
 
-    @property
-    def healthy_data(self):
-        return self.pkdata.filter_subject(f_healthy).exclude_subject(f_n_healthy)
+
 
     def create_subject_table(
             self,
-            subject,
-            numeric_fields=("weight", "age"),
-            categorical_fields=("sex",),
-            add_healthy=True,
-    ):
+            subject: str,
+            numeric_fields: Tuple[str] = ("weight", "age"),
+            categorical_fields: Tuple[str] = ("sex",),
+            add_healthy: bool = True,
+    ) -> pd.DataFrame:
+        """ Creates  """
 
         subject_core = getattr(self.pkdata, f"{subject}_core")
         subject_df = getattr(self.pkdata, subject)
 
         if add_healthy:
-            healthy_subjects_pks = getattr(self.healthy_data, subject).pks
+            healthy_subjects_pks = getattr(self.pkdata.healthy(), subject).pks
             subject_core["healthy"] = subject_core[subject_df.pk].isin(
                 healthy_subjects_pks
             )
@@ -116,9 +124,7 @@ class MetaAnalysis(object):
             )
 
         for categorical_field in categorical_fields:
-            subject_core[categorical_field] = subject_core[categorical_field].fillna(
-                "unknown"
-            )
+            subject_core[categorical_field] = subject_core[categorical_field].fillna(MISSING_VALUE)
 
         pk = subject_df.pk
 
@@ -127,7 +133,7 @@ class MetaAnalysis(object):
         )
         for measurement_type in ["age", "weight"]:
             subject_extra = subject_core.apply(
-                self._add, args=(measurement_type,), axis=1, result_type="expand"
+                self.subject_numeric_info, args=(measurement_type,), axis=1, result_type="expand"
             )
             if subject_extra.empty:
                 subject_core[
@@ -137,7 +143,6 @@ class MetaAnalysis(object):
                 subject_core[
                     [f"{k}_{measurement_type}" for k in NUMERIC_FIELDS]
                 ] = subject_extra
-
         return subject_core
 
     def add_extra_info(self, replacements):
@@ -177,22 +182,19 @@ class MetaAnalysis(object):
     def create_results_base(self):
         results = self.pkdata.outputs.copy()
         # FIXME: solve na values more generically
-        results["method"] = results["method"].fillna("unknown")
-        results["tissue"] = results["tissue"].fillna("unknown")
+        results["method"] = results["method"].fillna(MISSING_VALUE)
+        results["tissue"] = results["tissue"].fillna(MISSING_VALUE)
 
         results["per_bw"] = results.unit.str.endswith("/ kilogram")
         results["inferred"] = False
         self.results = results
 
     def add_intervention_info(self):
-        intervention_table = self._create_extra_table(
-            "interventions", self.intervention_substances
-        )
+        intervention_table = self.create_intervention_extra()
         # intervention_table.unit = intervention_table.unit.astype(str)
         intervention_table["per_bw"] = intervention_table.unit.str.endswith(
             "/ kilogram"
         )
-
         intervention_table = intervention_table.rename(
             columns={"intervention_pk": "pk"}
         )

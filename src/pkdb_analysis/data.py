@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 from IPython.display import display
 from pandas.errors import PerformanceWarning
-
+from pkdb_analysis.filter import f_healthy, f_n_healthy
 
 warnings.simplefilter(action="ignore", category=PerformanceWarning)
 logger = logging.getLogger(__name__)
@@ -410,6 +410,10 @@ class PKData(object):
             study_sids = study_sids.union(pk_df.study_sids)
 
         return study_sids
+
+    def healthy(self):
+        """ subset of healthy data."""
+        return self.filter_subject(f_healthy, concise=False).exclude_subject(f_n_healthy)
 
     @property
     def groups_count(self) -> int:
