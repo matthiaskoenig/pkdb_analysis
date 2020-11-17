@@ -11,7 +11,7 @@ from abc import ABC
 from collections import OrderedDict
 from io import BytesIO
 from pathlib import Path
-from typing import Callable, List, Union
+from typing import Callable, List, Union, Iterable
 
 import numpy as np
 import pandas as pd
@@ -31,19 +31,19 @@ class PKDataFrame(pd.DataFrame, ABC):
 
     @property
     def _constructor(self):
-        """Internal  """
+        """Internal function need for inheritances from pd.DataFrame. """
         return PKDataFrame._internal_ctor
 
     _metadata = ["pk"]
 
     @classmethod
     def _internal_ctor(cls, *args, **kwargs):
+        """Internal function need for inheritances from pd.DataFrame. """
         kwargs["pk"] = None
         return cls(*args, **kwargs)
 
     def __init__(self, data, pk=None, index=None, columns=None, dtype=None, copy=True):
         """
-
         :param data:
         :param pk:
         :param index:
@@ -60,7 +60,8 @@ class PKDataFrame(pd.DataFrame, ABC):
         self.pk = pk
 
     @staticmethod
-    def _validate_not_in_columns(columns):
+    def _validate_not_in_columns(columns: Iterable[str]):
+        """ """
         if columns:
             assert "pk" in columns
 
