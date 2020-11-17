@@ -112,6 +112,7 @@ def results(
 
     results_dict = {}
     for plot_content, pkd in data_dict.items():
+        print(pkd)
         meta_analysis = MetaAnalysis(pkd, intervention_substances, url)
         meta_analysis.create_results()
 
