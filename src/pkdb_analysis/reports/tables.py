@@ -22,8 +22,8 @@ logger = logging.getLogger(__name__)
 
 
 def create_table_report(
-    dosing_substances: List,
-    report_substances: List,
+    dosing_substances: Iterable[str],
+    report_substances: Iterable[str],
     study_info: Dict = None,
     timecourse_info: Dict = None,
     pharmacokinetic_info: Dict = None,
@@ -544,7 +544,8 @@ class TableReport(object):
 
         # create the base table
         table = self.pkdata.studies.df.copy()
-        table_keys = ["sid", "name", "reference_pmid"]
+        table_keys = ["name", "sid", "reference_pmid"]
+        table["reference_pmid"] = table["reference_pmid"].apply(self.int_or_none)
         table = table[table_keys]
         table_kwargs = {"table_df": table, "table_keys": table_keys}
         if report_type == TableReportTypes.STUDIES:
@@ -688,6 +689,17 @@ class TableReport(object):
         additional_dict["subjects"] = subject_size
 
         return study.append(pd.Series(additional_dict))
+
+    @staticmethod
+    def int_or_none(s) -> int:
+        try:
+            return int(s)
+
+        except ValueError:
+            return None
+
+
+
 
     @staticmethod
     def _add_group_all_count(study_df: pd.DataFrame, pkdata: PKData):

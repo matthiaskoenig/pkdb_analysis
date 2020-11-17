@@ -12,7 +12,6 @@ def filter_single_intervention(pkdata: 'PKData') -> 'PKData':
             pkdata.interventions.pk):
         if len(co_interventions) == 1:
             single_interventions.append(pk)
-
     return pkdata.filter_intervention(
         lambda d: d[pkdata.interventions.pk].isin(single_interventions)
     )
@@ -34,6 +33,7 @@ def exclude_tests(data: 'PKData') -> 'PKData':
 
 
 def combine(args):
+    """ Helper function join values. This function designed to be used in df.pivot_table as aggfunc."""
     args = sorted(set([str(arg) for arg in args]))
     str_value = " || ".join(args)
     if str_value == "nan":
@@ -97,6 +97,7 @@ def f_dosing(d: pd.DataFrame, substance: str) -> bool:
 def f_dosing_in(d: pd.DataFrame, substances: Iterable[str]) -> bool:
     """ Filter for substances which are applied as dosing.
      This filter is typically used in PKData.filter_interventions. """
+    print(f_substance(d, substance) & f_measurement_type(d, "dosing"))
     return d["substance"].isin(substances) & f_measurement_type(d, "dosing")
 
 
