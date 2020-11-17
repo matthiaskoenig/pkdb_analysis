@@ -2,16 +2,15 @@
 Module for static plot creation.
 """
 import logging
-from typing import List, Set, Dict, Callable, Iterable
+import pandas as pd
+from typing import List, Set, Dict, Callable
 from pathlib import Path
-import pint
-
 import numpy as np
 
 import warnings
 
 from pkdb_analysis.filter import f_dosing_in, f_mt_in_substance_in
-from pkdb_analysis.analysis import mscatter, get_one
+from pkdb_analysis.deprecated.analysis import mscatter, get_one
 from pkdb_analysis.data import PKData
 from pkdb_analysis.meta_analysis import MetaAnalysis
 
@@ -21,7 +20,6 @@ from matplotlib.lines import Line2D
 from matplotlib.ticker import FormatStrFormatter
 import matplotlib.font_manager as font_manager
 from matplotlib import ticker
-
 from pkdb_analysis.units import UnitRegistry
 from pkdb_analysis.core import Sid
 logger = logging.getLogger(__file__)
@@ -65,7 +63,7 @@ class PlotContentDefinition:
         if units_to_remove is None:
             units_to_remove = list()
 
-        self.key = str(sid) if sid else None
+        self.key = str(sid.sid) if sid else None
         self.sid = sid
         self.units_rm = units_to_remove
         self.infer_by_intervention = infer_by_intervention
@@ -100,17 +98,17 @@ class PlotContentDefinitionMulti(PlotContentDefinition):
         return [sid.sid for sid in self.sids]
 
     def _joined_measurement_type(self):
-        return "_".join([str(sid.sid) for sid in self.measurement_types])
+        return "_".join(self.measurement_types)
 
 
 def results(
-    data_dict,
-    intervention_substances,
-    additional_information,
-    url,
-    replacements,
-):
-    """ Creates  dataframes for different measurement_types and infers additional results from body weight. """
+    data_dict: Dict[PlotContentDefinition, PKData],
+    intervention_substances: Set[str],
+    additional_information: Dict[str, Callable],
+    url: str,
+    replacements: Dict[str, Dict[str, str]]
+) -> Dict[PlotContentDefinition, pd.DataFrame]:
+    """ Creates single dataframes from a pkdata instances and infers additional results from body weight. """
 
     results_dict = {}
     for plot_content, pkd in data_dict.items():
@@ -130,7 +128,8 @@ def results(
     return results_dict
 
 
-def add_legends(df, color_label, color_by,  ax):
+def add_legends(df: pd.DataFrame, color_label: str, color_by: str,  ax: plt.Axes):
+    """ Adds legends to axis"""
     legend_elements = []
     for plotting_type, d in df.groupby(color_label):
         individuals_data = d[d.group_pk == -1]
@@ -221,7 +220,9 @@ def add_legends(df, color_label, color_by,  ax):
     ax.add_artist(leg1)
 
 
-def group_values(df_group, color_by):
+def group_values(df_group: pd.DataFrame,
+                 color_by: str) -> (pd.Series, pd.Series, pd.Series, pd.Series, pd.Series, pd.Series):
+    """ Returns the values for plotting of group data"""
     x_group = df_group["intervention_value"]
 
     if np.isnan(df_group["mean"]):
@@ -237,7 +238,8 @@ def group_values(df_group, color_by):
     return x_group, y_group, yerr_group, ms, color, marker
 
 
-def add_group_scatter(df_group, color_by, ax):
+def add_group_scatter(df_group: pd.DataFrame, color_by: str, ax: plt.Axes):
+    """ Adds scatter plots of outputs related to groups. """
     x_group, y_group, yerr_group, ms, color, marker = group_values(df_group, color_by)
     ax.errorbar(
         x_group,
@@ -251,7 +253,8 @@ def add_group_scatter(df_group, color_by, ax):
     )
 
 
-def add_text(df_group, df_figure_x_max, df_figure_y_max, color_by, ax):
+def add_text(df_group: pd.DataFrame, df_figure_x_max: float, df_figure_y_max: float, color_by: str, ax: plt.Axes):
+    """ Annotates every scatter point related to a group with the respective study name."""
     x_group, y_group, _, _, _, _ = group_values(df_group, color_by=color_by)
     txt = df_group.study_name
     data_values = [
@@ -267,16 +270,16 @@ def add_text(df_group, df_figure_x_max, df_figure_y_max, color_by, ax):
         )
 
 
-def add_axis_config(ax,
-                    substance,
-                    substance_intervention,
-                    measurement_type,
+def add_axis_config(ax: plt.Axes,
+                    substance: str,
+                    substance_intervention: str,
+                    measurement_type: str,
                     u_unit,
                     u_unit_intervention,
-                    df_figure_x_max,
-                    df_figure_y_min,
-                    df_figure_y_max,
-                    log_y
+                    df_figure_x_max: float,
+                    df_figure_y_min: float,
+                    df_figure_y_max: float,
+                    log_y: bool
                     ):
     y_axis_label = f"{substance} {measurement_type}"
     ax.set_ylabel(f"{y_axis_label} [{u_unit.u :~P}]")
@@ -322,7 +325,7 @@ def create_plot(df,
     df_figure_y_max = np.max(max_values) * 1.05
     df_figure_x_max = df.intervention_value.max() * 1.05
     df_figure_y_min = 0
-    rows_with_nan = individuals_data[["intervention_value","value"]].isnull().any(axis=1)
+    rows_with_nan = individuals_data[["intervention_value", "value"]].isnull().any(axis=1)
     nan_individuals_data = individuals_data[rows_with_nan]
     if len(nan_individuals_data) > 0:
         for row, output in nan_individuals_data.iterrows():
@@ -366,7 +369,7 @@ def create_plots(results_dict, path, color_by, color_label):
     """FIXME: DOCUMENT ME"""
     for plot_content, result_infer in results_dict.items():
         for group, df in result_infer.groupby("unit_category"):
-            file_name = path / f"{plot_content.measurement_types}_{group}.png"
+            file_name = path / f"{plot_content.key}_{group}.png"
             create_plot(df, file_name, color_by, color_label)
 
 
@@ -382,6 +385,7 @@ def plot_factory(
     color_label: str,
     replacements: Dict[str,Dict[str, str]] = {},
 ):
+    """ Factory function to create multiple plots defined by each entry of the plotting_categories."""
     intervention_substances_str = {substance.sid for substance in intervention_substances}
     output_substances_str = {substance.sid for substance in output_substances}
 
@@ -415,9 +419,8 @@ def pkdata_by_plot_content(
     intervention_substances: Set[str],
     output_substances: Set[str],
     exclude_study_names: Set[str],
-):
-    """FIXME: DOCUMENT ME"""
-
+) -> Dict[PlotContentDefinition, PKData]:
+    """Splits the PKData instance in a dictonary with each entry related to one PlotContentDefinition."""
     # filter pkdata for given attributes
     data_dict = {}
     for plotting_category in plotting_categories:
@@ -434,9 +437,8 @@ def pkdata_by_plot_content(
             lambda d: d["study_name"].isin(exclude_study_names)
         )
 
-        measurement_type = plotting_category
         data.outputs["measurement_type"] = plotting_category.key
-        data_dict[measurement_type] = data.copy()
+        data_dict[plotting_category] = data.copy()
 
     return data_dict
 

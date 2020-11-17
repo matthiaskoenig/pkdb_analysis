@@ -1,21 +1,28 @@
+""" Module for analysis of PKData"""
+# FIXME: Probably deprecated
 import os
-from collections import namedtuple
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pint
+from matplotlib import ticker
 from matplotlib.lines import Line2D
 from matplotlib.ticker import FormatStrFormatter
-
-from pkdb_analysis.deprecated.utils import abs_idx, group_idx, individual_idx, rel_idx
-
-
-plt.style.use("seaborn-white")
-import matplotlib.ticker as ticker
-import pint
 
 
 ureg = pint.UnitRegistry()
 
+# ---- Styles for plotting ----
+
+import matplotlib.font_manager as font_manager
+import matplotlib.markers as mmarkers
+
+font = font_manager.FontProperties(
+    family="Roboto Mono",
+    weight="normal",
+    style="normal",
+    size=16,
+)
 plt.rcParams.update(
     {
         "axes.labelsize": "20",
@@ -28,315 +35,252 @@ plt.rcParams.update(
         "figure.facecolor": "1.00",
     }
 )
-
-import matplotlib.font_manager as font_manager
-
-
-font = font_manager.FontProperties(
-    family="Roboto Mono",
-    weight="normal",
-    style="normal",
-    size=16,
-)
+# ------------------------------
 
 
-class FigureTemplate(object):
-    def __init__(self, data_idx, intervention_type, output_type):
-        self.data_idx = (data_idx,)
-        self.intervention_type = intervention_type
-        self.output_type = output_type
-        self.figure = (False,)
-        self.ax = False
-
-    def data_subset(self, data):
-        return data.loc[self.data_idx]
-
-    def create_figure(self, data):
-        if len(self.data_subset(data)) > 0:
-            self.figure, self.ax = plt.subplots(nrows=1, ncols=1, figsize=(15, 15))
+def get_one(d):
+    """ return only one element if all elements are the same."""
+    d = d.dropna()
+    assert len(set(d)) <= 1, set(d)
+    return list(set(d))[0]
 
 
-PlotCategory = namedtuple("PlotCategory", ["name", "color", "marker", "data_idx"])
+def _str_all(d):
+    """ String representation of a list."""
+    d = d.dropna()
+    return ", ".join(set(d))
 
 
-def create_figures(df_data):
+def mscatter(x, y, ax, m=None, **kw):
 
-    figure_templates = [
-        FigureTemplate(
-            data_idx=abs_idx(df_data, "unit_intervention") & abs_idx(df_data, "unit"),
-            intervention_type="abs",
-            output_type="abs",
-        ),
-        FigureTemplate(
-            data_idx=rel_idx(df_data, "unit_intervention") & abs_idx(df_data, "unit"),
-            intervention_type="rel",
-            output_type="abs",
-        ),
-        FigureTemplate(
-            data_idx=abs_idx(df_data, "unit_intervention") & rel_idx(df_data, "unit"),
-            intervention_type="abs",
-            output_type="rel",
-        ),
-        FigureTemplate(
-            data_idx=rel_idx(df_data, "unit_intervention") & rel_idx(df_data, "unit"),
-            intervention_type="rel",
-            output_type="rel",
-        ),
-    ]
-    figure, axes = plt.subplots(nrows=2, ncols=2, figsize=(30, 30))
-    axes
-    for n, figure_template in enumerate(figure_templates):
-        figure_template.figure = figure
-        figure_template.ax = axes.flatten()[n]
-        # figure_template.create_figure(df_data)
-
-    return figure_templates
+    sc = ax.scatter(x, y, **kw)
+    if (m is not None) and (len(m) == len(x)):
+        paths = []
+        for marker in m:
+            if isinstance(marker, mmarkers.MarkerStyle):
+                marker_obj = marker
+            else:
+                marker_obj = mmarkers.MarkerStyle(marker)
+            path = marker_obj.get_path().transformed(marker_obj.get_transform())
+            paths.append(path)
+        sc.set_paths(paths)
+    return sc
 
 
-pk_name = {
-    "auc_end": "$AUC_{end}$",
-    "auc_inf": "$AUC_{\infty}$",
-    "clearance": "$Clearance$",
-    "cmax": "$C_{max}$",
-    "kel": "$k_{el}$",
-    "thalf": "$t_{half}$",
-    "tmax": "$t_{max}$",
-    "vd": "$Vd$",
-}
+def figure_category(d):
+    if d["per_bw"] and d["intervention_per_bw"]:
+        return "rel_output_rel_intervention"
+    elif d["per_bw"] and not d["intervention_per_bw"]:
+        return "rel_output_abs_intervention"
+    elif not d["per_bw"] and not d["intervention_per_bw"]:
+        return "abs_output_abs_intervention"
+    elif not d["per_bw"] and d["intervention_per_bw"]:
+        return "abs_output_rel_intervention"
 
 
-def create_plots(df_data, categories, fig_path, log_y=False):
-    measurement_type = df_data["measurement_type"].unique()[0]
-    substance = df_data["substance"].unique()[0]
-    figures = create_figures(df_data)
+def create_plots(  # FIXME: Probably deprecated
+    data,
+    fig_path,
+    color_by=None,
+    color_mapping=None,
+    nrows=2,
+    ncols=2,
+    figsize=(30, 30),
+    log_y=False,
+    formats=["png", "svg"],
+):
+    data["plotting_category"] = data[["per_bw", "intervention_per_bw"]].apply(
+        figure_category, axis=1
+    )
+    figure, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
+    axes_iter = iter(axes.flatten())
+    substance = get_one(data.substance)
+    substance_intervention = _str_all(data.substance_intervention)
+    measurement_type = get_one(data.measurement_type)
 
-    for figure in figures:
-        if figure.ax:
-            df_figure = figure.data_subset(df_data)
-            max_values = np.array([df_figure["value"].max(), df_figure["mean"].max()])
-            max_values = max_values[~np.isnan(max_values)]
-            df_figure_max = np.max(max_values) * 1.05
+    for plotting_category, data_category in data.groupby("plotting_category"):
 
-            df_figure_x_max = df_figure["value_intervention"].max() * 1.05
+        unit = get_one(data_category.unit)
+        u_unit = ureg(unit)
+        unit_intervention = get_one(data_category.unit_intervention)
+        u_unit_intervention = ureg(unit_intervention)
+        ax = next(axes_iter)
 
-            df_figure_min = (
-                0  # min([df_figure["value"].min(), df_figure["mean"].min()]) / 1.05
+        y_axis_label = f"{substance} {measurement_type}"
+
+        ax.set_ylabel(f"{y_axis_label} [{u_unit.u :~P}]")
+        x_label = "$Dose_{" + substance_intervention + "}$"
+        ax.set_xlabel(f"{x_label} [{u_unit_intervention.u :~P}]")
+        ax.yaxis.set_major_formatter(FormatStrFormatter("%.2f"))
+
+        max_values = np.array(
+            [
+                data_category["value"].max(),
+                data_category["mean"].max(),
+                data_category["median"].max(),
+            ]
+        )
+        max_values = max_values[~np.isnan(max_values)]
+        df_subplot_max = np.max(max_values) * 1.05
+        df_figure_x_max = data_category.value_intervention.max() * 1.05
+        df_figure_min = 0
+
+        individuals_data = data_category[data_category.group_pk == -1]
+        x = individuals_data.value_intervention
+        y = individuals_data.value
+        color = list(individuals_data.color)
+        marker = list(individuals_data.marker)
+        mscatter(x, y, ax=ax, color=color, m=marker, alpha=0.7, label=None, s=20)
+
+        group_data = data_category[data_category.group_pk != -1]
+
+        x_group_max = group_data["value_intervention"].max()
+        y_group_max = group_data["mean"].max()
+        for group, df_group in group_data.iterrows():
+            x_group = df_group["value_intervention"]
+
+            if np.isnan(df_group["mean"]):
+                y_group = df_group["median"]
+
+            else:
+                y_group = df_group["mean"]
+            yerr_group = df_group.se
+            ms = df_group.group_count + 5
+            color = df_group.color
+            marker = df_group.marker
+
+            ax.errorbar(
+                x_group,
+                y_group,
+                yerr=yerr_group,
+                xerr=0,
+                color=color,
+                fmt=marker,
+                ms=ms,
+                alpha=0.7,
             )
 
-            df_individual = df_figure[individual_idx(df_figure)]
-            df_group = df_figure[group_idx(df_figure)]
+            txt = df_group["study_name"]
+
+            data_values = [
+                x_group + (0.01 * x_group_max),
+                y_group + (0.01 * y_group_max),
+            ]
+            isnan = np.isnan(np.array(data_values))
+            if not any(isnan):
+                ax.annotate(
+                    txt,
+                    (x_group + (0.01 * x_group_max), y_group + (0.01 * y_group_max)),
+                    alpha=0.7,
+                )
 
             legend_elements = []
 
-            for plot_category in categories:
+        for plotting_type, d in data_category.groupby("plotting_type"):
+            individuals_data = d[d.group_pk == -1]
+            group_data = d[d.group_pk != -1]
 
-                df_category = df_individual[plot_category.data_idx(df_individual)]
+            individuals_number = len(individuals_data)
+            group_number = len(group_data)
+            total_group_individuals = group_data["group_count"].sum()
+            color = get_one(d.color)
 
-                units = df_category["unit"].unique()
-                units_intervention = df_category["unit_intervention"].unique()
-                assert len(units) <= 1, units
-                try:
-                    unit = units[0]
-                    u_unit = ureg(unit)
-                    unit_intervention = units_intervention[0]
-                    u_unit_intervention = ureg(unit_intervention)
-
-                    y_axis_label = (
-                        f"{substance} {pk_name.get(measurement_type, measurement_type)}"
-                    )
-
-                    figure.ax.set_ylabel(f"{y_axis_label} [{u_unit.u :~P}]")
-                    substance_internvetion = df_category[
-                        "substance_intervention"
-                    ].unique()[0]
-                    x_label = "$Dose_{" + substance_internvetion + "}$"
-                    figure.ax.set_xlabel(f"{x_label} [{u_unit_intervention.u :~P}]")
-                    figure.ax.yaxis.set_major_formatter(FormatStrFormatter("%.2f"))
-
-                except IndexError:
-                    pass
-
-                individuals_number = len(df_category)
-
-                for (calculated, inferred), df_individuals in df_category.groupby(
-                    ["calculated", "inferred"]
-                ):
-
-                    if calculated:
-                        marker = "s"
-                    else:
-                        marker = plot_category.marker
-
-                    x = df_individuals["value_intervention"]
-                    y = df_individuals["value"]
-                    figure.ax.scatter(
-                        x,
-                        y,
-                        color=plot_category.color,
-                        marker=marker,
-                        alpha=0.7,
-                        label=None,
-                        s=20,
-                    )
-
-                df_category = df_group[plot_category.data_idx(df_group)]
-                df_category = df_category[df_category["mean"].notnull()]
-                group_number = len(df_category)
-                total_group_individuals = 0
-                x_group_max = df_category["value_intervention"].max()
-                y_group_max = df_category["mean"].max()
-
-                for i, df_row in df_category.iterrows():
-                    if df_row["inferred"]:
-                        marker = "v"
-
-                    elif df_row["calculated"]:
-                        marker = "s"
-                    else:
-                        marker = plot_category.marker
-
-                    x_group = df_row["value_intervention"]
-                    y_group = df_row["mean"]
-
-                    if figure.output_type == "rel":
-                        xerr_group = (
-                            df_row[("weight", "sd")] / df_row[("weight", "mean")]
-                        ) * x_group
-                    else:
-                        xerr_group = 0
-                    yerr_group = df_row["se"]
-                    group_count = df_row["group_count"]
-                    total_group_individuals += group_count
-
-                    figure.ax.errorbar(
-                        x_group,
-                        y_group,
-                        yerr=yerr_group,
-                        xerr=xerr_group,
-                        color=plot_category.color,
-                        fmt=marker,
-                        ms=group_count + 5,
-                        alpha=0.7,
-                    )
-                    # for i, txt in enumerate(df_category[('study', '')]):
-                    txt = df_row[("study", "")]
-                    figure.ax.annotate(
-                        txt,
-                        (
-                            x_group + (0.01 * x_group_max),
-                            y_group + (0.01 * y_group_max),
-                        ),
-                        alpha=0.7,
-                    )
-
-                label_text = f"{plot_category.name:<10} I: {individuals_number:<3} G: {group_number:<2} TI: {int(total_group_individuals + individuals_number):<3}"
-                print(label_text)
-                # "
-                label = Line2D(
-                    [0],
-                    [0],
-                    marker="o",
-                    color="w",
-                    label=label_text,
-                    markerfacecolor=plot_category.color,
-                    markersize=10,
-                )
-                legend_elements.append(label)
-
-            legend2_elements = [
-                Line2D(
-                    [0],
-                    [0],
-                    marker="o",
-                    color="w",
-                    label="PK DATA",
-                    markerfacecolor="black",
-                    markersize=10,
-                ),
-                Line2D(
-                    [0],
-                    [0],
-                    marker="s",
-                    color="w",
-                    label="PK FROM TIME COURSE",
-                    markerfacecolor="black",
-                    markersize=10,
-                ),
-                Line2D(
-                    [0],
-                    [0],
-                    marker="v",
-                    color="w",
-                    label="PK FROM BODY WEIGHT",
-                    markerfacecolor="black",
-                    markersize=10,
-                ),
-            ]
-
-            legend3_elements = [
-                Line2D(
-                    [0],
-                    [10],
-                    marker="o",
-                    color="w",
-                    label="1",
-                    markerfacecolor="black",
-                    markersize=5 + 1,
-                ),
-                Line2D(
-                    [0],
-                    [20],
-                    marker="o",
-                    color="w",
-                    label="10",
-                    markerfacecolor="black",
-                    markersize=5 + 10,
-                ),
-                Line2D(
-                    [0],
-                    [50],
-                    marker="o",
-                    color="w",
-                    label="30",
-                    markerfacecolor="black",
-                    markersize=5 + 30,
-                ),
-            ]
-
-            figure.ax.set_title(
-                f"{figure.output_type}-vs-dosing_{figure.intervention_type}"
+            label_text = f"{plotting_type:<10} I: {individuals_number:<3} G: {group_number:<2} TI: {int(total_group_individuals + individuals_number):<3}"
+            label = Line2D(
+                [0],
+                [0],
+                marker="o",
+                color="w",
+                label=label_text,
+                markerfacecolor=color,
+                markersize=10,
             )
-            figure.ax.set_xlim(left=0, right=df_figure_x_max)
-            # figure.ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-            figure.ax.yaxis.set_major_formatter(
-                ticker.ScalarFormatter(useMathText=True)
-            )
+            legend_elements.append(label)
 
-            leg1 = figure.ax.legend(
-                handles=legend_elements, prop=font, loc="upper right"
-            )
+        legend2_elements = [
+            Line2D(
+                [0],
+                [0],
+                marker="o",
+                color="w",
+                label="PK DATA",
+                markerfacecolor="black",
+                markersize=10,
+            ),
+            Line2D(
+                [0],
+                [0],
+                marker="s",
+                color="w",
+                label="PK FROM TIME COURSE",
+                markerfacecolor="black",
+                markersize=10,
+            ),
+            Line2D(
+                [0],
+                [0],
+                marker="v",
+                color="w",
+                label="PK FROM BODY WEIGHT",
+                markerfacecolor="black",
+                markersize=10,
+            ),
+        ]
 
-            leg2 = figure.ax.legend(
-                handles=legend2_elements, prop=font, loc="upper left"
-            )
-            leg3 = figure.ax.legend(
-                handles=legend3_elements,
-                prop=font,
-                labelspacing=1.3,
-                loc=("center right"),
-            )
-            leg3.set_title(title="GROUP SIZE", prop=font)
-            figure.ax.add_artist(leg2)
-            figure.ax.add_artist(leg1)
+        legend3_elements = [
+            Line2D(
+                [0],
+                [10],
+                marker="o",
+                color="w",
+                label="1",
+                markerfacecolor="black",
+                markersize=5 + 1,
+            ),
+            Line2D(
+                [0],
+                [20],
+                marker="o",
+                color="w",
+                label="10",
+                markerfacecolor="black",
+                markersize=5 + 10,
+            ),
+            Line2D(
+                [0],
+                [50],
+                marker="o",
+                color="w",
+                label="30",
+                markerfacecolor="black",
+                markersize=5 + 30,
+            ),
+        ]
 
-            if log_y:
-                figure.ax.set_yscale("log")
-                figure.ax.set_ylim(bottom=df_figure_min, top=df_figure_max)
-            else:
-                figure.ax.set_ylim(bottom=0, top=df_figure_max)
+        ax.set_title(f"{plotting_category}")
+        ax.set_xlim(left=0, right=df_figure_x_max)
+        # ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.yaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
 
-    figures[0].figure.savefig(
-        os.path.join(fig_path, f"{substance}_{measurement_type}.png"),
-        bbox_inches="tight",
-        dpi=72,
-    )
+        leg1 = ax.legend(handles=legend_elements, prop=font, loc="upper right")
+        leg2 = ax.legend(handles=legend2_elements, prop=font, loc="upper left")
+        leg3 = ax.legend(
+            handles=legend3_elements, prop=font, labelspacing=1.3, loc="center right"
+        )
+        leg3.set_title(title="GROUP SIZE", prop=font)
+        ax.add_artist(leg2)
+        ax.add_artist(leg1)
+
+        if log_y:
+            ax.set_yscale("log")
+            ax.set_ylim(bottom=df_figure_min, top=df_subplot_max)
+        else:
+            ax.set_ylim(bottom=0, top=df_subplot_max)
+    for format in formats:
+        figure.savefig(
+            os.path.join(fig_path, f"{measurement_type}.{format}"),
+            bbox_inches="tight",
+            dpi=72,
+            format=format,
+        )
+    # figure.savefig(os.path.join(fig_path, f"{measurement_type}.png"), bbox_inches="tight", dpi=72)

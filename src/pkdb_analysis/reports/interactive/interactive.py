@@ -392,14 +392,14 @@ def create_navigation_file(results_dict, path):
     navigation = []
 
     for plot_content, result_infer in results_dict.items():
-        this_nav = {"name": plot_content.measurement_types, "link": "/#", "dropdown": []}
+        this_nav = {"name": plot_content.key, "link": "/#", "dropdown": []}
         for group, df in result_infer.groupby("unit_category"):
 
             u_unit = ureg(df["unit"].unique()[0])
             u_unit_intervention = ureg(df["intervention_unit"].unique()[0])
             this_dropdown_item = {
-                "name": f"{plot_content.measurement_types} [{u_unit.u :~P}] / dosing [{u_unit_intervention.u :~P}]".capitalize(),
-                "link": f"/_pages/{plot_content.measurement_types}_{group}/",
+                "name": f"{plot_content.key} [{u_unit.u :~P}] / dosing [{u_unit_intervention.u :~P}]".capitalize(),
+                "link": f"/_pages/{plot_content.key}_{group}/",
             }
             this_nav["dropdown"].append(this_dropdown_item)
 
@@ -419,15 +419,15 @@ def create_pages(results_dict, path):
             intervention_substance = df["intervention_substance"].unique()[0]
 
             content = {
-                "title": f"{plot_content.measurement_types} [{u_unit.u :~P}] / dosing [{u_unit_intervention.u :~P}]".capitalize(),
-                "subtitle": f"Meta analysis of {intervention_substance} {plot_content.measurement_types}",
+                "title": f"{plot_content.key} [{u_unit.u :~P}] / dosing [{u_unit_intervention.u :~P}]".capitalize(),
+                "subtitle": f"Meta analysis of {intervention_substance} {plot_content.key}",
                 "layout": "pk",
                 "hero_height": "80px",
-                "json": f"{plot_content.measurement_types}_{group}.json",
+                "json": f"{plot_content.key}_{group}.json",
             }
             path_pages = path / "_pages"
             path_pages.mkdir(exist_ok=True)
-            with open(path / "_pages" / f"{plot_content.measurement_types}_{group}.md", "w") as f:
+            with open(path / "_pages" / f"{plot_content.key}_{group}.md", "w") as f:
                 f.write("---\n")
                 f.write(yaml.dump(content))
                 f.write("---\n")
