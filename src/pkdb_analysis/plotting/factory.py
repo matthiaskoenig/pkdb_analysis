@@ -3,7 +3,7 @@ Module for static plot creation.
 """
 import logging
 import pandas as pd
-from typing import List, Set, Dict, Callable
+from typing import List, Set, Dict, Callable, Tuple
 from pathlib import Path
 import numpy as np
 
@@ -238,7 +238,7 @@ def group_values(df_group: pd.DataFrame,
     return x_group, y_group, yerr_group, ms, color, marker
 
 
-def add_group_scatter(df_group: pd.DataFrame, color_by: str, ax: plt.Axes):
+def add_group_scatter(df_group: pd.DataFrame, color_by: str, ax: plt.Axes) -> None:
     """ Adds scatter plots of outputs related to groups. """
     x_group, y_group, yerr_group, ms, color, marker = group_values(df_group, color_by)
     ax.errorbar(
@@ -253,7 +253,12 @@ def add_group_scatter(df_group: pd.DataFrame, color_by: str, ax: plt.Axes):
     )
 
 
-def add_text(df_group: pd.DataFrame, df_figure_x_max: float, df_figure_y_max: float, color_by: str, ax: plt.Axes):
+def add_text(
+        df_group: pd.DataFrame,
+        df_figure_x_max: float,
+        df_figure_y_max: float,
+        color_by: str,
+        ax: plt.Axes) -> None:
     """ Annotates every scatter point related to a group with the respective study name."""
     x_group, y_group, _, _, _, _ = group_values(df_group, color_by=color_by)
     txt = df_group.study_name
@@ -280,7 +285,7 @@ def add_axis_config(ax: plt.Axes,
                     df_figure_y_min: float,
                     df_figure_y_max: float,
                     log_y: bool
-                    ):
+                    ) -> None:
     y_axis_label = f"{substance} {measurement_type}"
     ax.set_ylabel(f"{y_axis_label} [{u_unit.u :~P}]")
     x_label = "$Dose_{" + substance_intervention + "}$"
@@ -297,14 +302,15 @@ def add_axis_config(ax: plt.Axes,
         ax.set_ylim(bottom=0, top=df_figure_y_max)
 
 
-def create_plot(df,
-                file_name,
-                color_by,
-                color_label,
-                figsize=(15, 15),
-                log_y=False):
+def create_plot(df: pd.DataFrame,
+                file_name: Path,
+                color_by: str,
+                color_label: str,
+                figsize: Tuple[int, int] = (15, 15),
+                log_y: bool = False) -> None:
+    """ Creates a single plot from the dataframe created by MetaAnalysis.create_results()"""
 
-    measurement_type = df["measurement_type"].unique()[0]  # fixme: multiple measurement_types are possible.
+    measurement_type = df["measurement_type"].unique()[0]
     substance = df["substance"].unique()[0]  # fixme: multiple substances are possible.
     substance_intervention = df["intervention_substance"].unique()[0]  # fixme: multiple substances are possible.
     u_unit = ureg(get_one(df["unit"]))
@@ -347,15 +353,15 @@ def create_plot(df,
 
     add_legends(df, color_label, color_by, ax)
     add_axis_config(ax,
-                     substance,
-                     substance_intervention,
-                     measurement_type,
-                     u_unit,
-                     u_unit_intervention,
-                     df_figure_x_max,
-                     df_figure_y_min,
-                     df_figure_y_max,
-                     log_y)
+                    substance,
+                    substance_intervention,
+                    measurement_type,
+                    u_unit,
+                    u_unit_intervention,
+                    df_figure_x_max,
+                    df_figure_y_min,
+                    df_figure_y_max,
+                    log_y)
 
     figure.savefig(
         file_name,
@@ -365,8 +371,8 @@ def create_plot(df,
     )
 
 
-def create_plots(results_dict, path, color_by, color_label):
-    """FIXME: DOCUMENT ME"""
+def create_plots(results_dict, path, color_by, color_label) -> None:
+    """Creates multiple static plots."""
     for plot_content, result_infer in results_dict.items():
         for group, df in result_infer.groupby("unit_category"):
             file_name = path / f"{plot_content.key}_{group}.png"
@@ -384,7 +390,7 @@ def plot_factory(
     color_by: str,
     color_label: str,
     replacements: Dict[str,Dict[str, str]] = {},
-):
+) -> None:
     """ Factory function to create multiple plots defined by each entry of the plotting_categories."""
     intervention_substances_str = {substance.sid for substance in intervention_substances}
     output_substances_str = {substance.sid for substance in output_substances}
