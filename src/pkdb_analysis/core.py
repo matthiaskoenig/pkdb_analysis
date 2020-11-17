@@ -7,10 +7,11 @@ import pandas as pd
 
 
 class Core:
-    """This class mange the the source containing all info nodes. This source is used for validation. """
+    """This class mange the the source containing all info nodes. 
+    This source is used for validation. """
     def __init__(self, source: Path):
         self.source = source
-        self.sids = list(pd.read_csv(source).sid)
+        self.sids = set(pd.read_csv(source).sid)
 
 
 @dataclass(frozen=True)
