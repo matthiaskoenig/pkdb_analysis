@@ -7,6 +7,7 @@ import pandas as pd
 
 
 class Core:
+    """This class mange the the source containing all info nodes. This source is used for validation. """
     def __init__(self, source: Path):
         self.source = source
         self.sids = list(pd.read_csv(source).sid)
@@ -20,10 +21,6 @@ class Sid:
     sid: str
     core: Core
 
-
     def __post_init__(self):
-        if  self.sid not in self.core.sids:
+        if self.sid not in self.core.sids:
             raise ValueError(f"{self.sid} is not in info_nodes [{self.core.source}]")
-
-
-

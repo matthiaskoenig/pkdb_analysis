@@ -9,14 +9,13 @@ from pkdb_analysis.test import (
     TEST_HDF5,
     TESTDATA_CONCISE_FALSE_ZIP,
     TESTDATA_CONCISE_TRUE_ZIP,
-    TESTDATA_PATH,
 )
 
 
 API_URL = "http://localhost:8000/api/v1"
 
 
-def update_test_data(path_zip: Path, concise: bool):
+def update_test_data(path_zip: Path, concise: bool) -> None:
 
     """Downloads latest test data with concise True/False.
 
