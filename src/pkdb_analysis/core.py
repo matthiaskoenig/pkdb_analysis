@@ -1,16 +1,21 @@
 """
 Definition of core objects.
 """
-from dataclasses import dataclass
+from typing import List, Set
 from pathlib import Path
-import pandas as pd
 
+from dataclasses import dataclass
+import pandas as pd
 
 class Core:
     """This class mange the the source containing all info nodes. This source is used for validation. """
-    def __init__(self, source: Path):
+    def __init__(self, source: Path = None, sids: Set[str] = None):
         self.source = source
-        self.sids = list(pd.read_csv(source).sid)
+        if sids is None:
+            self.sids = set(pd.read_csv(source).sid)
+        else:
+            self.sids = sids
+
 
 
 @dataclass(frozen=True)
@@ -23,4 +28,5 @@ class Sid:
 
     def __post_init__(self):
         if self.sid not in self.core.sids:
+            print()
             raise ValueError(f"{self.sid} is not in info_nodes [{self.core.source}]")

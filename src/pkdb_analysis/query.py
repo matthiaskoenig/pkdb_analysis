@@ -233,7 +233,7 @@ class PKDB(object):
         headers = cls.get_authentication_headers(BASE_URL, USER, PASSWORD)
         logger.warning(url)
         df = cls._get_data(url, headers, page_size=1000)
-        return df["sid"]
+        return set(df["sid"])
 
 
 

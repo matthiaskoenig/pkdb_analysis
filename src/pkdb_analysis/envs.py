@@ -8,7 +8,7 @@ from urllib import parse as urlparse
 from pkdb_analysis.logging_utils import bcolors
 
 
-# FIXME: this makes changing endpoints programatically extremely difficult.
+# FIXME: this makes changing endpoints programmatically extremely difficult.
 # FIXME: better environment variable names
 
 logger = logging.getLogger(__name__)
