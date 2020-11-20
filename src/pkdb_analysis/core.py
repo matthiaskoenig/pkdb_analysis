@@ -1,11 +1,12 @@
 """
 Definition of core objects.
 """
-from typing import List, Set
+from typing import Set
 from pathlib import Path
 
 from dataclasses import dataclass
 import pandas as pd
+
 
 class Core:
     """This class mange the the source containing all info nodes.

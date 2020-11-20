@@ -365,6 +365,8 @@ class TableReport(object):
     def study_info_default():
         return TableReport.DEFAULT_STUDY_INFO
 
+
+
     def __init__(
         self,
         pkdata: PKData,
@@ -375,42 +377,43 @@ class TableReport(object):
         pharmacokinetic_info: Dict = None,
     ):
 
-        # substance must occur in intervention
-        study_sids = pkdata.filter_intervention(
-            f_idx=filter.f_substance_in,
-            substances=substances_intervention,
-            concise=False,
-        ).interventions.study_sids
-        pkdata = pkdata.filter_study(lambda x: x["sid"].isin(study_sids), concise=False)
-
+        self.substances_intervention = substances_intervention
         self.pkdata = pkdata
+        self.filter_intervention_substances()
 
         # make a conciced copy of data
-        tmp_pkdata = pkdata.copy()
+        tmp_pkdata = self.pkdata.copy()
         tmp_pkdata._concise()
         self.pkdata_concised = tmp_pkdata
 
-        self.substances_intervention = substances_intervention
-        self.substances = (
-            substances_output if substances_output is not None else tuple()
-        )
-        self.study_info = (
-            study_info if study_info is not None else self.study_info_default()
-        )
-        self.timecourse_info = (
-            timecourse_info
-            if timecourse_info is not None
-            else self.timecourse_info_default(substances_output)
-        )
-        self.pharmacokinetic_info = (
-            pharmacokinetic_info
-            if pharmacokinetic_info is not None
-            else self.pharmacokinetic_info_default(substances_output)
-        )
+        self.substances = (substances_output if substances_output is not None else tuple())
+        if substances_output:
+            self.study_info = (study_info if study_info is not None else self.study_info_default() )
+            self.timecourse_info = (
+                timecourse_info
+                if timecourse_info is not None
+                else self.timecourse_info_default(substances_output)
+            )
+            self.pharmacokinetic_info = (
+                pharmacokinetic_info
+                if pharmacokinetic_info is not None
+                else self.pharmacokinetic_info_default(substances_output)
+            )
 
         self.df_studies = None
         self.df_timecourses = None
         self.df_pharmacokinetics = None
+
+    def filter_intervention_substances(self):
+        """ Filter the pkdata instance by for studies in which intervetion_substances where administrated"""
+        # substance must occur in intervention
+        if self.substances_intervention:
+            study_sids = self.pkdata.filter_intervention(
+                f_idx=filter.f_substance_in,
+                substances=self.substances_intervention,
+                concise=False,
+            ).interventions.study_sids
+            self.pkdata = self.pkdata.filter_study(lambda x: x["sid"].isin(study_sids), concise=False)
 
     @staticmethod
     def _create_path(path_output):
@@ -528,6 +531,12 @@ class TableReport(object):
         self.df_pharmacokinetics = self.create_table(
             report_type=TableReportTypes.PHARMACOKINETICS
         )
+    def base_table(self):
+        """ Create the base table."""
+        table = self.pkdata.studies.df.copy()
+        table_keys = ["name", "sid", "reference_pmid"]
+        table["reference_pmid"] = table["reference_pmid"].apply(self.int_or_none)
+        return table[table_keys]
 
     def create_table(self, report_type: TableReportTypes) -> pd.DataFrame:
         """Creates a summary table from PKData.
@@ -541,19 +550,13 @@ class TableReport(object):
             )
 
         logger.info(f"Create TableReport: {report_type}")
-
-        # create the base table
-        table = self.pkdata.studies.df.copy()
-        table_keys = ["name", "sid", "reference_pmid"]
-        table["reference_pmid"] = table["reference_pmid"].apply(self.int_or_none)
-        table = table[table_keys]
-        table_kwargs = {"table_df": table, "table_keys": table_keys}
+        table = self.base_table()
         if report_type == TableReportTypes.STUDIES:
-            table = self.studies_table(**table_kwargs)
+            table = self.studies_table(table)
         elif report_type == TableReportTypes.TIMECOURSES:
-            table = self.timecourses_table(**table_kwargs)
+            table = self.timecourses_table(table)
         elif report_type == TableReportTypes.PHARMACOKINETICS:
-            table = self.pk_table(**table_kwargs)
+            table = self.pk_table(table)
 
         # columns rename
         table.rename(
@@ -570,8 +573,15 @@ class TableReport(object):
 
         return table
 
+    def circos_table(self):
+        return self.base_table().apply(
+            self.add_counts,
+            args=(self.pkdata, self.pkdata_concised, False),
+            axis=1,
+        )
+
     def studies_table(
-        self, table_df: pd.DataFrame, table_keys: List[str]
+        self, table_df: pd.DataFrame
     ) -> pd.DataFrame:
         """
         Changes studies in place.
@@ -579,6 +589,8 @@ class TableReport(object):
         """
 
         # create extended tables for interventions, groups, ...
+
+        table_keys = list(table_df.columns)
         table_interventions = table_df.apply(
             self._add_information,
             args=(
@@ -593,7 +605,7 @@ class TableReport(object):
             axis=1,
         )
         table_groups = table_groups.apply(
-            self._add_group_and_individual_size,
+            self.add_counts,
             args=(self.pkdata, self.pkdata_concised),
             axis=1,
         )
@@ -646,9 +658,10 @@ class TableReport(object):
         return table_df[table_keys]
 
     def timecourses_table(
-        self, table_df: pd.DataFrame, table_keys: List[str]
+        self, table_df: pd.DataFrame
     ) -> pd.DataFrame:
         """Create timecourse table"""
+        table_keys = list(table_df.columns)
 
         table_df = table_df.apply(
             self._add_information,
@@ -659,8 +672,9 @@ class TableReport(object):
 
         return table_df[table_keys]
 
-    def pk_table(self, table_df: pd.DataFrame, table_keys: List[str]) -> pd.DataFrame:
+    def pk_table(self, table_df: pd.DataFrame) -> pd.DataFrame:
         """Create pharmacokinetics table."""
+        table_keys = list(table_df.columns)
 
         table_df = table_df.apply(
             self._add_information,
@@ -672,21 +686,34 @@ class TableReport(object):
         return table_df[table_keys]
 
     @staticmethod
-    def _add_group_and_individual_size(
+    def add_counts(
         study,
-        pkdata,
-        pkdata_concised,
+        pkdata: PKData,
+        pkdata_concised: PKData,
+        only_groups: bool = True,
     ):
+        """ Add counts of
+        individuals, groups, subjects (group=all -> group_count), interventions, outputs, timecourses, scatters"""
         additional_dict = {}
-        this_table = getattr(pkdata_concised, "groups")
-        groups_concised = this_table[this_table.study_sid == study.sid]
-        additional_dict["groups"] = len(groups_concised.pks)
+        if only_groups:
+            columns = ["groups"]
+        else:
+            columns = ["groups", "individuals", "interventions", "outputs", "timecourses"]
+        for column in columns:
+            pk_dataframe = getattr(pkdata_concised, column)
+            study_pk_dataframe = pk_dataframe[pk_dataframe.study_sid == study.sid]
+            additional_dict[column] = len(study_pk_dataframe.pks)
+            if column == "outputs":
+                additional_dict["outputs_calculated"] = len( study_pk_dataframe[study_pk_dataframe["calculated"]].pks)
 
         group_df = pkdata.groups.df
         study_group_df = group_df[group_df["study_sid"] == study.sid]
         all_group = study_group_df[study_group_df["group_name"] == "all"]
-        subject_size = all_group.group_count.unique()[0]
-        additional_dict["subjects"] = subject_size
+        if len(all_group) == 0:
+            additional_dict["subjects"] = 0
+        else:
+            subject_size = all_group.group_count.unique()[0]
+            additional_dict["subjects"] = subject_size
 
         return study.append(pd.Series(additional_dict))
 
@@ -858,18 +885,6 @@ class TableReport(object):
 
         return merged[df1.columns]
 
-    @staticmethod
-    def _extend_study_keys(study_keys):
-        return study_keys.extend(
-            [
-                "PKDB identifier",
-                "Name",
-                "PMID",
-                "publication date",
-                "subjects",
-                "groups",
-            ]
-        )
 
     @staticmethod
     def _clear_sheat(spread, header_size, column_length):

@@ -7,7 +7,7 @@ import zipfile
 from copy import deepcopy
 from io import BytesIO, StringIO
 from pathlib import Path
-from typing import List
+from typing import List, Set
 from urllib import parse as urlparse
 
 import numpy as np
@@ -228,7 +228,7 @@ class PKDB(object):
 
 
     @classmethod
-    def query_info_nodes(cls) -> pd.DataFrame:
+    def query_info_nodes(cls) -> Set[str]:
         url = API_URL + "/info_nodes/"
         headers = cls.get_authentication_headers(BASE_URL, USER, PASSWORD)
         logger.warning(url)
