@@ -27,6 +27,7 @@ def create_table_report(
     study_info: Dict = None,
     timecourse_info: Dict = None,
     pharmacokinetic_info: Dict = None,
+    pkdata: PKData = None,
     h5_data_path: Path = None,
     zip_data_path: Path = None,
     excel_path: Path = None,
@@ -63,6 +64,12 @@ def create_table_report(
                 f"Query the data first with the `query_data=True' flag."
             )
         pkdata = PKData.from_hdf5(h5_data_path)
+    elif not pkdata:
+        raise IOError(
+            f"One of the following arguments must be provided: 'zip_data_path','h5_data_path', or 'pkdata'."
+        )
+
+
 
     # Create table report
     table_report = TableReport(
@@ -89,7 +96,7 @@ def create_table_report(
 
 
 @dataclass
-class Parameter:
+class TableContentDefinition:
     """Helper Class to define how an interactive value can be selected. """
 
     measurement_types: Union[str, List] = "any"
@@ -122,57 +129,57 @@ class TableReport(object):
 
     DEFAULT_STUDY_INFO = {
         "subject_info": {
-            "sex": Parameter(measurement_types=["sex"], value_field=["choice"]),
-            "age": Parameter(
+            "sex": TableContentDefinition(measurement_types=["sex"], value_field=["choice"]),
+            "age": TableContentDefinition(
                 measurement_types=["age"], value_field=["mean", "median", "value"]
             ),
-            "weight": Parameter(
+            "weight": TableContentDefinition(
                 measurement_types=["weight"], value_field=["mean", "median", "value"]
             ),
-            "height": Parameter(
+            "height": TableContentDefinition(
                 measurement_types=["height"], value_field=["mean", "median", "value"]
             ),
-            "body mass index": Parameter(
+            "body mass index": TableContentDefinition(
                 measurement_types=["bmi"], value_field=["mean", "median", "value"]
             ),
-            "ethnicity": Parameter(
+            "ethnicity": TableContentDefinition(
                 measurement_types=["ethnicity"], value_field=["choice"]
             ),
             # pk effecting factors
-            "healthy": Parameter(measurement_types=["healthy"], value_field=["choice"]),
-            "medication": Parameter(
+            "healthy": TableContentDefinition(measurement_types=["healthy"], value_field=["choice"]),
+            "medication": TableContentDefinition(
                 measurement_types=["medication"], value_field=["choice"]
             ),
-            "smoking": Parameter(measurement_types=["smoking"], value_field=["choice"]),
-            "oral contraceptives": Parameter(
+            "smoking": TableContentDefinition(measurement_types=["smoking"], value_field=["choice"]),
+            "oral contraceptives": TableContentDefinition(
                 measurement_types=["oral contraceptives"], value_field=["choice"]
             ),
-            "overnight fast": Parameter(
+            "overnight fast": TableContentDefinition(
                 measurement_types=["overnight fast"], value_field=["choice"]
             ),
             # "CYP1A2 genotype": Parameter(
             #    measurement_types=["CYP1A2 genotype"], value_field=["choice"]
             # ),
-            "abstinence alcohol": Parameter(
+            "abstinence alcohol": TableContentDefinition(
                 measurement_types=["abstinence alcohol"],
                 value_field=["mean", "median", "value", "min", "max"],
             ),
         },
         "intervention_info": {
-            "dosing amount": Parameter(
+            "dosing amount": TableContentDefinition(
                 measurement_types=["dosing", "qualitative dosing"],
                 value_field=["value"],
             ),
-            "dosing route": Parameter(
+            "dosing route": TableContentDefinition(
                 measurement_types=["dosing", "qualitative dosing"],
                 value_field=["route"],
             ),
-            "dosing form": Parameter(
+            "dosing form": TableContentDefinition(
                 measurement_types=["dosing", "qualitative dosing"], value_field=["form"]
             ),
         },
         "output_info": {
-            "quantification method": Parameter(
+            "quantification method": TableContentDefinition(
                 measurement_types="any", value_field=["method"]
             )
         },
@@ -203,7 +210,7 @@ class TableReport(object):
         for substance in substances:
             for key, p_kwargs in timecourse_fields.items():
                 this_key = f"{substance}_{key}"
-                timecourse_info[this_key] = Parameter(
+                timecourse_info[this_key] = TableContentDefinition(
                     measurement_types="any", substance=substance, **p_kwargs
                 )
         return timecourse_info
@@ -213,145 +220,145 @@ class TableReport(object):
         pks_info = {}
         for substance in substances:
             pks_info_substance = {
-                f"{substance}_plasma": Parameter(
+                f"{substance}_plasma": TableContentDefinition(
                     substance=f"{substance}",
                     value_field=["tissue"],
                     values=["plasma", "blood", "serum"],
                     groupby=False,
                 ),
-                f"{substance}_urine": Parameter(
+                f"{substance}_urine": TableContentDefinition(
                     substance=f"{substance}",
                     value_field=["tissue"],
                     values=["urine"],
                     groupby=False,
                 ),
-                f"{substance}_saliva": Parameter(
+                f"{substance}_saliva": TableContentDefinition(
                     substance=f"{substance}",
                     value_field=["tissue"],
                     values=["saliva"],
                     groupby=False,
                 ),
-                f"{substance}_vd_individual": Parameter(
+                f"{substance}_vd_individual": TableContentDefinition(
                     measurement_types=["vd"],
                     substance=f"{substance}",
                     value_field=["value"],
                     only_individual=True,
                 ),
-                f"{substance}_vd_group": Parameter(
+                f"{substance}_vd_group": TableContentDefinition(
                     measurement_types=["vd"],
                     substance=f"{substance}",
                     value_field=["mean", "median"],
                     only_group=True,
                 ),
-                f"{substance}_vd_error": Parameter(
+                f"{substance}_vd_error": TableContentDefinition(
                     measurement_types=["vd"],
                     substance=f"{substance}",
                     value_field=["sd", "se", "cv"],
                     only_group=True,
                 ),
-                f"{substance}_clearance_individual": Parameter(
+                f"{substance}_clearance_individual": TableContentDefinition(
                     measurement_types=["clearance"],
                     substance=f"{substance}",
                     value_field=["value"],
                     only_individual=True,
                 ),
-                f"{substance}_clearance_group": Parameter(
+                f"{substance}_clearance_group": TableContentDefinition(
                     measurement_types=["clearance"],
                     substance=f"{substance}",
                     value_field=["mean", "median"],
                     only_group=True,
                 ),
-                f"{substance}_clearance_error": Parameter(
+                f"{substance}_clearance_error": TableContentDefinition(
                     measurement_types=["clearance"],
                     substance=f"{substance}",
                     value_field=["sd", "se", "cv"],
                     only_group=True,
                 ),
-                f"{substance}_auc_individual": Parameter(
+                f"{substance}_auc_individual": TableContentDefinition(
                     measurement_types=["auc-end", "auc-inf"],
                     substance=f"{substance}",
                     value_field=["value"],
                     only_individual=True,
                 ),
-                f"{substance}_auc_group": Parameter(
+                f"{substance}_auc_group": TableContentDefinition(
                     measurement_types=["auc-end", "auc-inf"],
                     substance=f"{substance}",
                     value_field=["mean", "median"],
                     only_group=True,
                 ),
-                f"{substance}_auc_error": Parameter(
+                f"{substance}_auc_error": TableContentDefinition(
                     measurement_types=["auc-end", "auc-inf"],
                     substance=f"{substance}",
                     value_field=["sd", "se", "cv"],
                     only_group=True,
                 ),
-                f"{substance}_thalf_individual": Parameter(
+                f"{substance}_thalf_individual": TableContentDefinition(
                     measurement_types=["thalf"],
                     substance=f"{substance}",
                     value_field=["value"],
                     only_individual=True,
                 ),
-                f"{substance}_thalf_group": Parameter(
+                f"{substance}_thalf_group": TableContentDefinition(
                     measurement_types=["thalf"],
                     substance=f"{substance}",
                     value_field=["mean", "median"],
                     only_group=True,
                 ),
-                f"{substance}_thalf_error": Parameter(
+                f"{substance}_thalf_error": TableContentDefinition(
                     measurement_types=["thalf"],
                     substance=f"{substance}",
                     value_field=["sd", "se", "cv"],
                     only_group=True,
                 ),
-                f"{substance}_cmax_individual": Parameter(
+                f"{substance}_cmax_individual": TableContentDefinition(
                     measurement_types=["cmax"],
                     substance=f"{substance}",
                     value_field=["value"],
                     only_individual=True,
                 ),
-                f"{substance}_cmax_group": Parameter(
+                f"{substance}_cmax_group": TableContentDefinition(
                     measurement_types=["cmax"],
                     substance=f"{substance}",
                     value_field=["mean", "median"],
                     only_group=True,
                 ),
-                f"{substance}_cmax_error": Parameter(
+                f"{substance}_cmax_error": TableContentDefinition(
                     measurement_types=["cmax"],
                     substance=f"{substance}",
                     value_field=["sd", "se", "cv"],
                     only_group=True,
                 ),
-                f"{substance}_tmax_individual": Parameter(
+                f"{substance}_tmax_individual": TableContentDefinition(
                     measurement_types=["tmax"],
                     substance=f"{substance}",
                     value_field=["value"],
                     only_individual=True,
                 ),
-                f"{substance}_tmax_group": Parameter(
+                f"{substance}_tmax_group": TableContentDefinition(
                     measurement_types=["tmax"],
                     substance=f"{substance}",
                     value_field=["mean", "median"],
                     only_group=True,
                 ),
-                f"{substance}_tmax_error": Parameter(
+                f"{substance}_tmax_error": TableContentDefinition(
                     measurement_types=["tmax"],
                     substance=f"{substance}",
                     value_field=["sd", "se", "cv"],
                     only_group=True,
                 ),
-                f"{substance}_kel_individual": Parameter(
+                f"{substance}_kel_individual": TableContentDefinition(
                     measurement_types=["kel"],
                     substance=f"{substance}",
                     value_field=["value"],
                     only_individual=True,
                 ),
-                f"{substance}_kel_group": Parameter(
+                f"{substance}_kel_group": TableContentDefinition(
                     measurement_types=["kel"],
                     substance=f"{substance}",
                     value_field=["mean", "median"],
                     only_group=True,
                 ),
-                f"{substance}_kel_error": Parameter(
+                f"{substance}_kel_error": TableContentDefinition(
                     measurement_types=["kel"],
                     substance=f"{substance}",
                     value_field=["sd", "se", "cv"],
@@ -426,13 +433,18 @@ class TableReport(object):
         """Write all tables excel file."""
         self._create_path(path_excel.parent)
 
+
         sheets = {
             "studies": self.df_studies,
             "timecourses": self.df_timecourses,
             "pharmacokinetics": self.df_pharmacokinetics,
         }
+        columns_horizontal = ["name", "PKDB", "pubmed"]
 
-        with pd.ExcelWriter(path_excel) as writer:
+
+        with pd.ExcelWriter(path_excel, engine='xlsxwriter') as writer:
+
+
             for key, df in sheets.items():
                 df1 = df.copy()
                 # hyperlink replacements:
@@ -442,8 +454,39 @@ class TableReport(object):
                 df1["pubmed"] = df1["pubmed"].apply(
                     lambda x: f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}", "{x}")'
                 )
+                df1.to_excel(writer, sheet_name=key, index=False, startrow=1, header=False)
 
-                df1.to_excel(writer, sheet_name=key, index=False)
+                worksheet = writer.sheets[key]
+                workbook = writer.book
+                header_format = workbook.add_format()
+                header_format.set_bold()
+                header_format.set_font_color('white')
+                header_format.set_bg_color('#808080')
+                header_format.set_align('center')
+                header_format.set_align('vcenter')
+                header_format.set_align('vjustify')
+
+
+
+                header_format90 = workbook.add_format()
+                header_format90.set_bold()
+                header_format90.set_font_color('white')
+                header_format90.set_bg_color('#808080')
+                header_format90.set_rotation(90)
+                header_format90.set_align('center')
+                header_format90.set_align('vcenter')
+                header_format90.set_align('vjustify')
+
+                for col_num, col_name in enumerate(df.columns.values):
+                    if col_name not in columns_horizontal:
+
+                        worksheet.write(0, col_num, col_name, header_format90)
+                    else:
+                        worksheet.write(0, col_num, col_name, header_format)
+                writer.save()
+
+
+
 
     def to_google_sheet(self, google_sheets: str):
         """Write all tables to google calc.
@@ -570,7 +613,6 @@ class TableReport(object):
         table.sort_values(by="name", inplace=True)
         # fill NA
         table.fillna("", inplace=True)
-
         return table
 
     def circos_table(self):
@@ -719,14 +761,23 @@ class TableReport(object):
 
     @staticmethod
     def int_or_none(s) -> int:
+        """"""
         try:
             return int(s)
 
         except ValueError:
             return None
 
-
-
+    @staticmethod
+    def format_vertical_headers(df: pd.DataFrame):
+        """Display a dataframe with vertical column headers"""
+        styles = [dict(selector="th", props=[('width', '40px')]),
+                  dict(selector="th.col_heading",
+                       props=[("writing-mode", "vertical-rl"),
+                              ('transform', 'rotateZ(180deg)'),
+                              ('height', '290px'),
+                              ('vertical-align', 'top')])]
+        return (df.fillna('').style.set_table_styles(styles))
 
     @staticmethod
     def _add_group_all_count(study_df: pd.DataFrame, pkdata: PKData):
@@ -778,7 +829,7 @@ class TableReport(object):
     def _cell_content(
         df: pd.DataFrame,
         instance_id: str,
-        parameter: Parameter,
+        parameter: TableContentDefinition,
         Subjects_groups: int = 0,
         Subjects_individual: int = 0,
     ) -> str:

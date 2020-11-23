@@ -105,7 +105,6 @@ class PKDB(object):
         :param page_size: number of entries per query
         """
         pkfilter = pkfilter.to_dict()
-        {data for data in pkfilter}
         parameters = {"format": "json", "page_size": page_size}
         logger.info("*** Querying data ***")
         pkdata = PKData(
