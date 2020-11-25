@@ -491,7 +491,7 @@ class TableReport(object):
                 worksheet.set_column(0, 0, 18, colsformat_default)
                 worksheet.set_column(1, 2, 18, href_format)
 
-                worksheet.set_column(3, len(df.columns.values)+1, 3, colsformat_default)
+                worksheet.set_column(3, len(df.columns.values), 3, colsformat_default)
 
 
 
@@ -501,11 +501,12 @@ class TableReport(object):
                     else:
                         worksheet.write(0, col_num, col_name, header_format)
 
-                worksheet.conditional_format('A1:ZZ100', {'type': 'cell',
+                table_len = len(df.columns.values)+2
+                worksheet.conditional_format(f'A1:ZZ{table_len}', {'type': 'cell',
                                                           'criteria': 'equal to',
                                                           'value': '"✓"',
                                                           'format': green})
-                worksheet.conditional_format('A1:ZZ100', {'type': 'cell',
+                worksheet.conditional_format(f'A1:ZZ{table_len}', {'type': 'cell',
                                                           'criteria': 'equal to',
                                                           'value': '"⅟"',
                                                           'format': orange})
