@@ -491,7 +491,7 @@ class TableReport(object):
                 worksheet.set_column(0, 0, 18, colsformat_default)
                 worksheet.set_column(1, 2, 18, href_format)
 
-                worksheet.set_column(3, len(df.columns.values), 3, colsformat_default)
+                worksheet.set_column(3, len(df.columns.values)+1, 3, colsformat_default)
 
 
 
@@ -795,17 +795,6 @@ class TableReport(object):
 
         except ValueError:
             return None
-
-    @staticmethod
-    def format_vertical_headers(df: pd.DataFrame):
-        """Display a dataframe with vertical column headers"""
-        styles = [dict(selector="th", props=[('width', '40px')]),
-                  dict(selector="th.col_heading",
-                       props=[("writing-mode", "vertical-rl"),
-                              ('transform', 'rotateZ(180deg)'),
-                              ('height', '290px'),
-                              ('vertical-align', 'top')])]
-        return (df.fillna('').style.set_table_styles(styles))
 
     @staticmethod
     def _add_group_all_count(study_df: pd.DataFrame, pkdata: PKData):
