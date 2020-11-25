@@ -36,7 +36,7 @@ def query_pkdb_data(
     if username is not None:
         studies_filter = {"creator": username}
     if study_names is not None:
-        studies_filter = {"name__in": study_names, **studies_filter}
+        studies_filter = {"name__in": "__".join(study_names), **studies_filter}
     pkfilter = PKFilter()
     pkfilter.studies = studies_filter
     pkdata = PKDB.query_(pkfilter)

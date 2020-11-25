@@ -70,7 +70,6 @@ def create_table_report(
         )
 
 
-
     # Create table report
     table_report = TableReport(
         pkdata=pkdata,
@@ -383,7 +382,6 @@ class TableReport(object):
         timecourse_info: Dict = None,
         pharmacokinetic_info: Dict = None,
     ):
-
         self.substances_intervention = substances_intervention
         self.pkdata = pkdata
         self.filter_intervention_substances()
@@ -433,6 +431,13 @@ class TableReport(object):
         """Write all tables excel file."""
         self._create_path(path_excel.parent)
 
+        def add_header_format(hformat):
+            hformat.set_bold()
+            hformat.set_font_color('white')
+            hformat.set_bg_color('#434343')
+            hformat.set_align('center')
+            hformat.set_align('vcenter')
+            return hformat
 
         sheets = {
             "studies": self.df_studies,
@@ -459,31 +464,52 @@ class TableReport(object):
                 worksheet = writer.sheets[key]
                 workbook = writer.book
                 header_format = workbook.add_format()
-                header_format.set_bold()
-                header_format.set_font_color('white')
-                header_format.set_bg_color('#808080')
-                header_format.set_align('center')
-                header_format.set_align('vcenter')
-                header_format.set_align('vjustify')
+                header_format = add_header_format(header_format)
 
+                #first row
+                worksheet.set_row(0, 160, None)
 
+                green = workbook.add_format()
+                green.set_bg_color('#B6D7A8')
+
+                orange = workbook.add_format()
+                orange.set_bg_color('#FFD966')
+
+                colsformat_default = workbook.add_format()
+                colsformat_default.set_bold()
+                colsformat_default.set_align('center')
+
+                href_format = workbook.add_format()
+                href_format.set_bold()
+                href_format.set_align('center')
+                href_format.set_font_color('#3C88E5')
 
                 header_format90 = workbook.add_format()
-                header_format90.set_bold()
-                header_format90.set_font_color('white')
-                header_format90.set_bg_color('#808080')
                 header_format90.set_rotation(90)
-                header_format90.set_align('center')
-                header_format90.set_align('vcenter')
-                header_format90.set_align('vjustify')
+                header_format90 = add_header_format(header_format90)
+
+                worksheet.set_column(0, 0, 18, colsformat_default)
+                worksheet.set_column(1, 2, 18, href_format)
+
+                worksheet.set_column(3, len(df.columns.values), 3, colsformat_default)
+
+
 
                 for col_num, col_name in enumerate(df.columns.values):
                     if col_name not in columns_horizontal:
-
                         worksheet.write(0, col_num, col_name, header_format90)
                     else:
                         worksheet.write(0, col_num, col_name, header_format)
-                writer.save()
+
+                worksheet.conditional_format('A1:ZZ100', {'type': 'cell',
+                                                          'criteria': 'equal to',
+                                                          'value': '"✓"',
+                                                          'format': green})
+                worksheet.conditional_format('A1:ZZ100', {'type': 'cell',
+                                                          'criteria': 'equal to',
+                                                          'value': '"⅟"',
+                                                          'format': orange})
+            writer.save()
 
 
 
@@ -594,6 +620,7 @@ class TableReport(object):
 
         logger.info(f"Create TableReport: {report_type}")
         table = self.base_table()
+
         if report_type == TableReportTypes.STUDIES:
             table = self.studies_table(table)
         elif report_type == TableReportTypes.TIMECOURSES:
@@ -613,6 +640,7 @@ class TableReport(object):
         table.sort_values(by="name", inplace=True)
         # fill NA
         table.fillna("", inplace=True)
+
         return table
 
     def circos_table(self):
