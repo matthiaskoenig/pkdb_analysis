@@ -18,7 +18,6 @@ class Core:
         else:
             self.sids = sids
 
-
 @dataclass(frozen=True)
 class Sid:
     """PK-DB sid.
@@ -26,6 +25,9 @@ class Sid:
     """
     sid: str
     core: Core
+
+    def __str__(self):
+        return self.sid
 
     def __post_init__(self):
         if self.sid not in self.core.sids:

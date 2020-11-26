@@ -6,6 +6,7 @@ from pkdb_analysis import PKData, PKFilter
 from pkdb_analysis.query import PKDB
 
 
+# FIXME: fix this
 def load_test_studies() -> PKData:
     """Loads test studies from database.
 
@@ -23,7 +24,7 @@ def load_test_studies() -> PKData:
         "timecourses",
     ]:
         setattr(pkfilter, df_key, {"study_name__in": url_study_names})
-    return PKDB.query(pkfilter=pkfilter)
+    return PKDB.query(pkfilter=pkfilter)  # updated to new query function, FIXME: check that works
 
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@ from pkdb_analysis.core import Sid as BaseSid, Core
 
 @dataclass(frozen=True)
 class Sid(BaseSid):
-    core: Core = field(default=Core(sids=PKDB.query_info_nodes()))
+    core: Core = field(default=Core(sids=PKDB.query_info_nodes_sids()))
 
 
 def test_tables(tmp_path):

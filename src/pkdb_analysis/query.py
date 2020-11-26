@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 import requests
 
+from pkdb_analysis.utils import deprecated
 from pkdb_analysis.data import PKData
 from pkdb_analysis.envs import API_URL, BASE_URL, PASSWORD, USER
 from pkdb_analysis.utils import recursive_iter
@@ -23,14 +24,21 @@ logger = logging.getLogger(__name__)
 
 
 def query_pkdb_data(
-    h5_path: Path = None, username: str = None, study_names: List = None
+    h5_path: Path = None,
+    zip_path: Path = None,
+    username: str = None, study_names: List = None
 ) -> PKData:
-    """Query the complete database.
+    """Query the PK-DB database.
+
+    If no usernames or study_names are provided the complete database will be
+    queried.
 
     Filtering by study name is supported.
 
     :param study_names: Iterable of study_names to filter for.
     :param username: filter studies by username
+
+    FIXME: support filters
     """
     studies_filter = {}
     if username is not None:
@@ -39,10 +47,15 @@ def query_pkdb_data(
         studies_filter = {"name__in": "__".join(study_names), **studies_filter}
     pkfilter = PKFilter()
     pkfilter.studies = studies_filter
-    pkdata = PKDB.query_(pkfilter)
+    pkdata = PKDB.query(pkfilter)
+
     if h5_path is not None:
-        logger.info(f"Storing pkdb data: {h5_path}")
+        logger.info(f"Storing pkdata to HDF5: {h5_path}")
         pkdata.to_hdf5(h5_path)
+
+    if zip_path is not None:
+        logger.info(f"Storing pkdata to zip archive: {zip_path}")
+        pkdata.to_archive(zip_path)
     return pkdata
 
 class PKFilter(object):
@@ -97,63 +110,30 @@ class PKDB(object):
     """ Querying PKData from PK-DB. """
 
     @classmethod
-    def query(cls, pkfilter: PKFilter = PKFilter(), page_size: int = 2000) -> "PKData":
-        """Create a PKData representation and gets the data for the provided filters.
-        If no filters are given the complete data is retrieved.
+    def query(cls, pkfilter: PKFilter = PKFilter()) -> PKData:
+        """Creates a PKData representation and gets the data for the provided filters.
 
-        :param pkfilter: Filter object to select subset of data, if no Filter is provided the complete data is returned
-        :param page_size: number of entries per query
+        If no filters are given the complete data is retrieved.
         """
-        pkfilter = pkfilter.to_dict()
-        parameters = {"format": "json", "page_size": page_size}
-        logger.info("*** Querying data ***")
-        pkdata = PKData(
-            studies=cls._get_subset(
-                "pkdata/studies", **{**parameters, **pkfilter.get("studies", {})}
-            ),
-            interventions=cls._get_subset(
-                "pkdata/interventions",
-                **{**parameters, **pkfilter.get("interventions", {})},
-            ),
-            individuals=cls._get_subset(
-                "pkdata/individuals",
-                **{**parameters, **pkfilter.get("individuals", {})},
-            ),
-            groups=cls._get_subset(
-                "pkdata/groups", **{**parameters, **pkfilter.get("groups", {})}
-            ),
-            outputs=cls._get_subset(
-                "pkdata/outputs", **{**parameters, **pkfilter.get("outputs", {})}
-            ),
-            timecourses=cls._get_subset(
-                "pkdata/timecourses",
-                **{**parameters, **pkfilter.get("timecourses", {})},
-            ),
-        )
-        return pkdata._intervention_pk_update()
+        url = API_URL + "/filter/" + pkfilter.url_params
+        headers = cls.get_authentication_headers(BASE_URL, USER, PASSWORD)
+        logger.warning(url)
+
+        with requests.get(url, headers=headers, stream=True) as r:
+            r.raise_for_status()
+            bytes_buffer = BytesIO()
+            for chunk in r.iter_content(chunk_size=8192):
+                bytes_buffer.write(chunk)
+            return PKData.from_archive(bytes_buffer)
 
     @classmethod
-    def _get_subset(cls, name, **parameters):
-        """FIXME: document me.
-
-        :param name: name of the view
-        :param parameters: query parameters
-        :return:
-        """
-        if not name in [
-            "pkdata/individuals",  # individuals
-            "pkdata/groups",  # groups
-            "pkdata/interventions",  # interventions
-            "pkdata/outputs",  # outputs
-            "pkdata/timecourses",  # timecourses
-            "pkdata/studies",  # studies
-        ]:
-            raise ValueError(f"{name} not supported")
-
-        url = API_URL + f"/{name}/"
-        return cls._get_data(
-            url, cls.get_authentication_headers(BASE_URL, USER, PASSWORD), **parameters
-        )
+    def query_info_nodes_sids(cls) -> Set[str]:
+        """Queries the sids of the info nodes"""
+        url = API_URL + "/info_nodes/"
+        headers = cls.get_authentication_headers(BASE_URL, USER, PASSWORD)
+        logger.warning(url)
+        df = cls._get_data(url, headers, page_size=1000)
+        return set(df["sid"])
 
     @classmethod
     def get_authentication_headers(cls, api_base, username, password) -> dict:
@@ -212,27 +192,65 @@ class PKDB(object):
         is_array = "timecourse" in url or "scatters" in url
         return PKData._clean_types(df, is_array)
 
+    @deprecated
     @classmethod
-    def query_(cls, pkfilter: PKFilter = PKFilter()) -> "PKData":
-        url = API_URL + "/filter/" + pkfilter.url_params
-        headers = cls.get_authentication_headers(BASE_URL, USER, PASSWORD)
-        logger.warning(url)
+    def _query(cls, pkfilter: PKFilter = PKFilter(), page_size: int = 2000) -> PKData:
+        """Create a PKData representation and gets the data for the provided filters.
+        If no filters are given the complete data is retrieved.
 
-        with requests.get(url, headers=headers, stream=True) as r:
-            r.raise_for_status()
-            bytes_buffer = BytesIO()
-            for chunk in r.iter_content(chunk_size=8192):
-                bytes_buffer.write(chunk)
-            return PKData.from_archive(bytes_buffer)
+        :param pkfilter: Filter object to select subset of data, if no Filter is provided the complete data is returned
+        :param page_size: number of entries per query
 
+        FIXME: remove
+        """
+        pkfilter = pkfilter.to_dict()
+        parameters = {"format": "json", "page_size": page_size}
+        logger.info("*** Querying data ***")
+        pkdata = PKData(
+            studies=cls._get_subset(
+                "pkdata/studies", **{**parameters, **pkfilter.get("studies", {})}
+            ),
+            interventions=cls._get_subset(
+                "pkdata/interventions",
+                **{**parameters, **pkfilter.get("interventions", {})},
+            ),
+            individuals=cls._get_subset(
+                "pkdata/individuals",
+                **{**parameters, **pkfilter.get("individuals", {})},
+            ),
+            groups=cls._get_subset(
+                "pkdata/groups", **{**parameters, **pkfilter.get("groups", {})}
+            ),
+            outputs=cls._get_subset(
+                "pkdata/outputs", **{**parameters, **pkfilter.get("outputs", {})}
+            ),
+            timecourses=cls._get_subset(
+                "pkdata/timecourses",
+                **{**parameters, **pkfilter.get("timecourses", {})},
+            ),
+        )
+        return pkdata._intervention_pk_update()
 
+    @deprecated
     @classmethod
-    def query_info_nodes(cls) -> Set[str]:
-        url = API_URL + "/info_nodes/"
-        headers = cls.get_authentication_headers(BASE_URL, USER, PASSWORD)
-        logger.warning(url)
-        df = cls._get_data(url, headers, page_size=1000)
-        return set(df["sid"])
+    def _get_subset(cls, name, **parameters):
+        """FIXME: document me.
 
+        :param name: name of the view
+        :param parameters: query parameters
+        :return:
+        """
+        if not name in [
+            "pkdata/individuals",  # individuals
+            "pkdata/groups",  # groups
+            "pkdata/interventions",  # interventions
+            "pkdata/outputs",  # outputs
+            "pkdata/timecourses",  # timecourses
+            "pkdata/studies",  # studies
+        ]:
+            raise ValueError(f"{name} not supported")
 
-
+        url = API_URL + f"/{name}/"
+        return cls._get_data(
+            url, cls.get_authentication_headers(BASE_URL, USER, PASSWORD), **parameters
+        )

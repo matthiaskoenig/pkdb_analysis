@@ -14,7 +14,7 @@ import pandas as pd
 
 from pkdb_analysis import filter, query_pkdb_data
 from pkdb_analysis.data import PKData
-
+from pkdb_analysis.core import Sid
 
 # from gspread_pandas import Spread -> removing gspread support for now
 Spread = None
@@ -22,8 +22,8 @@ logger = logging.getLogger(__name__)
 
 
 def create_table_report(
-    dosing_substances: Iterable[str],
-    report_substances: Iterable[str],
+    dosing_substances: Iterable[Union[str, Sid]],
+    report_substances: Iterable[Union[str, Sid]],
     study_info: Dict = None,
     timecourse_info: Dict = None,
     pharmacokinetic_info: Dict = None,
@@ -46,10 +46,12 @@ def create_table_report(
     google_sheets: Google sheets name for report
     query_data: boolean flag to query the data
     """
+
+
+
     if query_data:
         query_pkdb_data(h5_path=h5_data_path)
     # Load data
-
     if zip_data_path:
         if not zip_data_path.exists():
             raise IOError(
@@ -73,8 +75,8 @@ def create_table_report(
     # Create table report
     table_report = TableReport(
         pkdata=pkdata,
-        substances_output=report_substances,
-        substances_intervention=dosing_substances,
+        substances_output=[str(item) for item in report_substances],
+        substances_intervention=[str(item) for item in dosing_substances],
         study_info=study_info,
         timecourse_info=timecourse_info,
         pharmacokinetic_info=pharmacokinetic_info,
