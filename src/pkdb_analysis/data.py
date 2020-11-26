@@ -7,6 +7,7 @@ import logging
 import os
 import warnings
 import zipfile
+import tempfile
 from abc import ABC
 from collections import OrderedDict
 from io import BytesIO
@@ -16,10 +17,14 @@ from typing import Callable, List, Union, Iterable
 import numpy as np
 import pandas as pd
 from IPython.display import display
-from pandas.errors import PerformanceWarning
+
+from pkdb_analysis.utils import deprecated
 from pkdb_analysis.filter import f_healthy, f_n_healthy
 
-warnings.simplefilter(action="ignore", category=PerformanceWarning)
+# from pandas.errors import PerformanceWarning
+# This is not fixing anything, but just ignoring the problem !!!
+# warnings.simplefilter(action="ignore", category=PerformanceWarning)
+
 logger = logging.getLogger(__name__)
 
 
@@ -341,30 +346,40 @@ class PKData(object):
         return PKData(**resulting_kwargs)
 
     @classmethod
-    def from_archive(cls, path: Union[BytesIO, os.PathLike]) -> "PKData":
-        """Load data from HDF5 serialization.
-
-        :param path: path to HDF5.
-        :type path: str
-        :return: PKData loaded from HDF5.
-        :rtype: PKData
-        """
-        with zipfile.ZipFile(path, "r") as archive:
-            data_dict = {
-                key: PKData._clean_types(
-                    pd.read_csv(archive.open(f"{key}.csv"), low_memory=False),
-                    is_array=key in ["timecourses", "scatters"],
-                )
-                for key in PKData.KEYS
-            }
-        pkdata = PKData(**data_dict)
-
-        return cls._intervention_pk_update(pkdata)
+    def from_download(cls, path: Union[BytesIO, os.PathLike]) -> "PKData":
+        """Load data from downloaded zip archive."""
+        pkdata = cls.from_archive(path=path)
+        # fix the intervention keys due to different serialization format
+        pkdata = cls._intervention_pk_update(pkdata)
+        return pkdata
 
     @classmethod
-    def to_archive(cls):
-        # FIXME IMPLEMENT ME
-        raise NotImplemented
+    def from_archive(cls, path: Union[BytesIO, os.PathLike]) -> "PKData":
+        """Load data from serialized archive."""
+        data_dict = {}
+        with zipfile.ZipFile(path, "r") as archive:
+            for key in PKData.KEYS:
+                df = pd.read_csv(archive.open(f"{key}.csv", "r"), low_memory=False)
+                data_dict[key] = PKData._clean_types(
+                    df,
+                    is_array=key in ["timecourses", "scatters"]
+                )
+        # create data from data frames
+        return PKData(**data_dict)
+
+    def to_archive(self, path: Path) -> None:
+        """Saves data to zip archive"""
+        dir = path.parent
+        if not dir.exists():
+            logger.warning(f"Creating directory: {dir}")
+            dir.mkdir(parents=True)
+
+        with zipfile.ZipFile(path, "w") as archive:
+            for key in PKData.KEYS:
+                df = getattr(self, key)  # type: pd.DataFrame
+                with tempfile.NamedTemporaryFile() as fp:
+                    df.to_csv(fp.name)
+                    archive.write(filename=fp.name, arcname=f"{key}.csv")
 
     @staticmethod
     def from_hdf5(path: Path) -> "PKData":
@@ -385,11 +400,12 @@ class PKData(object):
         return PKData(**data_dict)
 
     def to_hdf5(self, path: Path) -> None:
-        """Saves data HDF5
+        """Saves data HDF5."""
+        dir = path.parent
+        if not dir.exists():
+            logger.warning(f"Creating directory: {dir}")
+            dir.mkdir(parents=True)
 
-        :param path: path to HDF5.
-        :type path: str
-        """
         store = pd.HDFStore(path)
         for key in [
             "studies",
@@ -996,10 +1012,8 @@ class PKData(object):
     def _intervention_pk_update(self):
         """Performs all three function necessary to update the
         intervention pks in all three tables where they are contained (interventions, output, timecourses)."""
-
         if not self.outputs.empty:
             mapping_int_pks = self._map_intervention_pks()
-
             data_dict = self.as_dict()
             data_dict["interventions"] = self._update_interventions(mapping_int_pks)
             if not self.outputs.empty:
