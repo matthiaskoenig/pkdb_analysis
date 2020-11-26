@@ -361,6 +361,11 @@ class PKData(object):
 
         return cls._intervention_pk_update(pkdata)
 
+    @classmethod
+    def to_archive(cls):
+        # FIXME IMPLEMENT ME
+        raise NotImplemented
+
     @staticmethod
     def from_hdf5(path: Path) -> "PKData":
         """Load data from an archive as returned from the download in pk-db.com.
