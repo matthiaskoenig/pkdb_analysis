@@ -1,6 +1,8 @@
 """ This module creates configuration files for circos plots."""
 from pathlib import Path
 import pandas as pd
+from pkdb_analysis.utils import create_parent
+
 
 def create_ideogram(studies_data):
     type_to_label = studies_data.set_index("type").to_dict()["label"]
@@ -14,14 +16,16 @@ def create_ideogram(studies_data):
 def create_config_files(studies_data: pd.DataFrame, path: Path):
     rows_per_study = 1
     ideogram = create_ideogram(studies_data)
-    with open(path / "data" / "ideogram.txt", "w") as f:
+    data_dir = path / "data"
+    ideogram_path = data_dir / "ideogram.txt"
+    create_parent(ideogram_path)
+    with open(ideogram_path, "w") as f:
 
         for idx, substance in ideogram.reset_index().iterrows():
             number = idx + 1
             f.write(
                 f"chr - {substance.label} {substance.label} 0 {substance.len * rows_per_study} pastel2-6-qual-{number}\n"
             )
-
     frames = []
     for _, data in studies_data.groupby("label"):
         data["start"] = range(0, len(data) * rows_per_study, rows_per_study)
@@ -32,26 +36,26 @@ def create_config_files(studies_data: pd.DataFrame, path: Path):
     studies_data = pd.concat(frames)
     # names 2d track
     studies_data[["label", "start", "end", "name"]].to_csv(
-          path / "data" / "study_names.txt", sep=" ", header=False, index=False
+          data_dir / "study_names.txt", sep=" ", header=False, index=False
     )
     # all subjects number for number track
     studies_data[["label", "start", "end", "subjects"]].to_csv(
-       path / "data" / "all_subjects_number.txt",
+       data_dir / "all_subjects_number.txt",
         sep=" ",
         header=False,
         index=False,
     )
     studies_data[["label", "start", "end", "timecourses"]].to_csv(
-        path / "data" / "timecourse_number.txt",
+        data_dir / "timecourse_number.txt",
         sep=" ",
         header=False,
         index=False,
     )
     studies_data[["label", "start", "end", "outputs"]].to_csv(
-          path / "data" / "output_number.txt", sep=" ", header=False, index=False
+          data_dir / "output_number.txt", sep=" ", header=False, index=False
     )
     studies_data[["label", "start", "end", "interventions"]].to_csv(
-        path / "data" / "intervention_number.txt",
+        data_dir / "intervention_number.txt",
         sep=" ",
         header=False,
         index=False,
@@ -60,7 +64,7 @@ def create_config_files(studies_data: pd.DataFrame, path: Path):
     bubbles_data_dict = bubbles_data(studies_data, 25)
     for name, data in bubbles_data_dict.items():
         data[["label", "start", "end", "type", "circle_type"]].to_csv(
-            path / "data" / f"{name}_bubble.txt", sep=" ", header=False, index=False
+            data_dir / f"{name}_bubble.txt", sep=" ", header=False, index=False
         )
 
 
