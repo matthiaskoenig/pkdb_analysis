@@ -22,6 +22,8 @@ import matplotlib.font_manager as font_manager
 from matplotlib import ticker
 from pkdb_analysis.units import UnitRegistry
 from pkdb_analysis.core import Sid
+from pkdb_analysis.utils import create_parent
+
 logger = logging.getLogger(__file__)
 
 # FIXME: get rid of global module definitions! This overwrites local settings on import!
@@ -363,6 +365,7 @@ def create_plot(df: pd.DataFrame,
                     df_figure_y_max,
                     log_y)
 
+    create_parent(file_name)
     figure.savefig(
         file_name,
         bbox_inches="tight",

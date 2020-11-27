@@ -11,8 +11,8 @@ import seaborn as sns
 import yaml
 from pkdb_analysis.data import PKData
 from pkdb_analysis.core import Sid
-from pkdb_analysis.meta_analysis import MetaAnalysis
 from pkdb_analysis.plotting.factory import pkdata_by_plot_content, results, PlotContentDefinition
+from pkdb_analysis.utils import create_parent
 
 alt.data_transformers.disable_max_rows()
 # alt.data_transformers.enable('json')
@@ -518,6 +518,7 @@ def interactive_plot_factory(
         replacements=replacements,
     )
     copy_dir(Path(__file__).parent / "template", path, "_".join(output_substances_str))
+    create_parent(path)
     create_navigation_file(results_dict, path)
     create_pages(results_dict, path)
     create_plots(

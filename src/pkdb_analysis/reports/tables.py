@@ -17,6 +17,8 @@ from pkdb_analysis.data import PKData
 from pkdb_analysis.core import Sid
 
 # from gspread_pandas import Spread -> removing gspread support for now
+from pkdb_analysis.utils import create_parent
+
 Spread = None
 logger = logging.getLogger(__name__)
 
@@ -427,11 +429,12 @@ class TableReport(object):
         """Create folder."""
         if not path_output.exists():
             logger.warning(f"Path created: '{path_output.resolve()}'")
-            path_output.mkdir()
+            path_output.mkdir(parents=True)
 
     def to_excel(self, path_excel: Path):
         """Write all tables excel file."""
-        self._create_path(path_excel.parent)
+        create_parent(path_excel)
+
 
         def add_header_format(hformat):
             hformat.set_bold()

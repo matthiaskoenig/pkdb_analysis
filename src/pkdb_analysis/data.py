@@ -19,7 +19,7 @@ import numpy as np
 import pandas as pd
 from IPython.display import display
 
-from pkdb_analysis.utils import deprecated
+from pkdb_analysis.utils import deprecated, create_parent
 from pkdb_analysis.filter import f_healthy, f_n_healthy
 
 # from pandas.errors import PerformanceWarning
@@ -371,11 +371,7 @@ class PKData(object):
 
     def to_archive(self, path: Path) -> None:
         """Saves data to zip archive"""
-        dir = path.parent
-        if not dir.exists():
-            logger.warning(f"Creating directory: {dir}")
-            dir.mkdir(parents=True)
-
+        create_parent(path)
         with zipfile.ZipFile(path, "w") as archive:
             for key in PKData.KEYS:
                 df = getattr(self, key)  # type: pd.DataFrame
@@ -403,11 +399,7 @@ class PKData(object):
 
     def to_hdf5(self, path: Path) -> None:
         """Saves data HDF5."""
-        dir = path.parent
-        if not dir.exists():
-            logger.warning(f"Creating directory: {dir}")
-            dir.mkdir(parents=True)
-
+        create_parent(path)
         store = pd.HDFStore(path)
         for key in [
             "studies",
