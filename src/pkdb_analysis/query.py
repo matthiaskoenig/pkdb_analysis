@@ -128,7 +128,7 @@ class PKDB(object):
             bytes_buffer = BytesIO()
             for chunk in r.iter_content(chunk_size=8192):
                 bytes_buffer.write(chunk)
-            return PKData.from_archive(bytes_buffer)
+            return PKData.from_download(bytes_buffer)
 
     @classmethod
     def query_info_nodes_sids(cls) -> Set[str]:

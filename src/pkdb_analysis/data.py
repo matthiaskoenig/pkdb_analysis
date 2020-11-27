@@ -9,6 +9,7 @@ import warnings
 import zipfile
 import tempfile
 from abc import ABC
+from ast import literal_eval
 from collections import OrderedDict
 from io import BytesIO
 from pathlib import Path
@@ -229,8 +230,9 @@ class PKData(object):
 
         def _transform_strings_tuple(value):
             if isinstance(value, str):
-                if value.startswith("["):
-                    return tuple([z for z in value[1:-1].split(",")])
+                if value.startswith("[") or value.startswith("("):
+                    return tuple(literal_eval(value))
+                    #return tuple([z for z in value[1:-1].split(",")])
             return value
 
         if not self.timecourses.empty:
@@ -1012,7 +1014,9 @@ class PKData(object):
     def _intervention_pk_update(self):
         """Performs all three function necessary to update the
         intervention pks in all three tables where they are contained (interventions, output, timecourses)."""
-        if not self.outputs.empty:
+        if self.outputs.empty:
+            return self
+        else:
             mapping_int_pks = self._map_intervention_pks()
             data_dict = self.as_dict()
             data_dict["interventions"] = self._update_interventions(mapping_int_pks)
@@ -1023,8 +1027,7 @@ class PKData(object):
             # if not self.scatters.empty:
             #    data_dict["scatters"] = self._update_scatters(mapping_int_pks)
             return PKData(**data_dict)
-        else:
-            return self
+
 
     @staticmethod
     def _clean_types(df: pd.DataFrame, is_array):
