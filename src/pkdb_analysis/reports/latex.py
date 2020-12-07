@@ -9,7 +9,8 @@ def create_latex_report(
     output_dir: Path,
     substance_sids: List[str],
     substance_shorts: List[str],
-    replacement_order: List[int] = None
+    replacement_order: List[int] = None,
+    citep: bool = False
 ):
     """Create latex table report.
 
@@ -24,8 +25,8 @@ def create_latex_report(
         substance_shorts=substance_shorts,
         replacement_order=replacement_order
     )
-    latex_tables.create_latex()
     latex_tables.create_pdf()
+    latex_tables.create_latex(citep=citep)
 
 
 class LatexTables:
@@ -62,13 +63,13 @@ class LatexTables:
         self.create_latex()
         subprocess.run(["pdflatex", 'main.tex'], cwd=self.output_dir)
 
-    def create_latex(self):
+    def create_latex(self, citep: bool = False):
         """Creates all latex files."""
         self._create_latex_main()
 
         for table_key in ["studies", "timecourses", "pharmacokinetics"]:
             dfs = self._prepare_table(table_key=table_key)
-            self._create_latex_tables(table_key=table_key, dfs=dfs)
+            self._create_latex_tables(table_key=table_key, dfs=dfs, citep=citep)
 
 
     def _create_latex_main(self):
@@ -199,14 +200,18 @@ class LatexTables:
             dfs = [df1, df2]
         return dfs
 
-    def _create_latex_tables(self, table_key, dfs: List[pd.DataFrame]):
+    def _create_latex_tables(self, table_key, dfs: List[pd.DataFrame], citep: bool = False):
         """ Convert dataframe to latex tables."""
-
         for k, df in enumerate(dfs):
             # create pandas latex content
             latex_path = self.output_dir / f"{table_key}.tex"
             if table_key == "pharmacokinetics":
                 latex_path = self.output_dir / f"{table_key}_{k}.tex"
+
+            if citep:
+                df["name"] = df["name"].apply(lambda name: "\citep{"+name+"}")
+
+            print(df["name"])
 
             df.to_latex(
                 latex_path,
@@ -287,3 +292,6 @@ class LatexTables:
 
             with open(latex_path, "w") as f:
                 f.write(latex)
+
+        def _post_processing2():
+            """ Long tables and pubmed ids."""

@@ -14,9 +14,11 @@ from collections import OrderedDict
 from io import BytesIO
 from pathlib import Path
 from typing import Callable, List, Union, Iterable
+from urllib import parse as urlparse
 
 import numpy as np
 import pandas as pd
+import requests
 from IPython.display import display
 
 from pkdb_analysis.utils import deprecated, create_parent
@@ -1056,3 +1058,15 @@ class PKData(object):
                 df[column] = df[column].replace({np.nan: -1}).astype(int)
 
         return df
+
+    def to_medline(self, path: Path):
+        """ create a bibtex file. """
+
+        create_parent(path)
+        reference_pmids = [str(int(s)) for s in self.studies.reference_pmid if s]
+        reference_pmids_str ="%2C".join(reference_pmids)
+        url = "https://api.ncbi.nlm.nih.gov/lit/ctxp/v1/pubmed/?format=medline&id=" + reference_pmids_str + "&download=y"
+        with requests.get(url) as r:
+            r.raise_for_status()
+            with open(path, "wb") as f:
+                    f.write(r.content)

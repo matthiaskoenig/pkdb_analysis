@@ -196,3 +196,4 @@ class PKDB(object):
         is_array = "timecourse" in url or "scatters" in url
 
         return PKData._clean_types(df, is_array)
+

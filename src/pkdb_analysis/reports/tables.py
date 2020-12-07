@@ -34,6 +34,7 @@ def create_table_report(
     zip_data_path: Path = None,
     excel_path: Path = None,
     tsv_path: Path = None,
+    nbib_path: Path = None,
     google_sheets: str = None,
     query_data: bool = False,
 ):
@@ -83,6 +84,8 @@ def create_table_report(
         timecourse_info=timecourse_info,
         pharmacokinetic_info=pharmacokinetic_info,
     )
+    if nbib_path:
+        table_report.pkdata.to_medline(nbib_path)
     table_report.create_tables()
 
     # serialize table report
