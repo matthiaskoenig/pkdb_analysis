@@ -506,7 +506,7 @@ class TableReport(object):
                     else:
                         worksheet.write(0, col_num, col_name, header_format)
 
-                table_len = len(df.columns.values)+2
+                table_len = len(df)+2
                 worksheet.conditional_format(f'A1:ZZ{table_len}', {'type': 'cell',
                                                           'criteria': 'equal to',
                                                           'value': '"✓"',
