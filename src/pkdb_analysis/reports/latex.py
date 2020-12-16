@@ -10,7 +10,7 @@ def create_latex_report(
     substance_sids: List[str],
     substance_shorts: List[str],
     replacement_order: List[int] = None,
-    citep: bool = False
+    citet: bool = False
 ):
     """Create latex table report.
 
@@ -26,7 +26,7 @@ def create_latex_report(
         replacement_order=replacement_order
     )
     latex_tables.create_pdf()
-    latex_tables.create_latex(citep=citep)
+    latex_tables.create_latex(citet=citet)
 
 
 class LatexTables:
@@ -63,13 +63,13 @@ class LatexTables:
         self.create_latex()
         subprocess.run(["pdflatex", 'main.tex'], cwd=self.output_dir)
 
-    def create_latex(self, citep: bool = False):
+    def create_latex(self, citet: bool = False):
         """Creates all latex files."""
         self._create_latex_main()
 
         for table_key in ["studies", "timecourses", "pharmacokinetics"]:
             dfs = self._prepare_table(table_key=table_key)
-            self._create_latex_tables(table_key=table_key, dfs=dfs, citep=citep)
+            self._create_latex_tables(table_key=table_key, dfs=dfs, citet=citet)
 
 
     def _create_latex_main(self):
@@ -199,25 +199,38 @@ class LatexTables:
             df2 = df_new.iloc[:, [0, 1] + list(range(split + 1, end))]
             dfs = [df1, df2]
         return dfs
+    @staticmethod
+    def latex_href(x):
+        return "\href{https://alpha.pk-db.com/data/"+str(x)+"}{"+str(x)+"}"
 
-    def _create_latex_tables(self, table_key, dfs: List[pd.DataFrame], citep: bool = False):
+    def _create_latex_tables(self, table_key, dfs: List[pd.DataFrame], citet: bool = False):
         """ Convert dataframe to latex tables."""
         for k, df in enumerate(dfs):
             # create pandas latex content
             latex_path = self.output_dir / f"{table_key}.tex"
             if table_key == "pharmacokinetics":
                 latex_path = self.output_dir / f"{table_key}_{k}.tex"
+            if citet:
+                df["name"] = df["name"].apply(lambda x: "\citet{"+str(x)+"}")
+                df["PKDB"] = df["PKDB"].astype(str).apply(self.latex_href)
 
-            if citep:
-                df["name"] = df["name"].apply(lambda name: "\citep{"+name+"}")
+            if table_key == "studies":
+                # rotate headers
+                replacements = {col: "\rotatebox{90}{" + col + "}" for col in df.columns if col not in ["PKDB", "name"]}
+                df.rename(columns=replacements, inplace=True)
 
-            print(df["name"])
+            with pd.option_context("max_colwidth", 1000):
+                df.to_latex(
+                    latex_path,
+                    longtable=True,
+                    index=False,
+                    header=True,
+                    caption=f"Overview of curated {table_key}. For each study the table shows which information was reported."
+                            " Either, information was reported ($\checkmark$), partially reported ($\oslash$) or not "
+                            "reported at all (whitespace).",
+                    label=table_key
 
-            df.to_latex(
-                latex_path,
-                index=False,
-                header=True,
-            )
+                )
 
             # post processing
             with open(latex_path, "r") as f:
@@ -230,12 +243,7 @@ class LatexTables:
 
             n_sids = len(self.substance_sids)
 
-            if table_key == "studies":
-                # rotate headers
-                for col in df.columns:
-                    if col in ["PKDB", "name"]:
-                        continue
-                    latex = latex.replace(col, r"\rotatebox{90}{" + col + "}")
+
 
             if table_key == "timecourses":
                 for k in self.replacement_order:

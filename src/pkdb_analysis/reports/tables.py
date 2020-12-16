@@ -840,9 +840,9 @@ class TableReport(object):
         df_sid_subset = table.df[table.study_sid == row.sid]  # type: pd.DataFrame
 
         d = dict()
-        for key, parameter in measurement_types.items():
+        for key, content_definition in measurement_types.items():
             d[key] = TableReport._cell_content(
-                parameter=parameter, df=df_sid_subset, instance_id=table.pk
+                content_definition=content_definition, df=df_sid_subset, instance_id=table.pk
             )
 
         return row.append(pd.Series(d))
@@ -855,7 +855,7 @@ class TableReport(object):
     def _cell_content(
         df: pd.DataFrame,
         instance_id: str,
-        parameter: TableContentDefinition,
+        content_definition: TableContentDefinition,
         Subjects_groups: int = 0,
         Subjects_individual: int = 0,
     ) -> str:
@@ -870,32 +870,32 @@ class TableReport(object):
         has_info = []
         compare_length = 0
 
-        if parameter.substance != "any":
-            df = df[df["substance"] == parameter.substance]
+        if content_definition.substance != "any":
+            df = df[df["substance"] == content_definition.substance]
 
-        if parameter.only_group:
+        if content_definition.only_group:
             df = df[df["individual_pk"] == -1]
             instance_id = "group_pk"
             compare_length = Subjects_groups
 
-        if parameter.only_individual:
+        if content_definition.only_individual:
             df = df[df["group_pk"] == -1]
             instance_id = "individual_pk"
             compare_length = Subjects_individual
 
-        if not parameter.groupby:
+        if not content_definition.groupby:
             instance_id = "study_name"
 
         for _, instance in df.groupby(instance_id):
-            if parameter.measurement_types == "any":
+            if content_definition.measurement_types == "any":
                 specific_info = instance
             else:
                 specific_info = instance[
-                    instance["measurement_type"].isin(parameter.measurement_types)
+                    instance["measurement_type"].isin(content_definition.measurement_types)
                 ]
 
             value_types = (
-                specific_info[parameter.value_field].applymap(type).stack().unique()
+                specific_info[content_definition.value_field].applymap(type).stack().unique()
             )
 
             has_array = False
@@ -905,11 +905,11 @@ class TableReport(object):
                     choices = {True}
 
             if not has_array:
-                this_series = specific_info[parameter.value_field].max(axis=1)
+                this_series = specific_info[content_definition.value_field].max(axis=1)
                 choices = set([i for i in this_series.dropna() if i is not None])
 
-            if "any" not in parameter.values:
-                choices = choices & set(parameter.values)
+            if "any" not in content_definition.values:
+                choices = choices & set(content_definition.values)
             if len(choices) == 0:
                 has_info.append(False)
             elif "NR" in set(choices):
