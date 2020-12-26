@@ -107,7 +107,7 @@ class TableContentDefinition:
 
     measurement_types: Union[str, List] = "any"
     value_field: Sequence = "choice"
-    substance: str = "any"
+    substance: Union[str, List] = "any"
     values: Sequence = ("any",)
     only_group: bool = False
     only_individual: bool = False
@@ -871,7 +871,10 @@ class TableReport(object):
         compare_length = 0
 
         if content_definition.substance != "any":
-            df = df[df["substance"] == content_definition.substance]
+            if isinstance(content_definition.substance, List):
+                df = df[df["substance"].isin(content_definition.substance)]
+            else:
+                df = df[df["substance"] == content_definition.substance]
 
         if content_definition.only_group:
             df = df[df["individual_pk"] == -1]
