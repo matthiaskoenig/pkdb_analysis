@@ -392,7 +392,7 @@ def plot_factory(
     path: Path,
     color_by: str,
     color_label: str,
-    replacements: Dict[str,Dict[str, str]] = {},
+    replacements: Dict[str, Dict[str, str]] = {},
 ) -> None:
     """ Factory function to create multiple plots defined by each entry of the plotting_categories."""
     intervention_substances_str = {substance.sid for substance in intervention_substances}

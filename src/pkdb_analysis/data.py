@@ -13,7 +13,7 @@ from ast import literal_eval
 from collections import OrderedDict
 from io import BytesIO
 from pathlib import Path
-from typing import Callable, List, Union, Iterable
+from typing import Callable, List, Union, Iterable, Dict
 from urllib import parse as urlparse
 
 import numpy as np
@@ -22,7 +22,7 @@ import requests
 from IPython.display import display
 
 from pkdb_analysis.utils import deprecated, create_parent
-from pkdb_analysis.filter import f_healthy, f_n_healthy
+from pkdb_analysis.filter import f_healthy, f_n_healthy, filter_factory
 
 # from pandas.errors import PerformanceWarning
 # This is not fixing anything, but just ignoring the problem !!!
@@ -715,6 +715,24 @@ class PKData(object):
         """ Filter timecourses. """
         return self._pk_filter("timecourses", f_idx, concise, **kwargs)
 
+    def filter(self, filter_dict: Dict) -> "PKData":
+        pkdata = self.copy()
+        filter_functions = [
+            "groups",
+            "individuals",
+            "interventions",
+            "outputs",
+        ]
+        for key in filter_functions:
+            # filter each table separately by dedicated function
+            table_filter_definitions = filter_dict.get(key, None)
+            if table_filter_definitions:
+                table_filters = filter_factory(table_filter_definitions)
+                pkdata = pkdata._pk_filter(key, f_idx=table_filters, concise=False)
+        pkdata._concise()
+        return pkdata
+
+
     def exclude_study(self, f_idx, concise=True, **kwargs) -> "PKData":
         """ Excludes studies which cann be selected by a filter (idx)."""
 
@@ -799,6 +817,7 @@ class PKData(object):
         Modifies the DataFrame in place.
         :return:
         """
+        #FIXME: scatters are not concised !!!
 
         self.outputs = self.outputs[
             self.outputs["group_pk"].isin(self.ids["groups"])

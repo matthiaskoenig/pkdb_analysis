@@ -10,7 +10,9 @@ def create_latex_report(
     substance_sids: List[str],
     substance_shorts: List[str],
     replacement_order: List[int] = None,
-    citet: bool = False
+    citet: bool = False,
+    number_header: bool = False
+
 ):
     """Create latex table report.
 
@@ -26,7 +28,7 @@ def create_latex_report(
         replacement_order=replacement_order
     )
     latex_tables.create_pdf()
-    latex_tables.create_latex(citet=citet)
+    latex_tables.create_latex(citet=citet, number_header=number_header)
 
 
 class LatexTables:
@@ -63,13 +65,13 @@ class LatexTables:
         self.create_latex()
         subprocess.run(["pdflatex", 'main.tex'], cwd=self.output_dir)
 
-    def create_latex(self, citet: bool = False):
+    def create_latex(self, citet: bool = False, number_header: bool = False):
         """Creates all latex files."""
         self._create_latex_main()
 
         for table_key in ["studies", "timecourses", "pharmacokinetics"]:
             dfs = self._prepare_table(table_key=table_key)
-            self._create_latex_tables(table_key=table_key, dfs=dfs, citet=citet)
+            self._create_latex_tables(table_key=table_key, dfs=dfs, citet=citet, number_header=number_header)
 
 
     def _create_latex_main(self):
@@ -203,16 +205,40 @@ class LatexTables:
     def latex_href(x):
         return "\href{https://alpha.pk-db.com/data/"+str(x)+"}{"+str(x)+"}"
 
-    def _create_latex_tables(self, table_key, dfs: List[pd.DataFrame], citet: bool = False):
+    @staticmethod
+    def count_true(series: pd.Series) -> int:
+        return series.value_counts().get("✓",0)
+
+    def _create_latex_tables(self,
+                             table_key: str,
+                             dfs: List[pd.DataFrame],
+                             citet: bool = False,
+                             number_header: bool = False):
         """ Convert dataframe to latex tables."""
         for k, df in enumerate(dfs):
             # create pandas latex content
             latex_path = self.output_dir / f"{table_key}.tex"
+
             if table_key == "pharmacokinetics":
                 latex_path = self.output_dir / f"{table_key}_{k}.tex"
             if citet:
                 df["name"] = df["name"].apply(lambda x: "\citet{"+str(x)+"}")
                 df["PKDB"] = df["PKDB"].astype(str).apply(self.latex_href)
+
+            if number_header:
+                header_row = {}
+                for name in df.columns:
+                    if name in {"PKDB"}:
+                        header_row[name] = df[name].count()
+                    elif name in {"name"}:
+                        header_row[name] = "\#"
+                    elif name in {"subjects", "groups"}:
+                        header_row[name] = df[name].sum()
+                    else:
+                        header_row[name] = self.count_true(df[name])
+
+                df = pd.concat([pd.DataFrame([header_row], columns=df.columns), df], ignore_index=True, )
+
 
             if table_key == "studies":
                 # rotate headers

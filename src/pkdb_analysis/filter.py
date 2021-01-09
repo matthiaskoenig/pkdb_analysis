@@ -1,8 +1,28 @@
 """ Defines frequently used filters for the PKData instances."""
-from typing import Iterable, Callable
+from typing import Iterable, Callable, Dict
 import numpy as np
 import pandas as pd
 
+
+def filter_factory(filter_dict: Dict):
+    """ generic filter factory """
+    f_idx = []
+    for key, value in filter_dict.items():
+
+        def constructor(key, value):
+
+            def _f1(d):
+                return d[key].isin(value)
+
+            def _f2(d):
+                return d[key] == value
+
+            if isinstance(value, list):
+                return _f1
+            else:
+                return _f2
+        f_idx.append(constructor(key, value))
+    return f_idx
 
 def filter_single_intervention(pkdata: 'PKData') -> 'PKData':
     """PKData filter returning a concise PKData instance containing only outputs where one intervention was applied."""

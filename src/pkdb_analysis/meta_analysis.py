@@ -50,7 +50,7 @@ def markers(d: pd.Series) -> str:
 class MetaAnalysis(object):
     """ Main class for meta analysis. Main functionality of the class is to merge the tables of an PKData objet into
     one Dataframe (self.results). The result is used for interactive plots, static plots, and table reports."""
-    def __init__(self, pkdata: PKData, intervention_substances: Set[str], url: str = ""):
+    def __init__(self, pkdata: PKData, intervention_substances: Set[str] = None, url: str = ""):
         self.pkdata = pkdata
         self.results = None
         self.group_pk = pkdata.groups.pk
@@ -64,7 +64,10 @@ class MetaAnalysis(object):
         table = self.pkdata.interventions
         _table = pd.DataFrame()
         for table_pk, df in table.df.groupby(table.pk):
-            subset = df[df["substance"].isin(self.intervention_substances)].copy()
+            if self.intervention_substances:
+                subset = df[df["substance"].isin(self.intervention_substances)].copy()
+            else:
+                subset = df.copy()
             subset["number"] = len(df)
             if len(subset) == 1:
                 subset = subset.iloc[0]
@@ -165,8 +168,10 @@ class MetaAnalysis(object):
         )
         self.results["min_sd_age"] = self.results["age"] - self.results["sd_age"]
         self.results["max_sd_age"] = self.results["age"] + self.results["sd_age"]
-
-        self.results["subject_count"] = self.results["group_count"].fillna(1)
+        if "group_count" in self.results:
+            self.results["subject_count"] = self.results["group_count"].fillna(1)
+        else:
+            self.results["subject_count"] = 1
 
         self.results["url"] = self.results["study_sid"].apply(lambda x: f"{self.url}/data/{x}")
         # self.results = self.results.replace({"NR", "not reported"}, regex=True)
