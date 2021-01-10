@@ -27,22 +27,22 @@ class OutputPair(object):
 
     @staticmethod
     def get_statistics(pkdata: PKData):
-        len_individuals = len(pkdata.individuals)
-        len_groups = len(pkdata.groups)
+        number_individuals = len(pkdata.individuals.pks)
+        number_groups = len(pkdata.groups.pks)
 
-        if len_individuals > 0 and len_groups > 0:
+        if number_individuals > 0 and number_groups > 0:
             raise ValueError("One group or individuals are allowed not both.")
 
-        if len_individuals == 0 and len_groups == 0:
+        if number_individuals == 0 and number_groups == 0:
             print(pkdata)
             raise ValueError("Empty data not allowed.")
 
-        if len_individuals > 0:
-            count = len_individuals
+        if number_individuals > 0:
+            count = number_individuals
             average = pkdata.outputs["value"].mean()
             sd = pkdata.outputs["value"].std()
 
-        elif len_groups > 0:
+        elif number_groups > 0:
             count = pkdata.groups.iloc[0].group_count
             average = get_value(pkdata.outputs.iloc[0])
             sd  =pkdata.outputs.iloc[0]["sd"]
