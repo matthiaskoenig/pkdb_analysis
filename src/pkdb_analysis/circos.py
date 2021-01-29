@@ -105,7 +105,7 @@ def bubbles_data(studies_data, big_bubble_size):
             interventions_df = interventions_df.append(interventions)
 
         group_subject = study_expand(
-            study, "subjects_minus_individuals", big_bubble_size, "subjects"
+            study, "subjects_minus_individuals", big_bubble_size, "group_subjects"
         )
         if len(group_subject) > 0:
             group_members_df = group_members_df.append(group_subject)

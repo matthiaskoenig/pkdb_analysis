@@ -6,9 +6,21 @@ import pandas as pd
 from typing import List, Set, Dict, Callable, Tuple
 from pathlib import Path
 import numpy as np
-
+import seaborn as sns
 import warnings
-
+from matplotlib import colors
+from matplotlib.colors import LinearSegmentedColormap, ListedColormap
+from pkdb_analysis.kernels import HeteroscedasticKernel
+from scipy.optimize import curve_fit
+from sklearn import preprocessing
+from sklearn.cluster import KMeans
+from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.gaussian_process.kernels import RBF, ConstantKernel, DotProduct, Matern
+from sklearn.naive_bayes import GaussianNB
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import WhiteKernel, ExpSineSquared, ConstantKernel as C
 from pkdb_analysis.filter import f_dosing_in, f_mt_in_substance_in
 from pkdb_analysis.deprecated.analysis import mscatter, get_one
 from pkdb_analysis.data import PKData
@@ -225,19 +237,12 @@ def add_legends(df: pd.DataFrame, color_label: str, color_by: str,  ax: plt.Axes
 def group_values(df_group: pd.DataFrame,
                  color_by: str) -> (pd.Series, pd.Series, pd.Series, pd.Series, pd.Series, pd.Series):
     """ Returns the values for plotting of group data"""
-    x_group = df_group["intervention_value"]
-
-    if np.isnan(df_group["mean"]):
-        y_group = df_group["median"]
-    else:
-        y_group = df_group["mean"]
-
     yerr_group = df_group.se
     yerr_group = np.nan_to_num(yerr_group)
     ms = df_group.group_count + 5
     color = df_group[color_by]
     marker = df_group.marker
-    return x_group, y_group, yerr_group, ms, color, marker
+    return df_group.x, df_group.y, yerr_group, ms, color, marker
 
 
 def add_group_scatter(df_group: pd.DataFrame, color_by: str, ax: plt.Axes) -> None:
@@ -260,19 +265,30 @@ def add_text(
         df_figure_x_max: float,
         df_figure_y_max: float,
         color_by: str,
-        ax: plt.Axes) -> None:
+        ax: plt.Axes,
+        log_x: bool,
+        log_y: bool,
+) -> None:
     """ Annotates every scatter point related to a group with the respective study name."""
     x_group, y_group, _, _, _, _ = group_values(df_group, color_by=color_by)
     txt = df_group.study_name
+    aditional_x = (0.01 * df_figure_x_max)
+    aditional_y = (0.01 * df_figure_y_max)
+
+    if log_x:
+        aditional_x = 0
+    if log_y:
+        aditional_y = 0
+
     data_values = [
-        x_group + (0.01 * df_figure_x_max),
-        y_group + (0.01 * df_figure_y_max),
+        x_group + aditional_x,
+        y_group + aditional_y,
     ]
     isnan = np.isnan(np.array(data_values))
     if not any(isnan):
         ax.annotate(
             txt,
-            (x_group + (0.01 * df_figure_x_max), y_group + (0.01 * df_figure_y_max)),
+            (x_group + aditional_x, y_group + aditional_y),
             alpha=0.7,
         )
 
@@ -282,20 +298,35 @@ def add_axis_config(ax: plt.Axes,
                     substance_intervention: str,
                     measurement_type: str,
                     u_unit,
-                    u_unit_intervention,
+                    u_unit_x,
                     df_figure_x_max: float,
                     df_figure_y_min: float,
                     df_figure_y_max: float,
-                    log_y: bool
+                    log_y: bool,
+                    log_x: bool,
+                    x_value: str,
+                    standardize: bool,
                     ) -> None:
     y_axis_label = f"{substance} {measurement_type}"
     ax.set_ylabel(f"{y_axis_label} [{u_unit.u :~P}]")
-    x_label = "$Dose_{" + substance_intervention + "}$"
-    ax.set_xlabel(f"{x_label} [{u_unit_intervention.u :~P}]")
+    if x_value =="intervention_value":
+        x_label = "$Dose_{" + substance_intervention + "}$"
+    elif x_value == "time":
+        x_label = x_value
+    ax.set_xlabel(f"{x_label} [{u_unit_x.u :~P}]")
     ax.yaxis.set_major_formatter(FormatStrFormatter("%.2f"))
-    ax.set_xlim(left=0, right=df_figure_x_max)
     # ax.yaxis.set_major_locator(MaxNLocator(integer=True))
     ax.yaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
+    if log_x:
+        ax.set_xscale("log")
+        ax.set_xlim(right=df_figure_x_max)
+
+    elif standardize:
+        ax.set_xlim(right=df_figure_x_max)
+        ax.set_ylim(top=df_figure_y_max)
+        return
+    else:
+        ax.set_xlim(left=0, right=df_figure_x_max)
 
     if log_y:
         ax.set_yscale("log")
@@ -304,54 +335,157 @@ def add_axis_config(ax: plt.Axes,
         ax.set_ylim(bottom=0, top=df_figure_y_max)
 
 
+def _gaussian_regression(
+        df,
+        color_label,
+        color_by,
+        log_x, substance,
+        substance_intervention,
+        measurement_type,
+        u_unit,
+        u_unit_x,
+        df_figure_x_max,
+        df_figure_y_min,
+        df_figure_y_max,
+        log_y,
+        x_value,
+        standardize,
+        figsize):
+     n = 2
+     m = 2
+     figure, axes = plt.subplots(nrows=n, ncols=m, figsize=figsize)
+
+     df = df[df[color_label].isin(["oc", "smoking", "control"])]
+     rows_with_nan = df[["x", "y"]].isnull().any(axis=1)
+     df = df[~rows_with_nan]
+
+     xplot = np.linspace(0, df_figure_x_max, 100)
+     if log_x:
+         xplot = np.logspace(-0.5, np.log(df_figure_x_max), 100)
+     xplot_2d = np.atleast_2d(xplot).T
+
+     for label in ["control", "smoking", "oc"]:
+         df_color = df[df[color_label] == label]
+         color_i = df_color[color_by].unique()[0]
+
+         # sns_plot = sns.kdeplot(ax=ax,
+         #                        data=df_color,
+         #                        x="x",
+         #                        y="y",
+         #                        fill=True,
+         #                        clip=((None, None), (df_figure_y_min,df_figure_y_max)),
+         #                        alpha=.5,
+         #                        log_scale=(log_x, log_y),
+         #                        common_norm=False,
+         #                        #thresh=.02,
+         #                        levels=100,
+         #                        color=color_i, )
+
+         # sns_plot = sns.lineplot(
+         #     ax=ax,
+         #     data=df_color,
+         #     x="x",
+         #     y="y",
+         #     ci="sd",
+         #     color=color_i)
+
+         # gp_kernel = ExpSineSquared(1.0, 5.0, periodicity_bounds=(1e-2, 1e1)) \
+         #             + WhiteKernel(1e-1)
+         # kernel = 1.0 * RBF(1.0)
+         # kernel = DotProduct() + RBF(0.1) + WhiteKernel(1e-1)
+         # kernel_homo = ConstantKernel(1.0, (1e-10, 1000)) * RBF(1, (1e-2, 1e3)) \
+         #              + WhiteKernel(1e-3, (1e-10, 50.0))
+         # Gaussian Process with RBF kernel and heteroscedastic noise level
+         x = np.atleast_2d(df_color[["x"]])
+         prototypes = KMeans(n_clusters=10).fit(x).cluster_centers_
+         for ii in range(2):
+             for i in range(2):
+                 kernel = ConstantKernel() + Matern(length_scale=2, nu=ii / 2) + WhiteKernel(noise_level=i) + \
+                          HeteroscedasticKernel.construct(prototypes, 1e-3, (1e-10, 50.0), gamma=5.0,
+                                                          gamma_bounds="fixed")
+
+                 kernel_hetero = C(ii, (1e-10, 1000)) * RBF(i, (0.01, 100.0)) \
+                                 + HeteroscedasticKernel.construct(prototypes, 1e-3, (1e-10, 50.0),
+                                                                   gamma=5.0, gamma_bounds="fixed")
+
+                 # kernel_hetero = DotProduct(100.0, (1e-10, 1000)) + RBF(1, (0.01, 100.0)) \
+                 #                + HeteroscedasticKernel.construct(prototypes, 1e-2, (1e-10, 50.0),
+                 #                                                  gamma=5.0, gamma_bounds="fixed")
+
+                 # kernel_hetero = HeteroscedasticKernel.construct(prototypes, 1e-2, (1e-10, 50.0),
+                 #                                                  gamma=5.0)
+
+                 gp = GaussianProcessRegressor(kernel, alpha=2.0)
+                 gp.fit(np.atleast_2d(df_color["x"]).T, df_color["y"])
+                 y_pred, y_std = gp.predict(xplot_2d, return_std=True)
+                 axes[ii][i].fill_between(xplot_2d[:, 0], y_pred - y_std, y_pred + y_std, color=color_i, alpha=0.2)
+                 axes[ii][i].plot(xplot_2d[:, 0], y_pred - y_std, y_pred + y_std, color=color_i, alpha=0.2)
+                 axes[ii][i].plot(xplot_2d[:, 0], y_pred, color=color_i, )
+
+                 add_axis_config(
+                     axes[ii][i],
+                     substance,
+                     substance_intervention,
+                     measurement_type,
+                     u_unit,
+                     u_unit_x,
+                     df_figure_x_max,
+                     df_figure_y_min,
+                     df_figure_y_max,
+                     log_y,
+                     log_x,
+                     x_value=x_value,
+                     standardize=standardize)
+     return figure
+
+
 def create_plot(df: pd.DataFrame,
                 file_name: Path,
                 color_by: str,
                 color_label: str,
                 figsize: Tuple[int, int] = (15, 15),
-                log_y: bool = False) -> None:
+                x_value: str = "intervention_value",
+                log_y: bool = False,
+                log_x: bool = False,
+                cluster: bool = False,
+                hexbins: bool = False,
+                standardize: bool = False,
+                gaussian_regression: bool = False,) -> None:
     """ Creates a single plot from the dataframe created by MetaAnalysis.create_results()"""
-
+    df["x"] = df[x_value]
     measurement_type = df["measurement_type"].unique()[0]
     substance = df["substance"].unique()[0]  # fixme: multiple substances are possible.
     substance_intervention = df["intervention_substance"].unique()[0]  # fixme: multiple substances are possible.
     u_unit = ureg(get_one(df["unit"]))
-    u_unit_intervention = ureg(get_one(df["intervention_unit"]))
+    if x_value == "intervention_value":
+        u_unit_x = ureg(get_one(df["intervention_unit"]))
+    else:
+        u_unit_x = ureg(get_one(df[f"{x_value}_unit"]))
+    if standardize:
+        df[["x", "y"]] = StandardScaler().fit_transform(df[["x", "y"]])
 
     figure, ax = plt.subplots(nrows=1, ncols=1, figsize=figsize)
     individuals_data = df[df.group_pk == -1]
     group_data = df[df.group_pk != -1]
-
-    max_values = np.array(
-        [
-            df["value"].max(),
-            df["mean"].max(),
-            df["median"].max(),
-        ]
-    )
-    max_values = max_values[~np.isnan(max_values)]
-    df_figure_y_max = np.max(max_values) * 1.05
-    df_figure_x_max = df.intervention_value.max() * 1.05
+    df_figure_y_max = df["y"].max() * 1.05
+    df_figure_x_max = df["x"].max() * 1.05
     df_figure_y_min = 0
-    rows_with_nan = individuals_data[["intervention_value", "value"]].isnull().any(axis=1)
+    rows_with_nan = individuals_data[["x", "y"]].isnull().any(axis=1)
     nan_individuals_data = individuals_data[rows_with_nan]
     if len(nan_individuals_data) > 0:
         for row, output in nan_individuals_data.iterrows():
             warnings.warn(f"individual: <{output['individual_name']}> in study <{output['study_name']}> is has a nan value "
-                          f"on intervention <{output['intervention_value']}> or output <{output['value']}>,"
+                          f"on {x_value} <{output[x_value]}> or output <{output['y']}>,"
                           f" which will not be displayed.")
 
     individuals_data = individuals_data[~rows_with_nan]
-    x = individuals_data.intervention_value
-    y = individuals_data.value
-
     color = list(individuals_data[color_by])
     marker = list(individuals_data["marker"])
-    mscatter(list(x), list(y), ax=ax, color=color, m=marker, alpha=0.7, label=None, s=20)
+    mscatter(list(individuals_data.x), list(individuals_data.y), ax=ax, color=color, m=marker, alpha=0.7, label=None, s=20)
 
     for group, df_group in group_data.iterrows():
         add_group_scatter(df_group, color_by, ax)
-        add_text(df_group, df_figure_x_max, df_figure_y_max, color_by, ax)
+        add_text(df_group, df_figure_x_max, df_figure_y_max, color_by, ax, log_x, log_y)
 
     add_legends(df, color_label, color_by, ax)
     add_axis_config(ax,
@@ -359,12 +493,14 @@ def create_plot(df: pd.DataFrame,
                     substance_intervention,
                     measurement_type,
                     u_unit,
-                    u_unit_intervention,
+                    u_unit_x,
                     df_figure_x_max,
                     df_figure_y_min,
                     df_figure_y_max,
-                    log_y)
-
+                    log_y,
+                    log_x,
+                    x_value=x_value,
+                    standardize=standardize)
     create_parent(file_name)
     figure.savefig(
         file_name,
@@ -372,14 +508,162 @@ def create_plot(df: pd.DataFrame,
         dpi=72,
         format="png",
     )
+    if gaussian_regression:
+        figure = _gaussian_regression(
+            df,
+            color_label,
+            log_x, substance,
+            substance_intervention,
+            measurement_type,
+            u_unit,
+            u_unit_x,
+            df_figure_x_max,
+            df_figure_y_min,
+            df_figure_y_max,
+            log_y,
+            x_value,
+            standardize,
+            figsize,
+        )
+        figure.savefig(
+            file_name.parent / f"{file_name.stem}_gaussian_regression.png",
+            bbox_inches="tight",
+            dpi=300,
+            format="png",
+        )
+
+    if hexbins:
+        def get_cmap(c):
+            r, g, b = colors.to_rgb(c)
+            cmap_grey = {
+                'red': ((0.0, 1.0, 1), (1.0, r, 0)),
+                'green': ((0.0, 1.0, 1), (1.0, g, 0)),
+                'blue': ((0.0, 1.0, 1), (1.0, b, 0)),
+            }
+            return LinearSegmentedColormap('testCmap', segmentdata=cmap_grey, N=256)
+        df["subject_number"] = df["group_count"].fillna(1)
+
+        """
+        
+
+        n = 1
+        m = 4
+        figure, axes = plt.subplots(nrows=n, ncols=m, figsize=figsize)
+        plotting = np.array(["unknown", "control", "smoking", "oc"]).reshape((n, m))
+        axes = np.array(axes).reshape((n, m))
+        
+        for ii in range(m):
+            for i in range(n):
+                figure, ax = plt.subplots(nrows=n, ncols=m, figsize=figsize)
+
+                if plotting[i][ii] == "all":
+                    this_df = df
+                    cmap = get_cmap("darkgray")
+                else:
+                    this_df = df[df[color_label] == plotting[i][ii]]
+                    this_color = this_df[color_by].unique()[0]
+                    cmap = get_cmap(this_color)
+                axes[i][ii].hexbin(
+                                   x=this_df["x"],
+                                   y=this_df["y"],
+                                   C=this_df["subject_number"],
+                                   bins='log',
+                                   gridsize=(10, 10),
+                                   extent=[df["x"].min(), df["x"].max(), df["y"].min(), df["y"].max()],
+                                   cmap=cmap,
+                                   reduce_C_function=np.sum)
+                average = (this_df["y"]*this_df["subject_number"]).sum()/this_df["subject_number"].sum()
+                axes[i][ii].axhline(y=average, color=this_color, linestyle=':')
+                axes[i][ii].set_title(plotting[i][ii])
+                add_axis_config(axes[i][ii],
+                                substance,
+                                substance_intervention,
+                                measurement_type,
+                                u_unit,
+                                u_unit_x,
+                                df_figure_x_max,
+                                df_figure_y_min,
+                                df_figure_y_max,
+                                log_y,
+                                log_x,
+                                x_value=x_value,
+                                standardize=standardize)
+
+                if i != 0:
+                    axes[i][ii].get_xaxis().set_visible(False)
+
+                if ii != 0:
+                    axes[i][ii].get_yaxis().set_visible(False)
+
+        figure.savefig(
+            file_name.parent / f"{file_name.stem}_hexbins.png",
+            bbox_inches="tight",
+            dpi=300,
+            format="png",
+        )
+        """
+        plotting = ["control", "smoking", "oc"]
 
 
-def create_plots(results_dict, path, color_by, color_label) -> None:
+        for ii in plotting:
+            figure, ax_n = plt.subplots(nrows=1, ncols=1, figsize=figsize)
+
+            this_df = df[df[color_label] == ii]
+            this_color = this_df[color_by].unique()[0]
+            cmap = get_cmap(this_color)
+            ax_n.hexbin(
+                x=this_df["x"],
+                y=this_df["y"],
+                C=this_df["subject_number"],
+                bins='log',
+                gridsize=(10, 10),
+                extent=[df["x"].min(), df["x"].max(), df["y"].min(), df["y"].max()],
+                cmap=cmap,
+                reduce_C_function=np.sum)
+            average = (this_df["y"] * this_df["subject_number"]).sum() / this_df["subject_number"].sum()
+            ax_n.axhline(y=average, color=this_color, linestyle=':')
+            ax_n.set_title(ii)
+            add_axis_config(ax_n,
+                            substance,
+                            substance_intervention,
+                            measurement_type,
+                            u_unit,
+                            u_unit_x,
+                            df_figure_x_max,
+                            df_figure_y_min,
+                            df_figure_y_max,
+                            log_y,
+                            log_x,
+                            x_value=x_value,
+                            standardize=standardize)
+
+                #if i != 0:
+                #    axes[i][ii].get_xaxis().set_visible(False)
+
+                #if ii != 0:
+                #    axes[i][ii].get_yaxis().set_visible(False)
+
+            figure.savefig(
+                file_name.parent / f"{file_name.stem}_hexbins_{ii}.svg",
+                bbox_inches="tight",
+                dpi=300,
+                format="svg",
+            )
+
+
+
+
+
+def create_plots(results_dict, path, color_by, color_label, cluster, standardize, gaussian_regression, hexbins) -> None:
     """Creates multiple static plots."""
     for plot_content, result_infer in results_dict.items():
         for group, df in result_infer.groupby("unit_category"):
             file_name = path / f"{plot_content.key}_{group}.png"
-            create_plot(df, file_name, color_by, color_label)
+            create_plot(df, file_name, color_by, color_label,
+                        cluster=cluster,
+                        standardize=standardize,
+                        gaussian_regression=gaussian_regression,
+                        hexbins=hexbins)
 
 
 def plot_factory(
@@ -392,6 +676,10 @@ def plot_factory(
     path: Path,
     color_by: str,
     color_label: str,
+    cluster: bool = False,
+    gaussian_regression: bool = False,
+    hexbins: bool = False,
+    standardize: bool = False,
     replacements: Dict[str, Dict[str, str]] = {},
 ) -> None:
     """ Factory function to create multiple plots defined by each entry of the plotting_categories."""
@@ -418,7 +706,11 @@ def plot_factory(
         results_dict,
         path=path,
         color_by=color_by,
-        color_label=color_label
+        color_label=color_label,
+        cluster=cluster,
+        standardize=standardize,
+        gaussian_regression=gaussian_regression,
+        hexbins=hexbins,
     )
 
 
