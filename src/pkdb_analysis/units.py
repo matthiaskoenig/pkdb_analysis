@@ -1,3 +1,6 @@
-import pint
-from pint import UnitRegistry
 
+import pint
+# Define unit registry for examples
+
+ureg = pint.UnitRegistry()
+ureg.define("none = count")

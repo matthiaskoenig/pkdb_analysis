@@ -237,6 +237,10 @@ class MetaAnalysis(object):
             how="left",
         )
 
+    def beautiful_units(self):
+        raise NotImplementedError
+
+
     def add_subject_info(self):
         self.results = self.individual_results().df.append(self.group_results())
 

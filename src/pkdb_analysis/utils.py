@@ -5,11 +5,13 @@ import functools
 from pathlib import Path
 logger = logging.getLogger(__name__)
 
+
 def create_parent(path: Path):
     _dir = path.parent
     if not _dir.exists():
         logger.warning(f"Creating directory: {_dir}")
         _dir.mkdir(parents=True)
+
 
 def deprecated(func):
     """This is a decorator which can be used to mark functions

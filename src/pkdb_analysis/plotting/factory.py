@@ -6,21 +6,15 @@ import pandas as pd
 from typing import List, Set, Dict, Callable, Tuple
 from pathlib import Path
 import numpy as np
-import seaborn as sns
 import warnings
 from matplotlib import colors
-from matplotlib.colors import LinearSegmentedColormap, ListedColormap
+from matplotlib.colors import LinearSegmentedColormap
 from pkdb_analysis.kernels import HeteroscedasticKernel
-from scipy.optimize import curve_fit
-from sklearn import preprocessing
 from sklearn.cluster import KMeans
-from sklearn.gaussian_process import GaussianProcessClassifier
-from sklearn.gaussian_process.kernels import RBF, ConstantKernel, DotProduct, Matern
-from sklearn.naive_bayes import GaussianNB
+from sklearn.gaussian_process.kernels import RBF, ConstantKernel, Matern
 from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
 from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import WhiteKernel, ExpSineSquared, ConstantKernel as C
+from sklearn.gaussian_process.kernels import WhiteKernel, ConstantKernel as C
 from pkdb_analysis.filter import f_dosing_in, f_mt_in_substance_in
 from pkdb_analysis.deprecated.analysis import mscatter, get_one
 from pkdb_analysis.data import PKData
@@ -29,17 +23,16 @@ from pkdb_analysis.meta_analysis import MetaAnalysis
 # ---- Styles for plotting ----
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
-from matplotlib.ticker import FormatStrFormatter
+from matplotlib.ticker import FormatStrFormatter, LogFormatter
 import matplotlib.font_manager as font_manager
 from matplotlib import ticker
-from pkdb_analysis.units import UnitRegistry
+from pkdb_analysis.units import ureg
 from pkdb_analysis.core import Sid
 from pkdb_analysis.utils import create_parent
 
 logger = logging.getLogger(__file__)
 
 # FIXME: get rid of global module definitions! This overwrites local settings on import!
-ureg = UnitRegistry()
 
 font = font_manager.FontProperties(
     family="Roboto Mono",
@@ -72,6 +65,8 @@ class PlotContentDefinition:
         units_to_remove: List[str] = None,
         infer_by_intervention: bool = True,
         infer_by_output: bool = True,
+        y_units: List[str] = None,
+
     ):
 
         if units_to_remove is None:
@@ -80,6 +75,7 @@ class PlotContentDefinition:
         self.key = str(sid.sid) if sid else None
         self.sid = sid
         self.units_rm = units_to_remove
+        self.y_units = y_units
         self.infer_by_intervention = infer_by_intervention
         self.infer_by_output = infer_by_output
 
@@ -142,9 +138,15 @@ def results(
     return results_dict
 
 
-def add_legends(df: pd.DataFrame, color_label: str, color_by: str,  ax: plt.Axes):
+def nothing(x):
+    return x
+
+def add_legends(df: pd.DataFrame, color_label: str, color_by: str,  ax: plt.Axes, group_size_scaling: Callable = None):
     """ Adds legends to axis"""
     legend_elements = []
+    biggest_group = df["group_count"].max()
+    if not group_size_scaling:
+        group_size_scaling = nothing
     for plotting_type, d in df.groupby(color_label):
         individuals_data = d[d.group_pk == -1]
         group_data = d[d.group_pk != -1]
@@ -152,8 +154,7 @@ def add_legends(df: pd.DataFrame, color_label: str, color_by: str,  ax: plt.Axes
         group_number = len(group_data)
         total_group_individuals = group_data["group_count"].sum()
         color = get_one(d[color_by])
-
-        label_text = f"{plotting_type:<10} I: {individuals_number:<3} G: {group_number:<2} TI: {int(total_group_individuals + individuals_number):<3}"
+        label_text = f"{plotting_type:<10} I: {individuals_number:<3} G: {group_number:<3} TI: {int(total_group_individuals + individuals_number):<3}"
         label = Line2D(
             [0],
             [0],
@@ -202,7 +203,7 @@ def add_legends(df: pd.DataFrame, color_label: str, color_by: str,  ax: plt.Axes
             color="w",
             label="1",
             markerfacecolor="black",
-            markersize=5 + 1,
+            markersize=group_size_scaling(1)+5,
         ),
         Line2D(
             [0],
@@ -211,16 +212,16 @@ def add_legends(df: pd.DataFrame, color_label: str, color_by: str,  ax: plt.Axes
             color="w",
             label="10",
             markerfacecolor="black",
-            markersize=5 + 10,
+            markersize=group_size_scaling(10)+5,
         ),
         Line2D(
             [0],
             [50],
             marker="o",
             color="w",
-            label="30",
+            label=f"{int(biggest_group)}",
             markerfacecolor="black",
-            markersize=5 + 30,
+            markersize=group_size_scaling(biggest_group)+5,
         ),
     ]
 
@@ -235,19 +236,24 @@ def add_legends(df: pd.DataFrame, color_label: str, color_by: str,  ax: plt.Axes
 
 
 def group_values(df_group: pd.DataFrame,
-                 color_by: str) -> (pd.Series, pd.Series, pd.Series, pd.Series, pd.Series, pd.Series):
+                 color_by: str, group_size_scaling: Callable = None) -> (pd.Series, pd.Series, pd.Series, pd.Series, pd.Series, pd.Series):
     """ Returns the values for plotting of group data"""
     yerr_group = df_group.se
     yerr_group = np.nan_to_num(yerr_group)
-    ms = df_group.group_count + 5
+
+    if group_size_scaling:
+        ms = group_size_scaling(df_group.group_count)+5
+    else:
+        ms = df_group.group_count + 5
+
     color = df_group[color_by]
     marker = df_group.marker
     return df_group.x, df_group.y, yerr_group, ms, color, marker
 
 
-def add_group_scatter(df_group: pd.DataFrame, color_by: str, ax: plt.Axes) -> None:
+def add_group_scatter(df_group: pd.DataFrame, color_by: str, ax: plt.Axes, group_size_scaling:Callable) -> None:
     """ Adds scatter plots of outputs related to groups. """
-    x_group, y_group, yerr_group, ms, color, marker = group_values(df_group, color_by)
+    x_group, y_group, yerr_group, ms, color, marker = group_values(df_group, color_by, group_size_scaling)
     ax.errorbar(
         x_group,
         y_group,
@@ -310,7 +316,7 @@ def add_axis_config(ax: plt.Axes,
     y_axis_label = f"{substance} {measurement_type}"
     ax.set_ylabel(f"{y_axis_label} [{u_unit.u :~P}]")
     if x_value =="intervention_value":
-        x_label = "$Dose_{" + substance_intervention + "}$"
+        x_label = f"{substance_intervention.capitalize()} dose"
     elif x_value == "time":
         x_label = x_value
     ax.set_xlabel(f"{x_label} [{u_unit_x.u :~P}]")
@@ -447,8 +453,10 @@ def create_plot(df: pd.DataFrame,
                 x_value: str = "intervention_value",
                 log_y: bool = False,
                 log_x: bool = False,
+                group_size_scaling: Callable = None,
                 cluster: bool = False,
                 hexbins: bool = False,
+                hexbin_categories: List = None,
                 standardize: bool = False,
                 gaussian_regression: bool = False,) -> None:
     """ Creates a single plot from the dataframe created by MetaAnalysis.create_results()"""
@@ -484,10 +492,10 @@ def create_plot(df: pd.DataFrame,
     mscatter(list(individuals_data.x), list(individuals_data.y), ax=ax, color=color, m=marker, alpha=0.7, label=None, s=20)
 
     for group, df_group in group_data.iterrows():
-        add_group_scatter(df_group, color_by, ax)
+        add_group_scatter(df_group, color_by, ax, group_size_scaling)
         add_text(df_group, df_figure_x_max, df_figure_y_max, color_by, ax, log_x, log_y)
 
-    add_legends(df, color_label, color_by, ax)
+    add_legends(df, color_label, color_by, ax, group_size_scaling)
     add_axis_config(ax,
                     substance,
                     substance_intervention,
@@ -506,7 +514,7 @@ def create_plot(df: pd.DataFrame,
         file_name,
         bbox_inches="tight",
         dpi=72,
-        format="png",
+        format="svg",
     )
     if gaussian_regression:
         figure = _gaussian_regression(
@@ -543,19 +551,17 @@ def create_plot(df: pd.DataFrame,
             return LinearSegmentedColormap('testCmap', segmentdata=cmap_grey, N=256)
         df["subject_number"] = df["group_count"].fillna(1)
 
-        """
-        
+
 
         n = 1
-        m = 4
-        figure, axes = plt.subplots(nrows=n, ncols=m, figsize=figsize)
-        plotting = np.array(["unknown", "control", "smoking", "oc"]).reshape((n, m))
+        m = len(hexbin_categories)
+        width, height = figsize
+        figure, axes = plt.subplots(nrows=n, ncols=m, figsize=(width, height/m))
+        plotting = np.array(hexbin_categories).reshape((n, m))
         axes = np.array(axes).reshape((n, m))
         
         for ii in range(m):
             for i in range(n):
-                figure, ax = plt.subplots(nrows=n, ncols=m, figsize=figsize)
-
                 if plotting[i][ii] == "all":
                     this_df = df
                     cmap = get_cmap("darkgray")
@@ -563,7 +569,7 @@ def create_plot(df: pd.DataFrame,
                     this_df = df[df[color_label] == plotting[i][ii]]
                     this_color = this_df[color_by].unique()[0]
                     cmap = get_cmap(this_color)
-                axes[i][ii].hexbin(
+                hb = axes[i][ii].hexbin(
                                    x=this_df["x"],
                                    y=this_df["y"],
                                    C=this_df["subject_number"],
@@ -572,9 +578,10 @@ def create_plot(df: pd.DataFrame,
                                    extent=[df["x"].min(), df["x"].max(), df["y"].min(), df["y"].max()],
                                    cmap=cmap,
                                    reduce_C_function=np.sum)
+                formatter = LogFormatter(10, labelOnlyBase=False)
+                cb = figure.colorbar(hb, ax=axes[i][ii], format=formatter)
                 average = (this_df["y"]*this_df["subject_number"]).sum()/this_df["subject_number"].sum()
-                axes[i][ii].axhline(y=average, color=this_color, linestyle=':')
-                axes[i][ii].set_title(plotting[i][ii])
+                axes[i][ii].axhline(y=average, color=this_color, linestyle='-')
                 add_axis_config(axes[i][ii],
                                 substance,
                                 substance_intervention,
@@ -596,10 +603,10 @@ def create_plot(df: pd.DataFrame,
                     axes[i][ii].get_yaxis().set_visible(False)
 
         figure.savefig(
-            file_name.parent / f"{file_name.stem}_hexbins.png",
+            file_name.parent / f"{file_name.stem}_hexbins.svg",
             bbox_inches="tight",
             dpi=300,
-            format="png",
+            format="svg",
         )
         """
         plotting = ["control", "smoking", "oc"]
@@ -649,21 +656,32 @@ def create_plot(df: pd.DataFrame,
                 dpi=300,
                 format="svg",
             )
+        """
 
 
 
 
-
-def create_plots(results_dict, path, color_by, color_label, cluster, standardize, gaussian_regression, hexbins) -> None:
+def create_plots(results_dict,
+                 path,
+                 color_by,
+                 color_label,
+                 cluster,
+                 standardize,
+                 gaussian_regression,
+                 hexbins,
+                 group_size_scaling=None,
+                 hexbin_categories=None) -> None:
     """Creates multiple static plots."""
     for plot_content, result_infer in results_dict.items():
         for group, df in result_infer.groupby("unit_category"):
-            file_name = path / f"{plot_content.key}_{group}.png"
+            file_name = path / f"{plot_content.key}_{group}.svg"
             create_plot(df, file_name, color_by, color_label,
                         cluster=cluster,
                         standardize=standardize,
                         gaussian_regression=gaussian_regression,
-                        hexbins=hexbins)
+                        hexbins=hexbins,
+                        hexbin_categories=hexbin_categories,
+                        group_size_scaling=group_size_scaling)
 
 
 def plot_factory(
@@ -734,6 +752,11 @@ def pkdata_by_plot_content(
             substances=output_substances,
         )
         data = data.exclude_output(lambda d: d["unit"].isin(plotting_category.units_rm))
+        if plotting_category.y_units:
+            for unit in plotting_category.y_units:
+                data.outputs = data.outputs.change_unit(unit)
+            #print( data.outputs.groupby("unit").count())
+
         data = data.exclude_intervention(
             lambda d: d["study_name"].isin(exclude_study_names)
         )

@@ -5,7 +5,6 @@ Functions for working with PKDB data.
 """
 import logging
 import os
-import warnings
 import zipfile
 import tempfile
 from abc import ABC
@@ -14,14 +13,13 @@ from collections import OrderedDict
 from io import BytesIO
 from pathlib import Path
 from typing import Callable, List, Union, Iterable, Dict
-from urllib import parse as urlparse
-
+from pkdb_analysis.units import ureg
 import numpy as np
 import pandas as pd
 import requests
 from IPython.display import display
 
-from pkdb_analysis.utils import deprecated, create_parent
+from pkdb_analysis.utils import create_parent
 from pkdb_analysis.filter import f_healthy, f_n_healthy, filter_factory
 
 # from pandas.errors import PerformanceWarning
@@ -107,6 +105,19 @@ class PKDataFrame(pd.DataFrame, ABC):
         df_pks = self[ff_idx][self.pk].unique()
         df_excluded = self[~self[self.pk].isin(df_pks)]
         return PKDataFrame(df_excluded, pk=self.pk)
+
+    @staticmethod
+    def _change_unit(sd, unit):
+        infer_fields = ["value", "mean", "median", "min", "max", "sd", "se"]
+        if ureg(sd["unit"]).check(unit):
+            factor = ureg(sd["unit"]).to(unit).m
+            sd[infer_fields] = sd[infer_fields] * factor
+            sd["unit"] = unit
+        return sd
+
+    def change_unit(self, unit):
+        df = self.df.apply(self._change_unit, unit=unit, axis=1)
+        return PKDataFrame(df, pk=self.pk)
 
     @property
     def pk_column(self):

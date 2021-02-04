@@ -6,15 +6,10 @@ from typing import Optional, Tuple
 
 import numpy as np
 import pandas as pd
-import pint
+from pkdb_analysis.units import ureg
 from pint import Quantity, UnitRegistry
 
-
-# Define unit registry for examples
-ureg = pint.UnitRegistry()
-
 Q_ = ureg.Quantity
-ureg.define("none = count")
 
 
 class InferWeight(object):
@@ -38,9 +33,9 @@ class InferWeight(object):
             return -1
 
     def get_weight(
-        self,
-        weight_fields=("value_weight", "mean_weight", "median_weight"),
-        weight_unit_field="unit_weight",
+            self,
+            weight_fields=("value_weight", "mean_weight", "median_weight"),
+            weight_unit_field="unit_weight",
     ) -> Tuple[Optional[Quantity], Optional[str]]:
         """ helper function to get the weight of a subject or group"""
         for weight_field in weight_fields:
@@ -54,10 +49,10 @@ class InferWeight(object):
         return None, None
 
     def bw_infer(
-        self,
-        unit_field="unit",
-        infer_fields=("value", "mean", "median", "min", "max", "sd", "se"),
-        per_bw_field="per_bw",
+            self,
+            unit_field="unit",
+            infer_fields=("value", "mean", "median", "min", "max", "sd", "se"),
+            per_bw_field="per_bw",
     ) -> pd.Series:
         """ helper function to infer values from the weight of a subject or group"""
         if self.weight is not None and self.series[unit_field] is not None:

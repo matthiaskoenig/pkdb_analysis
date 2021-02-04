@@ -163,6 +163,15 @@ def f_n_oc(d: pd.DataFrame) -> pd.Series:
     """ Filter for subject not taking oral contraceptives. """
     return f_measurement_type(d, "oral contraceptives") & f_choice(d, "N")
 
+def f_pregnant(d: pd.DataFrame) -> pd.Series:
+    """ Filter for subject pregnant """
+    return f_measurement_type(d, "pregnant") & f_choice(d, "Y")
+
+
+def f_n_pregnant(d: pd.DataFrame) -> pd.Series:
+    """ Filter for subject not pregnant. """
+    return f_measurement_type(d, "pregnant") & f_choice(d, "N")
+
 
 def f_male(d: pd.DataFrame) -> pd.Series:
     """ Filter for male subjects. """
