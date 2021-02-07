@@ -145,6 +145,7 @@ def add_legends(df: pd.DataFrame, color_label: str, color_by: str,  ax: plt.Axes
     """ Adds legends to axis"""
     legend_elements = []
     biggest_group = df["group_count"].max()
+    str_max_len = df[color_label].str.len().max()
     if not group_size_scaling:
         group_size_scaling = nothing
     for plotting_type, d in df.groupby(color_label):
@@ -154,7 +155,7 @@ def add_legends(df: pd.DataFrame, color_label: str, color_by: str,  ax: plt.Axes
         group_number = len(group_data)
         total_group_individuals = group_data["group_count"].sum()
         color = get_one(d[color_by])
-        label_text = f"{plotting_type:<10} I: {individuals_number:<3} G: {group_number:<3} TI: {int(total_group_individuals + individuals_number):<3}"
+        label_text = f"{plotting_type:<{str_max_len}} I: {individuals_number:<3} G: {group_number:<3} TI: {int(total_group_individuals + individuals_number):<3}"
         label = Line2D(
             [0],
             [0],
@@ -261,8 +262,7 @@ def add_group_scatter(df_group: pd.DataFrame, color_by: str, ax: plt.Axes, group
         xerr=0,
         color=color,
         fmt=marker,
-        ms=ms,
-        alpha=0.7,
+        ms=ms
     )
 
 
@@ -274,10 +274,14 @@ def add_text(
         ax: plt.Axes,
         log_x: bool,
         log_y: bool,
+        text_column: str = None
 ) -> None:
     """ Annotates every scatter point related to a group with the respective study name."""
     x_group, y_group, _, _, _, _ = group_values(df_group, color_by=color_by)
-    txt = df_group.study_name
+    if text_column:
+        txt = df_group[text_column]
+    else:
+        txt = df_group.study_name
     aditional_x = (0.01 * df_figure_x_max)
     aditional_y = (0.01 * df_figure_y_max)
 
@@ -458,13 +462,16 @@ def create_plot(df: pd.DataFrame,
                 hexbins: bool = False,
                 hexbin_categories: List = None,
                 standardize: bool = False,
-                gaussian_regression: bool = False,) -> None:
+                gaussian_regression: bool = False,
+                no_text_column: str = None,
+                text_column: str = None,
+                ) -> None:
     """ Creates a single plot from the dataframe created by MetaAnalysis.create_results()"""
     df["x"] = df[x_value]
     measurement_type = df["measurement_type"].unique()[0]
     substance = df["substance"].unique()[0]  # fixme: multiple substances are possible.
     substance_intervention = df["intervention_substance"].unique()[0]  # fixme: multiple substances are possible.
-    u_unit = ureg(get_one(df["unit"]))
+    u_unit = get_one(df["unit"].apply(ureg))
     if x_value == "intervention_value":
         u_unit_x = ureg(get_one(df["intervention_unit"]))
     else:
@@ -489,11 +496,16 @@ def create_plot(df: pd.DataFrame,
     individuals_data = individuals_data[~rows_with_nan]
     color = list(individuals_data[color_by])
     marker = list(individuals_data["marker"])
-    mscatter(list(individuals_data.x), list(individuals_data.y), ax=ax, color=color, m=marker, alpha=0.7, label=None, s=20)
+    mscatter(list(individuals_data.x), list(individuals_data.y), ax=ax, color=color, m=marker, label=None, s=20)
 
     for group, df_group in group_data.iterrows():
         add_group_scatter(df_group, color_by, ax, group_size_scaling)
-        add_text(df_group, df_figure_x_max, df_figure_y_max, color_by, ax, log_x, log_y)
+        if no_text_column:
+            if not df_group[no_text_column]:
+                add_text(df_group, df_figure_x_max, df_figure_y_max, color_by, ax, log_x, log_y, text_column)
+        else:
+
+            add_text(df_group, df_figure_x_max, df_figure_y_max, color_by, ax, log_x, log_y, text_column)
 
     add_legends(df, color_label, color_by, ax, group_size_scaling)
     add_axis_config(ax,
@@ -562,6 +574,7 @@ def create_plot(df: pd.DataFrame,
         
         for ii in range(m):
             for i in range(n):
+                axes[i][ii].set_box_aspect(1)
                 if plotting[i][ii] == "all":
                     this_df = df
                     cmap = get_cmap("darkgray")
@@ -579,7 +592,7 @@ def create_plot(df: pd.DataFrame,
                                    cmap=cmap,
                                    reduce_C_function=np.sum)
                 formatter = LogFormatter(10, labelOnlyBase=False)
-                cb = figure.colorbar(hb, ax=axes[i][ii], format=formatter)
+                cb = figure.colorbar(hb, ax=axes[i][ii], format=formatter, fraction=0.046, pad=0.04)
                 average = (this_df["y"]*this_df["subject_number"]).sum()/this_df["subject_number"].sum()
                 axes[i][ii].axhline(y=average, color=this_color, linestyle='-')
                 add_axis_config(axes[i][ii],
@@ -596,11 +609,19 @@ def create_plot(df: pd.DataFrame,
                                 x_value=x_value,
                                 standardize=standardize)
 
+                if ii != 1:
+                    axes[i][ii].set_xlabel("")
+
                 if i != 0:
                     axes[i][ii].get_xaxis().set_visible(False)
 
                 if ii != 0:
                     axes[i][ii].get_yaxis().set_visible(False)
+                else:
+                    y_axis_label = f"{measurement_type}".capitalize()
+                    axes[i][ii].set_ylabel(f"{y_axis_label} [{u_unit.u :~P}]")
+
+
 
         figure.savefig(
             file_name.parent / f"{file_name.stem}_hexbins.svg",
