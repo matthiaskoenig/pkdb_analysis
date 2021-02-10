@@ -39,8 +39,8 @@ def test_pharmacokinetics_nan():
     )
     pk = tcpk.pk
 
-    assert not np.isnan(pk.auc)
-    assert np.isnan(pk.aucinf)
+    assert not np.isnan(pk.auc.m)
+    assert not np.isnan(pk.aucinf.m)
 
 
 def test_pharmacokinetics():

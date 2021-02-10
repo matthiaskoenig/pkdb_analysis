@@ -146,7 +146,7 @@ class TimecoursePKNoDosing(object):
         )
         kel = self._kel(slope=slope)
         thalf = self._thalf(kel=kel)
-        aucinf = self._aucinf(t, c, slope=slope)
+        aucinf = self._aucinf(t, c, slope=slope, auc=auc)
 
         return PKParametersNoDosing(
             compound=self.substance,
@@ -222,18 +222,25 @@ class TimecoursePKNoDosing(object):
         :param rm_nan = remove nan values array
         """
         if rm_nan:
-            idx = np.argwhere(~np.isnan(c))
+            idx = np.where(~np.isnan(c))
             t, c = t[idx], c[idx]
         auc = np.sum((t[1:] - t[0:-1]) * (c[1:] + c[0:-1]) / 2.0)
         return auc
 
-    def _aucinf(self, t, c, slope=None):
+    def _aucinf(self, t, c, slope=None, auc=None,  rm_nan: bool = True):
         """Calculates the area under the curve (AUC) via trapezoid rule
         and extrapolated to infinity"""
-        auc = self._auc(t, c)
+        if rm_nan:
+            idx = np.where(~np.isnan(c))
+            t, c = t[idx], c[idx]
+        if not auc:
+            auc = self._auc(t, c)
 
         # by integrating from tend to infinity for c[-1]exp(slope * t) we get
+
         auc_d = -c[-1] / slope
+
+        print()
 
         if auc_d > auc:
             warnings.warn(f"AUC(t-oo) > AUC(0-tend), no AUC(0-oo) calculated.")
@@ -524,7 +531,7 @@ class TimecoursePK(TimecoursePKNoDosing):
 
         kel = self._kel(slope=slope)
         thalf = self._thalf(kel=kel)
-        aucinf = self._aucinf(t, c, slope=slope)
+        aucinf = self._aucinf(t, c, auc=auc, slope=slope)
 
         if self.dose is not None and not np.isnan(self.dose.magnitude):
             # parameters depending on dose

@@ -84,7 +84,7 @@ def test_inference_by_body_weight2():
 
 def test_inference_by_body_weight3():
     test_data = PKData.from_archive(TESTDATA_CONCISE_TRUE_ZIP)
-    ma = MetaAnalysis(test_data, ["caffeine"], "test/url/")
+    ma = MetaAnalysis(test_data, {"caf"}, "test/url/")
     ma.create_results()
     results_inferred = infer_weight(ma.results)
     assert len(results_inferred) > len(ma.results)

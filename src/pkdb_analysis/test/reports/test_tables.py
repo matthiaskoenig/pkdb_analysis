@@ -52,10 +52,10 @@ def test_create_config_files_circos(tmp_path):
     df_circos["type"] = 0
     df_circos["label"] = "caffeine"
     create_config_files(df_circos, tmp_path)
-    assert (tmp_path / "timecourse_number.txt").exists()
-    assert (tmp_path / "all_subjects_number.txt").exists()
-    assert (tmp_path / "output_number.txt").exists()
-    assert (tmp_path / "intervention_number.txt").exists()
-    assert (tmp_path / "ideogram.txt").exists()
+    assert (tmp_path / "data" / "timecourse_number.txt").exists()
+    assert (tmp_path / "data" / "all_subjects_number.txt").exists()
+    assert (tmp_path / "data" / "output_number.txt").exists()
+    assert (tmp_path / "data" / "intervention_number.txt").exists()
+    assert (tmp_path / "data" / "ideogram.txt").exists()
 
 
