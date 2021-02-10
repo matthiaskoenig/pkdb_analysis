@@ -15,6 +15,33 @@ from pkdb_analysis.pk.pharmacokinetics_example import (
     show_results,
 )
 
+def test_pharmacokinetics_nan():
+    ureg = UnitRegistry()
+    Q_ = ureg.Quantity
+    c = [
+             0.00829241,
+             0.00610768,
+             0.00460769,
+             0.0050102,
+             0.00220838,
+             0.00190252,
+             0.00128454,
+             0.00094463,
+             0.00077496,
+             np.nan
+         ]
+    concentration = Q_(c, 'gram / liter')
+    dose = Q_(0.35, 'gram')
+    t = [1.,  2.,  3., 4., 6., 8., 10., 12., 14., 24.]
+    time = Q_(t, "hr")
+    tcpk = TimecoursePK(
+        time=time, concentration=concentration, dose=dose, ureg=ureg
+    )
+    pk = tcpk.pk
+
+    assert not np.isnan(pk.auc)
+    assert np.isnan(pk.aucinf)
+
 
 def test_pharmacokinetics():
     ureg = UnitRegistry()

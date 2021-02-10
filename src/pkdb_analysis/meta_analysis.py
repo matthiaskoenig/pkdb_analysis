@@ -50,7 +50,10 @@ def markers(d: pd.Series) -> str:
 class MetaAnalysis(object):
     """ Main class for meta analysis. Main functionality of the class is to merge the tables of an PKData objet into
     one Dataframe (self.results). The result is used for interactive plots, static plots, and table reports."""
-    def __init__(self, pkdata: PKData, intervention_substances: Set[str] = None, url: str = ""):
+    def __init__(self, pkdata: PKData,
+                 intervention_substances: Set[str] = None,
+                 url: str = "",
+                 first_intervention: bool = False):
         self.pkdata = pkdata
         self.results = None
         self.group_pk = pkdata.groups.pk
@@ -58,6 +61,7 @@ class MetaAnalysis(object):
         self.intervention_pk = pkdata.interventions.pk
         self.intervention_substances = intervention_substances
         self.url = url
+        self.first_intervention = first_intervention
 
     def create_intervention_extra(self):
         """ Returns the 'intervention_extra' column with complete information on intervention."""
@@ -74,11 +78,16 @@ class MetaAnalysis(object):
                 subset["extra"] = df
                 _table = _table.append(subset)
             else:
-                ds = df.iloc[0]
-                warnings.warn(f"Outputs with interventions <{list(subset['name'])}> in study <{ds['study_name']}> are "
-                              f"removed from the plots. Due to the administration of one of the "
-                              f"substances <{self.intervention_substances}> multiple times. It is not clear how to "
-                              f"calculated the dosage and compare to a single dose application.")
+                if self.first_intervention:
+                    subset = subset.sort_values("time").iloc[0]
+                    subset["extra"] = df
+                    _table = _table.append(subset)
+                else:
+                    ds = df.iloc[0]
+                    warnings.warn(f"Outputs with interventions <{list(subset['name'])}> in study <{ds['study_name']}> are "
+                                  f"removed from the plots. Due to the administration of one of the "
+                                  f"substances <{self.intervention_substances}> multiple times. It is not clear how to "
+                                  f"calculated the dosage and compare to a single dose application.")
         return _table
 
     @staticmethod

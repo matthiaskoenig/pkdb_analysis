@@ -648,7 +648,6 @@ class PKData(object):
 
         dict_pkdata = self.as_dict()
         dict_pkdata[df_k] = getattr(self, df_k).pk_exclude(f_idx, **kwargs)
-
         pkdata = PKData(**dict_pkdata)
         if concise:
             pkdata._concise()

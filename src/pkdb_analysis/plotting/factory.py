@@ -93,12 +93,15 @@ class PlotContentDefinitionMulti(PlotContentDefinition):
         units_to_remove: List[str] = None,
         infer_by_intervention: bool = True,
         infer_by_output: bool = True,
+        y_units: List[str] = None,
+
     ):
         super().__init__(
             sid=None,
             units_to_remove=units_to_remove,
             infer_by_intervention=infer_by_intervention,
-            infer_by_output=infer_by_output
+            infer_by_output=infer_by_output,
+            y_units=y_units
         )
         self.sids = sids
         self.key = self._joined_measurement_type()
@@ -141,10 +144,21 @@ def results(
 def nothing(x):
     return x
 
-def add_legends(df: pd.DataFrame, color_label: str, color_by: str,  ax: plt.Axes, group_size_scaling: Callable = None):
+def add_legends(df: pd.DataFrame,
+                color_label: str,
+                color_by: str,
+                ax: plt.Axes,
+                group_size_scaling: Callable = None,
+                loc1: Tuple = "upper right",
+                loc2: Tuple = "upper left",
+                loc3: Tuple = "center right",
+                which_legends = [1,2,3],
+                ):
     """ Adds legends to axis"""
     legend_elements = []
     biggest_group = df["group_count"].max()
+    if pd.isnull(biggest_group):
+        biggest_group = 30
     str_max_len = df[color_label].str.len().max()
     if not group_size_scaling:
         group_size_scaling = nothing
@@ -225,15 +239,19 @@ def add_legends(df: pd.DataFrame, color_label: str, color_by: str,  ax: plt.Axes
             markersize=group_size_scaling(biggest_group)+5,
         ),
     ]
+    if 1 in which_legends:
+        leg1 = ax.legend(handles=legend_elements, prop=font, loc=loc1)
+        ax.add_artist(leg1)
 
-    leg1 = ax.legend(handles=legend_elements, prop=font, loc="upper right")
-    leg2 = ax.legend(handles=legend2_elements, prop=font, loc="upper left")
-    leg3 = ax.legend(
-        handles=legend3_elements, prop=font, labelspacing=1.3, loc="center right"
-    )
-    leg3.set_title(title="GROUP SIZE", prop=font)
-    ax.add_artist(leg2)
-    ax.add_artist(leg1)
+    if 2 in which_legends:
+        leg2 = ax.legend(handles=legend2_elements, prop=font, loc=loc2)
+        ax.add_artist(leg2)
+
+    if 3 in which_legends:
+        leg3 = ax.legend(
+            handles=legend3_elements, prop=font, labelspacing=1.3, loc=loc3
+        )
+        leg3.set_title(title="GROUP SIZE", prop=font)
 
 
 def group_values(df_group: pd.DataFrame,
@@ -252,7 +270,7 @@ def group_values(df_group: pd.DataFrame,
     return df_group.x, df_group.y, yerr_group, ms, color, marker
 
 
-def add_group_scatter(df_group: pd.DataFrame, color_by: str, ax: plt.Axes, group_size_scaling:Callable) -> None:
+def add_group_scatter(df_group: pd.DataFrame, color_by: str, ax: plt.Axes, group_size_scaling: Callable) -> None:
     """ Adds scatter plots of outputs related to groups. """
     x_group, y_group, yerr_group, ms, color, marker = group_values(df_group, color_by, group_size_scaling)
     ax.errorbar(
@@ -341,8 +359,8 @@ def add_axis_config(ax: plt.Axes,
     if log_y:
         ax.set_yscale("log")
         ax.set_ylim(bottom=df_figure_y_min, top=df_figure_y_max)
-    else:
-        ax.set_ylim(bottom=0, top=df_figure_y_max)
+    #else:
+        #ax.set_ylim(bottom=0, top=df_figure_y_max)
 
 
 def _gaussian_regression(
@@ -465,6 +483,8 @@ def create_plot(df: pd.DataFrame,
                 gaussian_regression: bool = False,
                 no_text_column: str = None,
                 text_column: str = None,
+                ax = None,
+                figure = None,
                 ) -> None:
     """ Creates a single plot from the dataframe created by MetaAnalysis.create_results()"""
     df["x"] = df[x_value]
@@ -478,8 +498,9 @@ def create_plot(df: pd.DataFrame,
         u_unit_x = ureg(get_one(df[f"{x_value}_unit"]))
     if standardize:
         df[["x", "y"]] = StandardScaler().fit_transform(df[["x", "y"]])
+    if not ax:
+        figure, ax = plt.subplots(nrows=1, ncols=1, figsize=figsize)
 
-    figure, ax = plt.subplots(nrows=1, ncols=1, figsize=figsize)
     individuals_data = df[df.group_pk == -1]
     group_data = df[df.group_pk != -1]
     df_figure_y_max = df["y"].max() * 1.05
@@ -521,13 +542,18 @@ def create_plot(df: pd.DataFrame,
                     log_x,
                     x_value=x_value,
                     standardize=standardize)
-    create_parent(file_name)
-    figure.savefig(
-        file_name,
-        bbox_inches="tight",
-        dpi=72,
-        format="svg",
-    )
+
+    if figure:
+        create_parent(file_name)
+        figure.savefig(
+            file_name,
+            bbox_inches="tight",
+            dpi=72,
+            format="svg",
+        )
+    else:
+        return ax
+
     if gaussian_regression:
         figure = _gaussian_regression(
             df,

@@ -98,7 +98,8 @@ class OutputPair(object):
 
             "investigate_count": investigate_count,
             "investigate_mean": investigate_mean,
-            "investigate_sd": investigate_sd, **pair_statistics
+            "investigate_sd": investigate_sd,
+            **pair_statistics
         }
 
 
