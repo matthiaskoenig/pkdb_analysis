@@ -11,7 +11,11 @@ import seaborn as sns
 import yaml
 from pkdb_analysis.data import PKData
 from pkdb_analysis.core import Sid
-from pkdb_analysis.plotting.factory import pkdata_by_plot_content, results, PlotContentDefinition
+from pkdb_analysis.plotting.factory import (
+    pkdata_by_plot_content,
+    results,
+    PlotContentDefinition,
+)
 from pkdb_analysis.utils import create_parent
 
 alt.data_transformers.disable_max_rows()
@@ -28,10 +32,7 @@ class LegendArgs(object):
 
 def column_to_color(column):
     mapping = {v: n for n, v in enumerate(column.unique())}
-    colors = sns.color_palette(
-        "colorblind",
-        12,
-    ).as_hex()
+    colors = sns.color_palette("colorblind", 12,).as_hex()
 
     return column.apply(lambda x: colors[mapping[x]])
 
@@ -310,9 +311,7 @@ def create_interactive_plot(
     histo_y = filter_transform_all(
         alt.Chart(df)
         .properties(height=350, width=80)
-        .mark_bar(
-            opacity=0.9,
-        )
+        .mark_bar(opacity=0.9,)
         .encode(
             y=alt.Y(
                 "y:Q",
@@ -329,9 +328,7 @@ def create_interactive_plot(
     histo_x = filter_transform_all(
         alt.Chart(df)
         .properties(height=80, width=500)
-        .mark_bar(
-            opacity=0.9,
-        )
+        .mark_bar(opacity=0.9,)
         .encode(
             x=alt.X(
                 "intervention_value:Q",
@@ -375,13 +372,12 @@ def create_interactive_plot(
     )
 
     if create_json:
-        chart.save(
-            f"{path}.json",
-        )
+        chart.save(f"{path}.json",)
     else:
         chart.save(
             f"{path}.html", webdriver="firefox", embed_options={"renderer": "svg"}
         )
+
 
 def check_legends(df, legend_keys):
     for legend_key in legend_keys:
@@ -487,7 +483,7 @@ def copy_dir(src, dst, substance):
 
 def interactive_plot_factory(
     pkdata: PKData,
-    plotting_categories:  List[PlotContentDefinition],
+    plotting_categories: List[PlotContentDefinition],
     intervention_substances: Set[Sid],
     output_substances: Set[Sid],
     exclude_study_names: Set[str],
@@ -496,11 +492,13 @@ def interactive_plot_factory(
     multi_legend,
     tooltip,
     path: Path,
-    url: str="http://0.0.0.0:8081",
+    url: str = "http://0.0.0.0:8081",
     create_json=True,
     replacements={},
 ):
-    intervention_substances_str = {substance.sid for substance in intervention_substances}
+    intervention_substances_str = {
+        substance.sid for substance in intervention_substances
+    }
     output_substances_str = {substance.sid for substance in output_substances}
 
     data_dict = pkdata_by_plot_content(

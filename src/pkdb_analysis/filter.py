@@ -10,7 +10,6 @@ def filter_factory(filter_dict: Dict):
     for key, value in filter_dict.items():
 
         def constructor(key, value):
-
             def _f1(d):
                 return d[key].isin(value)
 
@@ -21,15 +20,16 @@ def filter_factory(filter_dict: Dict):
                 return _f1
             else:
                 return _f2
+
         f_idx.append(constructor(key, value))
     return f_idx
 
-def filter_single_intervention(pkdata: 'PKData') -> 'PKData':
+
+def filter_single_intervention(pkdata: "PKData") -> "PKData":
     """PKData filter returning a concise PKData instance containing only outputs where one intervention was applied."""
     pkdata = pkdata.copy()
     single_interventions = []
-    for pk, co_interventions in pkdata.interventions.groupby(
-            pkdata.interventions.pk):
+    for pk, co_interventions in pkdata.interventions.groupby(pkdata.interventions.pk):
         if len(co_interventions) == 1:
             single_interventions.append(pk)
     return pkdata.filter_intervention(
@@ -37,19 +37,17 @@ def filter_single_intervention(pkdata: 'PKData') -> 'PKData':
     )
 
 
-def filter_healthy(pkdata: 'PKData') -> 'PKData':
+def filter_healthy(pkdata: "PKData") -> "PKData":
     """PKData filter returning a concise PKData instance containing only healthy subjects."""
     pkdata = pkdata.copy()
-    return pkdata.filter_subject(
-        f_healthy, concise=False
-    ).exclude_subject(f_n_healthy)
+    return pkdata.filter_subject(f_healthy, concise=False).exclude_subject(f_n_healthy)
 
 
-def exclude_tests(data: 'PKData') -> 'PKData':
+def exclude_tests(data: "PKData") -> "PKData":
     """Exclude data for test studies."""
-    return data.exclude_intervention(lambda d: d["study_name"].isin(
-        ["Test1", "Test2", "Test3", "Test4"]
-    ))
+    return data.exclude_intervention(
+        lambda d: d["study_name"].isin(["Test1", "Test2", "Test3", "Test4"])
+    )
 
 
 def combine(args: Iterable):
@@ -65,12 +63,13 @@ def combine(args: Iterable):
 
 
 def pk_info(
-        d: pd.DataFrame,
-        measurement_type: str,
-        columns: Iterable[str],
-        suffix: str = None,
-        concise: bool = True,
-        aggfunc: Callable = combine):
+    d: pd.DataFrame,
+    measurement_type: str,
+    columns: Iterable[str],
+    suffix: str = None,
+    concise: bool = True,
+    aggfunc: Callable = combine,
+):
     """ Pivots a pd.Dataframe to get a single rows for a measurement_type on a selected column.
     If multiple values exists such configuration (e.g. df=pkdata.groups, measurement_type=sex, column=choice,
     can contain males and females). The argument: aggfunc is applied to combine theses values.
@@ -82,8 +81,10 @@ def pk_info(
 
     columns = [d.pk, *columns]
     df = (
-        d[d["measurement_type"] == measurement_type][columns].set_index(
-            d.pk).add_suffix(suffix_text).reset_index()
+        d[d["measurement_type"] == measurement_type][columns]
+        .set_index(d.pk)
+        .add_suffix(suffix_text)
+        .reset_index()
     )
     if len(df) == 0:
         return df
@@ -131,12 +132,12 @@ def f_mt_substance(d: pd.DataFrame, measurement_type: str, substance: str) -> pd
 
 
 def f_mt_in_substance_in(
-        d: pd.DataFrame,
-        measurement_types: Iterable[str],
-        substances: Iterable[str]) -> pd.Series:
+    d: pd.DataFrame, measurement_types: Iterable[str], substances: Iterable[str]
+) -> pd.Series:
     """ Combined filter on  measurement_types and substances. """
     return d["measurement_type"].isin(measurement_types) & d["substance"].isin(
-        substances)
+        substances
+    )
 
 
 def f_choice(d: pd.DataFrame, choice: str) -> pd.Series:
@@ -162,6 +163,7 @@ def f_oc(d: pd.DataFrame) -> pd.Series:
 def f_n_oc(d: pd.DataFrame) -> pd.Series:
     """ Filter for subject not taking oral contraceptives. """
     return f_measurement_type(d, "oral contraceptives") & f_choice(d, "N")
+
 
 def f_pregnant(d: pd.DataFrame) -> pd.Series:
     """ Filter for subject pregnant """

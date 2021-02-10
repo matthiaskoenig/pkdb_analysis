@@ -18,10 +18,7 @@ import matplotlib.font_manager as font_manager
 import matplotlib.markers as mmarkers
 
 font = font_manager.FontProperties(
-    family="Roboto Mono",
-    weight="normal",
-    style="normal",
-    size=16,
+    family="Roboto Mono", weight="normal", style="normal", size=16,
 )
 plt.rcParams.update(
     {

@@ -57,5 +57,3 @@ def test_create_config_files_circos(tmp_path):
     assert (tmp_path / "data" / "output_number.txt").exists()
     assert (tmp_path / "data" / "intervention_number.txt").exists()
     assert (tmp_path / "data" / "ideogram.txt").exists()
-
-

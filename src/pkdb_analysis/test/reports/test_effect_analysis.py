@@ -1,6 +1,10 @@
 import pytest
 import pandas as pd
-from pkdb_analysis.reports.effect_analysis import OutputPair, fixed_effect, random_effects
+from pkdb_analysis.reports.effect_analysis import (
+    OutputPair,
+    fixed_effect,
+    random_effects,
+)
 
 
 def test_esc_mean_sd():
@@ -37,7 +41,7 @@ def test_fixed_effect():
         "study": ["Caroll", "Grant", "Peck", "Donat", "Stewart", "Young"],
         "hedges_g": [0.1, 0.3, 0.35, 0.65, 0.45, 0.15],
         "standard_error": [0.173, 0.173, 0.224, 0.1, 0.224, 0.141],
-        "variance": [0.03, 0.03, 0.05, 0.01, 0.05, 0.02]
+        "variance": [0.03, 0.03, 0.05, 0.01, 0.05, 0.02],
     }
     df = pd.DataFrame(data)
 
@@ -57,7 +61,7 @@ def test_random_effects():
         "study": ["Caroll", "Grant", "Peck", "Donat", "Stewart", "Young"],
         "hedges_g": [0.1, 0.3, 0.35, 0.65, 0.45, 0.15],
         "standard_error": [0.173, 0.173, 0.224, 0.1, 0.224, 0.141],
-        "variance": [0.03, 0.03, 0.05, 0.01, 0.05, 0.02]
+        "variance": [0.03, 0.03, 0.05, 0.01, 0.05, 0.02],
     }
     df = pd.DataFrame(data)
 
@@ -66,5 +70,3 @@ def test_random_effects():
     assert result["random_effects_weighted_mean"] == pytest.approx(0.3442, rel=0.01)
     assert result["random_effects_variance"] == pytest.approx(0.0114, rel=0.01)
     assert result["random_effects_sd"] == pytest.approx(0.1068, rel=0.01)
-
-

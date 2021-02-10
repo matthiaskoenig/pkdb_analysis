@@ -227,7 +227,7 @@ class TimecoursePKNoDosing(object):
         auc = np.sum((t[1:] - t[0:-1]) * (c[1:] + c[0:-1]) / 2.0)
         return auc
 
-    def _aucinf(self, t, c, slope=None, auc=None,  rm_nan: bool = True):
+    def _aucinf(self, t, c, slope=None, auc=None, rm_nan: bool = True):
         """Calculates the area under the curve (AUC) via trapezoid rule
         and extrapolated to infinity"""
         if rm_nan:

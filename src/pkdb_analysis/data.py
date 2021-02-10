@@ -245,7 +245,7 @@ class PKData(object):
             if isinstance(value, str):
                 if value.startswith("[") or value.startswith("("):
                     return tuple(literal_eval(value))
-                    #return tuple([z for z in value[1:-1].split(",")])
+                    # return tuple([z for z in value[1:-1].split(",")])
             return value
 
         if not self.timecourses.empty:
@@ -376,8 +376,7 @@ class PKData(object):
             for key in PKData.KEYS:
                 df = pd.read_csv(archive.open(f"{key}.csv", "r"), low_memory=False)
                 data_dict[key] = PKData._clean_types(
-                    df,
-                    is_array=key in ["timecourses", "scatters"]
+                    df, is_array=key in ["timecourses", "scatters"]
                 )
         # create data from data frames
         return PKData(**data_dict)
@@ -442,7 +441,9 @@ class PKData(object):
 
     def healthy(self):
         """ subset of healthy data."""
-        return self.filter_subject(f_healthy, concise=False).exclude_subject(f_n_healthy)
+        return self.filter_subject(f_healthy, concise=False).exclude_subject(
+            f_n_healthy
+        )
 
     @property
     def groups_count(self) -> int:
@@ -742,7 +743,6 @@ class PKData(object):
         pkdata._concise()
         return pkdata
 
-
     def exclude_study(self, f_idx, concise=True, **kwargs) -> "PKData":
         """ Excludes studies which cann be selected by a filter (idx)."""
 
@@ -827,7 +827,7 @@ class PKData(object):
         Modifies the DataFrame in place.
         :return:
         """
-        #FIXME: scatters are not concised !!!
+        # FIXME: scatters are not concised !!!
 
         self.outputs = self.outputs[
             self.outputs["group_pk"].isin(self.ids["groups"])
@@ -1051,7 +1051,6 @@ class PKData(object):
             #    data_dict["scatters"] = self._update_scatters(mapping_int_pks)
             return PKData(**data_dict)
 
-
     @staticmethod
     def _clean_types(df: pd.DataFrame, is_array):
         """Sets the correct datatypes for each column in the table (df)."""
@@ -1093,9 +1092,13 @@ class PKData(object):
 
         create_parent(path)
         reference_pmids = [str(int(s)) for s in self.studies.reference_pmid if s]
-        reference_pmids_str ="%2C".join(reference_pmids)
-        url = "https://api.ncbi.nlm.nih.gov/lit/ctxp/v1/pubmed/?format=medline&id=" + reference_pmids_str + "&download=y"
+        reference_pmids_str = "%2C".join(reference_pmids)
+        url = (
+            "https://api.ncbi.nlm.nih.gov/lit/ctxp/v1/pubmed/?format=medline&id="
+            + reference_pmids_str
+            + "&download=y"
+        )
         with requests.get(url) as r:
             r.raise_for_status()
             with open(path, "wb") as f:
-                    f.write(r.content)
+                f.write(r.content)

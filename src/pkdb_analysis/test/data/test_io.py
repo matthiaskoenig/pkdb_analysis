@@ -7,6 +7,7 @@ def test_read_from_archive():
     pkdata = PKData.from_archive(path=TESTDATA_CONCISE_FALSE_ZIP)
     assert pkdata
 
+
 def test_write_to_archive(tmp_path):
     """Test writing to archive from archive."""
     pkdata = PKData.from_archive(path=TESTDATA_CONCISE_FALSE_ZIP)

@@ -12,11 +12,7 @@ from pkdb_analysis.inference.body_weight import (
     ureg,
 )
 from pkdb_analysis.meta_analysis import MetaAnalysis
-from pkdb_analysis.test import (
-    TEST_HDF5,
-    TESTDATA_CONCISE_FALSE_ZIP,
-    TESTDATA_CONCISE_TRUE_ZIP,
-)
+from pkdb_analysis.test import TESTDATA_CONCISE_TRUE_ZIP
 from pkdb_analysis.test.data.group_data import (
     GROUP_OUTPUT,
     INDIVIDUAL_NO_BODYWEIGHT_OUTPUT,

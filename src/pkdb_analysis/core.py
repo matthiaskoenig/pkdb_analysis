@@ -11,6 +11,7 @@ import pandas as pd
 class Core:
     """This class mange the the source containing all info nodes.
     This source is used for validation. """
+
     def __init__(self, source: Path = None, sids: Set[str] = None):
         self.source = source
         if sids is None:
@@ -18,11 +19,13 @@ class Core:
         else:
             self.sids = sids
 
+
 @dataclass(frozen=True)
 class Sid:
     """PK-DB sid.
     Mainly used for type checking, later on for validation.
     """
+
     sid: str
     core: Core
 

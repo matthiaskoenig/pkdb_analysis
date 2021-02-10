@@ -155,6 +155,20 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 </pre></div>
 </div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---------------------------------------------------------------------------</span>
+
+<span class="ne">ImportError</span>                               <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
+
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">9779</span><span class="n">cd9ede1f</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+      <span class="mi">2</span> <span class="n">get_ipython</span><span class="p">()</span><span class="o">.</span><span class="n">run_line_magic</span><span class="p">(</span><span class="s1">&#39;autoreload&#39;</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">)</span>
+      <span class="mi">3</span> <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
+<span class="o">----&gt;</span> <span class="mi">4</span> <span class="kn">from</span> <span class="nn">pkdb_analysis</span> <span class="kn">import</span> <span class="n">PKFilter</span><span class="p">,</span> <span class="n">PKFilterFactory</span><span class="p">,</span> <span class="n">PKData</span><span class="p">,</span> <span class="n">PKDB</span>
+      <span class="mi">5</span> <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<span class="ne">ImportError</span><span class="p">:</span> <span class="n">cannot</span> <span class="kn">import</span> <span class="nn">name</span> <span class="s1">&#39;PKFilterFactory&#39;</span> <span class="kn">from</span> <span class="s1">&#39;pkdb_analysis&#39;</span> <span class="p">(</span><span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">janek</span><span class="o">/</span><span class="n">Dev</span><span class="o">/</span><span class="n">pkdb_analysis</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">pkdb_analysis</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="section" id="curation-and-checking-of-studies">
 <h1>Curation and checking of studies<a class="headerlink" href="#curation-and-checking-of-studies" title="Permalink to this headline">¶</a></h1>
 <p>Helpers for simple checking of curated results.</p>
@@ -165,29 +179,19 @@
 <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
-<pre class="literal-block">INFO <strong>* Querying data *</strong>
-INFO <a class="reference external" href="http://0.0.0.0:8000/api/v1/pkdata/studies/?format=json&amp;page_size=2000&amp;study_name=Test1">http://0.0.0.0:8000/api/v1/pkdata/studies/?format=json&amp;page_size=2000&amp;study_name=Test1</a>
-INFO <a class="reference external" href="http://0.0.0.0:8000/api/v1/pkdata/studies/?format=json&amp;page_size=2000&amp;study_name=Test1&amp;page=1">http://0.0.0.0:8000/api/v1/pkdata/studies/?format=json&amp;page_size=2000&amp;study_name=Test1&amp;page=1</a>
-INFO <a class="reference external" href="http://0.0.0.0:8000/api/v1/pkdata/interventions/?format=json&amp;page_size=2000&amp;normed=true&amp;study_name=Test1">http://0.0.0.0:8000/api/v1/pkdata/interventions/?format=json&amp;page_size=2000&amp;normed=true&amp;study_name=Test1</a>
-INFO <a class="reference external" href="http://0.0.0.0:8000/api/v1/pkdata/interventions/?format=json&amp;page_size=2000&amp;normed=true&amp;study_name=Test1&amp;page=1">http://0.0.0.0:8000/api/v1/pkdata/interventions/?format=json&amp;page_size=2000&amp;normed=true&amp;study_name=Test1&amp;page=1</a>
-INFO <a class="reference external" href="http://0.0.0.0:8000/api/v1/pkdata/individuals/?format=json&amp;page_size=2000&amp;study_name=Test1">http://0.0.0.0:8000/api/v1/pkdata/individuals/?format=json&amp;page_size=2000&amp;study_name=Test1</a>
-INFO <a class="reference external" href="http://0.0.0.0:8000/api/v1/pkdata/individuals/?format=json&amp;page_size=2000&amp;study_name=Test1&amp;page=1">http://0.0.0.0:8000/api/v1/pkdata/individuals/?format=json&amp;page_size=2000&amp;study_name=Test1&amp;page=1</a>
-INFO <a class="reference external" href="http://0.0.0.0:8000/api/v1/pkdata/groups/?format=json&amp;page_size=2000&amp;study_name=Test1">http://0.0.0.0:8000/api/v1/pkdata/groups/?format=json&amp;page_size=2000&amp;study_name=Test1</a>
-INFO <a class="reference external" href="http://0.0.0.0:8000/api/v1/pkdata/groups/?format=json&amp;page_size=2000&amp;study_name=Test1&amp;page=1">http://0.0.0.0:8000/api/v1/pkdata/groups/?format=json&amp;page_size=2000&amp;study_name=Test1&amp;page=1</a>
-INFO <a class="reference external" href="http://0.0.0.0:8000/api/v1/pkdata/outputs/?format=json&amp;page_size=2000&amp;normed=true&amp;study_name=Test1">http://0.0.0.0:8000/api/v1/pkdata/outputs/?format=json&amp;page_size=2000&amp;normed=true&amp;study_name=Test1</a>
-INFO <a class="reference external" href="http://0.0.0.0:8000/api/v1/pkdata/outputs/?format=json&amp;page_size=2000&amp;normed=true&amp;study_name=Test1&amp;page=1">http://0.0.0.0:8000/api/v1/pkdata/outputs/?format=json&amp;page_size=2000&amp;normed=true&amp;study_name=Test1&amp;page=1</a>
-INFO <a class="reference external" href="http://0.0.0.0:8000/api/v1/pkdata/timecourses/?format=json&amp;page_size=2000&amp;study_name=Test1">http://0.0.0.0:8000/api/v1/pkdata/timecourses/?format=json&amp;page_size=2000&amp;study_name=Test1</a>
-INFO <a class="reference external" href="http://0.0.0.0:8000/api/v1/pkdata/timecourses/?format=json&amp;page_size=2000&amp;study_name=Test1&amp;page=1">http://0.0.0.0:8000/api/v1/pkdata/timecourses/?format=json&amp;page_size=2000&amp;study_name=Test1&amp;page=1</a></pre>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
-<span class="n">PKData</span> <span class="p">(</span><span class="mi">140210902454608</span><span class="p">)</span>
-<span class="o">------------------------------</span>
-<span class="n">studies</span>             <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
-<span class="n">groups</span>              <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
-<span class="n">individuals</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
-<span class="n">interventions</span>       <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
-<span class="n">outputs</span>             <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
-<span class="n">timecourses</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
-<span class="o">------------------------------</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---------------------------------------------------------------------------</span>
+
+<span class="ne">NameError</span>                                 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
+
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">ea6e6bd278a7</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+      <span class="mi">1</span> <span class="c1"># get data for study</span>
+      <span class="mi">2</span> <span class="n">study_name</span> <span class="o">=</span> <span class="s2">&quot;Test1&quot;</span>
+<span class="o">----&gt;</span> <span class="mi">3</span> <span class="n">pkfilter</span> <span class="o">=</span> <span class="n">PKFilterFactory</span><span class="o">.</span><span class="n">by_study_name</span><span class="p">(</span><span class="n">study_name</span><span class="p">)</span>
+      <span class="mi">4</span> <span class="n">data</span> <span class="o">=</span> <span class="n">PKDB</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">pkfilter</span><span class="o">=</span><span class="n">pkfilter</span><span class="p">)</span>
+      <span class="mi">5</span> <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="ne">NameError</span><span class="p">:</span> <span class="n">name</span> <span class="s1">&#39;PKFilterFactory&#39;</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">defined</span>
 </pre></div>
 </div>
 <div class="section" id="explore-data-content">
@@ -196,8 +200,16 @@ INFO <a class="reference external" href="http://0.0.0.0:8000/api/v1/pkdata/timec
 <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">individuals</span><span class="o">.</span><span class="n">pks</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">()</span>
-<span class="nb">set</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---------------------------------------------------------------------------</span>
+
+<span class="ne">NameError</span>                                 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
+
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">21704</span><span class="n">facd3df</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="o">----&gt;</span> <span class="mi">1</span> <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">pks</span><span class="p">)</span>
+      <span class="mi">2</span> <span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">individuals</span><span class="o">.</span><span class="n">pks</span><span class="p">)</span>
+
+
+<span class="ne">NameError</span><span class="p">:</span> <span class="n">name</span> <span class="s1">&#39;data&#39;</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">defined</span>
 </pre></div>
 </div>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">option_context</span><span class="p">(</span><span class="s1">&#39;display.max_rows&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;display.max_columns&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
@@ -208,181 +220,48 @@ INFO <a class="reference external" href="http://0.0.0.0:8000/api/v1/pkdata/timec
     <span class="n">display</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">timecourses_mi</span><span class="p">)</span>
 </pre></div>
 </div>
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---------------------------------------------------------------------------</span>
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
+<span class="ne">NameError</span>                                 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
-</div><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">b5f98a7f64fd</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="o">----&gt;</span> <span class="mi">1</span> <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">option_context</span><span class="p">(</span><span class="s1">&#39;display.max_rows&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;display.max_columns&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+      <span class="mi">2</span>     <span class="n">display</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">groups_mi</span><span class="p">)</span>
+      <span class="mi">3</span>     <span class="n">display</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">individuals_mi</span><span class="p">)</span>
+      <span class="mi">4</span>     <span class="n">display</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">interventions_mi</span><span class="p">)</span>
+      <span class="mi">5</span>     <span class="n">display</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">outputs_mi</span><span class="p">)</span>
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
-</div><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
-</div><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
-</div><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
-</div><div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">timecourses</span>
-</pre></div>
-</div>
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
-</div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Empty</span> <span class="n">DataFrame</span>
-<span class="n">Columns</span><span class="p">:</span> <span class="p">[]</span>
-<span class="n">Index</span><span class="p">:</span> <span class="p">[]</span>
+<span class="ne">NameError</span><span class="p">:</span> <span class="n">name</span> <span class="s1">&#39;pd&#39;</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">defined</span>
 </pre></div>
 </div>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">timecourses</span>
 </pre></div>
 </div>
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---------------------------------------------------------------------------</span>
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
+<span class="ne">NameError</span>                                 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
-</div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Empty</span> <span class="n">DataFrame</span>
-<span class="n">Columns</span><span class="p">:</span> <span class="p">[]</span>
-<span class="n">Index</span><span class="p">:</span> <span class="p">[]</span>
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="n">fde804e136a</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="o">----&gt;</span> <span class="mi">1</span> <span class="n">data</span><span class="o">.</span><span class="n">timecourses</span>
+
+
+<span class="ne">NameError</span><span class="p">:</span> <span class="n">name</span> <span class="s1">&#39;data&#39;</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">defined</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">timecourses</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---------------------------------------------------------------------------</span>
+
+<span class="ne">NameError</span>                                 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
+
+<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">0</span><span class="n">d2b1d8dbe58</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+<span class="o">----&gt;</span> <span class="mi">1</span> <span class="n">data</span><span class="o">.</span><span class="n">timecourses</span>
+      <span class="mi">2</span>
+
+
+<span class="ne">NameError</span><span class="p">:</span> <span class="n">name</span> <span class="s1">&#39;data&#39;</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">defined</span>
 </pre></div>
 </div>
 </div>

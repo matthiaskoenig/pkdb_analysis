@@ -50,8 +50,6 @@ def create_table_report(
     query_data: boolean flag to query the data
     """
 
-
-
     if query_data:
         query_pkdb_data(h5_path=h5_data_path)
     # Load data
@@ -73,7 +71,6 @@ def create_table_report(
         raise IOError(
             f"One of the following arguments must be provided: 'zip_data_path','h5_data_path', or 'pkdata'."
         )
-
 
     # Create table report
     table_report = TableReport(
@@ -135,7 +132,9 @@ class TableReport(object):
 
     DEFAULT_STUDY_INFO = {
         "subject_info": {
-            "sex": TableContentDefinition(measurement_types=["sex"], value_field=["choice"]),
+            "sex": TableContentDefinition(
+                measurement_types=["sex"], value_field=["choice"]
+            ),
             "age": TableContentDefinition(
                 measurement_types=["age"], value_field=["mean", "median", "value"]
             ),
@@ -152,11 +151,15 @@ class TableReport(object):
                 measurement_types=["ethnicity"], value_field=["choice"]
             ),
             # pk effecting factors
-            "healthy": TableContentDefinition(measurement_types=["healthy"], value_field=["choice"]),
+            "healthy": TableContentDefinition(
+                measurement_types=["healthy"], value_field=["choice"]
+            ),
             "medication": TableContentDefinition(
                 measurement_types=["medication"], value_field=["choice"]
             ),
-            "smoking": TableContentDefinition(measurement_types=["smoking"], value_field=["choice"]),
+            "smoking": TableContentDefinition(
+                measurement_types=["smoking"], value_field=["choice"]
+            ),
             "oral contraceptives": TableContentDefinition(
                 measurement_types=["oral contraceptives"], value_field=["choice"]
             ),
@@ -378,8 +381,6 @@ class TableReport(object):
     def study_info_default():
         return TableReport.DEFAULT_STUDY_INFO
 
-
-
     def __init__(
         self,
         pkdata: PKData,
@@ -398,9 +399,13 @@ class TableReport(object):
         tmp_pkdata._concise()
         self.pkdata_concised = tmp_pkdata
 
-        self.substances = (substances_output if substances_output is not None else tuple())
+        self.substances = (
+            substances_output if substances_output is not None else tuple()
+        )
         if substances_output:
-            self.study_info = (study_info if study_info is not None else self.study_info_default() )
+            self.study_info = (
+                study_info if study_info is not None else self.study_info_default()
+            )
             self.timecourse_info = (
                 timecourse_info
                 if timecourse_info is not None
@@ -425,7 +430,9 @@ class TableReport(object):
                 substances=self.substances_intervention,
                 concise=False,
             ).interventions.study_sids
-            self.pkdata = self.pkdata.filter_study(lambda x: x["sid"].isin(study_sids), concise=False)
+            self.pkdata = self.pkdata.filter_study(
+                lambda x: x["sid"].isin(study_sids), concise=False
+            )
 
     @staticmethod
     def _create_path(path_output):
@@ -438,13 +445,12 @@ class TableReport(object):
         """Write all tables excel file."""
         create_parent(path_excel)
 
-
         def add_header_format(hformat):
             hformat.set_bold()
-            hformat.set_font_color('white')
-            hformat.set_bg_color('#434343')
-            hformat.set_align('center')
-            hformat.set_align('vcenter')
+            hformat.set_font_color("white")
+            hformat.set_bg_color("#434343")
+            hformat.set_align("center")
+            hformat.set_align("vcenter")
             return hformat
 
         sheets = {
@@ -454,9 +460,7 @@ class TableReport(object):
         }
         columns_horizontal = ["name", "PKDB", "pubmed"]
 
-
-        with pd.ExcelWriter(path_excel, engine='xlsxwriter') as writer:
-
+        with pd.ExcelWriter(path_excel, engine="xlsxwriter") as writer:
 
             for key, df in sheets.items():
                 df1 = df.copy()
@@ -467,30 +471,32 @@ class TableReport(object):
                 df1["pubmed"] = df1["pubmed"].apply(
                     lambda x: f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}", "{x}")'
                 )
-                df1.to_excel(writer, sheet_name=key, index=False, startrow=1, header=False)
+                df1.to_excel(
+                    writer, sheet_name=key, index=False, startrow=1, header=False
+                )
 
                 worksheet = writer.sheets[key]
                 workbook = writer.book
                 header_format = workbook.add_format()
                 header_format = add_header_format(header_format)
 
-                #first row
+                # first row
                 worksheet.set_row(0, 160, None)
 
                 green = workbook.add_format()
-                green.set_bg_color('#B6D7A8')
+                green.set_bg_color("#B6D7A8")
 
                 orange = workbook.add_format()
-                orange.set_bg_color('#FFD966')
+                orange.set_bg_color("#FFD966")
 
                 colsformat_default = workbook.add_format()
                 colsformat_default.set_bold()
-                colsformat_default.set_align('center')
+                colsformat_default.set_align("center")
 
                 href_format = workbook.add_format()
                 href_format.set_bold()
-                href_format.set_align('center')
-                href_format.set_font_color('#3C88E5')
+                href_format.set_align("center")
+                href_format.set_font_color("#3C88E5")
 
                 header_format90 = workbook.add_format()
                 header_format90.set_rotation(90)
@@ -501,27 +507,32 @@ class TableReport(object):
 
                 worksheet.set_column(3, len(df.columns.values), 3, colsformat_default)
 
-
-
                 for col_num, col_name in enumerate(df.columns.values):
                     if col_name not in columns_horizontal:
                         worksheet.write(0, col_num, col_name, header_format90)
                     else:
                         worksheet.write(0, col_num, col_name, header_format)
 
-                table_len = len(df)+2
-                worksheet.conditional_format(f'A1:ZZ{table_len}', {'type': 'cell',
-                                                          'criteria': 'equal to',
-                                                          'value': '"✓"',
-                                                          'format': green})
-                worksheet.conditional_format(f'A1:ZZ{table_len}', {'type': 'cell',
-                                                          'criteria': 'equal to',
-                                                          'value': '"⅟"',
-                                                          'format': orange})
+                table_len = len(df) + 2
+                worksheet.conditional_format(
+                    f"A1:ZZ{table_len}",
+                    {
+                        "type": "cell",
+                        "criteria": "equal to",
+                        "value": '"✓"',
+                        "format": green,
+                    },
+                )
+                worksheet.conditional_format(
+                    f"A1:ZZ{table_len}",
+                    {
+                        "type": "cell",
+                        "criteria": "equal to",
+                        "value": '"⅟"',
+                        "format": orange,
+                    },
+                )
             writer.save()
-
-
-
 
     def to_google_sheet(self, google_sheets: str):
         """Write all tables to google calc.
@@ -609,6 +620,7 @@ class TableReport(object):
         self.df_pharmacokinetics = self.create_table(
             report_type=TableReportTypes.PHARMACOKINETICS
         )
+
     def base_table(self):
         """ Create the base table."""
         table = self.pkdata.studies.df.copy()
@@ -639,11 +651,7 @@ class TableReport(object):
 
         # columns rename
         table.rename(
-            columns={
-                "sid": "PKDB",
-                "reference_pmid": "pubmed",
-            },
-            inplace=True,
+            columns={"sid": "PKDB", "reference_pmid": "pubmed",}, inplace=True,
         )
         # sort
         table.sort_values(by="name", inplace=True)
@@ -654,14 +662,10 @@ class TableReport(object):
 
     def circos_table(self):
         return self.base_table().apply(
-            self.add_counts,
-            args=(self.pkdata, self.pkdata_concised, False),
-            axis=1,
+            self.add_counts, args=(self.pkdata, self.pkdata_concised, False), axis=1,
         )
 
-    def studies_table(
-        self, table_df: pd.DataFrame
-    ) -> pd.DataFrame:
+    def studies_table(self, table_df: pd.DataFrame) -> pd.DataFrame:
         """
         Changes studies in place.
         Changes study_keys in place.
@@ -684,9 +688,7 @@ class TableReport(object):
             axis=1,
         )
         table_groups = table_groups.apply(
-            self.add_counts,
-            args=(self.pkdata, self.pkdata_concised),
-            axis=1,
+            self.add_counts, args=(self.pkdata, self.pkdata_concised), axis=1,
         )
         table_groups[["subjects", "groups"]] = table_groups[
             ["subjects", "groups"]
@@ -730,15 +732,12 @@ class TableReport(object):
         )
         table_df = pd.merge(table_df, table_interventions[i_keys], on="sid")
         table_df = pd.merge(
-            table_df,
-            self._combine(table_outputs[o_keys], table_timecourses[o_keys]),
+            table_df, self._combine(table_outputs[o_keys], table_timecourses[o_keys]),
         )
 
         return table_df[table_keys]
 
-    def timecourses_table(
-        self, table_df: pd.DataFrame
-    ) -> pd.DataFrame:
+    def timecourses_table(self, table_df: pd.DataFrame) -> pd.DataFrame:
         """Create timecourse table"""
         table_keys = list(table_df.columns)
 
@@ -766,10 +765,7 @@ class TableReport(object):
 
     @staticmethod
     def add_counts(
-        study,
-        pkdata: PKData,
-        pkdata_concised: PKData,
-        only_groups: bool = True,
+        study, pkdata: PKData, pkdata_concised: PKData, only_groups: bool = True,
     ):
         """ Add counts of
         individuals, groups, subjects (group=all -> group_count), interventions, outputs, timecourses, scatters"""
@@ -777,13 +773,21 @@ class TableReport(object):
         if only_groups:
             columns = ["groups"]
         else:
-            columns = ["groups", "individuals", "interventions", "outputs", "timecourses"]
+            columns = [
+                "groups",
+                "individuals",
+                "interventions",
+                "outputs",
+                "timecourses",
+            ]
         for column in columns:
             pk_dataframe = getattr(pkdata_concised, column)
             study_pk_dataframe = pk_dataframe[pk_dataframe.study_sid == study.sid]
             additional_dict[column] = len(study_pk_dataframe.pks)
             if column == "outputs":
-                additional_dict["outputs_calculated"] = len( study_pk_dataframe[study_pk_dataframe["calculated"]].pks)
+                additional_dict["outputs_calculated"] = len(
+                    study_pk_dataframe[study_pk_dataframe["calculated"]].pks
+                )
 
         group_df = pkdata.groups.df
         study_group_df = group_df[group_df["study_sid"] == study.sid]
@@ -842,7 +846,9 @@ class TableReport(object):
         d = dict()
         for key, content_definition in measurement_types.items():
             d[key] = TableReport._cell_content(
-                content_definition=content_definition, df=df_sid_subset, instance_id=table.pk
+                content_definition=content_definition,
+                df=df_sid_subset,
+                instance_id=table.pk,
             )
 
         return row.append(pd.Series(d))
@@ -894,11 +900,16 @@ class TableReport(object):
                 specific_info = instance
             else:
                 specific_info = instance[
-                    instance["measurement_type"].isin(content_definition.measurement_types)
+                    instance["measurement_type"].isin(
+                        content_definition.measurement_types
+                    )
                 ]
 
             value_types = (
-                specific_info[content_definition.value_field].applymap(type).stack().unique()
+                specific_info[content_definition.value_field]
+                .applymap(type)
+                .stack()
+                .unique()
             )
 
             has_array = False
@@ -964,7 +975,6 @@ class TableReport(object):
             merged[column] = merged[keys].apply(TableReport._and_logic, axis=1)
 
         return merged[df1.columns]
-
 
     @staticmethod
     def _clear_sheat(spread, header_size, column_length):

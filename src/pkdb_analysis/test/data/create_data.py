@@ -24,7 +24,9 @@ def load_test_studies() -> PKData:
         "timecourses",
     ]:
         setattr(pkfilter, df_key, {"study_name__in": url_study_names})
-    return PKDB.query(pkfilter=pkfilter)  # updated to new query function, FIXME: check that works
+    return PKDB.query(
+        pkfilter=pkfilter
+    )  # updated to new query function, FIXME: check that works
 
 
 if __name__ == "__main__":

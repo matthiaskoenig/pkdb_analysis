@@ -1,11 +1,15 @@
 """Example to create interactive pharmacokinetics plot."""
 import os
+
 # os.environ["API_BASE"] = "https://alpha.pk-db.com"
 os.environ["API_BASE"] = "http://localhost:8000"
 from pathlib import Path
 
 import pandas as pd
-from pkdb_analysis.reports.interactive.interactive import interactive_plot_factory, LegendArgs as LA
+from pkdb_analysis.reports.interactive.interactive import (
+    interactive_plot_factory,
+    LegendArgs as LA,
+)
 from pkdb_analysis import PKData
 from pkdb_analysis.filter import f_effective_n_oc, f_n_oc, f_n_smoking, f_oc, f_smoking
 from pkdb_analysis.plotting.factory import PlotContentDefinition
@@ -22,6 +26,7 @@ class Sid(BaseSid):
 
     # FIXME: set the API once & better solution for this
     core: Core = field(default=Core(sids=PKDB.query_info_nodes_sids()))
+
 
 # substances used in the interventions
 INTERVENTION_SUBSTANCES = {"caffeine"}
@@ -59,16 +64,15 @@ MULTI_LEGEND = {"Study": "study_name"}
 
 MULTI_COLOR_LEGEND = {
     "Data type": LA("data_type"),
-    "Outlier": LA("outlier", [False, ]),
+    "Outlier": LA("outlier", [False,]),
     "Sex": LA("sex"),
-    "Healthy": LA("healthy", [True], ),
-    "Lifestyle": LA("life_style", ),
+    "Healthy": LA("healthy", [True],),
+    "Lifestyle": LA("life_style",),
     "Administration route": LA("intervention_route"),
     "Coadministration": LA("intervention_extra"),
-    "Number of interventions": LA("intervention_number", [1, ]),
+    "Number of interventions": LA("intervention_number", [1,]),
     "Tissue": LA("tissue"),
     "Assay": LA("method"),
-
 }
 # Information shown on hover.
 TOOLTIP = [

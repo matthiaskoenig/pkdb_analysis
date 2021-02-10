@@ -11,8 +11,7 @@ from scipy.special import gamma, kv
 from sklearn.cluster import KMeans
 from sklearn.metrics.pairwise import pairwise_kernels
 from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels \
-    import Kernel, _approx_fprime, Hyperparameter, RBF
+from sklearn.gaussian_process.kernels import Kernel, _approx_fprime, Hyperparameter, RBF
 
 
 class ManifoldKernel(Kernel):
@@ -52,8 +51,16 @@ class ManifoldKernel(Kernel):
     http://arxiv.org/abs/1402.5876
     """
 
-    def __init__(self, w, w_bounds, base_kernel, architecture, theta_nn_size,
-                 transfer_fct="tanh", max_nn_weight=5.0):
+    def __init__(
+        self,
+        w,
+        w_bounds,
+        base_kernel,
+        architecture,
+        theta_nn_size,
+        transfer_fct="tanh",
+        max_nn_weight=5.0,
+    ):
         self.w = w
         self.w_bounds = w_bounds
         self.base_kernel = base_kernel
@@ -62,26 +69,32 @@ class ManifoldKernel(Kernel):
         self.transfer_fct = transfer_fct
         self.max_nn_weight = max_nn_weight
 
-        self.hyperparameter_w = \
-                Hyperparameter("w", "numeric", self.w_bounds,
-                               self.w.shape[0])
+        self.hyperparameter_w = Hyperparameter(
+            "w", "numeric", self.w_bounds, self.w.shape[0]
+        )
 
     @classmethod
-    def construct(cls, base_kernel, architecture, transfer_fct="tanh",
-                  max_nn_weight=5.0):
+    def construct(
+        cls, base_kernel, architecture, transfer_fct="tanh", max_nn_weight=5.0
+    ):
         n_outputs, theta_nn_size = determine_network_layout(architecture)
 
-        w = np.array(list(np.random.uniform(-max_nn_weight, max_nn_weight,
-                                            theta_nn_size))
-                     + list(base_kernel.theta))
-        wL = [-max_nn_weight] * theta_nn_size \
-            + list(base_kernel.bounds[:, 0])
-        wU = [max_nn_weight] * theta_nn_size \
-            + list(base_kernel.bounds[:, 1])
+        w = np.array(
+            list(np.random.uniform(-max_nn_weight, max_nn_weight, theta_nn_size))
+            + list(base_kernel.theta)
+        )
+        wL = [-max_nn_weight] * theta_nn_size + list(base_kernel.bounds[:, 0])
+        wU = [max_nn_weight] * theta_nn_size + list(base_kernel.bounds[:, 1])
         w_bounds = np.vstack((wL, wU)).T
-        return cls(w, w_bounds, base_kernel=base_kernel,
-                   architecture=architecture, theta_nn_size=theta_nn_size,
-                   transfer_fct=transfer_fct, max_nn_weight=max_nn_weight)
+        return cls(
+            w,
+            w_bounds,
+            base_kernel=base_kernel,
+            architecture=architecture,
+            theta_nn_size=theta_nn_size,
+            transfer_fct=transfer_fct,
+            max_nn_weight=max_nn_weight,
+        )
 
     @property
     def theta(self):
@@ -90,7 +103,7 @@ class ManifoldKernel(Kernel):
     @theta.setter
     def theta(self, theta):
         self.w = np.asarray(theta, dtype=np.float)
-        self.base_kernel.theta = theta[self.theta_nn_size:]
+        self.base_kernel.theta = theta[self.theta_nn_size :]
 
     @property
     def bounds(self):
@@ -112,11 +125,11 @@ class ManifoldKernel(Kernel):
                 #      backpropagation?
                 def f(theta):  # helper function
                     return self.clone_with_theta(theta)(X, Y)
+
                 return K, _approx_fprime(self.theta, f, 1e-5)
         else:
             if eval_gradient:
-                raise ValueError(
-                    "Gradient can only be evaluated when Y is None.")
+                raise ValueError("Gradient can only be evaluated when Y is None.")
             Y_nn = self._project_manifold(Y)
             return self.base_kernel(X_nn, Y_nn)
 
@@ -134,7 +147,7 @@ class ManifoldKernel(Kernel):
         K_diag : array, shape (n_samples_X,)
             Diagonal of kernel k(X, X)
         """
-        return np.diag(self(X)) # XXX
+        return np.diag(self(X))  # XXX
 
     def is_stationary(self):
         """Returns whether the kernel is stationary. """
@@ -158,19 +171,22 @@ class ManifoldKernel(Kernel):
 
         y = []
         for subnet in self.architecture:
-            y.append(X[:, :subnet[0]])
+            y.append(X[:, : subnet[0]])
             for layer in range(len(subnet) - 1):
-                W = w[:subnet[layer]*subnet[layer+1]]
-                W = W.reshape((subnet[layer], subnet[layer+1]))
-                b = w[subnet[layer]*subnet[layer+1]:
-                      (subnet[layer]+1)*subnet[layer+1]]
+                W = w[: subnet[layer] * subnet[layer + 1]]
+                W = W.reshape((subnet[layer], subnet[layer + 1]))
+                b = w[
+                    subnet[layer]
+                    * subnet[layer + 1] : (subnet[layer] + 1)
+                    * subnet[layer + 1]
+                ]
                 a = y[-1].dot(W) + b
                 y[-1] = transfer_fct(a)
 
                 # chop off weights of this layer
-                w = w[(subnet[layer]+1)*subnet[layer+1]:]
+                w = w[(subnet[layer] + 1) * subnet[layer + 1] :]
 
-            X = X[:, subnet[0]:]  # chop off used input dimensions
+            X = X[:, subnet[0] :]  # chop off used input dimensions
 
         return np.hstack(y)
 
@@ -181,7 +197,7 @@ def determine_network_layout(architecture):
     n_params = 0
     for subnet in architecture:
         for layer in range(len(subnet) - 1):
-            n_params += (subnet[layer] + 1) * subnet[layer+1]
+            n_params += (subnet[layer] + 1) * subnet[layer + 1]
 
         n_outputs += subnet[-1]
 
@@ -213,10 +229,24 @@ class LocalLengthScalesKernel(Kernel):
     Smoothness", Christian Plagemann, Kristian Kersting, and Wolfram Burgard,
     ECML 2008
     """
-    def __init__(self, X_, nu=1.5,
-                 isotropic=True, theta0=1e-1, thetaL=1e-3, thetaU=1.0,
-                 l_isotropic=True, theta_l_0=1e-1, theta_l_L=1e-3, theta_l_U=1e1,
-                 l_samples=10, l_0=1.0, l_L=0.1, l_U=10.0):
+
+    def __init__(
+        self,
+        X_,
+        nu=1.5,
+        isotropic=True,
+        theta0=1e-1,
+        thetaL=1e-3,
+        thetaU=1.0,
+        l_isotropic=True,
+        theta_l_0=1e-1,
+        theta_l_L=1e-3,
+        theta_l_U=1e1,
+        l_samples=10,
+        l_0=1.0,
+        l_L=0.1,
+        l_U=10.0,
+    ):
         self.X_ = X_
         self.nu = nu
         self.isotropic = isotropic
@@ -236,8 +266,7 @@ class LocalLengthScalesKernel(Kernel):
         # categories (used later for parsing theta)
         self.theta_gp_size = 1 if self.isotropic else X_.shape[1]
         self.theta_l_size = 1 if self.l_isotropic else X_.shape[1]
-        self.theta_size = \
-            self.theta_gp_size + self.theta_l_size + self.l_samples
+        self.theta_size = self.theta_gp_size + self.theta_l_size + self.l_samples
 
         self.weights = [theta0] * self.theta_gp_size
         weightsL = [thetaL] * self.theta_gp_size
@@ -254,15 +283,28 @@ class LocalLengthScalesKernel(Kernel):
         self.weights_bounds = np.vstack((weightsL, weightsU)).T
         self.theta = np.log(self.weights)
 
-        self.hyperparameter_weights = \
-                Hyperparameter("weights", "numeric", self.weights_bounds,
-                               len(self.weights))
+        self.hyperparameter_weights = Hyperparameter(
+            "weights", "numeric", self.weights_bounds, len(self.weights)
+        )
 
     @classmethod
-    def construct(cls, X, nu=1.5, isotropic=True,
-                  theta0=1e-1, thetaL=1e-3, thetaU=1.0, l_isotropic=True,
-                  theta_l_0=1e-1, theta_l_L=1e-3, theta_l_U=1e1,
-                  l_samples=10, l_0=1.0, l_L=0.1, l_U=10.0):
+    def construct(
+        cls,
+        X,
+        nu=1.5,
+        isotropic=True,
+        theta0=1e-1,
+        thetaL=1e-3,
+        thetaU=1.0,
+        l_isotropic=True,
+        theta_l_0=1e-1,
+        theta_l_L=1e-3,
+        theta_l_U=1e1,
+        l_samples=10,
+        l_0=1.0,
+        l_L=0.1,
+        l_U=10.0,
+    ):
         assert X is not None
         # Select points on which length-scale GP is defined
         if X.shape[0] > l_samples:
@@ -270,10 +312,22 @@ class LocalLengthScalesKernel(Kernel):
             X_ = kmeans.fit(X).cluster_centers_
         else:
             X_ = np.asarray(X)
-        return cls(X_=X_, nu=nu, isotropic=isotropic, theta0=theta0,
-                   thetaL=thetaL, thetaU=thetaU, l_isotropic=l_isotropic,
-                   theta_l_0=theta_l_0, theta_l_L=theta_l_L, theta_l_U=theta_l_U,
-                   l_samples=l_samples, l_0=l_0, l_L=l_L, l_U=l_U)
+        return cls(
+            X_=X_,
+            nu=nu,
+            isotropic=isotropic,
+            theta0=theta0,
+            thetaL=thetaL,
+            thetaU=thetaU,
+            l_isotropic=l_isotropic,
+            theta_l_0=theta_l_0,
+            theta_l_L=theta_l_L,
+            theta_l_U=theta_l_U,
+            l_samples=l_samples,
+            l_0=l_0,
+            l_L=l_L,
+            l_U=l_U,
+        )
 
     @property
     def theta(self):
@@ -284,8 +338,9 @@ class LocalLengthScalesKernel(Kernel):
         self.weights = np.exp(np.asarray(weights, dtype=np.float))
 
         # Parse weights into its components
-        self.theta_gp, self.theta_l, self.length_scales = \
-            self._parse_weights(self.weights)
+        self.theta_gp, self.theta_l, self.length_scales = self._parse_weights(
+            self.weights
+        )
 
         # Train length-scale Gaussian Process
         kernel = RBF(self.theta_l, length_scale_bounds="fixed")
@@ -312,28 +367,28 @@ class LocalLengthScalesKernel(Kernel):
             d = d.reshape((-1, Y.shape[1]))
             # Predict length scales for query datapoints
             l_query = 10 ** self.gp_l.predict(Y)
-            l = np.transpose([np.tile(l_train, len(l_query)),
-                              np.repeat(l_query, len(l_train))])
+            l = np.transpose(
+                [np.tile(l_train, len(l_query)), np.repeat(l_query, len(l_train))]
+            )
         else:
             # No external datapoints given; auto-correlation of training set
             # is used instead
             d = X[:, np.newaxis, :] - X[np.newaxis, :, :]
             d = d.reshape((-1, X.shape[1]))
-            l = np.transpose([np.tile(l_train, len(l_train)),
-                              np.repeat(l_train, len(l_train))])  # XXX: check
+            l = np.transpose(
+                [np.tile(l_train, len(l_train)), np.repeat(l_train, len(l_train))]
+            )  # XXX: check
 
         # Compute general Matern kernel
         if d.ndim > 1 and self.theta_gp.size == d.ndim:
-            activation = \
-                np.sum(self.theta_gp.reshape(1, d.ndim) * d ** 2, axis=1)
+            activation = np.sum(self.theta_gp.reshape(1, d.ndim) * d ** 2, axis=1)
         else:
             activation = self.theta_gp[0] * np.sum(d ** 2, axis=1)
-        tmp = 0.5 * (l**2).sum(1)
-        tmp2 = np.maximum(2*np.sqrt(self.nu * activation / tmp), 1e-5)
-        k = np.sqrt(l[:, 0]) * np.sqrt(l[:, 1]) \
-            / (gamma(self.nu) * 2**(self.nu - 1))
+        tmp = 0.5 * (l ** 2).sum(1)
+        tmp2 = np.maximum(2 * np.sqrt(self.nu * activation / tmp), 1e-5)
+        k = np.sqrt(l[:, 0]) * np.sqrt(l[:, 1]) / (gamma(self.nu) * 2 ** (self.nu - 1))
         k /= np.sqrt(tmp)
-        k *= tmp2**self.nu * kv(self.nu, tmp2)
+        k *= tmp2 ** self.nu * kv(self.nu, tmp2)
 
         # Convert correlations to 2d matrix
         if Y is not None:
@@ -347,6 +402,7 @@ class LocalLengthScalesKernel(Kernel):
                 # XXX: computed gradient analytically?
                 def f(theta):  # helper function
                     return self.clone_with_theta(theta)(X, Y)
+
                 return K, _approx_fprime(self.weights, f, 1e-7)
 
     def _parse_weights(self, weights):
@@ -366,20 +422,27 @@ class LocalLengthScalesKernel(Kernel):
         """
         weights = np.asarray(weights, dtype=np.float)
 
-        assert (weights.size == self.theta_size), \
-            "weights does not have the expected size (expected: %d, " \
-            "actual size %d). Expected: %d entries for main GP, " \
-            "%d entries for length-scale GP, %d entries containing the "\
-            "length scales, and %d entries for nu." \
-            % (self.theta_size, weights.size, self.theta_gp_size,
-               self.theta_l_size, self.l_samples, self.nu_size)
+        assert weights.size == self.theta_size, (
+            "weights does not have the expected size (expected: %d, "
+            "actual size %d). Expected: %d entries for main GP, "
+            "%d entries for length-scale GP, %d entries containing the "
+            "length scales, and %d entries for nu."
+            % (
+                self.theta_size,
+                weights.size,
+                self.theta_gp_size,
+                self.theta_l_size,
+                self.l_samples,
+                self.nu_size,
+            )
+        )
 
         # Split theta in its components
-        theta_gp = weights[:self.theta_gp_size]
-        theta_l = \
-            weights[self.theta_gp_size:][:self.theta_l_size]
-        length_scales = \
-            weights[self.theta_gp_size+self.theta_l_size:][:self.l_samples]
+        theta_gp = weights[: self.theta_gp_size]
+        theta_l = weights[self.theta_gp_size :][: self.theta_l_size]
+        length_scales = weights[self.theta_gp_size + self.theta_l_size :][
+            : self.l_samples
+        ]
 
         return theta_gp, theta_l, length_scales
 
@@ -397,7 +460,7 @@ class LocalLengthScalesKernel(Kernel):
         K_diag : array, shape (n_samples_X,)
             Diagonal of kernel k(X, X)
         """
-        return np.diag(self(X)) # XXX
+        return np.diag(self(X))  # XXX
 
     def is_stationary(self):
         """Returns whether the kernel is stationary. """
@@ -405,8 +468,8 @@ class LocalLengthScalesKernel(Kernel):
 
     def __repr__(self):
         return "{0}(theta_gp={1}, theta_l={2}, length_scales={3})".format(
-            self.__class__.__name__, self.theta_gp, self.theta_l,
-            self.length_scales)
+            self.__class__.__name__, self.theta_gp, self.theta_l, self.length_scales
+        )
 
 
 class HeteroscedasticKernel(Kernel):
@@ -428,8 +491,15 @@ class HeteroscedasticKernel(Kernel):
     gamma_bounds : pair of floats >= 0, default: (1e-2, 1e2)
         The lower and upper bound on gamma
     """
-    def __init__(self, prototypes, sigma_2=1.0, sigma_2_bounds=(0.1, 10.0),
-                 gamma=1.0, gamma_bounds=(1e-2, 1e2)):
+
+    def __init__(
+        self,
+        prototypes,
+        sigma_2=1.0,
+        sigma_2_bounds=(0.1, 10.0),
+        gamma=1.0,
+        gamma_bounds=(1e-2, 1e2),
+    ):
         assert prototypes.shape[0] == sigma_2.shape[0]
         self.prototypes = prototypes
 
@@ -439,20 +509,27 @@ class HeteroscedasticKernel(Kernel):
         self.gamma = gamma
         self.gamma_bounds = gamma_bounds
 
-        self.hyperparameter_sigma_2 = \
-                Hyperparameter("sigma_2", "numeric", self.sigma_2_bounds,
-                               self.sigma_2.shape[0])
+        self.hyperparameter_sigma_2 = Hyperparameter(
+            "sigma_2", "numeric", self.sigma_2_bounds, self.sigma_2.shape[0]
+        )
 
-        self.hyperparameter_gamma = \
-                Hyperparameter("gamma", "numeric", self.gamma_bounds)
+        self.hyperparameter_gamma = Hyperparameter(
+            "gamma", "numeric", self.gamma_bounds
+        )
 
     @classmethod
-    def construct(cls, prototypes, sigma_2=1.0, sigma_2_bounds=(0.1, 10.0),
-                  gamma=1.0, gamma_bounds=(1e-2, 1e2)):
+    def construct(
+        cls,
+        prototypes,
+        sigma_2=1.0,
+        sigma_2_bounds=(0.1, 10.0),
+        gamma=1.0,
+        gamma_bounds=(1e-2, 1e2),
+    ):
         prototypes = np.asarray(prototypes)
         if prototypes.shape[0] > 1 and len(np.atleast_1d(sigma_2)) == 1:
             sigma_2 = np.repeat(sigma_2, prototypes.shape[0])
-            sigma_2_bounds = np.vstack([sigma_2_bounds] *prototypes.shape[0])
+            sigma_2_bounds = np.vstack([sigma_2_bounds] * prototypes.shape[0])
         return cls(prototypes, sigma_2, sigma_2_bounds, gamma, gamma_bounds)
 
     def __call__(self, X, Y=None, eval_gradient=False):
@@ -478,41 +555,43 @@ class HeteroscedasticKernel(Kernel):
         """
         prototypes_std = self.prototypes.std(0)
         n_prototypes = self.prototypes.shape[0]
-        n_gradient_dim = \
-            n_prototypes + (0 if self.hyperparameter_gamma.fixed else 1)
+        n_gradient_dim = n_prototypes + (0 if self.hyperparameter_gamma.fixed else 1)
 
         X = np.atleast_2d(X)
         if Y is not None and eval_gradient:
             raise ValueError("Gradient can only be evaluated when Y is None.")
 
         if Y is None:
-            K= np.eye(X.shape[0]) * self.diag(X)
+            K = np.eye(X.shape[0]) * self.diag(X)
             if eval_gradient:
-                K_gradient = \
-                    np.zeros((K.shape[0], K.shape[0], n_gradient_dim))
-                K_pairwise = \
-                    pairwise_kernels(self.prototypes / prototypes_std,
-                                     X / prototypes_std,
-                                     metric="rbf", gamma=self.gamma)
+                K_gradient = np.zeros((K.shape[0], K.shape[0], n_gradient_dim))
+                K_pairwise = pairwise_kernels(
+                    self.prototypes / prototypes_std,
+                    X / prototypes_std,
+                    metric="rbf",
+                    gamma=self.gamma,
+                )
                 for i in range(n_prototypes):
                     for j in range(K.shape[0]):
-                        K_gradient[j, j, i] = \
-                            self.sigma_2[i] * K_pairwise[i, j] \
-                            / K_pairwise[:, j].sum()
+                        K_gradient[j, j, i] = (
+                            self.sigma_2[i] * K_pairwise[i, j] / K_pairwise[:, j].sum()
+                        )
                 if not self.hyperparameter_gamma.fixed:
                     # XXX: Analytic expression for gradient?
                     def f(gamma):  # helper function
                         theta = self.theta.copy()
                         theta[-1] = gamma[0]
                         return self.clone_with_theta(theta)(X, Y)
-                    K_gradient[:, :, -1] = \
-                        _approx_fprime([self.theta[-1]], f, 1e-5)[:, :, 0]
+
+                    K_gradient[:, :, -1] = _approx_fprime([self.theta[-1]], f, 1e-5)[
+                        :, :, 0
+                    ]
                 return K, K_gradient
             else:
                 return K
         else:
             K = np.zeros((X.shape[0], Y.shape[0]))
-            return K   # XXX: similar entries?
+            return K  # XXX: similar entries?
 
     def is_stationary(self):
         """Returns whether the kernel is stationary. """
@@ -536,14 +615,18 @@ class HeteroscedasticKernel(Kernel):
         n_prototypes = self.prototypes.shape[0]
 
         # kernel regression of noise levels
-        K_pairwise = \
-            pairwise_kernels(self.prototypes / prototypes_std,
-                             X / prototypes_std,
-                             metric="rbf", gamma=self.gamma)
+        K_pairwise = pairwise_kernels(
+            self.prototypes / prototypes_std,
+            X / prototypes_std,
+            metric="rbf",
+            gamma=self.gamma,
+        )
 
-        return (K_pairwise * self.sigma_2[:, None]).sum(axis=0) \
-                / K_pairwise.sum(axis=0)
+        return (K_pairwise * self.sigma_2[:, None]).sum(axis=0) / K_pairwise.sum(axis=0)
 
     def __repr__(self):
-        return "{0}(sigma_2=[{1}], gamma={2})".format(self.__class__.__name__,
-            ", ".join(map("{0:.3g}".format, self.sigma_2)), self.gamma)
+        return "{0}(sigma_2=[{1}], gamma={2})".format(
+            self.__class__.__name__,
+            ", ".join(map("{0:.3g}".format, self.sigma_2)),
+            self.gamma,
+        )

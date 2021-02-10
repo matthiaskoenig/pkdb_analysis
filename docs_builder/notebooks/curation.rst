@@ -4,6 +4,24 @@
     from pkdb_analysis import PKFilter, PKFilterFactory, PKData, PKDB
     import pandas as pd
 
+
+::
+
+
+    ---------------------------------------------------------------------------
+
+    ImportError                               Traceback (most recent call last)
+
+    <ipython-input-1-9779cd9ede1f> in <module>
+          2 get_ipython().run_line_magic('autoreload', '2')
+          3 from IPython.display import display
+    ----> 4 from pkdb_analysis import PKFilter, PKFilterFactory, PKData, PKDB
+          5 import pandas as pd
+
+
+    ImportError: cannot import name 'PKFilterFactory' from 'pkdb_analysis' (/home/janek/Dev/pkdb_analysis/src/pkdb_analysis/__init__.py)
+
+
 Curation and checking of studies
 ================================
 
@@ -18,35 +36,22 @@ Helpers for simple checking of curated results.
     print(data)
 
 
-.. parsed-literal::
-
-    INFO *** Querying data ***
-    INFO http://0.0.0.0:8000/api/v1/pkdata/studies/?format=json&page_size=2000&study_name=Test1
-    INFO http://0.0.0.0:8000/api/v1/pkdata/studies/?format=json&page_size=2000&study_name=Test1&page=1
-    INFO http://0.0.0.0:8000/api/v1/pkdata/interventions/?format=json&page_size=2000&normed=true&study_name=Test1
-    INFO http://0.0.0.0:8000/api/v1/pkdata/interventions/?format=json&page_size=2000&normed=true&study_name=Test1&page=1
-    INFO http://0.0.0.0:8000/api/v1/pkdata/individuals/?format=json&page_size=2000&study_name=Test1
-    INFO http://0.0.0.0:8000/api/v1/pkdata/individuals/?format=json&page_size=2000&study_name=Test1&page=1
-    INFO http://0.0.0.0:8000/api/v1/pkdata/groups/?format=json&page_size=2000&study_name=Test1
-    INFO http://0.0.0.0:8000/api/v1/pkdata/groups/?format=json&page_size=2000&study_name=Test1&page=1
-    INFO http://0.0.0.0:8000/api/v1/pkdata/outputs/?format=json&page_size=2000&normed=true&study_name=Test1
-    INFO http://0.0.0.0:8000/api/v1/pkdata/outputs/?format=json&page_size=2000&normed=true&study_name=Test1&page=1
-    INFO http://0.0.0.0:8000/api/v1/pkdata/timecourses/?format=json&page_size=2000&study_name=Test1
-    INFO http://0.0.0.0:8000/api/v1/pkdata/timecourses/?format=json&page_size=2000&study_name=Test1&page=1
+::
 
 
-.. parsed-literal::
+    ---------------------------------------------------------------------------
 
-    ------------------------------
-    PKData (140210902454608)
-    ------------------------------
-    studies             0  (    0)
-    groups              0  (    0)
-    individuals         0  (    0)
-    interventions       0  (    0)
-    outputs             0  (    0)
-    timecourses         0  (    0)
-    ------------------------------
+    NameError                                 Traceback (most recent call last)
+
+    <ipython-input-1-ea6e6bd278a7> in <module>
+          1 # get data for study
+          2 study_name = "Test1"
+    ----> 3 pkfilter = PKFilterFactory.by_study_name(study_name)
+          4 data = PKDB.query(pkfilter=pkfilter)
+          5 print(data)
+
+
+    NameError: name 'PKFilterFactory' is not defined
 
 
 Explore data content
@@ -59,10 +64,19 @@ Explore data content
 
 
 
-.. parsed-literal::
+::
 
-    set()
-    set()
+
+    ---------------------------------------------------------------------------
+
+    NameError                                 Traceback (most recent call last)
+
+    <ipython-input-1-21704facd3df> in <module>
+    ----> 1 print(data.groups.pks)
+          2 print(data.individuals.pks)
+
+
+    NameError: name 'data' is not defined
 
 
 .. code:: ipython3
@@ -75,149 +89,22 @@ Explore data content
         display(data.timecourses_mi)
 
 
-
-.. raw:: html
-
-    <div>
-    <style scoped>
-        .dataframe tbody tr th:only-of-type {
-            vertical-align: middle;
-        }
-    
-        .dataframe tbody tr th {
-            vertical-align: top;
-        }
-    
-        .dataframe thead th {
-            text-align: right;
-        }
-    </style>
-    <table border="1" class="dataframe">
-      <thead>
-        <tr style="text-align: right;">
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-    </div>
+::
 
 
+    ---------------------------------------------------------------------------
 
-.. raw:: html
+    NameError                                 Traceback (most recent call last)
 
-    <div>
-    <style scoped>
-        .dataframe tbody tr th:only-of-type {
-            vertical-align: middle;
-        }
-    
-        .dataframe tbody tr th {
-            vertical-align: top;
-        }
-    
-        .dataframe thead th {
-            text-align: right;
-        }
-    </style>
-    <table border="1" class="dataframe">
-      <thead>
-        <tr style="text-align: right;">
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-    </div>
+    <ipython-input-1-b5f98a7f64fd> in <module>
+    ----> 1 with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+          2     display(data.groups_mi)
+          3     display(data.individuals_mi)
+          4     display(data.interventions_mi)
+          5     display(data.outputs_mi)
 
 
-
-.. raw:: html
-
-    <div>
-    <style scoped>
-        .dataframe tbody tr th:only-of-type {
-            vertical-align: middle;
-        }
-    
-        .dataframe tbody tr th {
-            vertical-align: top;
-        }
-    
-        .dataframe thead th {
-            text-align: right;
-        }
-    </style>
-    <table border="1" class="dataframe">
-      <thead>
-        <tr style="text-align: right;">
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-    </div>
-
-
-
-.. raw:: html
-
-    <div>
-    <style scoped>
-        .dataframe tbody tr th:only-of-type {
-            vertical-align: middle;
-        }
-    
-        .dataframe tbody tr th {
-            vertical-align: top;
-        }
-    
-        .dataframe thead th {
-            text-align: right;
-        }
-    </style>
-    <table border="1" class="dataframe">
-      <thead>
-        <tr style="text-align: right;">
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-    </div>
-
-
-
-.. raw:: html
-
-    <div>
-    <style scoped>
-        .dataframe tbody tr th:only-of-type {
-            vertical-align: middle;
-        }
-    
-        .dataframe tbody tr th {
-            vertical-align: top;
-        }
-    
-        .dataframe thead th {
-            text-align: right;
-        }
-    </style>
-    <table border="1" class="dataframe">
-      <thead>
-        <tr style="text-align: right;">
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-    </div>
+    NameError: name 'pd' is not defined
 
 
 .. code:: ipython3
@@ -225,43 +112,18 @@ Explore data content
     data.timecourses
 
 
+::
 
-.. raw:: html
 
-    <div>
-    <style scoped>
-        .dataframe tbody tr th:only-of-type {
-            vertical-align: middle;
-        }
+    ---------------------------------------------------------------------------
+
+    NameError                                 Traceback (most recent call last)
+
+    <ipython-input-1-2fde804e136a> in <module>
+    ----> 1 data.timecourses
     
-        .dataframe tbody tr th {
-            vertical-align: top;
-        }
-    
-        .dataframe thead th {
-            text-align: right;
-        }
-    </style>
-    <table border="1" class="dataframe">
-      <thead>
-        <tr style="text-align: right;">
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-    </div>
 
-
-
-
-.. parsed-literal::
-
-    Empty DataFrame
-    Columns: []
-    Index: []
-
+    NameError: name 'data' is not defined
 
 
 .. code:: ipython3
@@ -271,43 +133,19 @@ Explore data content
 
 
 
-
-.. raw:: html
-
-    <div>
-    <style scoped>
-        .dataframe tbody tr th:only-of-type {
-            vertical-align: middle;
-        }
-    
-        .dataframe tbody tr th {
-            vertical-align: top;
-        }
-    
-        .dataframe thead th {
-            text-align: right;
-        }
-    </style>
-    <table border="1" class="dataframe">
-      <thead>
-        <tr style="text-align: right;">
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-    </div>
+::
 
 
+    ---------------------------------------------------------------------------
+
+    NameError                                 Traceback (most recent call last)
+
+    <ipython-input-1-0d2b1d8dbe58> in <module>
+    ----> 1 data.timecourses
+          2 
 
 
-.. parsed-literal::
-
-    Empty DataFrame
-    Columns: []
-    Index: []
-
+    NameError: name 'data' is not defined
 
 
 

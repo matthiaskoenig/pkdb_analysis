@@ -28,7 +28,6 @@ class PKFilter(object):
         "interventions",
         "outputs",
         "timecourses",
-
         # special keys
         "concise",
         "download",
@@ -72,7 +71,7 @@ def query_pkdb_data(
     pkfilter: PKFilter = None,
     creator: str = None,
     curators: List[str] = None,
-    study_names: List = None
+    study_names: List = None,
 ) -> PKData:
     """Query the PK-DB database.
 
@@ -196,4 +195,3 @@ class PKDB(object):
         is_array = "timecourse" in url or "scatters" in url
 
         return PKData._clean_types(df, is_array)
-
