@@ -1,6 +1,4 @@
-"""
-Definition of core objects.
-"""
+"""Definition of core objects."""
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Set

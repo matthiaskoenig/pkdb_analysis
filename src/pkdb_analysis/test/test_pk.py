@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 from matplotlib import pyplot as plt
-from pint import UnitRegistry
+from pkdb_analysis.units import ureg
 
 from pkdb_analysis.pk.pharmacokinetics import TimecoursePK
 from pkdb_analysis.pk.pharmacokinetics_example import (
@@ -17,7 +17,7 @@ from pkdb_analysis.pk.pharmacokinetics_example import (
 
 
 def test_pharmacokinetics_nan():
-    ureg = UnitRegistry()
+    """Test pharmacokinetics calculation with NaN values."""
     Q_ = ureg.Quantity
     c = [
         0.00829241,
@@ -43,7 +43,6 @@ def test_pharmacokinetics_nan():
 
 
 def test_pharmacokinetics():
-    ureg = UnitRegistry()
     Q_ = ureg.Quantity
     t = np.linspace(0, 100, num=50)
     kel = 1.0
