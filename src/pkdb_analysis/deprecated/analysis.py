@@ -127,7 +127,7 @@ def create_plots(  # FIXME: Probably deprecated
         y = individuals_data.value
         color = list(individuals_data.color)
         marker = list(individuals_data.marker)
-        mscatter(x, y, ax=ax, color=color, m=marker, alpha=0.7, label=None, s=20)
+        mscatter(x, y, ax=ax, color=color, m=marker, label=None, s=20)
 
         group_data = data_category[data_category.group_pk != -1]
 
@@ -146,12 +146,18 @@ def create_plots(  # FIXME: Probably deprecated
             color = df_group.color
             marker = df_group.marker
 
+            mfc = color
+            if color == (0, 0, 0, 0.7):
+                mfc = (0, 0, 0, 0)
+
             ax.errorbar(
                 x_group,
                 y_group,
                 yerr=yerr_group,
                 xerr=0,
-                color=color,
+                mfc=mfc,
+                ecolor=color,
+                mec=color,
                 fmt=marker,
                 ms=ms,
                 alpha=0.7,

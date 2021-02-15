@@ -277,8 +277,21 @@ def add_group_scatter(
     x_group, y_group, yerr_group, ms, color, marker = group_values(
         df_group, color_by, group_size_scaling
     )
+    mfc = color
+    #if color ==  (0, 0, 0, 0.7):
+    #    mfc = (0, 0, 0, 0)
+
     ax.errorbar(
-        x_group, y_group, yerr=yerr_group, xerr=0, color=color, fmt=marker, ms=ms
+        x_group,
+        y_group,
+        yerr=yerr_group,
+        xerr=0,
+        #color=color,
+        mfc=mfc,
+        ecolor=color,
+        mec=color,
+        fmt=marker,
+        ms=ms,
     )
 
 
@@ -505,6 +518,9 @@ def create_plot(
     gaussian_regression: bool = False,
     no_text_column: str = None,
     text_column: str = None,
+    loc1: Tuple = "upper right",
+    loc2: Tuple = "upper left",
+    loc3: Tuple = "center right",
     ax=None,
     figure=None,
 ) -> None:
@@ -580,7 +596,7 @@ def create_plot(
                 text_column,
             )
 
-    add_legends(df, color_label, color_by, ax, group_size_scaling)
+    add_legends(df, color_label, color_by, ax, group_size_scaling, loc1=loc1, loc2=loc2, loc3=loc3)
     add_axis_config(
         ax,
         substance,

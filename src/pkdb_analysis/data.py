@@ -109,14 +109,37 @@ class PKDataFrame(pd.DataFrame, ABC):
     @staticmethod
     def _change_unit(sd, unit):
         infer_fields = ["value", "mean", "median", "min", "max", "sd", "se"]
-        if ureg(sd["unit"]).check(unit):
-            factor = ureg(sd["unit"]).to(unit).m
-            sd[infer_fields] = sd[infer_fields] * factor
-            sd["unit"] = unit
+        return PKDataFrame._change_unit_generic(
+            sd=sd,
+            unit=unit,
+            infer_fields=infer_fields,
+            unit_field="unit")
+
+    @staticmethod
+    def _change_unit_generic(sd, unit: str, infer_fields: List[str], unit_field: str):
+        if isinstance( sd[unit_field], str):
+            if ureg(sd[unit_field]).check(unit):
+                factor = ureg(sd[unit_field]).to(unit).m
+                sd[infer_fields] = sd[infer_fields] * factor
+                sd[unit_field] = unit
         return sd
+
+    @staticmethod
+    def _change_time_unit(sd, unit):
+        infer_fields = ["time"]
+        unit_field = "time_unit"
+        return PKDataFrame._change_unit_generic(
+            sd=sd,
+            unit=unit,
+            infer_fields=infer_fields,
+            unit_field=unit_field)
 
     def change_unit(self, unit):
         df = self.df.apply(self._change_unit, unit=unit, axis=1)
+        return PKDataFrame(df, pk=self.pk)
+
+    def change_time_unit(self, unit):
+        df = self.df.apply(self._change_time_unit, unit=unit, axis=1)
         return PKDataFrame(df, pk=self.pk)
 
     @property

@@ -38,7 +38,6 @@ class OutputPair(object):
             raise ValueError("One group or individuals are allowed not both.")
 
         if number_individuals == 0 and number_groups == 0:
-            print(pkdata)
             raise ValueError("Empty data not allowed.")
 
         if number_individuals > 0:
