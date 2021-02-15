@@ -33,7 +33,7 @@ def create_table_report(
     h5_data_path: Path = None,
     zip_data_path: Path = None,
     excel_path: Path = None,
-    tsv_path: Path = None,
+    tsv_dir: Path = None,
     google_sheets: str = None,
     query_data: bool = False,
 ):
@@ -44,13 +44,10 @@ def create_table_report(
     report_substances: Set of substances in reports
 
     excel_path: Path to excel file to write the report to
-    tsv_path: Path to directory to to which the tsv are written
+    tsv_dir: Path to directory to to which the tsv are written
     google_sheets: Google sheets name for report
     query_data: boolean flag to query the data
     """
-
-
-
     if query_data:
         query_pkdb_data(h5_path=h5_data_path)
     # Load data
@@ -88,8 +85,8 @@ def create_table_report(
     # serialize table report
     if excel_path is not None:
         table_report.to_excel(excel_path)
-    if tsv_path is not None:
-        table_report.to_tsv(tsv_path)
+    if tsv_dir is not None:
+        table_report.to_tsv(tsv_dir)
     if google_sheets is not None:
         logger.error(
             f"NO SUPPORT FOR GOOGLE SHEETS: see "

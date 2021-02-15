@@ -28,7 +28,7 @@ def test_tables(tmp_path):
         ],
         excel_path=xlsx_path,
         # google_sheets="TorasemideTables",
-        tsv_path=output_path,
+        tsv_dir=output_path,
         query_data=False,
     )
 
