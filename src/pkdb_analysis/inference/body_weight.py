@@ -6,15 +6,10 @@ from typing import Optional, Tuple
 
 import numpy as np
 import pandas as pd
-import pint
+from pkdb_analysis.units import ureg
 from pint import Quantity, UnitRegistry
 
-
-# Define unit registry for examples
-ureg = pint.UnitRegistry()
-
 Q_ = ureg.Quantity
-ureg.define("none = count")
 
 
 class InferWeight(object):

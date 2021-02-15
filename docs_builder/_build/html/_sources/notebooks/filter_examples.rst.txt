@@ -25,20 +25,16 @@ from it.
 
 .. parsed-literal::
 
-    INFO NumExpr defaulting to 8 threads.
-
-
-.. parsed-literal::
-
     ------------------------------
-    PKData (140073344574672)
+    PKData (139890849755408)
     ------------------------------
-    studies           505  (  505)
-    groups           1456  (11993)
-    individuals      6395  (57683)
-    interventions    1209  ( 1865)
-    outputs         72206  (72206)
-    timecourses       423  (  423)
+    studies           127  (  127)
+    groups            429  ( 3733)
+    individuals      3163  (28219)
+    interventions     409  (  409)
+    outputs         19407  (29053)
+    timecourses       722  (  722)
+    scatters           80  (   80)
     ------------------------------
 
 
@@ -71,167 +67,57 @@ sids in the dataset is available via
 
 .. parsed-literal::
 
-    {'10381807',
-     '10412886',
-     '10444424',
-     '10460065',
+    {'1033273',
      '10634135',
-     '10741630',
-     '10934672',
-     '10976543',
-     '11061578',
-     '11112089',
-     '11180018',
-     '11259986',
-     '1133173',
-     '11361054',
-     '11497338',
-     '1154379',
-     '11709322',
-     '11736870',
-     '11753267',
-     '11872673',
-     '11986393',
-     '12189441',
-     '12200754',
-     '12236852',
-     '1246330',
-     '12723464',
-     '12784317',
+     '11839447',
      '13053413',
-     '14612892',
-     '14691614',
-     '1484193',
-     '1488408',
-     '14979606',
-     '14982753',
-     '15206993',
-     '15317833',
-     '1551497',
-     '15518608',
-     '1577043',
-     '1613123',
+     '15022032',
      '16158445',
-     '1623898',
      '16261361',
-     '170711',
-     '17108811',
-     '1732127',
-     '17541571',
-     '18213452',
-     '1895958',
-     '19094067',
+     '18703023',
+     '2060878',
      '20853468',
-     '2121568',
-     '21252240',
-     '2198434',
+     '21591074',
+     '2185297',
      '22673010',
-     '23469684',
-     '24517114',
-     '25323804',
-     '2584298',
      '25853045',
-     '264686',
-     '28063968',
-     '2816559',
-     '28350522',
-     '2857025',
-     '2902373',
+     '25891161',
+     '26862045',
+     '28929443',
      '2921843',
      '29230348',
-     '29403866',
-     '30171779',
-     '30729119',
-     '3113968',
+     '30387917',
      '32071850',
-     '3335120',
-     '3356089',
      '3356110',
-     '3437070',
-     '3514335',
-     '3519643',
-     '3522621',
-     '3546378',
-     '3604267',
-     '3722329',
-     '3741728',
+     '3557314',
      '3741730',
-     '3816112',
-     '385271',
-     '3971846',
      '4027137',
-     '4079279',
-     '4127645',
-     '4430704',
-     '4552828',
-     '4850385',
-     '4856884',
-     '4942784',
-     '5957477',
-     '6041196',
      '6135578',
-     '6141519',
-     '6368593',
-     '659633',
+     '6712142',
      '6734698',
-     '6743445',
-     '6883911',
-     '7009366',
-     '7094509',
+     '7371463',
+     '7371698',
      '7742721',
-     '7898078',
-     '7983238',
-     '8138261',
-     '8149872',
-     '8375123',
-     '8423228',
+     '7775610',
      '8445222',
-     '856672',
-     '8568017',
-     '8622603',
-     '8690818',
-     '8823235',
-     '8852486',
-     '8877677',
-     '8988072',
-     '908472',
-     '9272591',
-     '9542477',
-     '9696456',
-     '9725479',
-     '9728898',
-     '9792543',
-     '9834039',
-     '9920147',
-     'Andersen1999',
+     'Arnaud1981',
      'Arold2005',
+     'Bchir2006',
      'Becker1984',
-     'Bochner1999',
-     'Borin1989',
-     'Branch1976',
-     'Burns1991',
-     'Chen1989ThesisChapter4',
-     'Chijiiwa2000',
+     'Bozikas2004',
+     'Broughton1981',
+     'Callahan1982',
+     'Cattarossi1988',
+     'Christensen2002',
      'Cysneiros2007',
-     'DOnofrio2014',
-     'Gadano1997',
-     'Geneve1990',
-     'Grundmann1992',
-     'Hasselstrom1993',
+     'Djordjevic2008',
      'He2017',
-     'Huet1980',
-     'Itoh2001',
      'Kamimori1999',
-     'Kawasaki1988',
-     'Kearns1990',
-     'Kinzler2019',
-     'Klockowski1990',
+     'Laizure2017',
      'Lane1992',
-     'Leevy1962',
-     'Ma2008',
-     'Martin1975',
-     'Meijer1988',
-     'Niemann2000',
+     'Lennard1982',
+     'Matthaei2016',
+     'Nakazawa1988',
      'PKDB00001',
      'PKDB00002',
      'PKDB00003',
@@ -251,18 +137,6 @@ sids in the dataset is available via
      'PKDB00017',
      'PKDB00018',
      'PKDB00019',
-     'PKDB00020',
-     'PKDB00021',
-     'PKDB00022',
-     'PKDB00023',
-     'PKDB00024',
-     'PKDB00025',
-     'PKDB00026',
-     'PKDB00027',
-     'PKDB00028',
-     'PKDB00029',
-     'PKDB00030',
-     'PKDB00031',
      'PKDB00032',
      'PKDB00033',
      'PKDB00034',
@@ -296,270 +170,27 @@ sids in the dataset is available via
      'PKDB00062',
      'PKDB00063',
      'PKDB00065',
-     'PKDB00066',
-     'PKDB00067',
-     'PKDB00068',
-     'PKDB00069',
-     'PKDB00070',
-     'PKDB00071',
-     'PKDB00072',
-     'PKDB00073',
-     'PKDB00074',
-     'PKDB00075',
-     'PKDB00076',
-     'PKDB00077',
-     'PKDB00078',
-     'PKDB00079',
-     'PKDB00080',
-     'PKDB00081',
-     'PKDB00082',
-     'PKDB00083',
-     'PKDB00084',
-     'PKDB00085',
-     'PKDB00086',
-     'PKDB00087',
-     'PKDB00089',
-     'PKDB00090',
-     'PKDB00091',
-     'PKDB00092',
-     'PKDB00093',
-     'PKDB00094',
-     'PKDB00095',
-     'PKDB00096',
-     'PKDB00097',
-     'PKDB00098',
-     'PKDB00100',
-     'PKDB00101',
-     'PKDB00102',
-     'PKDB00103',
-     'PKDB00104',
-     'PKDB00105',
-     'PKDB00106',
-     'PKDB00107',
-     'PKDB00108',
-     'PKDB00109',
-     'PKDB00110',
-     'PKDB00111',
-     'PKDB00112',
-     'PKDB00113',
-     'PKDB00114',
-     'PKDB00115',
-     'PKDB00116',
-     'PKDB00117',
-     'PKDB00118',
-     'PKDB00119',
-     'PKDB00120',
-     'PKDB00121',
-     'PKDB00122',
-     'PKDB00123',
-     'PKDB00124',
-     'PKDB00125',
      'PKDB00126',
      'PKDB00127',
      'PKDB00128',
      'PKDB00129',
-     'PKDB00130',
-     'PKDB00131',
-     'PKDB00132',
-     'PKDB00133',
-     'PKDB00134',
-     'PKDB00135',
      'PKDB00136',
      'PKDB00137',
      'PKDB00138',
-     'PKDB00139',
-     'PKDB00140',
-     'PKDB00141',
-     'PKDB00142',
-     'PKDB00143',
-     'PKDB00144',
-     'PKDB00145',
-     'PKDB00146',
-     'PKDB00147',
-     'PKDB00148',
-     'PKDB00149',
-     'PKDB00150',
-     'PKDB00151',
-     'PKDB00152',
-     'PKDB00153',
-     'PKDB00154',
-     'PKDB00155',
-     'PKDB00156',
-     'PKDB00157',
-     'PKDB00158',
-     'PKDB00159',
-     'PKDB00160',
-     'PKDB00161',
-     'PKDB00162',
-     'PKDB00163',
-     'PKDB00164',
-     'PKDB00165',
-     'PKDB00166',
-     'PKDB00167',
-     'PKDB00168',
-     'PKDB00169',
-     'PKDB00170',
-     'PKDB00171',
-     'PKDB00172',
-     'PKDB00174',
-     'PKDB00175',
-     'PKDB00176',
-     'PKDB00177',
-     'PKDB00178',
-     'PKDB00179',
-     'PKDB00180',
-     'PKDB00181',
-     'PKDB00182',
-     'PKDB00183',
-     'PKDB00184',
-     'PKDB00185',
-     'PKDB00186',
-     'PKDB00188',
-     'PKDB00189',
-     'PKDB00190',
-     'PKDB00191',
-     'PKDB00192',
-     'PKDB00193',
-     'PKDB00194',
-     'PKDB00195',
-     'PKDB00196',
-     'PKDB00197',
-     'PKDB00198',
-     'PKDB00199',
-     'PKDB00200',
-     'PKDB00201',
-     'PKDB00202',
-     'PKDB00203',
-     'PKDB00204',
-     'PKDB00205',
-     'PKDB00206',
-     'PKDB00207',
-     'PKDB00208',
-     'PKDB00209',
      'PKDB00210',
-     'PKDB00211',
-     'PKDB00212',
-     'PKDB00213',
-     'PKDB00214',
-     'PKDB00215',
-     'PKDB00216',
-     'PKDB00217',
-     'PKDB00218',
-     'PKDB00219',
-     'PKDB00220',
-     'PKDB00221',
-     'PKDB00222',
-     'PKDB00223',
-     'PKDB00224',
-     'PKDB00225',
-     'PKDB00226',
-     'PKDB00227',
-     'PKDB00228',
-     'PKDB00243',
-     'PKDB00244',
-     'PKDB00245',
-     'PKDB00246',
-     'PKDB00247',
-     'PKDB00248',
-     'PKDB00249',
-     'PKDB00250',
-     'PKDB00251',
-     'PKDB00252',
-     'PKDB00253',
-     'PKDB00254',
-     'PKDB00255',
-     'PKDB00256',
-     'PKDB00257',
-     'PKDB00258',
-     'PKDB00259',
-     'PKDB00260',
-     'PKDB00261',
-     'PKDB00262',
-     'PKDB00263',
-     'PKDB00264',
-     'PKDB00265',
-     'PKDB00266',
-     'PKDB00268',
-     'PKDB00269',
-     'PKDB00270',
-     'PKDB00271',
-     'PKDB00272',
-     'PKDB00273',
-     'PKDB00274',
-     'PKDB00275',
-     'PKDB00276',
-     'PKDB00277',
-     'PKDB00278',
-     'PKDB00279',
-     'PKDB00280',
-     'PKDB00281',
-     'PKDB00282',
-     'PKDB00283',
-     'PKDB00284',
-     'PKDB00285',
-     'PKDB00286',
-     'PKDB00287',
-     'PKDB00288',
-     'PKDB00289',
-     'PKDB00290',
-     'PKDB00291',
-     'PKDB00292',
-     'PKDB00293',
-     'PKDB00294',
-     'PKDB00295',
-     'PKDB00296',
-     'PKDB00297',
-     'PKDB00298',
-     'PKDB00299',
-     'PKDB00300',
-     'PKDB00301',
-     'PKDB00302',
-     'PKDB00303',
-     'PKDB00304',
-     'PKDB00305',
-     'PKDB00306',
-     'PKDB00307',
-     'PKDB00308',
-     'PKDB00309',
-     'PKDB00310',
-     'PKDB00311',
-     'PKDB00312',
-     'PKDB00313',
-     'PKDB00314',
-     'PKDB00315',
-     'PKDB00316',
-     'PKDB00317',
-     'PKDB00318',
-     'PKDB00319',
-     'PKDB00320',
-     'PKDB00321',
-     'PKDB00322',
-     'PKDB00323',
-     'PKDB00324',
-     'PKDB00325',
-     'PKDB00326',
-     'PKDB00327',
      'PKDB00328',
-     'PKDB00329',
-     'PKDB00330',
-     'PKDB00331',
-     'PKDB00332',
-     'PKDB00333',
-     'PKDB00334',
-     'PKDB00335',
-     'PKDB00336',
-     'PKDB00337',
      'PKDB00338',
      'PKDB00339',
      'PKDB00341',
-     'Roberts1976',
+     'PKDB00378',
+     'PKDB00380',
+     'PKDB00381',
+     'PKDB00382',
+     'PKDB00383',
+     'Sandberg1988',
      'Scott1989',
-     'Seideman1980',
      'Tanaka1993',
-     'Trang1985',
-     'Walker1990',
-     'Wood1979',
-     'Yiamouyiannis1994'}
+     'Trang1985'}
 
 
 
@@ -580,7 +211,7 @@ which select a subset of the data. The filters are written on the
 .. parsed-literal::
 
     ------------------------------
-    PKData (140073385145552)
+    PKData (139891787702672)
     ------------------------------
     studies             0  (    0)
     groups              0  (    0)
@@ -588,6 +219,7 @@ which select a subset of the data. The filters are written on the
     interventions       0  (    0)
     outputs             0  (    0)
     timecourses         0  (    0)
+    scatters           80  (   80)
     ------------------------------
 
 
@@ -600,7 +232,7 @@ The PKData now only contains data for the given study_sid:
 
 .. parsed-literal::
 
-    set()
+    {'Lennard1982', '25853045', 'PKDB00002', '25891161', '6712142', 'PKDB00045', 'Trang1985', 'PKDB00210', 'PKDB00012', '1033273', '4027137', 'PKDB00126', '7371463', '15022032', 'Sandberg1988', '3557314', 'Nakazawa1988', '2921843', '2185297', '28929443', 'PKDB00015', '26862045'}
 
 
 .. code:: ipython3
@@ -630,18 +262,18 @@ The PKData now only contains data for the given study_sid:
       <thead>
         <tr style="text-align: right;">
           <th></th>
-          <th>intervention_pk</th>
           <th>Unnamed: 0</th>
           <th>study_sid</th>
           <th>study_name</th>
+          <th>intervention_pk</th>
           <th>raw_pk</th>
           <th>normed</th>
           <th>name</th>
           <th>route</th>
+          <th>route_label</th>
           <th>form</th>
-          <th>application</th>
           <th>...</th>
-          <th>substance</th>
+          <th>substance_label</th>
           <th>value</th>
           <th>mean</th>
           <th>median</th>
@@ -656,7 +288,7 @@ The PKData now only contains data for the given study_sid:
       <tbody>
       </tbody>
     </table>
-    <p>0 rows × 25 columns</p>
+    <p>0 rows × 31 columns</p>
     </div>
 
 
@@ -664,10 +296,10 @@ The PKData now only contains data for the given study_sid:
 .. parsed-literal::
 
     Empty DataFrame
-    Columns: [intervention_pk, Unnamed: 0, study_sid, study_name, raw_pk, normed, name, route, form, application, time, time_end, time_unit, measurement_type, choice, substance, value, mean, median, min, max, sd, se, cv, unit]
+    Columns: [Unnamed: 0, study_sid, study_name, intervention_pk, raw_pk, normed, name, route, route_label, form, form_label, application, application_label, time, time_end, time_unit, measurement_type, measurement_type_label, choice, choice_label, substance, substance_label, value, mean, median, min, max, sd, se, cv, unit]
     Index: []
     
-    [0 rows x 25 columns]
+    [0 rows x 31 columns]
 
 
 One could also define this as a simple lambda function
@@ -681,7 +313,7 @@ One could also define this as a simple lambda function
 .. parsed-literal::
 
     ------------------------------
-    PKData (140074325498576)
+    PKData (139891787682832)
     ------------------------------
     studies             0  (    0)
     groups              0  (    0)
@@ -689,6 +321,7 @@ One could also define this as a simple lambda function
     interventions       0  (    0)
     outputs             0  (    0)
     timecourses         0  (    0)
+    scatters           80  (   80)
     ------------------------------
 
 
@@ -711,7 +344,7 @@ intervention are filtered out. This behavior is controlled by the
 .. parsed-literal::
 
     ------------------------------
-    PKData (140073376541712)
+    PKData (139890839716880)
     ------------------------------
     studies             0  (    0)
     groups              0  (    0)
@@ -719,16 +352,18 @@ intervention are filtered out. This behavior is controlled by the
     interventions       0  (    0)
     outputs             0  (    0)
     timecourses         0  (    0)
+    scatters           80  (   80)
     ------------------------------
     ------------------------------
-    PKData (140073376537296)
+    PKData (139890839717712)
     ------------------------------
-    studies           505  (  505)
-    groups           1456  (11993)
-    individuals      6395  (57683)
+    studies           127  (  127)
+    groups            429  ( 3733)
+    individuals      3163  (28219)
     interventions       0  (    0)
-    outputs         72206  (72206)
-    timecourses       423  (  423)
+    outputs         19407  (29053)
+    timecourses       722  (  722)
+    scatters           80  (   80)
     ------------------------------
 
 
@@ -831,8 +466,6 @@ intervention are filtered out. This behavior is controlled by the
       <thead>
         <tr style="text-align: right;">
           <th></th>
-          <th>output_pk</th>
-          <th>intervention_pk</th>
           <th>Unnamed: 0</th>
           <th>study_name</th>
           <th>measurement_type</th>
@@ -841,6 +474,8 @@ intervention are filtered out. This behavior is controlled by the
           <th>se</th>
           <th>min</th>
           <th>group_pk</th>
+          <th>output_pk</th>
+          <th>time_unit</th>
           <th>...</th>
           <th>max</th>
           <th>substance</th>
@@ -857,121 +492,121 @@ intervention are filtered out. This behavior is controlled by the
       <tbody>
         <tr>
           <th>0</th>
-          <td>21</td>
           <td>0</td>
-          <td>6</td>
-          <td>Abernethy1982</td>
+          <td>Abernethy1985</td>
           <td>thalf</td>
           <td>plasma</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>1.9900</td>
-          <td>3</td>
-          <td>...</td>
-          <td>3.4700</td>
-          <td>paracetamol</td>
           <td>NaN</td>
           <td>-1</td>
+          <td>210625</td>
+          <td>NaN</td>
+          <td>...</td>
+          <td>NaN</td>
+          <td>caf</td>
+          <td>NaN</td>
+          <td>23952</td>
           <td>hour</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>2.550000</td>
+          <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
         </tr>
         <tr>
           <th>1</th>
-          <td>22</td>
-          <td>0</td>
-          <td>9</td>
-          <td>Abernethy1982</td>
-          <td>vd</td>
+          <td>1</td>
+          <td>Abernethy1985</td>
+          <td>thalf</td>
           <td>plasma</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>62.2000</td>
-          <td>3</td>
-          <td>...</td>
-          <td>151.4000</td>
-          <td>paracetamol</td>
           <td>NaN</td>
           <td>-1</td>
-          <td>liter</td>
+          <td>210628</td>
+          <td>NaN</td>
+          <td>...</td>
+          <td>NaN</td>
+          <td>caf</td>
+          <td>NaN</td>
+          <td>23955</td>
+          <td>hour</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>108.500000</td>
+          <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
         </tr>
         <tr>
           <th>2</th>
-          <td>23</td>
-          <td>0</td>
           <td>2</td>
-          <td>Abernethy1982</td>
-          <td>vd</td>
+          <td>Abernethy1985</td>
+          <td>thalf</td>
           <td>plasma</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>0.5300</td>
-          <td>3</td>
-          <td>...</td>
-          <td>1.3100</td>
-          <td>paracetamol</td>
           <td>NaN</td>
           <td>-1</td>
-          <td>liter / kilogram</td>
+          <td>210631</td>
+          <td>NaN</td>
+          <td>...</td>
+          <td>NaN</td>
+          <td>caf</td>
+          <td>NaN</td>
+          <td>23958</td>
+          <td>hour</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>0.810000</td>
+          <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
         </tr>
         <tr>
           <th>3</th>
-          <td>24</td>
-          <td>0</td>
-          <td>8</td>
-          <td>Abernethy1982</td>
-          <td>clearance</td>
+          <td>3</td>
+          <td>Abernethy1985</td>
+          <td>thalf</td>
           <td>plasma</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>19.4400</td>
-          <td>3</td>
-          <td>...</td>
-          <td>38.7600</td>
-          <td>paracetamol</td>
           <td>NaN</td>
           <td>-1</td>
-          <td>liter / hour</td>
+          <td>210635</td>
+          <td>NaN</td>
+          <td>...</td>
+          <td>NaN</td>
+          <td>caf</td>
+          <td>NaN</td>
+          <td>23962</td>
+          <td>hour</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>29.040000</td>
+          <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
         </tr>
         <tr>
           <th>4</th>
-          <td>25</td>
-          <td>0</td>
-          <td>10</td>
-          <td>Abernethy1982</td>
+          <td>4</td>
+          <td>Abernethy1985</td>
           <td>clearance</td>
           <td>plasma</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>0.1452</td>
-          <td>3</td>
-          <td>...</td>
-          <td>0.3156</td>
-          <td>paracetamol</td>
           <td>NaN</td>
           <td>-1</td>
+          <td>210640</td>
+          <td>NaN</td>
+          <td>...</td>
+          <td>NaN</td>
+          <td>caf</td>
+          <td>NaN</td>
+          <td>23967</td>
           <td>liter / hour / kilogram</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>0.224400</td>
+          <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
         </tr>
@@ -1000,128 +635,128 @@ intervention are filtered out. This behavior is controlled by the
           <td>...</td>
         </tr>
         <tr>
-          <th>72201</th>
-          <td>153076</td>
-          <td>1208</td>
-          <td>100516</td>
-          <td>Zhang2016</td>
-          <td>kel</td>
+          <th>29048</th>
+          <td>29048</td>
+          <td>Barnett1990</td>
+          <td>cmax</td>
           <td>plasma</td>
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>1504</td>
+          <td>-1</td>
+          <td>263142</td>
+          <td>NaN</td>
           <td>...</td>
           <td>NaN</td>
-          <td>torasemide</td>
+          <td>caf</td>
           <td>NaN</td>
-          <td>-1</td>
-          <td>1 / minute</td>
+          <td>30567</td>
+          <td>gram / liter</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>0.003658</td>
+          <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
         </tr>
         <tr>
-          <th>72202</th>
-          <td>153077</td>
-          <td>1208</td>
-          <td>100342</td>
-          <td>Zhang2016</td>
-          <td>thalf</td>
+          <th>29049</th>
+          <td>29049</td>
+          <td>Barnett1990</td>
+          <td>vd-ss</td>
           <td>plasma</td>
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>1504</td>
+          <td>-1</td>
+          <td>263146</td>
+          <td>NaN</td>
           <td>...</td>
           <td>NaN</td>
-          <td>torasemide</td>
+          <td>caf</td>
           <td>NaN</td>
-          <td>-1</td>
-          <td>hour</td>
+          <td>30567</td>
+          <td>liter</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>3.157929</td>
+          <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
         </tr>
         <tr>
-          <th>72203</th>
-          <td>153078</td>
-          <td>1208</td>
-          <td>100520</td>
-          <td>Zhang2016</td>
-          <td>tmax</td>
+          <th>29050</th>
+          <td>29050</td>
+          <td>Barnett1990</td>
+          <td>cmax</td>
           <td>plasma</td>
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>1504</td>
+          <td>-1</td>
+          <td>263159</td>
+          <td>NaN</td>
           <td>...</td>
           <td>NaN</td>
-          <td>torasemide</td>
+          <td>caf</td>
           <td>NaN</td>
-          <td>-1</td>
-          <td>hour</td>
+          <td>30567</td>
+          <td>gram / liter</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>0.760958</td>
+          <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
         </tr>
         <tr>
-          <th>72204</th>
-          <td>153079</td>
-          <td>1208</td>
-          <td>100463</td>
-          <td>Zhang2016</td>
+          <th>29051</th>
+          <td>29051</td>
+          <td>Barnett1990</td>
           <td>vd</td>
           <td>plasma</td>
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>1504</td>
+          <td>-1</td>
+          <td>263163</td>
+          <td>NaN</td>
           <td>...</td>
           <td>NaN</td>
-          <td>torasemide</td>
+          <td>caf</td>
           <td>NaN</td>
-          <td>-1</td>
+          <td>30567</td>
           <td>liter</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>11.511323</td>
+          <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
         </tr>
         <tr>
-          <th>72205</th>
-          <td>153080</td>
-          <td>1208</td>
-          <td>100494</td>
-          <td>Zhang2016</td>
-          <td>vd_ss</td>
+          <th>29052</th>
+          <td>29052</td>
+          <td>Barnett1990</td>
+          <td>vd-ss</td>
           <td>plasma</td>
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>1504</td>
+          <td>-1</td>
+          <td>263164</td>
+          <td>NaN</td>
           <td>...</td>
           <td>NaN</td>
-          <td>torasemide</td>
+          <td>caf</td>
           <td>NaN</td>
-          <td>-1</td>
+          <td>30567</td>
           <td>liter</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>12.039979</td>
+          <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
         </tr>
       </tbody>
     </table>
-    <p>72206 rows × 27 columns</p>
+    <p>29053 rows × 27 columns</p>
     </div>
 
 
@@ -1129,59 +764,46 @@ intervention are filtered out. This behavior is controlled by the
 
 .. parsed-literal::
 
-           output_pk  intervention_pk  Unnamed: 0     study_name measurement_type  \
-    0             21                0           6  Abernethy1982            thalf   
-    1             22                0           9  Abernethy1982               vd   
-    2             23                0           2  Abernethy1982               vd   
-    3             24                0           8  Abernethy1982        clearance   
-    4             25                0          10  Abernethy1982        clearance   
-    ...          ...              ...         ...            ...              ...   
-    72201     153076             1208      100516      Zhang2016              kel   
-    72202     153077             1208      100342      Zhang2016            thalf   
-    72203     153078             1208      100520      Zhang2016             tmax   
-    72204     153079             1208      100463      Zhang2016               vd   
-    72205     153080             1208      100494      Zhang2016            vd_ss   
+           Unnamed: 0     study_name measurement_type  tissue  sd  se  min  \
+    0               0  Abernethy1985            thalf  plasma NaN NaN  NaN   
+    1               1  Abernethy1985            thalf  plasma NaN NaN  NaN   
+    2               2  Abernethy1985            thalf  plasma NaN NaN  NaN   
+    3               3  Abernethy1985            thalf  plasma NaN NaN  NaN   
+    4               4  Abernethy1985        clearance  plasma NaN NaN  NaN   
+    ...           ...            ...              ...     ...  ..  ..  ...   
+    29048       29048    Barnett1990             cmax  plasma NaN NaN  NaN   
+    29049       29049    Barnett1990            vd-ss  plasma NaN NaN  NaN   
+    29050       29050    Barnett1990             cmax  plasma NaN NaN  NaN   
+    29051       29051    Barnett1990               vd  plasma NaN NaN  NaN   
+    29052       29052    Barnett1990            vd-ss  plasma NaN NaN  NaN   
     
-           tissue  sd  se      min  group_pk  ...       max    substance  label  \
-    0      plasma NaN NaN   1.9900         3  ...    3.4700  paracetamol    NaN   
-    1      plasma NaN NaN  62.2000         3  ...  151.4000  paracetamol    NaN   
-    2      plasma NaN NaN   0.5300         3  ...    1.3100  paracetamol    NaN   
-    3      plasma NaN NaN  19.4400         3  ...   38.7600  paracetamol    NaN   
-    4      plasma NaN NaN   0.1452         3  ...    0.3156  paracetamol    NaN   
-    ...       ...  ..  ..      ...       ...  ...       ...          ...    ...   
-    72201  plasma NaN NaN      NaN      1504  ...       NaN   torasemide    NaN   
-    72202  plasma NaN NaN      NaN      1504  ...       NaN   torasemide    NaN   
-    72203  plasma NaN NaN      NaN      1504  ...       NaN   torasemide    NaN   
-    72204  plasma NaN NaN      NaN      1504  ...       NaN   torasemide    NaN   
-    72205  plasma NaN NaN      NaN      1504  ...       NaN   torasemide    NaN   
+           group_pk  output_pk time_unit  ...  max  substance  label  \
+    0            -1     210625       NaN  ...  NaN        caf    NaN   
+    1            -1     210628       NaN  ...  NaN        caf    NaN   
+    2            -1     210631       NaN  ...  NaN        caf    NaN   
+    3            -1     210635       NaN  ...  NaN        caf    NaN   
+    4            -1     210640       NaN  ...  NaN        caf    NaN   
+    ...         ...        ...       ...  ...  ...        ...    ...   
+    29048        -1     263142       NaN  ...  NaN        caf    NaN   
+    29049        -1     263146       NaN  ...  NaN        caf    NaN   
+    29050        -1     263159       NaN  ...  NaN        caf    NaN   
+    29051        -1     263163       NaN  ...  NaN        caf    NaN   
+    29052        -1     263164       NaN  ...  NaN        caf    NaN   
     
-           individual_pk                     unit  cv median        mean time  \
-    0                 -1                     hour NaN    NaN    2.550000  NaN   
-    1                 -1                    liter NaN    NaN  108.500000  NaN   
-    2                 -1         liter / kilogram NaN    NaN    0.810000  NaN   
-    3                 -1             liter / hour NaN    NaN   29.040000  NaN   
-    4                 -1  liter / hour / kilogram NaN    NaN    0.224400  NaN   
-    ...              ...                      ...  ..    ...         ...  ...   
-    72201             -1               1 / minute NaN    NaN    0.003658  NaN   
-    72202             -1                     hour NaN    NaN    3.157929  NaN   
-    72203             -1                     hour NaN    NaN    0.760958  NaN   
-    72204             -1                    liter NaN    NaN   11.511323  NaN   
-    72205             -1                    liter NaN    NaN   12.039979  NaN   
+          individual_pk                     unit  cv median  mean time choice  
+    0             23952                     hour NaN    NaN   NaN  NaN    NaN  
+    1             23955                     hour NaN    NaN   NaN  NaN    NaN  
+    2             23958                     hour NaN    NaN   NaN  NaN    NaN  
+    3             23962                     hour NaN    NaN   NaN  NaN    NaN  
+    4             23967  liter / hour / kilogram NaN    NaN   NaN  NaN    NaN  
+    ...             ...                      ...  ..    ...   ...  ...    ...  
+    29048         30567             gram / liter NaN    NaN   NaN  NaN    NaN  
+    29049         30567                    liter NaN    NaN   NaN  NaN    NaN  
+    29050         30567             gram / liter NaN    NaN   NaN  NaN    NaN  
+    29051         30567                    liter NaN    NaN   NaN  NaN    NaN  
+    29052         30567                    liter NaN    NaN   NaN  NaN    NaN  
     
-          choice  
-    0        NaN  
-    1        NaN  
-    2        NaN  
-    3        NaN  
-    4        NaN  
-    ...      ...  
-    72201    NaN  
-    72202    NaN  
-    72203    NaN  
-    72204    NaN  
-    72205    NaN  
-    
-    [72206 rows x 27 columns]
+    [29053 rows x 27 columns]
 
 
 
@@ -1234,14 +856,15 @@ logic” can be directly applied on the index.
 .. parsed-literal::
 
     ------------------------------
-    PKData (140073382514896)
+    PKData (139890849157456)
     ------------------------------
-    studies           165  (  165)
-    groups            271  ( 2774)
-    individuals      1989  (20777)
-    interventions     402  (  633)
-    outputs         22886  (22886)
-    timecourses       135  (  135)
+    studies            81  (   81)
+    groups            143  ( 1396)
+    individuals      1150  (10810)
+    interventions     238  (  238)
+    outputs         10578  (14843)
+    timecourses       438  (  438)
+    scatters           80  (   80)
     ------------------------------
 
 
@@ -1313,18 +936,18 @@ logic” can be directly applied on the index.
       </thead>
       <tbody>
         <tr>
-          <th rowspan="5" valign="top">3</th>
-          <th>5</th>
+          <th rowspan="5" valign="top">3463</th>
+          <th>67383</th>
           <td>10</td>
-          <td>Abernethy1982</td>
-          <td>PKDB00198</td>
-          <td>species</td>
-          <td>7</td>
-          <td>obese men</td>
+          <td>Abernethy1985</td>
+          <td>PKDB00001</td>
+          <td>smoking</td>
+          <td>9</td>
+          <td>OCS</td>
           <td>NaN</td>
           <td>nan</td>
-          <td>42</td>
-          <td>2</td>
+          <td>18</td>
+          <td>3462</td>
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
@@ -1332,421 +955,43 @@ logic” can be directly applied on the index.
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>homo sapiens</td>
+          <td>N</td>
           <td>NaN</td>
         </tr>
         <tr>
-          <th>6</th>
+          <th>67384</th>
           <td>11</td>
-          <td>Abernethy1982</td>
-          <td>PKDB00198</td>
-          <td>healthy</td>
-          <td>7</td>
-          <td>obese men</td>
-          <td>NaN</td>
-          <td>nan</td>
-          <td>42</td>
-          <td>2</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>Y</td>
-          <td>NaN</td>
-        </tr>
-        <tr>
-          <th>11</th>
-          <td>12</td>
-          <td>Abernethy1982</td>
-          <td>PKDB00198</td>
-          <td>obesity index</td>
-          <td>7</td>
-          <td>obese men</td>
-          <td>NaN</td>
-          <td>nan</td>
-          <td>21</td>
-          <td>2</td>
-          <td>NaN</td>
-          <td>percent</td>
-          <td>NaN</td>
-          <td>133.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-        </tr>
-        <tr>
-          <th>12</th>
-          <td>13</td>
-          <td>Abernethy1982</td>
-          <td>PKDB00198</td>
-          <td>weight (categorial)</td>
-          <td>7</td>
-          <td>obese men</td>
-          <td>NaN</td>
-          <td>nan</td>
-          <td>21</td>
-          <td>2</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>obese</td>
-          <td>NaN</td>
-        </tr>
-        <tr>
-          <th>18</th>
-          <td>14</td>
-          <td>Abernethy1982</td>
-          <td>PKDB00198</td>
-          <td>sex</td>
-          <td>7</td>
-          <td>obese men</td>
-          <td>NaN</td>
-          <td>nan</td>
-          <td>7</td>
-          <td>2</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>M</td>
-          <td>NaN</td>
-        </tr>
-        <tr>
-          <th>...</th>
-          <th>...</th>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-        </tr>
-        <tr>
-          <th rowspan="5" valign="top">1433</th>
-          <th>27416</th>
-          <td>11419</td>
-          <td>TubicGrozdanis2008</td>
-          <td>18213452</td>
+          <td>Abernethy1985</td>
+          <td>PKDB00001</td>
           <td>age</td>
-          <td>7</td>
-          <td>all</td>
-          <td>42.0</td>
+          <td>9</td>
+          <td>OCS</td>
+          <td>30.0</td>
           <td>nan</td>
-          <td>7</td>
-          <td>-1</td>
+          <td>18</td>
+          <td>3462</td>
           <td>NaN</td>
           <td>year</td>
+          <td>1.0</td>
+          <td>23.0</td>
+          <td>NaN</td>
           <td>NaN</td>
           <td>26.0</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>30.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
         </tr>
         <tr>
-          <th>27417</th>
-          <td>11420</td>
-          <td>TubicGrozdanis2008</td>
-          <td>18213452</td>
-          <td>weight</td>
-          <td>7</td>
-          <td>all</td>
-          <td>84.0</td>
-          <td>nan</td>
-          <td>7</td>
-          <td>-1</td>
-          <td>NaN</td>
-          <td>kilogram</td>
-          <td>NaN</td>
-          <td>70.5</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>77.3</td>
-          <td>NaN</td>
-          <td>NaN</td>
-        </tr>
-        <tr>
-          <th>27418</th>
-          <td>11421</td>
-          <td>TubicGrozdanis2008</td>
-          <td>18213452</td>
-          <td>medication</td>
-          <td>7</td>
-          <td>all</td>
-          <td>NaN</td>
-          <td>nan</td>
-          <td>7</td>
-          <td>-1</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>N</td>
-          <td>NaN</td>
-        </tr>
-        <tr>
-          <th>27419</th>
-          <td>11422</td>
-          <td>TubicGrozdanis2008</td>
-          <td>18213452</td>
-          <td>smoking</td>
-          <td>7</td>
-          <td>all</td>
-          <td>NaN</td>
-          <td>nan</td>
-          <td>7</td>
-          <td>-1</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>N</td>
-          <td>NaN</td>
-        </tr>
-        <tr>
-          <th>27420</th>
-          <td>11423</td>
-          <td>TubicGrozdanis2008</td>
-          <td>18213452</td>
-          <td>fasting (duration)</td>
-          <td>7</td>
-          <td>all</td>
-          <td>NaN</td>
-          <td>nan</td>
-          <td>7</td>
-          <td>-1</td>
-          <td>NaN</td>
-          <td>day</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-        </tr>
-      </tbody>
-    </table>
-    <p>2774 rows × 19 columns</p>
-    </div>
-
-
-
-
-.. parsed-literal::
-
-                                 Unnamed: 0          study_name  study_sid  \
-    group_pk characteristica_pk                                              
-    3        5                           10       Abernethy1982  PKDB00198   
-             6                           11       Abernethy1982  PKDB00198   
-             11                          12       Abernethy1982  PKDB00198   
-             12                          13       Abernethy1982  PKDB00198   
-             18                          14       Abernethy1982  PKDB00198   
-    ...                                 ...                 ...        ...   
-    1433     27416                    11419  TubicGrozdanis2008   18213452   
-             27417                    11420  TubicGrozdanis2008   18213452   
-             27418                    11421  TubicGrozdanis2008   18213452   
-             27419                    11422  TubicGrozdanis2008   18213452   
-             27420                    11423  TubicGrozdanis2008   18213452   
-    
-                                    measurement_type  group_count group_name  \
-    group_pk characteristica_pk                                                
-    3        5                               species            7  obese men   
-             6                               healthy            7  obese men   
-             11                        obesity index            7  obese men   
-             12                  weight (categorial)            7  obese men   
-             18                                  sex            7  obese men   
-    ...                                          ...          ...        ...   
-    1433     27416                               age            7        all   
-             27417                            weight            7        all   
-             27418                        medication            7        all   
-             27419                           smoking            7        all   
-             27420                fasting (duration)            7        all   
-    
-                                  max substance  count  group_parent_pk  sd  \
-    group_pk characteristica_pk                                               
-    3        5                    NaN       nan     42                2 NaN   
-             6                    NaN       nan     42                2 NaN   
-             11                   NaN       nan     21                2 NaN   
-             12                   NaN       nan     21                2 NaN   
-             18                   NaN       nan      7                2 NaN   
-    ...                           ...       ...    ...              ...  ..   
-    1433     27416               42.0       nan      7               -1 NaN   
-             27417               84.0       nan      7               -1 NaN   
-             27418                NaN       nan      7               -1 NaN   
-             27419                NaN       nan      7               -1 NaN   
-             27420                NaN       nan      7               -1 NaN   
-    
-                                     unit  se    min  cv  median  mean  \
-    group_pk characteristica_pk                                          
-    3        5                        NaN NaN    NaN NaN     NaN   NaN   
-             6                        NaN NaN    NaN NaN     NaN   NaN   
-             11                   percent NaN  133.0 NaN     NaN   NaN   
-             12                       NaN NaN    NaN NaN     NaN   NaN   
-             18                       NaN NaN    NaN NaN     NaN   NaN   
-    ...                               ...  ..    ...  ..     ...   ...   
-    1433     27416                   year NaN   26.0 NaN     NaN  30.0   
-             27417               kilogram NaN   70.5 NaN     NaN  77.3   
-             27418                    NaN NaN    NaN NaN     NaN   NaN   
-             27419                    NaN NaN    NaN NaN     NaN   NaN   
-             27420                    day NaN    NaN NaN     NaN   NaN   
-    
-                                       choice  value  
-    group_pk characteristica_pk                       
-    3        5                   homo sapiens    NaN  
-             6                              Y    NaN  
-             11                           NaN    NaN  
-             12                         obese    NaN  
-             18                             M    NaN  
-    ...                                   ...    ...  
-    1433     27416                        NaN    NaN  
-             27417                        NaN    NaN  
-             27418                          N    NaN  
-             27419                          N    NaN  
-             27420                        NaN    NaN  
-    
-    [2774 rows x 19 columns]
-
-
-
-Often attributes are mixed for groups so we have to exclude the
-opposites. In the example, the group ``20`` consists of 5 smokers and 1
-nonsmoker. So for a subset of the group smoking is No. We can exclude
-groups via
-
-.. code:: ipython3
-
-    healthy_nonsmoker = test_data.filter_subject([is_healthy, nonsmoker]).exclude_subject([smoker])
-    print(healthy_nonsmoker)
-    display(healthy_nonsmoker.groups_mi)
-
-
-.. parsed-literal::
-
-    ------------------------------
-    PKData (140073376596112)
-    ------------------------------
-    studies           140  (  140)
-    groups            202  ( 1960)
-    individuals      1241  (12212)
-    interventions     339  (  550)
-    outputs         18013  (18013)
-    timecourses       115  (  115)
-    ------------------------------
-
-
-
-.. raw:: html
-
-    <div>
-    <style scoped>
-        .dataframe tbody tr th:only-of-type {
-            vertical-align: middle;
-        }
-    
-        .dataframe tbody tr th {
-            vertical-align: top;
-        }
-    
-        .dataframe thead th {
-            text-align: right;
-        }
-    </style>
-    <table border="1" class="dataframe">
-      <thead>
-        <tr style="text-align: right;">
-          <th></th>
-          <th></th>
-          <th>Unnamed: 0</th>
-          <th>study_name</th>
-          <th>study_sid</th>
-          <th>measurement_type</th>
-          <th>group_count</th>
-          <th>group_name</th>
-          <th>max</th>
-          <th>substance</th>
-          <th>count</th>
-          <th>group_parent_pk</th>
-          <th>sd</th>
-          <th>unit</th>
-          <th>se</th>
-          <th>min</th>
-          <th>cv</th>
-          <th>median</th>
-          <th>mean</th>
-          <th>choice</th>
-          <th>value</th>
-        </tr>
-        <tr>
-          <th>group_pk</th>
-          <th>characteristica_pk</th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th rowspan="5" valign="top">4</th>
-          <th>5</th>
-          <td>19</td>
-          <td>Abernethy1982</td>
-          <td>PKDB00198</td>
+          <th>67385</th>
+          <td>12</td>
+          <td>Abernethy1985</td>
+          <td>PKDB00001</td>
           <td>species</td>
-          <td>14</td>
-          <td>obese women</td>
+          <td>9</td>
+          <td>OCS</td>
           <td>NaN</td>
           <td>nan</td>
-          <td>42</td>
-          <td>2</td>
+          <td>18</td>
+          <td>3462</td>
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
@@ -1758,17 +1003,17 @@ groups via
           <td>NaN</td>
         </tr>
         <tr>
-          <th>6</th>
-          <td>20</td>
-          <td>Abernethy1982</td>
-          <td>PKDB00198</td>
+          <th>67386</th>
+          <td>13</td>
+          <td>Abernethy1985</td>
+          <td>PKDB00001</td>
           <td>healthy</td>
-          <td>14</td>
-          <td>obese women</td>
+          <td>9</td>
+          <td>OCS</td>
           <td>NaN</td>
           <td>nan</td>
-          <td>42</td>
-          <td>2</td>
+          <td>18</td>
+          <td>3462</td>
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
@@ -1780,61 +1025,17 @@ groups via
           <td>NaN</td>
         </tr>
         <tr>
-          <th>11</th>
-          <td>21</td>
-          <td>Abernethy1982</td>
-          <td>PKDB00198</td>
-          <td>obesity index</td>
+          <th>67387</th>
           <td>14</td>
-          <td>obese women</td>
-          <td>NaN</td>
-          <td>nan</td>
-          <td>21</td>
-          <td>2</td>
-          <td>NaN</td>
-          <td>percent</td>
-          <td>NaN</td>
-          <td>133.0</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-        </tr>
-        <tr>
-          <th>12</th>
-          <td>22</td>
-          <td>Abernethy1982</td>
-          <td>PKDB00198</td>
-          <td>weight (categorial)</td>
-          <td>14</td>
-          <td>obese women</td>
-          <td>NaN</td>
-          <td>nan</td>
-          <td>21</td>
-          <td>2</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>NaN</td>
-          <td>obese</td>
-          <td>NaN</td>
-        </tr>
-        <tr>
-          <th>27</th>
-          <td>23</td>
-          <td>Abernethy1982</td>
-          <td>PKDB00198</td>
+          <td>Abernethy1985</td>
+          <td>PKDB00001</td>
           <td>sex</td>
-          <td>14</td>
-          <td>obese women</td>
+          <td>9</td>
+          <td>OCS</td>
           <td>NaN</td>
           <td>nan</td>
-          <td>14</td>
-          <td>2</td>
+          <td>18</td>
+          <td>3462</td>
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
@@ -1869,62 +1070,62 @@ groups via
           <td>...</td>
         </tr>
         <tr>
-          <th rowspan="5" valign="top">1433</th>
-          <th>27416</th>
-          <td>11419</td>
-          <td>TubicGrozdanis2008</td>
-          <td>18213452</td>
-          <td>age</td>
-          <td>7</td>
-          <td>all</td>
-          <td>42.0</td>
+          <th rowspan="5" valign="top">4001</th>
+          <th>80932</th>
+          <td>3677</td>
+          <td>Tian2019</td>
+          <td>30387917</td>
+          <td>CYP1A2 genotype</td>
+          <td>12</td>
+          <td>men</td>
+          <td>NaN</td>
           <td>nan</td>
-          <td>7</td>
-          <td>-1</td>
-          <td>NaN</td>
-          <td>year</td>
-          <td>NaN</td>
-          <td>26.0</td>
+          <td>1</td>
+          <td>3999</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>30.0</td>
           <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>*1a/*1a</td>
           <td>NaN</td>
         </tr>
         <tr>
-          <th>27417</th>
-          <td>11420</td>
-          <td>TubicGrozdanis2008</td>
-          <td>18213452</td>
-          <td>weight</td>
-          <td>7</td>
-          <td>all</td>
-          <td>84.0</td>
+          <th>80933</th>
+          <td>3678</td>
+          <td>Tian2019</td>
+          <td>30387917</td>
+          <td>CYP1A2 genotype</td>
+          <td>12</td>
+          <td>men</td>
+          <td>NaN</td>
           <td>nan</td>
-          <td>7</td>
-          <td>-1</td>
-          <td>NaN</td>
-          <td>kilogram</td>
-          <td>NaN</td>
-          <td>70.5</td>
+          <td>1</td>
+          <td>3999</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>77.3</td>
           <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>*1c/*1f</td>
           <td>NaN</td>
         </tr>
         <tr>
-          <th>27418</th>
-          <td>11421</td>
-          <td>TubicGrozdanis2008</td>
-          <td>18213452</td>
-          <td>medication</td>
-          <td>7</td>
-          <td>all</td>
+          <th>80934</th>
+          <td>3681</td>
+          <td>Tian2019</td>
+          <td>30387917</td>
+          <td>CYP1A2 genotype</td>
+          <td>12</td>
+          <td>men</td>
           <td>NaN</td>
           <td>nan</td>
-          <td>7</td>
-          <td>-1</td>
+          <td>2</td>
+          <td>3999</td>
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
@@ -1932,21 +1133,21 @@ groups via
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>N</td>
+          <td>*1c*1f/*1c*1f</td>
           <td>NaN</td>
         </tr>
         <tr>
-          <th>27419</th>
-          <td>11422</td>
-          <td>TubicGrozdanis2008</td>
-          <td>18213452</td>
-          <td>smoking</td>
-          <td>7</td>
-          <td>all</td>
+          <th>80935</th>
+          <td>3682</td>
+          <td>Tian2019</td>
+          <td>30387917</td>
+          <td>CYP1A2 genotype</td>
+          <td>12</td>
+          <td>men</td>
           <td>NaN</td>
           <td>nan</td>
-          <td>7</td>
-          <td>-1</td>
+          <td>6</td>
+          <td>3999</td>
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
@@ -1954,111 +1155,506 @@ groups via
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
-          <td>N</td>
+          <td>*1a/*1f</td>
           <td>NaN</td>
         </tr>
         <tr>
-          <th>27420</th>
-          <td>11423</td>
-          <td>TubicGrozdanis2008</td>
-          <td>18213452</td>
-          <td>fasting (duration)</td>
-          <td>7</td>
-          <td>all</td>
+          <th>80936</th>
+          <td>3683</td>
+          <td>Tian2019</td>
+          <td>30387917</td>
+          <td>CYP1A2 genotype</td>
+          <td>12</td>
+          <td>men</td>
           <td>NaN</td>
           <td>nan</td>
-          <td>7</td>
-          <td>-1</td>
-          <td>NaN</td>
-          <td>day</td>
+          <td>2</td>
+          <td>3999</td>
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
           <td>NaN</td>
+          <td>NaN</td>
+          <td>*1f/*1f</td>
           <td>NaN</td>
         </tr>
       </tbody>
     </table>
-    <p>1960 rows × 19 columns</p>
+    <p>1396 rows × 19 columns</p>
+    </div>
+
+
+
+
+.. parsed-literal::
+
+                                 Unnamed: 0     study_name  study_sid  \
+    group_pk characteristica_pk                                         
+    3463     67383                       10  Abernethy1985  PKDB00001   
+             67384                       11  Abernethy1985  PKDB00001   
+             67385                       12  Abernethy1985  PKDB00001   
+             67386                       13  Abernethy1985  PKDB00001   
+             67387                       14  Abernethy1985  PKDB00001   
+    ...                                 ...            ...        ...   
+    4001     80932                     3677       Tian2019   30387917   
+             80933                     3678       Tian2019   30387917   
+             80934                     3681       Tian2019   30387917   
+             80935                     3682       Tian2019   30387917   
+             80936                     3683       Tian2019   30387917   
+    
+                                measurement_type  group_count group_name   max  \
+    group_pk characteristica_pk                                                  
+    3463     67383                       smoking            9        OCS   NaN   
+             67384                           age            9        OCS  30.0   
+             67385                       species            9        OCS   NaN   
+             67386                       healthy            9        OCS   NaN   
+             67387                           sex            9        OCS   NaN   
+    ...                                      ...          ...        ...   ...   
+    4001     80932               CYP1A2 genotype           12        men   NaN   
+             80933               CYP1A2 genotype           12        men   NaN   
+             80934               CYP1A2 genotype           12        men   NaN   
+             80935               CYP1A2 genotype           12        men   NaN   
+             80936               CYP1A2 genotype           12        men   NaN   
+    
+                                substance  count  group_parent_pk  sd  unit   se  \
+    group_pk characteristica_pk                                                    
+    3463     67383                    nan     18             3462 NaN   NaN  NaN   
+             67384                    nan     18             3462 NaN  year  1.0   
+             67385                    nan     18             3462 NaN   NaN  NaN   
+             67386                    nan     18             3462 NaN   NaN  NaN   
+             67387                    nan     18             3462 NaN   NaN  NaN   
+    ...                               ...    ...              ...  ..   ...  ...   
+    4001     80932                    nan      1             3999 NaN   NaN  NaN   
+             80933                    nan      1             3999 NaN   NaN  NaN   
+             80934                    nan      2             3999 NaN   NaN  NaN   
+             80935                    nan      6             3999 NaN   NaN  NaN   
+             80936                    nan      2             3999 NaN   NaN  NaN   
+    
+                                  min  cv  median  mean         choice  value  
+    group_pk characteristica_pk                                                
+    3463     67383                NaN NaN     NaN   NaN              N    NaN  
+             67384               23.0 NaN     NaN  26.0            NaN    NaN  
+             67385                NaN NaN     NaN   NaN   homo sapiens    NaN  
+             67386                NaN NaN     NaN   NaN              Y    NaN  
+             67387                NaN NaN     NaN   NaN              F    NaN  
+    ...                           ...  ..     ...   ...            ...    ...  
+    4001     80932                NaN NaN     NaN   NaN        *1a/*1a    NaN  
+             80933                NaN NaN     NaN   NaN        *1c/*1f    NaN  
+             80934                NaN NaN     NaN   NaN  *1c*1f/*1c*1f    NaN  
+             80935                NaN NaN     NaN   NaN        *1a/*1f    NaN  
+             80936                NaN NaN     NaN   NaN        *1f/*1f    NaN  
+    
+    [1396 rows x 19 columns]
+
+
+
+Often attributes are mixed for groups so we have to exclude the
+opposites. In the example, the group ``20`` consists of 5 smokers and 1
+nonsmoker. So for a subset of the group smoking is No. We can exclude
+groups via
+
+.. code:: ipython3
+
+    healthy_nonsmoker = test_data.filter_subject([is_healthy, nonsmoker]).exclude_subject([smoker])
+    print(healthy_nonsmoker)
+    display(healthy_nonsmoker.groups_mi)
+
+
+.. parsed-literal::
+
+    ------------------------------
+    PKData (139890842843216)
+    ------------------------------
+    studies            74  (   74)
+    groups            124  ( 1144)
+    individuals       927  ( 8619)
+    interventions     221  (  221)
+    outputs          9539  (13730)
+    timecourses       397  (  397)
+    scatters           80  (   80)
+    ------------------------------
+
+
+
+.. raw:: html
+
+    <div>
+    <style scoped>
+        .dataframe tbody tr th:only-of-type {
+            vertical-align: middle;
+        }
+    
+        .dataframe tbody tr th {
+            vertical-align: top;
+        }
+    
+        .dataframe thead th {
+            text-align: right;
+        }
+    </style>
+    <table border="1" class="dataframe">
+      <thead>
+        <tr style="text-align: right;">
+          <th></th>
+          <th></th>
+          <th>Unnamed: 0</th>
+          <th>study_name</th>
+          <th>study_sid</th>
+          <th>measurement_type</th>
+          <th>group_count</th>
+          <th>group_name</th>
+          <th>max</th>
+          <th>substance</th>
+          <th>count</th>
+          <th>group_parent_pk</th>
+          <th>sd</th>
+          <th>unit</th>
+          <th>se</th>
+          <th>min</th>
+          <th>cv</th>
+          <th>median</th>
+          <th>mean</th>
+          <th>choice</th>
+          <th>value</th>
+        </tr>
+        <tr>
+          <th>group_pk</th>
+          <th>characteristica_pk</th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th rowspan="5" valign="top">3463</th>
+          <th>67383</th>
+          <td>10</td>
+          <td>Abernethy1985</td>
+          <td>PKDB00001</td>
+          <td>smoking</td>
+          <td>9</td>
+          <td>OCS</td>
+          <td>NaN</td>
+          <td>nan</td>
+          <td>18</td>
+          <td>3462</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>N</td>
+          <td>NaN</td>
+        </tr>
+        <tr>
+          <th>67384</th>
+          <td>11</td>
+          <td>Abernethy1985</td>
+          <td>PKDB00001</td>
+          <td>age</td>
+          <td>9</td>
+          <td>OCS</td>
+          <td>30.0</td>
+          <td>nan</td>
+          <td>18</td>
+          <td>3462</td>
+          <td>NaN</td>
+          <td>year</td>
+          <td>1.0</td>
+          <td>23.0</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>26.0</td>
+          <td>NaN</td>
+          <td>NaN</td>
+        </tr>
+        <tr>
+          <th>67385</th>
+          <td>12</td>
+          <td>Abernethy1985</td>
+          <td>PKDB00001</td>
+          <td>species</td>
+          <td>9</td>
+          <td>OCS</td>
+          <td>NaN</td>
+          <td>nan</td>
+          <td>18</td>
+          <td>3462</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>homo sapiens</td>
+          <td>NaN</td>
+        </tr>
+        <tr>
+          <th>67386</th>
+          <td>13</td>
+          <td>Abernethy1985</td>
+          <td>PKDB00001</td>
+          <td>healthy</td>
+          <td>9</td>
+          <td>OCS</td>
+          <td>NaN</td>
+          <td>nan</td>
+          <td>18</td>
+          <td>3462</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>Y</td>
+          <td>NaN</td>
+        </tr>
+        <tr>
+          <th>67387</th>
+          <td>14</td>
+          <td>Abernethy1985</td>
+          <td>PKDB00001</td>
+          <td>sex</td>
+          <td>9</td>
+          <td>OCS</td>
+          <td>NaN</td>
+          <td>nan</td>
+          <td>18</td>
+          <td>3462</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>F</td>
+          <td>NaN</td>
+        </tr>
+        <tr>
+          <th>...</th>
+          <th>...</th>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+        <tr>
+          <th rowspan="5" valign="top">4001</th>
+          <th>80932</th>
+          <td>3677</td>
+          <td>Tian2019</td>
+          <td>30387917</td>
+          <td>CYP1A2 genotype</td>
+          <td>12</td>
+          <td>men</td>
+          <td>NaN</td>
+          <td>nan</td>
+          <td>1</td>
+          <td>3999</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>*1a/*1a</td>
+          <td>NaN</td>
+        </tr>
+        <tr>
+          <th>80933</th>
+          <td>3678</td>
+          <td>Tian2019</td>
+          <td>30387917</td>
+          <td>CYP1A2 genotype</td>
+          <td>12</td>
+          <td>men</td>
+          <td>NaN</td>
+          <td>nan</td>
+          <td>1</td>
+          <td>3999</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>*1c/*1f</td>
+          <td>NaN</td>
+        </tr>
+        <tr>
+          <th>80934</th>
+          <td>3681</td>
+          <td>Tian2019</td>
+          <td>30387917</td>
+          <td>CYP1A2 genotype</td>
+          <td>12</td>
+          <td>men</td>
+          <td>NaN</td>
+          <td>nan</td>
+          <td>2</td>
+          <td>3999</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>*1c*1f/*1c*1f</td>
+          <td>NaN</td>
+        </tr>
+        <tr>
+          <th>80935</th>
+          <td>3682</td>
+          <td>Tian2019</td>
+          <td>30387917</td>
+          <td>CYP1A2 genotype</td>
+          <td>12</td>
+          <td>men</td>
+          <td>NaN</td>
+          <td>nan</td>
+          <td>6</td>
+          <td>3999</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>*1a/*1f</td>
+          <td>NaN</td>
+        </tr>
+        <tr>
+          <th>80936</th>
+          <td>3683</td>
+          <td>Tian2019</td>
+          <td>30387917</td>
+          <td>CYP1A2 genotype</td>
+          <td>12</td>
+          <td>men</td>
+          <td>NaN</td>
+          <td>nan</td>
+          <td>2</td>
+          <td>3999</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>NaN</td>
+          <td>*1f/*1f</td>
+          <td>NaN</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>1144 rows × 19 columns</p>
     </div>
 
 
 
 .. parsed-literal::
 
-                                 Unnamed: 0          study_name  study_sid  \
-    group_pk characteristica_pk                                              
-    4        5                           19       Abernethy1982  PKDB00198   
-             6                           20       Abernethy1982  PKDB00198   
-             11                          21       Abernethy1982  PKDB00198   
-             12                          22       Abernethy1982  PKDB00198   
-             27                          23       Abernethy1982  PKDB00198   
-    ...                                 ...                 ...        ...   
-    1433     27416                    11419  TubicGrozdanis2008   18213452   
-             27417                    11420  TubicGrozdanis2008   18213452   
-             27418                    11421  TubicGrozdanis2008   18213452   
-             27419                    11422  TubicGrozdanis2008   18213452   
-             27420                    11423  TubicGrozdanis2008   18213452   
+                                 Unnamed: 0     study_name  study_sid  \
+    group_pk characteristica_pk                                         
+    3463     67383                       10  Abernethy1985  PKDB00001   
+             67384                       11  Abernethy1985  PKDB00001   
+             67385                       12  Abernethy1985  PKDB00001   
+             67386                       13  Abernethy1985  PKDB00001   
+             67387                       14  Abernethy1985  PKDB00001   
+    ...                                 ...            ...        ...   
+    4001     80932                     3677       Tian2019   30387917   
+             80933                     3678       Tian2019   30387917   
+             80934                     3681       Tian2019   30387917   
+             80935                     3682       Tian2019   30387917   
+             80936                     3683       Tian2019   30387917   
     
-                                    measurement_type  group_count   group_name  \
+                                measurement_type  group_count group_name   max  \
     group_pk characteristica_pk                                                  
-    4        5                               species           14  obese women   
-             6                               healthy           14  obese women   
-             11                        obesity index           14  obese women   
-             12                  weight (categorial)           14  obese women   
-             27                                  sex           14  obese women   
-    ...                                          ...          ...          ...   
-    1433     27416                               age            7          all   
-             27417                            weight            7          all   
-             27418                        medication            7          all   
-             27419                           smoking            7          all   
-             27420                fasting (duration)            7          all   
+    3463     67383                       smoking            9        OCS   NaN   
+             67384                           age            9        OCS  30.0   
+             67385                       species            9        OCS   NaN   
+             67386                       healthy            9        OCS   NaN   
+             67387                           sex            9        OCS   NaN   
+    ...                                      ...          ...        ...   ...   
+    4001     80932               CYP1A2 genotype           12        men   NaN   
+             80933               CYP1A2 genotype           12        men   NaN   
+             80934               CYP1A2 genotype           12        men   NaN   
+             80935               CYP1A2 genotype           12        men   NaN   
+             80936               CYP1A2 genotype           12        men   NaN   
     
-                                  max substance  count  group_parent_pk  sd  \
-    group_pk characteristica_pk                                               
-    4        5                    NaN       nan     42                2 NaN   
-             6                    NaN       nan     42                2 NaN   
-             11                   NaN       nan     21                2 NaN   
-             12                   NaN       nan     21                2 NaN   
-             27                   NaN       nan     14                2 NaN   
-    ...                           ...       ...    ...              ...  ..   
-    1433     27416               42.0       nan      7               -1 NaN   
-             27417               84.0       nan      7               -1 NaN   
-             27418                NaN       nan      7               -1 NaN   
-             27419                NaN       nan      7               -1 NaN   
-             27420                NaN       nan      7               -1 NaN   
+                                substance  count  group_parent_pk  sd  unit   se  \
+    group_pk characteristica_pk                                                    
+    3463     67383                    nan     18             3462 NaN   NaN  NaN   
+             67384                    nan     18             3462 NaN  year  1.0   
+             67385                    nan     18             3462 NaN   NaN  NaN   
+             67386                    nan     18             3462 NaN   NaN  NaN   
+             67387                    nan     18             3462 NaN   NaN  NaN   
+    ...                               ...    ...              ...  ..   ...  ...   
+    4001     80932                    nan      1             3999 NaN   NaN  NaN   
+             80933                    nan      1             3999 NaN   NaN  NaN   
+             80934                    nan      2             3999 NaN   NaN  NaN   
+             80935                    nan      6             3999 NaN   NaN  NaN   
+             80936                    nan      2             3999 NaN   NaN  NaN   
     
-                                     unit  se    min  cv  median  mean  \
-    group_pk characteristica_pk                                          
-    4        5                        NaN NaN    NaN NaN     NaN   NaN   
-             6                        NaN NaN    NaN NaN     NaN   NaN   
-             11                   percent NaN  133.0 NaN     NaN   NaN   
-             12                       NaN NaN    NaN NaN     NaN   NaN   
-             27                       NaN NaN    NaN NaN     NaN   NaN   
-    ...                               ...  ..    ...  ..     ...   ...   
-    1433     27416                   year NaN   26.0 NaN     NaN  30.0   
-             27417               kilogram NaN   70.5 NaN     NaN  77.3   
-             27418                    NaN NaN    NaN NaN     NaN   NaN   
-             27419                    NaN NaN    NaN NaN     NaN   NaN   
-             27420                    day NaN    NaN NaN     NaN   NaN   
+                                  min  cv  median  mean         choice  value  
+    group_pk characteristica_pk                                                
+    3463     67383                NaN NaN     NaN   NaN              N    NaN  
+             67384               23.0 NaN     NaN  26.0            NaN    NaN  
+             67385                NaN NaN     NaN   NaN   homo sapiens    NaN  
+             67386                NaN NaN     NaN   NaN              Y    NaN  
+             67387                NaN NaN     NaN   NaN              F    NaN  
+    ...                           ...  ..     ...   ...            ...    ...  
+    4001     80932                NaN NaN     NaN   NaN        *1a/*1a    NaN  
+             80933                NaN NaN     NaN   NaN        *1c/*1f    NaN  
+             80934                NaN NaN     NaN   NaN  *1c*1f/*1c*1f    NaN  
+             80935                NaN NaN     NaN   NaN        *1a/*1f    NaN  
+             80936                NaN NaN     NaN   NaN        *1f/*1f    NaN  
     
-                                       choice  value  
-    group_pk characteristica_pk                       
-    4        5                   homo sapiens    NaN  
-             6                              Y    NaN  
-             11                           NaN    NaN  
-             12                         obese    NaN  
-             27                             F    NaN  
-    ...                                   ...    ...  
-    1433     27416                        NaN    NaN  
-             27417                        NaN    NaN  
-             27418                          N    NaN  
-             27419                          N    NaN  
-             27420                        NaN    NaN  
-    
-    [1960 rows x 19 columns]
+    [1144 rows x 19 columns]
 
 
 In addition often combinations of attributes have to be used to find the
@@ -2087,34 +1683,37 @@ correct subjects. For instance a combination of ``healthy`` and reported
 .. parsed-literal::
 
     ------------------------------
-    PKData (140073376598800)
+    PKData (139890842843920)
     ------------------------------
-    studies           409  (  409)
-    groups            760  ( 6858)
-    individuals      4939  (43337)
-    interventions    1088  ( 1722)
-    outputs         61672  (61672)
-    timecourses       384  (  384)
-    ------------------------------
-    ------------------------------
-    PKData (140073396104400)
-    ------------------------------
-    studies           424  (  424)
-    groups            797  ( 7111)
-    individuals      5006  (43686)
-    interventions    1120  ( 1762)
-    outputs         63558  (63558)
-    timecourses       402  (  402)
+    studies           111  (  111)
+    groups            228  ( 2093)
+    individuals      2165  (17531)
+    interventions     345  (  345)
+    outputs         15746  (25008)
+    timecourses       607  (  607)
+    scatters           80  (   80)
     ------------------------------
     ------------------------------
-    PKData (140073396101584)
+    PKData (139890839534800)
     ------------------------------
-    studies           407  (  407)
-    groups            744  ( 6670)
-    individuals      4869  (42651)
-    interventions    1081  ( 1711)
-    outputs         60992  (60992)
-    timecourses       384  (  384)
+    studies           119  (  119)
+    groups            234  ( 2107)
+    individuals      2259  (17906)
+    interventions     349  (  349)
+    outputs         16367  (25485)
+    timecourses       620  (  620)
+    scatters           80  (   80)
+    ------------------------------
+    ------------------------------
+    PKData (139890849160720)
+    ------------------------------
+    studies           110  (  110)
+    groups            222  ( 2028)
+    individuals      2058  (16812)
+    interventions     337  (  337)
+    outputs         15472  (24590)
+    timecourses       603  (  603)
+    scatters           80  (   80)
     ------------------------------
 
 
@@ -2150,14 +1749,15 @@ intervention with measurement_type “dosing” and substance “caffeine”
 .. parsed-literal::
 
     ------------------------------
-    PKData (140073376303632)
+    PKData (139890848739472)
     ------------------------------
-    studies            81  (   81)
-    groups            136  ( 1336)
-    individuals      1022  (10148)
-    interventions     153  (  260)
-    outputs          9864  ( 9864)
-    timecourses        43  (   43)
+    studies             0  (    0)
+    groups              0  (    0)
+    individuals         0  (    0)
+    interventions       0  (    0)
+    outputs             0  (    0)
+    timecourses         0  (    0)
+    scatters           80  (   80)
     ------------------------------
 
 
@@ -2183,14 +1783,15 @@ filter all outputs with measurement_type auc_inf
 .. parsed-literal::
 
     ------------------------------
-    PKData (140073378072784)
+    PKData (139890841988752)
     ------------------------------
-    studies           311  (  311)
-    groups            470  ( 4492)
-    individuals       717  ( 7014)
-    interventions     694  (  998)
-    outputs          3324  ( 3324)
+    studies             0  (    0)
+    groups              0  (    0)
+    individuals         0  (    0)
+    interventions       0  (    0)
+    outputs             0  (    0)
     timecourses         0  (    0)
+    scatters           80  (   80)
     ------------------------------
 
 
@@ -2231,14 +1832,15 @@ for cyp2d6.
 .. parsed-literal::
 
     ------------------------------
-    PKData (140073346167888)
+    PKData (139890848654736)
     ------------------------------
-    studies             3  (    3)
-    groups              5  (   41)
-    individuals        14  (   98)
-    interventions       3  (    3)
-    outputs            19  (   19)
+    studies             0  (    0)
+    groups              0  (    0)
+    individuals         0  (    0)
+    interventions       0  (    0)
+    outputs             0  (    0)
     timecourses         0  (    0)
+    scatters           80  (   80)
     ------------------------------
 
 

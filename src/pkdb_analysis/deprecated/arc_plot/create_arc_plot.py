@@ -75,10 +75,7 @@ def show_values_on_bars(axs, bottom):
                 continue
 
             ax.text(
-                _x,
-                _y,
-                value,
-                ha="center",
+                _x, _y, value, ha="center",
             )
 
     if isinstance(axs, np.ndarray):

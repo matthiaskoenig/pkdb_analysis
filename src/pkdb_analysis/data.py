@@ -5,7 +5,6 @@ Functions for working with PKDB data.
 """
 import logging
 import os
-import warnings
 import zipfile
 import tempfile
 from abc import ABC
@@ -13,14 +12,15 @@ from ast import literal_eval
 from collections import OrderedDict
 from io import BytesIO
 from pathlib import Path
-from typing import Callable, List, Union, Iterable
-
+from typing import Callable, List, Union, Iterable, Dict
+from pkdb_analysis.units import ureg
 import numpy as np
 import pandas as pd
+import requests
 from IPython.display import display
 
-from pkdb_analysis.utils import deprecated, create_parent
-from pkdb_analysis.filter import f_healthy, f_n_healthy
+from pkdb_analysis.utils import create_parent
+from pkdb_analysis.filter import f_healthy, f_n_healthy, filter_factory
 
 # from pandas.errors import PerformanceWarning
 # This is not fixing anything, but just ignoring the problem !!!
@@ -105,6 +105,42 @@ class PKDataFrame(pd.DataFrame, ABC):
         df_pks = self[ff_idx][self.pk].unique()
         df_excluded = self[~self[self.pk].isin(df_pks)]
         return PKDataFrame(df_excluded, pk=self.pk)
+
+    @staticmethod
+    def _change_unit(sd, unit):
+        infer_fields = ["value", "mean", "median", "min", "max", "sd", "se"]
+        return PKDataFrame._change_unit_generic(
+            sd=sd,
+            unit=unit,
+            infer_fields=infer_fields,
+            unit_field="unit")
+
+    @staticmethod
+    def _change_unit_generic(sd, unit: str, infer_fields: List[str], unit_field: str):
+        if isinstance( sd[unit_field], str):
+            if ureg(sd[unit_field]).check(unit):
+                factor = ureg(sd[unit_field]).to(unit).m
+                sd[infer_fields] = sd[infer_fields] * factor
+                sd[unit_field] = unit
+        return sd
+
+    @staticmethod
+    def _change_time_unit(sd, unit):
+        infer_fields = ["time"]
+        unit_field = "time_unit"
+        return PKDataFrame._change_unit_generic(
+            sd=sd,
+            unit=unit,
+            infer_fields=infer_fields,
+            unit_field=unit_field)
+
+    def change_unit(self, unit):
+        df = self.df.apply(self._change_unit, unit=unit, axis=1)
+        return PKDataFrame(df, pk=self.pk)
+
+    def change_time_unit(self, unit):
+        df = self.df.apply(self._change_time_unit, unit=unit, axis=1)
+        return PKDataFrame(df, pk=self.pk)
 
     @property
     def pk_column(self):
@@ -232,7 +268,7 @@ class PKData(object):
             if isinstance(value, str):
                 if value.startswith("[") or value.startswith("("):
                     return tuple(literal_eval(value))
-                    #return tuple([z for z in value[1:-1].split(",")])
+                    # return tuple([z for z in value[1:-1].split(",")])
             return value
 
         if not self.timecourses.empty:
@@ -363,8 +399,7 @@ class PKData(object):
             for key in PKData.KEYS:
                 df = pd.read_csv(archive.open(f"{key}.csv", "r"), low_memory=False)
                 data_dict[key] = PKData._clean_types(
-                    df,
-                    is_array=key in ["timecourses", "scatters"]
+                    df, is_array=key in ["timecourses", "scatters"]
                 )
         # create data from data frames
         return PKData(**data_dict)
@@ -429,7 +464,9 @@ class PKData(object):
 
     def healthy(self):
         """ subset of healthy data."""
-        return self.filter_subject(f_healthy, concise=False).exclude_subject(f_n_healthy)
+        return self.filter_subject(f_healthy, concise=False).exclude_subject(
+            f_n_healthy
+        )
 
     @property
     def groups_count(self) -> int:
@@ -635,7 +672,6 @@ class PKData(object):
 
         dict_pkdata = self.as_dict()
         dict_pkdata[df_k] = getattr(self, df_k).pk_exclude(f_idx, **kwargs)
-
         pkdata = PKData(**dict_pkdata)
         if concise:
             pkdata._concise()
@@ -712,6 +748,23 @@ class PKData(object):
     def filter_timecourse(self, f_idx, concise=True, **kwargs) -> "PKData":
         """ Filter timecourses. """
         return self._pk_filter("timecourses", f_idx, concise, **kwargs)
+
+    def filter(self, filter_dict: Dict) -> "PKData":
+        pkdata = self.copy()
+        filter_functions = [
+            "groups",
+            "individuals",
+            "interventions",
+            "outputs",
+        ]
+        for key in filter_functions:
+            # filter each table separately by dedicated function
+            table_filter_definitions = filter_dict.get(key, None)
+            if table_filter_definitions:
+                table_filters = filter_factory(table_filter_definitions)
+                pkdata = pkdata._pk_filter(key, f_idx=table_filters, concise=False)
+        pkdata._concise()
+        return pkdata
 
     def exclude_study(self, f_idx, concise=True, **kwargs) -> "PKData":
         """ Excludes studies which cann be selected by a filter (idx)."""
@@ -797,6 +850,7 @@ class PKData(object):
         Modifies the DataFrame in place.
         :return:
         """
+        # FIXME: scatters are not concised !!!
 
         self.outputs = self.outputs[
             self.outputs["group_pk"].isin(self.ids["groups"])
@@ -1020,7 +1074,6 @@ class PKData(object):
             #    data_dict["scatters"] = self._update_scatters(mapping_int_pks)
             return PKData(**data_dict)
 
-
     @staticmethod
     def _clean_types(df: pd.DataFrame, is_array):
         """Sets the correct datatypes for each column in the table (df)."""
@@ -1056,3 +1109,19 @@ class PKData(object):
                 df[column] = df[column].replace({np.nan: -1}).astype(int)
 
         return df
+
+    def to_medline(self, path: Path):
+        """ create a bibtex file. """
+
+        create_parent(path)
+        reference_pmids = [str(int(s)) for s in self.studies.reference_pmid if s]
+        reference_pmids_str = "%2C".join(reference_pmids)
+        url = (
+            "https://api.ncbi.nlm.nih.gov/lit/ctxp/v1/pubmed/?format=medline&id="
+            + reference_pmids_str
+            + "&download=y"
+        )
+        with requests.get(url) as r:
+            r.raise_for_status()
+            with open(path, "wb") as f:
+                f.write(r.content)

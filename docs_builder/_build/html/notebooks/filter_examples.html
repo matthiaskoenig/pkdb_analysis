@@ -192,18 +192,16 @@ from it.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INFO</span> <span class="n">NumExpr</span> <span class="n">defaulting</span> <span class="n">to</span> <span class="mi">8</span> <span class="n">threads</span><span class="o">.</span>
-</pre></div>
-</div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
-<span class="n">PKData</span> <span class="p">(</span><span class="mi">140073344574672</span><span class="p">)</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">139890849755408</span><span class="p">)</span>
 <span class="o">------------------------------</span>
-<span class="n">studies</span>           <span class="mi">505</span>  <span class="p">(</span>  <span class="mi">505</span><span class="p">)</span>
-<span class="n">groups</span>           <span class="mi">1456</span>  <span class="p">(</span><span class="mi">11993</span><span class="p">)</span>
-<span class="n">individuals</span>      <span class="mi">6395</span>  <span class="p">(</span><span class="mi">57683</span><span class="p">)</span>
-<span class="n">interventions</span>    <span class="mi">1209</span>  <span class="p">(</span> <span class="mi">1865</span><span class="p">)</span>
-<span class="n">outputs</span>         <span class="mi">72206</span>  <span class="p">(</span><span class="mi">72206</span><span class="p">)</span>
-<span class="n">timecourses</span>       <span class="mi">423</span>  <span class="p">(</span>  <span class="mi">423</span><span class="p">)</span>
+<span class="n">studies</span>           <span class="mi">127</span>  <span class="p">(</span>  <span class="mi">127</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">429</span>  <span class="p">(</span> <span class="mi">3733</span><span class="p">)</span>
+<span class="n">individuals</span>      <span class="mi">3163</span>  <span class="p">(</span><span class="mi">28219</span><span class="p">)</span>
+<span class="n">interventions</span>     <span class="mi">409</span>  <span class="p">(</span>  <span class="mi">409</span><span class="p">)</span>
+<span class="n">outputs</span>         <span class="mi">19407</span>  <span class="p">(</span><span class="mi">29053</span><span class="p">)</span>
+<span class="n">timecourses</span>       <span class="mi">722</span>  <span class="p">(</span>  <span class="mi">722</span><span class="p">)</span>
+<span class="n">scatters</span>           <span class="mi">80</span>  <span class="p">(</span>   <span class="mi">80</span><span class="p">)</span>
 <span class="o">------------------------------</span>
 </pre></div>
 </div>
@@ -225,167 +223,57 @@ sids in the dataset is available via</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span><span class="o">.</span><span class="n">study_sids</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;10381807&#39;</span><span class="p">,</span>
- <span class="s1">&#39;10412886&#39;</span><span class="p">,</span>
- <span class="s1">&#39;10444424&#39;</span><span class="p">,</span>
- <span class="s1">&#39;10460065&#39;</span><span class="p">,</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;1033273&#39;</span><span class="p">,</span>
  <span class="s1">&#39;10634135&#39;</span><span class="p">,</span>
- <span class="s1">&#39;10741630&#39;</span><span class="p">,</span>
- <span class="s1">&#39;10934672&#39;</span><span class="p">,</span>
- <span class="s1">&#39;10976543&#39;</span><span class="p">,</span>
- <span class="s1">&#39;11061578&#39;</span><span class="p">,</span>
- <span class="s1">&#39;11112089&#39;</span><span class="p">,</span>
- <span class="s1">&#39;11180018&#39;</span><span class="p">,</span>
- <span class="s1">&#39;11259986&#39;</span><span class="p">,</span>
- <span class="s1">&#39;1133173&#39;</span><span class="p">,</span>
- <span class="s1">&#39;11361054&#39;</span><span class="p">,</span>
- <span class="s1">&#39;11497338&#39;</span><span class="p">,</span>
- <span class="s1">&#39;1154379&#39;</span><span class="p">,</span>
- <span class="s1">&#39;11709322&#39;</span><span class="p">,</span>
- <span class="s1">&#39;11736870&#39;</span><span class="p">,</span>
- <span class="s1">&#39;11753267&#39;</span><span class="p">,</span>
- <span class="s1">&#39;11872673&#39;</span><span class="p">,</span>
- <span class="s1">&#39;11986393&#39;</span><span class="p">,</span>
- <span class="s1">&#39;12189441&#39;</span><span class="p">,</span>
- <span class="s1">&#39;12200754&#39;</span><span class="p">,</span>
- <span class="s1">&#39;12236852&#39;</span><span class="p">,</span>
- <span class="s1">&#39;1246330&#39;</span><span class="p">,</span>
- <span class="s1">&#39;12723464&#39;</span><span class="p">,</span>
- <span class="s1">&#39;12784317&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;11839447&#39;</span><span class="p">,</span>
  <span class="s1">&#39;13053413&#39;</span><span class="p">,</span>
- <span class="s1">&#39;14612892&#39;</span><span class="p">,</span>
- <span class="s1">&#39;14691614&#39;</span><span class="p">,</span>
- <span class="s1">&#39;1484193&#39;</span><span class="p">,</span>
- <span class="s1">&#39;1488408&#39;</span><span class="p">,</span>
- <span class="s1">&#39;14979606&#39;</span><span class="p">,</span>
- <span class="s1">&#39;14982753&#39;</span><span class="p">,</span>
- <span class="s1">&#39;15206993&#39;</span><span class="p">,</span>
- <span class="s1">&#39;15317833&#39;</span><span class="p">,</span>
- <span class="s1">&#39;1551497&#39;</span><span class="p">,</span>
- <span class="s1">&#39;15518608&#39;</span><span class="p">,</span>
- <span class="s1">&#39;1577043&#39;</span><span class="p">,</span>
- <span class="s1">&#39;1613123&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;15022032&#39;</span><span class="p">,</span>
  <span class="s1">&#39;16158445&#39;</span><span class="p">,</span>
- <span class="s1">&#39;1623898&#39;</span><span class="p">,</span>
  <span class="s1">&#39;16261361&#39;</span><span class="p">,</span>
- <span class="s1">&#39;170711&#39;</span><span class="p">,</span>
- <span class="s1">&#39;17108811&#39;</span><span class="p">,</span>
- <span class="s1">&#39;1732127&#39;</span><span class="p">,</span>
- <span class="s1">&#39;17541571&#39;</span><span class="p">,</span>
- <span class="s1">&#39;18213452&#39;</span><span class="p">,</span>
- <span class="s1">&#39;1895958&#39;</span><span class="p">,</span>
- <span class="s1">&#39;19094067&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;18703023&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;2060878&#39;</span><span class="p">,</span>
  <span class="s1">&#39;20853468&#39;</span><span class="p">,</span>
- <span class="s1">&#39;2121568&#39;</span><span class="p">,</span>
- <span class="s1">&#39;21252240&#39;</span><span class="p">,</span>
- <span class="s1">&#39;2198434&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;21591074&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;2185297&#39;</span><span class="p">,</span>
  <span class="s1">&#39;22673010&#39;</span><span class="p">,</span>
- <span class="s1">&#39;23469684&#39;</span><span class="p">,</span>
- <span class="s1">&#39;24517114&#39;</span><span class="p">,</span>
- <span class="s1">&#39;25323804&#39;</span><span class="p">,</span>
- <span class="s1">&#39;2584298&#39;</span><span class="p">,</span>
  <span class="s1">&#39;25853045&#39;</span><span class="p">,</span>
- <span class="s1">&#39;264686&#39;</span><span class="p">,</span>
- <span class="s1">&#39;28063968&#39;</span><span class="p">,</span>
- <span class="s1">&#39;2816559&#39;</span><span class="p">,</span>
- <span class="s1">&#39;28350522&#39;</span><span class="p">,</span>
- <span class="s1">&#39;2857025&#39;</span><span class="p">,</span>
- <span class="s1">&#39;2902373&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;25891161&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;26862045&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;28929443&#39;</span><span class="p">,</span>
  <span class="s1">&#39;2921843&#39;</span><span class="p">,</span>
  <span class="s1">&#39;29230348&#39;</span><span class="p">,</span>
- <span class="s1">&#39;29403866&#39;</span><span class="p">,</span>
- <span class="s1">&#39;30171779&#39;</span><span class="p">,</span>
- <span class="s1">&#39;30729119&#39;</span><span class="p">,</span>
- <span class="s1">&#39;3113968&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;30387917&#39;</span><span class="p">,</span>
  <span class="s1">&#39;32071850&#39;</span><span class="p">,</span>
- <span class="s1">&#39;3335120&#39;</span><span class="p">,</span>
- <span class="s1">&#39;3356089&#39;</span><span class="p">,</span>
  <span class="s1">&#39;3356110&#39;</span><span class="p">,</span>
- <span class="s1">&#39;3437070&#39;</span><span class="p">,</span>
- <span class="s1">&#39;3514335&#39;</span><span class="p">,</span>
- <span class="s1">&#39;3519643&#39;</span><span class="p">,</span>
- <span class="s1">&#39;3522621&#39;</span><span class="p">,</span>
- <span class="s1">&#39;3546378&#39;</span><span class="p">,</span>
- <span class="s1">&#39;3604267&#39;</span><span class="p">,</span>
- <span class="s1">&#39;3722329&#39;</span><span class="p">,</span>
- <span class="s1">&#39;3741728&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;3557314&#39;</span><span class="p">,</span>
  <span class="s1">&#39;3741730&#39;</span><span class="p">,</span>
- <span class="s1">&#39;3816112&#39;</span><span class="p">,</span>
- <span class="s1">&#39;385271&#39;</span><span class="p">,</span>
- <span class="s1">&#39;3971846&#39;</span><span class="p">,</span>
  <span class="s1">&#39;4027137&#39;</span><span class="p">,</span>
- <span class="s1">&#39;4079279&#39;</span><span class="p">,</span>
- <span class="s1">&#39;4127645&#39;</span><span class="p">,</span>
- <span class="s1">&#39;4430704&#39;</span><span class="p">,</span>
- <span class="s1">&#39;4552828&#39;</span><span class="p">,</span>
- <span class="s1">&#39;4850385&#39;</span><span class="p">,</span>
- <span class="s1">&#39;4856884&#39;</span><span class="p">,</span>
- <span class="s1">&#39;4942784&#39;</span><span class="p">,</span>
- <span class="s1">&#39;5957477&#39;</span><span class="p">,</span>
- <span class="s1">&#39;6041196&#39;</span><span class="p">,</span>
  <span class="s1">&#39;6135578&#39;</span><span class="p">,</span>
- <span class="s1">&#39;6141519&#39;</span><span class="p">,</span>
- <span class="s1">&#39;6368593&#39;</span><span class="p">,</span>
- <span class="s1">&#39;659633&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;6712142&#39;</span><span class="p">,</span>
  <span class="s1">&#39;6734698&#39;</span><span class="p">,</span>
- <span class="s1">&#39;6743445&#39;</span><span class="p">,</span>
- <span class="s1">&#39;6883911&#39;</span><span class="p">,</span>
- <span class="s1">&#39;7009366&#39;</span><span class="p">,</span>
- <span class="s1">&#39;7094509&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;7371463&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;7371698&#39;</span><span class="p">,</span>
  <span class="s1">&#39;7742721&#39;</span><span class="p">,</span>
- <span class="s1">&#39;7898078&#39;</span><span class="p">,</span>
- <span class="s1">&#39;7983238&#39;</span><span class="p">,</span>
- <span class="s1">&#39;8138261&#39;</span><span class="p">,</span>
- <span class="s1">&#39;8149872&#39;</span><span class="p">,</span>
- <span class="s1">&#39;8375123&#39;</span><span class="p">,</span>
- <span class="s1">&#39;8423228&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;7775610&#39;</span><span class="p">,</span>
  <span class="s1">&#39;8445222&#39;</span><span class="p">,</span>
- <span class="s1">&#39;856672&#39;</span><span class="p">,</span>
- <span class="s1">&#39;8568017&#39;</span><span class="p">,</span>
- <span class="s1">&#39;8622603&#39;</span><span class="p">,</span>
- <span class="s1">&#39;8690818&#39;</span><span class="p">,</span>
- <span class="s1">&#39;8823235&#39;</span><span class="p">,</span>
- <span class="s1">&#39;8852486&#39;</span><span class="p">,</span>
- <span class="s1">&#39;8877677&#39;</span><span class="p">,</span>
- <span class="s1">&#39;8988072&#39;</span><span class="p">,</span>
- <span class="s1">&#39;908472&#39;</span><span class="p">,</span>
- <span class="s1">&#39;9272591&#39;</span><span class="p">,</span>
- <span class="s1">&#39;9542477&#39;</span><span class="p">,</span>
- <span class="s1">&#39;9696456&#39;</span><span class="p">,</span>
- <span class="s1">&#39;9725479&#39;</span><span class="p">,</span>
- <span class="s1">&#39;9728898&#39;</span><span class="p">,</span>
- <span class="s1">&#39;9792543&#39;</span><span class="p">,</span>
- <span class="s1">&#39;9834039&#39;</span><span class="p">,</span>
- <span class="s1">&#39;9920147&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Andersen1999&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Arnaud1981&#39;</span><span class="p">,</span>
  <span class="s1">&#39;Arold2005&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Bchir2006&#39;</span><span class="p">,</span>
  <span class="s1">&#39;Becker1984&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Bochner1999&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Borin1989&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Branch1976&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Burns1991&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Chen1989ThesisChapter4&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Chijiiwa2000&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Bozikas2004&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Broughton1981&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Callahan1982&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Cattarossi1988&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Christensen2002&#39;</span><span class="p">,</span>
  <span class="s1">&#39;Cysneiros2007&#39;</span><span class="p">,</span>
- <span class="s1">&#39;DOnofrio2014&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Gadano1997&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Geneve1990&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Grundmann1992&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Hasselstrom1993&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Djordjevic2008&#39;</span><span class="p">,</span>
  <span class="s1">&#39;He2017&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Huet1980&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Itoh2001&#39;</span><span class="p">,</span>
  <span class="s1">&#39;Kamimori1999&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Kawasaki1988&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Kearns1990&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Kinzler2019&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Klockowski1990&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Laizure2017&#39;</span><span class="p">,</span>
  <span class="s1">&#39;Lane1992&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Leevy1962&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Ma2008&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Martin1975&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Meijer1988&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Niemann2000&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Lennard1982&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Matthaei2016&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Nakazawa1988&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00001&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00002&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00003&#39;</span><span class="p">,</span>
@@ -405,18 +293,6 @@ sids in the dataset is available via</p>
  <span class="s1">&#39;PKDB00017&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00018&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00019&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00020&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00021&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00022&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00023&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00024&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00025&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00026&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00027&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00028&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00029&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00030&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00031&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00032&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00033&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00034&#39;</span><span class="p">,</span>
@@ -450,270 +326,27 @@ sids in the dataset is available via</p>
  <span class="s1">&#39;PKDB00062&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00063&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00065&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00066&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00067&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00068&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00069&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00070&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00071&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00072&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00073&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00074&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00075&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00076&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00077&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00078&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00079&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00080&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00081&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00082&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00083&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00084&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00085&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00086&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00087&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00089&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00090&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00091&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00092&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00093&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00094&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00095&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00096&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00097&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00098&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00100&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00101&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00102&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00103&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00104&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00105&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00106&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00107&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00108&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00109&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00110&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00111&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00112&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00113&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00114&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00115&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00116&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00117&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00118&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00119&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00120&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00121&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00122&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00123&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00124&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00125&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00126&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00127&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00128&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00129&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00130&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00131&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00132&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00133&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00134&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00135&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00136&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00137&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00138&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00139&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00140&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00141&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00142&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00143&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00144&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00145&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00146&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00147&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00148&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00149&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00150&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00151&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00152&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00153&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00154&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00155&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00156&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00157&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00158&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00159&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00160&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00161&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00162&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00163&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00164&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00165&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00166&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00167&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00168&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00169&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00170&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00171&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00172&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00174&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00175&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00176&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00177&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00178&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00179&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00180&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00181&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00182&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00183&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00184&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00185&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00186&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00188&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00189&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00190&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00191&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00192&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00193&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00194&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00195&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00196&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00197&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00198&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00199&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00200&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00201&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00202&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00203&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00204&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00205&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00206&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00207&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00208&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00209&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00210&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00211&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00212&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00213&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00214&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00215&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00216&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00217&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00218&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00219&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00220&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00221&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00222&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00223&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00224&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00225&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00226&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00227&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00228&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00243&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00244&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00245&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00246&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00247&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00248&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00249&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00250&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00251&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00252&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00253&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00254&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00255&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00256&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00257&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00258&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00259&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00260&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00261&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00262&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00263&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00264&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00265&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00266&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00268&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00269&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00270&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00271&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00272&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00273&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00274&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00275&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00276&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00277&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00278&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00279&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00280&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00281&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00282&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00283&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00284&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00285&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00286&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00287&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00288&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00289&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00290&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00291&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00292&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00293&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00294&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00295&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00296&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00297&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00298&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00299&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00300&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00301&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00302&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00303&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00304&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00305&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00306&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00307&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00308&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00309&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00310&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00311&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00312&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00313&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00314&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00315&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00316&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00317&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00318&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00319&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00320&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00321&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00322&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00323&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00324&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00325&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00326&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00327&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00328&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00329&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00330&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00331&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00332&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00333&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00334&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00335&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00336&#39;</span><span class="p">,</span>
- <span class="s1">&#39;PKDB00337&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00338&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00339&#39;</span><span class="p">,</span>
  <span class="s1">&#39;PKDB00341&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Roberts1976&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;PKDB00378&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;PKDB00380&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;PKDB00381&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;PKDB00382&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;PKDB00383&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;Sandberg1988&#39;</span><span class="p">,</span>
  <span class="s1">&#39;Scott1989&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Seideman1980&#39;</span><span class="p">,</span>
  <span class="s1">&#39;Tanaka1993&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Trang1985&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Walker1990&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Wood1979&#39;</span><span class="p">,</span>
- <span class="s1">&#39;Yiamouyiannis1994&#39;</span><span class="p">}</span>
+ <span class="s1">&#39;Trang1985&#39;</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>Filtering a subset of data works by providing filter/selection functions
@@ -728,7 +361,7 @@ which select a subset of the data. The filters are written on the
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
-<span class="n">PKData</span> <span class="p">(</span><span class="mi">140073385145552</span><span class="p">)</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">139891787702672</span><span class="p">)</span>
 <span class="o">------------------------------</span>
 <span class="n">studies</span>             <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
 <span class="n">groups</span>              <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
@@ -736,6 +369,7 @@ which select a subset of the data. The filters are written on the
 <span class="n">interventions</span>       <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
 <span class="n">outputs</span>             <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
 <span class="n">timecourses</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">scatters</span>           <span class="mi">80</span>  <span class="p">(</span>   <span class="mi">80</span><span class="p">)</span>
 <span class="o">------------------------------</span>
 </pre></div>
 </div>
@@ -743,7 +377,7 @@ which select a subset of the data. The filters are written on the
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">study_sids</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;Lennard1982&#39;</span><span class="p">,</span> <span class="s1">&#39;25853045&#39;</span><span class="p">,</span> <span class="s1">&#39;PKDB00002&#39;</span><span class="p">,</span> <span class="s1">&#39;25891161&#39;</span><span class="p">,</span> <span class="s1">&#39;6712142&#39;</span><span class="p">,</span> <span class="s1">&#39;PKDB00045&#39;</span><span class="p">,</span> <span class="s1">&#39;Trang1985&#39;</span><span class="p">,</span> <span class="s1">&#39;PKDB00210&#39;</span><span class="p">,</span> <span class="s1">&#39;PKDB00012&#39;</span><span class="p">,</span> <span class="s1">&#39;1033273&#39;</span><span class="p">,</span> <span class="s1">&#39;4027137&#39;</span><span class="p">,</span> <span class="s1">&#39;PKDB00126&#39;</span><span class="p">,</span> <span class="s1">&#39;7371463&#39;</span><span class="p">,</span> <span class="s1">&#39;15022032&#39;</span><span class="p">,</span> <span class="s1">&#39;Sandberg1988&#39;</span><span class="p">,</span> <span class="s1">&#39;3557314&#39;</span><span class="p">,</span> <span class="s1">&#39;Nakazawa1988&#39;</span><span class="p">,</span> <span class="s1">&#39;2921843&#39;</span><span class="p">,</span> <span class="s1">&#39;2185297&#39;</span><span class="p">,</span> <span class="s1">&#39;28929443&#39;</span><span class="p">,</span> <span class="s1">&#39;PKDB00015&#39;</span><span class="p">,</span> <span class="s1">&#39;26862045&#39;</span><span class="p">}</span>
 </pre></div>
 </div>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># for instance interventions</span>
@@ -768,18 +402,18 @@ which select a subset of the data. The filters are written on the
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>intervention_pk</th>
       <th>Unnamed: 0</th>
       <th>study_sid</th>
       <th>study_name</th>
+      <th>intervention_pk</th>
       <th>raw_pk</th>
       <th>normed</th>
       <th>name</th>
       <th>route</th>
+      <th>route_label</th>
       <th>form</th>
-      <th>application</th>
       <th>...</th>
-      <th>substance</th>
+      <th>substance_label</th>
       <th>value</th>
       <th>mean</th>
       <th>median</th>
@@ -794,12 +428,12 @@ which select a subset of the data. The filters are written on the
   <tbody>
   </tbody>
 </table>
-<p>0 rows × 25 columns</p>
+<p>0 rows × 31 columns</p>
 </div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Empty</span> <span class="n">DataFrame</span>
-<span class="n">Columns</span><span class="p">:</span> <span class="p">[</span><span class="n">intervention_pk</span><span class="p">,</span> <span class="n">Unnamed</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">study_sid</span><span class="p">,</span> <span class="n">study_name</span><span class="p">,</span> <span class="n">raw_pk</span><span class="p">,</span> <span class="n">normed</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">route</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="n">application</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">time_end</span><span class="p">,</span> <span class="n">time_unit</span><span class="p">,</span> <span class="n">measurement_type</span><span class="p">,</span> <span class="n">choice</span><span class="p">,</span> <span class="n">substance</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">median</span><span class="p">,</span> <span class="nb">min</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="n">sd</span><span class="p">,</span> <span class="n">se</span><span class="p">,</span> <span class="n">cv</span><span class="p">,</span> <span class="n">unit</span><span class="p">]</span>
+<span class="n">Columns</span><span class="p">:</span> <span class="p">[</span><span class="n">Unnamed</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">study_sid</span><span class="p">,</span> <span class="n">study_name</span><span class="p">,</span> <span class="n">intervention_pk</span><span class="p">,</span> <span class="n">raw_pk</span><span class="p">,</span> <span class="n">normed</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">route</span><span class="p">,</span> <span class="n">route_label</span><span class="p">,</span> <span class="n">form</span><span class="p">,</span> <span class="n">form_label</span><span class="p">,</span> <span class="n">application</span><span class="p">,</span> <span class="n">application_label</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">time_end</span><span class="p">,</span> <span class="n">time_unit</span><span class="p">,</span> <span class="n">measurement_type</span><span class="p">,</span> <span class="n">measurement_type_label</span><span class="p">,</span> <span class="n">choice</span><span class="p">,</span> <span class="n">choice_label</span><span class="p">,</span> <span class="n">substance</span><span class="p">,</span> <span class="n">substance_label</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">median</span><span class="p">,</span> <span class="nb">min</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="n">sd</span><span class="p">,</span> <span class="n">se</span><span class="p">,</span> <span class="n">cv</span><span class="p">,</span> <span class="n">unit</span><span class="p">]</span>
 <span class="n">Index</span><span class="p">:</span> <span class="p">[]</span>
 
-<span class="p">[</span><span class="mi">0</span> <span class="n">rows</span> <span class="n">x</span> <span class="mi">25</span> <span class="n">columns</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">0</span> <span class="n">rows</span> <span class="n">x</span> <span class="mi">31</span> <span class="n">columns</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>One could also define this as a simple lambda function</p>
@@ -808,7 +442,7 @@ which select a subset of the data. The filters are written on the
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
-<span class="n">PKData</span> <span class="p">(</span><span class="mi">140074325498576</span><span class="p">)</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">139891787682832</span><span class="p">)</span>
 <span class="o">------------------------------</span>
 <span class="n">studies</span>             <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
 <span class="n">groups</span>              <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
@@ -816,6 +450,7 @@ which select a subset of the data. The filters are written on the
 <span class="n">interventions</span>       <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
 <span class="n">outputs</span>             <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
 <span class="n">timecourses</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">scatters</span>           <span class="mi">80</span>  <span class="p">(</span>   <span class="mi">80</span><span class="p">)</span>
 <span class="o">------------------------------</span>
 </pre></div>
 </div>
@@ -833,7 +468,7 @@ intervention are filtered out. This behavior is controlled by the
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
-<span class="n">PKData</span> <span class="p">(</span><span class="mi">140073376541712</span><span class="p">)</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">139890839716880</span><span class="p">)</span>
 <span class="o">------------------------------</span>
 <span class="n">studies</span>             <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
 <span class="n">groups</span>              <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
@@ -841,16 +476,18 @@ intervention are filtered out. This behavior is controlled by the
 <span class="n">interventions</span>       <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
 <span class="n">outputs</span>             <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
 <span class="n">timecourses</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">scatters</span>           <span class="mi">80</span>  <span class="p">(</span>   <span class="mi">80</span><span class="p">)</span>
 <span class="o">------------------------------</span>
 <span class="o">------------------------------</span>
-<span class="n">PKData</span> <span class="p">(</span><span class="mi">140073376537296</span><span class="p">)</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">139890839717712</span><span class="p">)</span>
 <span class="o">------------------------------</span>
-<span class="n">studies</span>           <span class="mi">505</span>  <span class="p">(</span>  <span class="mi">505</span><span class="p">)</span>
-<span class="n">groups</span>           <span class="mi">1456</span>  <span class="p">(</span><span class="mi">11993</span><span class="p">)</span>
-<span class="n">individuals</span>      <span class="mi">6395</span>  <span class="p">(</span><span class="mi">57683</span><span class="p">)</span>
+<span class="n">studies</span>           <span class="mi">127</span>  <span class="p">(</span>  <span class="mi">127</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">429</span>  <span class="p">(</span> <span class="mi">3733</span><span class="p">)</span>
+<span class="n">individuals</span>      <span class="mi">3163</span>  <span class="p">(</span><span class="mi">28219</span><span class="p">)</span>
 <span class="n">interventions</span>       <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
-<span class="n">outputs</span>         <span class="mi">72206</span>  <span class="p">(</span><span class="mi">72206</span><span class="p">)</span>
-<span class="n">timecourses</span>       <span class="mi">423</span>  <span class="p">(</span>  <span class="mi">423</span><span class="p">)</span>
+<span class="n">outputs</span>         <span class="mi">19407</span>  <span class="p">(</span><span class="mi">29053</span><span class="p">)</span>
+<span class="n">timecourses</span>       <span class="mi">722</span>  <span class="p">(</span>  <span class="mi">722</span><span class="p">)</span>
+<span class="n">scatters</span>           <span class="mi">80</span>  <span class="p">(</span>   <span class="mi">80</span><span class="p">)</span>
 <span class="o">------------------------------</span>
 </pre></div>
 </div>
@@ -928,8 +565,6 @@ intervention are filtered out. This behavior is controlled by the
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>output_pk</th>
-      <th>intervention_pk</th>
       <th>Unnamed: 0</th>
       <th>study_name</th>
       <th>measurement_type</th>
@@ -938,6 +573,8 @@ intervention are filtered out. This behavior is controlled by the
       <th>se</th>
       <th>min</th>
       <th>group_pk</th>
+      <th>output_pk</th>
+      <th>time_unit</th>
       <th>...</th>
       <th>max</th>
       <th>substance</th>
@@ -954,121 +591,121 @@ intervention are filtered out. This behavior is controlled by the
   <tbody>
     <tr>
       <th>0</th>
-      <td>21</td>
       <td>0</td>
-      <td>6</td>
-      <td>Abernethy1982</td>
+      <td>Abernethy1985</td>
       <td>thalf</td>
       <td>plasma</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>1.9900</td>
-      <td>3</td>
-      <td>...</td>
-      <td>3.4700</td>
-      <td>paracetamol</td>
       <td>NaN</td>
       <td>-1</td>
+      <td>210625</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>caf</td>
+      <td>NaN</td>
+      <td>23952</td>
       <td>hour</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>2.550000</td>
+      <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>22</td>
-      <td>0</td>
-      <td>9</td>
-      <td>Abernethy1982</td>
-      <td>vd</td>
+      <td>1</td>
+      <td>Abernethy1985</td>
+      <td>thalf</td>
       <td>plasma</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>62.2000</td>
-      <td>3</td>
-      <td>...</td>
-      <td>151.4000</td>
-      <td>paracetamol</td>
       <td>NaN</td>
       <td>-1</td>
-      <td>liter</td>
+      <td>210628</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>caf</td>
+      <td>NaN</td>
+      <td>23955</td>
+      <td>hour</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>108.500000</td>
+      <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>23</td>
-      <td>0</td>
       <td>2</td>
-      <td>Abernethy1982</td>
-      <td>vd</td>
+      <td>Abernethy1985</td>
+      <td>thalf</td>
       <td>plasma</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>0.5300</td>
-      <td>3</td>
-      <td>...</td>
-      <td>1.3100</td>
-      <td>paracetamol</td>
       <td>NaN</td>
       <td>-1</td>
-      <td>liter / kilogram</td>
+      <td>210631</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>caf</td>
+      <td>NaN</td>
+      <td>23958</td>
+      <td>hour</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>0.810000</td>
+      <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>24</td>
-      <td>0</td>
-      <td>8</td>
-      <td>Abernethy1982</td>
-      <td>clearance</td>
+      <td>3</td>
+      <td>Abernethy1985</td>
+      <td>thalf</td>
       <td>plasma</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>19.4400</td>
-      <td>3</td>
-      <td>...</td>
-      <td>38.7600</td>
-      <td>paracetamol</td>
       <td>NaN</td>
       <td>-1</td>
-      <td>liter / hour</td>
+      <td>210635</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>caf</td>
+      <td>NaN</td>
+      <td>23962</td>
+      <td>hour</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>29.040000</td>
+      <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>25</td>
-      <td>0</td>
-      <td>10</td>
-      <td>Abernethy1982</td>
+      <td>4</td>
+      <td>Abernethy1985</td>
       <td>clearance</td>
       <td>plasma</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>0.1452</td>
-      <td>3</td>
-      <td>...</td>
-      <td>0.3156</td>
-      <td>paracetamol</td>
       <td>NaN</td>
       <td>-1</td>
+      <td>210640</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>caf</td>
+      <td>NaN</td>
+      <td>23967</td>
       <td>liter / hour / kilogram</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>0.224400</td>
+      <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
@@ -1097,178 +734,166 @@ intervention are filtered out. This behavior is controlled by the
       <td>...</td>
     </tr>
     <tr>
-      <th>72201</th>
-      <td>153076</td>
-      <td>1208</td>
-      <td>100516</td>
-      <td>Zhang2016</td>
-      <td>kel</td>
+      <th>29048</th>
+      <td>29048</td>
+      <td>Barnett1990</td>
+      <td>cmax</td>
       <td>plasma</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>1504</td>
+      <td>-1</td>
+      <td>263142</td>
+      <td>NaN</td>
       <td>...</td>
       <td>NaN</td>
-      <td>torasemide</td>
+      <td>caf</td>
       <td>NaN</td>
-      <td>-1</td>
-      <td>1 / minute</td>
+      <td>30567</td>
+      <td>gram / liter</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>0.003658</td>
+      <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
     <tr>
-      <th>72202</th>
-      <td>153077</td>
-      <td>1208</td>
-      <td>100342</td>
-      <td>Zhang2016</td>
-      <td>thalf</td>
+      <th>29049</th>
+      <td>29049</td>
+      <td>Barnett1990</td>
+      <td>vd-ss</td>
       <td>plasma</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>1504</td>
+      <td>-1</td>
+      <td>263146</td>
+      <td>NaN</td>
       <td>...</td>
       <td>NaN</td>
-      <td>torasemide</td>
+      <td>caf</td>
       <td>NaN</td>
-      <td>-1</td>
-      <td>hour</td>
+      <td>30567</td>
+      <td>liter</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>3.157929</td>
+      <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
     <tr>
-      <th>72203</th>
-      <td>153078</td>
-      <td>1208</td>
-      <td>100520</td>
-      <td>Zhang2016</td>
-      <td>tmax</td>
+      <th>29050</th>
+      <td>29050</td>
+      <td>Barnett1990</td>
+      <td>cmax</td>
       <td>plasma</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>1504</td>
+      <td>-1</td>
+      <td>263159</td>
+      <td>NaN</td>
       <td>...</td>
       <td>NaN</td>
-      <td>torasemide</td>
+      <td>caf</td>
       <td>NaN</td>
-      <td>-1</td>
-      <td>hour</td>
+      <td>30567</td>
+      <td>gram / liter</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>0.760958</td>
+      <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
     <tr>
-      <th>72204</th>
-      <td>153079</td>
-      <td>1208</td>
-      <td>100463</td>
-      <td>Zhang2016</td>
+      <th>29051</th>
+      <td>29051</td>
+      <td>Barnett1990</td>
       <td>vd</td>
       <td>plasma</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>1504</td>
+      <td>-1</td>
+      <td>263163</td>
+      <td>NaN</td>
       <td>...</td>
       <td>NaN</td>
-      <td>torasemide</td>
+      <td>caf</td>
       <td>NaN</td>
-      <td>-1</td>
+      <td>30567</td>
       <td>liter</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>11.511323</td>
+      <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
     <tr>
-      <th>72205</th>
-      <td>153080</td>
-      <td>1208</td>
-      <td>100494</td>
-      <td>Zhang2016</td>
-      <td>vd_ss</td>
+      <th>29052</th>
+      <td>29052</td>
+      <td>Barnett1990</td>
+      <td>vd-ss</td>
       <td>plasma</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>1504</td>
+      <td>-1</td>
+      <td>263164</td>
+      <td>NaN</td>
       <td>...</td>
       <td>NaN</td>
-      <td>torasemide</td>
+      <td>caf</td>
       <td>NaN</td>
-      <td>-1</td>
+      <td>30567</td>
       <td>liter</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>12.039979</td>
+      <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
   </tbody>
 </table>
-<p>72206 rows × 27 columns</p>
-</div><pre class="literal-block">       output_pk  intervention_pk  Unnamed: 0     study_name measurement_type  0             21                0           6  Abernethy1982            thalf
-1             22                0           9  Abernethy1982               vd
-2             23                0           2  Abernethy1982               vd
-3             24                0           8  Abernethy1982        clearance
-4             25                0          10  Abernethy1982        clearance
-...          ...              ...         ...            ...              ...
-72201     153076             1208      100516      Zhang2016              kel
-72202     153077             1208      100342      Zhang2016            thalf
-72203     153078             1208      100520      Zhang2016             tmax
-72204     153079             1208      100463      Zhang2016               vd
-72205     153080             1208      100494      Zhang2016            vd_ss
+<p>29053 rows × 27 columns</p>
+</div><pre class="literal-block">       Unnamed: 0     study_name measurement_type  tissue  sd  se  min  0               0  Abernethy1985            thalf  plasma NaN NaN  NaN
+1               1  Abernethy1985            thalf  plasma NaN NaN  NaN
+2               2  Abernethy1985            thalf  plasma NaN NaN  NaN
+3               3  Abernethy1985            thalf  plasma NaN NaN  NaN
+4               4  Abernethy1985        clearance  plasma NaN NaN  NaN
+...           ...            ...              ...     ...  ..  ..  ...
+29048       29048    Barnett1990             cmax  plasma NaN NaN  NaN
+29049       29049    Barnett1990            vd-ss  plasma NaN NaN  NaN
+29050       29050    Barnett1990             cmax  plasma NaN NaN  NaN
+29051       29051    Barnett1990               vd  plasma NaN NaN  NaN
+29052       29052    Barnett1990            vd-ss  plasma NaN NaN  NaN
 
-       tissue  sd  se      min  group_pk  ...       max    substance  label  0      plasma NaN NaN   1.9900         3  ...    3.4700  paracetamol    NaN
-1      plasma NaN NaN  62.2000         3  ...  151.4000  paracetamol    NaN
-2      plasma NaN NaN   0.5300         3  ...    1.3100  paracetamol    NaN
-3      plasma NaN NaN  19.4400         3  ...   38.7600  paracetamol    NaN
-4      plasma NaN NaN   0.1452         3  ...    0.3156  paracetamol    NaN
-...       ...  ..  ..      ...       ...  ...       ...          ...    ...
-72201  plasma NaN NaN      NaN      1504  ...       NaN   torasemide    NaN
-72202  plasma NaN NaN      NaN      1504  ...       NaN   torasemide    NaN
-72203  plasma NaN NaN      NaN      1504  ...       NaN   torasemide    NaN
-72204  plasma NaN NaN      NaN      1504  ...       NaN   torasemide    NaN
-72205  plasma NaN NaN      NaN      1504  ...       NaN   torasemide    NaN
+       group_pk  output_pk time_unit  ...  max  substance  label  0            -1     210625       NaN  ...  NaN        caf    NaN
+1            -1     210628       NaN  ...  NaN        caf    NaN
+2            -1     210631       NaN  ...  NaN        caf    NaN
+3            -1     210635       NaN  ...  NaN        caf    NaN
+4            -1     210640       NaN  ...  NaN        caf    NaN
+...         ...        ...       ...  ...  ...        ...    ...
+29048        -1     263142       NaN  ...  NaN        caf    NaN
+29049        -1     263146       NaN  ...  NaN        caf    NaN
+29050        -1     263159       NaN  ...  NaN        caf    NaN
+29051        -1     263163       NaN  ...  NaN        caf    NaN
+29052        -1     263164       NaN  ...  NaN        caf    NaN
 
-       individual_pk                     unit  cv median        mean time  0                 -1                     hour NaN    NaN    2.550000  NaN
-1                 -1                    liter NaN    NaN  108.500000  NaN
-2                 -1         liter / kilogram NaN    NaN    0.810000  NaN
-3                 -1             liter / hour NaN    NaN   29.040000  NaN
-4                 -1  liter / hour / kilogram NaN    NaN    0.224400  NaN
-...              ...                      ...  ..    ...         ...  ...
-72201             -1               1 / minute NaN    NaN    0.003658  NaN
-72202             -1                     hour NaN    NaN    3.157929  NaN
-72203             -1                     hour NaN    NaN    0.760958  NaN
-72204             -1                    liter NaN    NaN   11.511323  NaN
-72205             -1                    liter NaN    NaN   12.039979  NaN
+      individual_pk                     unit  cv median  mean time choice
+0             23952                     hour NaN    NaN   NaN  NaN    NaN
+1             23955                     hour NaN    NaN   NaN  NaN    NaN
+2             23958                     hour NaN    NaN   NaN  NaN    NaN
+3             23962                     hour NaN    NaN   NaN  NaN    NaN
+4             23967  liter / hour / kilogram NaN    NaN   NaN  NaN    NaN
+...             ...                      ...  ..    ...   ...  ...    ...
+29048         30567             gram / liter NaN    NaN   NaN  NaN    NaN
+29049         30567                    liter NaN    NaN   NaN  NaN    NaN
+29050         30567             gram / liter NaN    NaN   NaN  NaN    NaN
+29051         30567                    liter NaN    NaN   NaN  NaN    NaN
+29052         30567                    liter NaN    NaN   NaN  NaN    NaN
 
-      choice
-0        NaN
-1        NaN
-2        NaN
-3        NaN
-4        NaN
-...      ...
-72201    NaN
-72202    NaN
-72203    NaN
-72204    NaN
-72205    NaN
-
-[72206 rows x 27 columns]</pre>
+[29053 rows x 27 columns]</pre>
 </div>
 <div class="section" id="query-groups-and-individuals">
 <h2>Query groups and individuals<a class="headerlink" href="#query-groups-and-individuals" title="Permalink to this headline">¶</a></h2>
@@ -1309,14 +934,15 @@ logic” can be directly applied on the index.</p>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
-<span class="n">PKData</span> <span class="p">(</span><span class="mi">140073382514896</span><span class="p">)</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">139890849157456</span><span class="p">)</span>
 <span class="o">------------------------------</span>
-<span class="n">studies</span>           <span class="mi">165</span>  <span class="p">(</span>  <span class="mi">165</span><span class="p">)</span>
-<span class="n">groups</span>            <span class="mi">271</span>  <span class="p">(</span> <span class="mi">2774</span><span class="p">)</span>
-<span class="n">individuals</span>      <span class="mi">1989</span>  <span class="p">(</span><span class="mi">20777</span><span class="p">)</span>
-<span class="n">interventions</span>     <span class="mi">402</span>  <span class="p">(</span>  <span class="mi">633</span><span class="p">)</span>
-<span class="n">outputs</span>         <span class="mi">22886</span>  <span class="p">(</span><span class="mi">22886</span><span class="p">)</span>
-<span class="n">timecourses</span>       <span class="mi">135</span>  <span class="p">(</span>  <span class="mi">135</span><span class="p">)</span>
+<span class="n">studies</span>            <span class="mi">81</span>  <span class="p">(</span>   <span class="mi">81</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">143</span>  <span class="p">(</span> <span class="mi">1396</span><span class="p">)</span>
+<span class="n">individuals</span>      <span class="mi">1150</span>  <span class="p">(</span><span class="mi">10810</span><span class="p">)</span>
+<span class="n">interventions</span>     <span class="mi">238</span>  <span class="p">(</span>  <span class="mi">238</span><span class="p">)</span>
+<span class="n">outputs</span>         <span class="mi">10578</span>  <span class="p">(</span><span class="mi">14843</span><span class="p">)</span>
+<span class="n">timecourses</span>       <span class="mi">438</span>  <span class="p">(</span>  <span class="mi">438</span><span class="p">)</span>
+<span class="n">scatters</span>           <span class="mi">80</span>  <span class="p">(</span>   <span class="mi">80</span><span class="p">)</span>
 <span class="o">------------------------------</span>
 </pre></div>
 </div>
@@ -1385,18 +1011,18 @@ logic” can be directly applied on the index.</p>
   </thead>
   <tbody>
     <tr>
-      <th rowspan="5" valign="top">3</th>
-      <th>5</th>
+      <th rowspan="5" valign="top">3463</th>
+      <th>67383</th>
       <td>10</td>
-      <td>Abernethy1982</td>
-      <td>PKDB00198</td>
-      <td>species</td>
-      <td>7</td>
-      <td>obese men</td>
+      <td>Abernethy1985</td>
+      <td>PKDB00001</td>
+      <td>smoking</td>
+      <td>9</td>
+      <td>OCS</td>
       <td>NaN</td>
       <td>nan</td>
-      <td>42</td>
-      <td>2</td>
+      <td>18</td>
+      <td>3462</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -1404,399 +1030,43 @@ logic” can be directly applied on the index.</p>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>homo sapiens</td>
+      <td>N</td>
       <td>NaN</td>
     </tr>
     <tr>
-      <th>6</th>
+      <th>67384</th>
       <td>11</td>
-      <td>Abernethy1982</td>
-      <td>PKDB00198</td>
-      <td>healthy</td>
-      <td>7</td>
-      <td>obese men</td>
-      <td>NaN</td>
-      <td>nan</td>
-      <td>42</td>
-      <td>2</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>Y</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>12</td>
-      <td>Abernethy1982</td>
-      <td>PKDB00198</td>
-      <td>obesity index</td>
-      <td>7</td>
-      <td>obese men</td>
-      <td>NaN</td>
-      <td>nan</td>
-      <td>21</td>
-      <td>2</td>
-      <td>NaN</td>
-      <td>percent</td>
-      <td>NaN</td>
-      <td>133.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>13</td>
-      <td>Abernethy1982</td>
-      <td>PKDB00198</td>
-      <td>weight (categorial)</td>
-      <td>7</td>
-      <td>obese men</td>
-      <td>NaN</td>
-      <td>nan</td>
-      <td>21</td>
-      <td>2</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>obese</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>14</td>
-      <td>Abernethy1982</td>
-      <td>PKDB00198</td>
-      <td>sex</td>
-      <td>7</td>
-      <td>obese men</td>
-      <td>NaN</td>
-      <td>nan</td>
-      <td>7</td>
-      <td>2</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>M</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th rowspan="5" valign="top">1433</th>
-      <th>27416</th>
-      <td>11419</td>
-      <td>TubicGrozdanis2008</td>
-      <td>18213452</td>
+      <td>Abernethy1985</td>
+      <td>PKDB00001</td>
       <td>age</td>
-      <td>7</td>
-      <td>all</td>
-      <td>42.0</td>
+      <td>9</td>
+      <td>OCS</td>
+      <td>30.0</td>
       <td>nan</td>
-      <td>7</td>
-      <td>-1</td>
+      <td>18</td>
+      <td>3462</td>
       <td>NaN</td>
       <td>year</td>
+      <td>1.0</td>
+      <td>23.0</td>
+      <td>NaN</td>
       <td>NaN</td>
       <td>26.0</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>30.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
     </tr>
     <tr>
-      <th>27417</th>
-      <td>11420</td>
-      <td>TubicGrozdanis2008</td>
-      <td>18213452</td>
-      <td>weight</td>
-      <td>7</td>
-      <td>all</td>
-      <td>84.0</td>
-      <td>nan</td>
-      <td>7</td>
-      <td>-1</td>
-      <td>NaN</td>
-      <td>kilogram</td>
-      <td>NaN</td>
-      <td>70.5</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>77.3</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>27418</th>
-      <td>11421</td>
-      <td>TubicGrozdanis2008</td>
-      <td>18213452</td>
-      <td>medication</td>
-      <td>7</td>
-      <td>all</td>
-      <td>NaN</td>
-      <td>nan</td>
-      <td>7</td>
-      <td>-1</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>N</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>27419</th>
-      <td>11422</td>
-      <td>TubicGrozdanis2008</td>
-      <td>18213452</td>
-      <td>smoking</td>
-      <td>7</td>
-      <td>all</td>
-      <td>NaN</td>
-      <td>nan</td>
-      <td>7</td>
-      <td>-1</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>N</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>27420</th>
-      <td>11423</td>
-      <td>TubicGrozdanis2008</td>
-      <td>18213452</td>
-      <td>fasting (duration)</td>
-      <td>7</td>
-      <td>all</td>
-      <td>NaN</td>
-      <td>nan</td>
-      <td>7</td>
-      <td>-1</td>
-      <td>NaN</td>
-      <td>day</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-  </tbody>
-</table>
-<p>2774 rows × 19 columns</p>
-</div><pre class="literal-block">                             Unnamed: 0          study_name  study_sid  group_pk characteristica_pk
-3        5                           10       Abernethy1982  PKDB00198
-         6                           11       Abernethy1982  PKDB00198
-         11                          12       Abernethy1982  PKDB00198
-         12                          13       Abernethy1982  PKDB00198
-         18                          14       Abernethy1982  PKDB00198
-...                                 ...                 ...        ...
-1433     27416                    11419  TubicGrozdanis2008   18213452
-         27417                    11420  TubicGrozdanis2008   18213452
-         27418                    11421  TubicGrozdanis2008   18213452
-         27419                    11422  TubicGrozdanis2008   18213452
-         27420                    11423  TubicGrozdanis2008   18213452
-
-                                measurement_type  group_count group_name  group_pk characteristica_pk
-3        5                               species            7  obese men
-         6                               healthy            7  obese men
-         11                        obesity index            7  obese men
-         12                  weight (categorial)            7  obese men
-         18                                  sex            7  obese men
-...                                          ...          ...        ...
-1433     27416                               age            7        all
-         27417                            weight            7        all
-         27418                        medication            7        all
-         27419                           smoking            7        all
-         27420                fasting (duration)            7        all
-
-                              max substance  count  group_parent_pk  sd  group_pk characteristica_pk
-3        5                    NaN       nan     42                2 NaN
-         6                    NaN       nan     42                2 NaN
-         11                   NaN       nan     21                2 NaN
-         12                   NaN       nan     21                2 NaN
-         18                   NaN       nan      7                2 NaN
-...                           ...       ...    ...              ...  ..
-1433     27416               42.0       nan      7               -1 NaN
-         27417               84.0       nan      7               -1 NaN
-         27418                NaN       nan      7               -1 NaN
-         27419                NaN       nan      7               -1 NaN
-         27420                NaN       nan      7               -1 NaN
-
-                                 unit  se    min  cv  median  mean  group_pk characteristica_pk
-3        5                        NaN NaN    NaN NaN     NaN   NaN
-         6                        NaN NaN    NaN NaN     NaN   NaN
-         11                   percent NaN  133.0 NaN     NaN   NaN
-         12                       NaN NaN    NaN NaN     NaN   NaN
-         18                       NaN NaN    NaN NaN     NaN   NaN
-...                               ...  ..    ...  ..     ...   ...
-1433     27416                   year NaN   26.0 NaN     NaN  30.0
-         27417               kilogram NaN   70.5 NaN     NaN  77.3
-         27418                    NaN NaN    NaN NaN     NaN   NaN
-         27419                    NaN NaN    NaN NaN     NaN   NaN
-         27420                    day NaN    NaN NaN     NaN   NaN
-
-                                   choice  value
-group_pk characteristica_pk
-3        5                   homo sapiens    NaN
-         6                              Y    NaN
-         11                           NaN    NaN
-         12                         obese    NaN
-         18                             M    NaN
-...                                   ...    ...
-1433     27416                        NaN    NaN
-         27417                        NaN    NaN
-         27418                          N    NaN
-         27419                          N    NaN
-         27420                        NaN    NaN
-
-[2774 rows x 19 columns]</pre>
-<p>Often attributes are mixed for groups so we have to exclude the
-opposites. In the example, the group <code class="docutils literal notranslate"><span class="pre">20</span></code> consists of 5 smokers and 1
-nonsmoker. So for a subset of the group smoking is No. We can exclude
-groups via</p>
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">healthy_nonsmoker</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_subject</span><span class="p">([</span><span class="n">is_healthy</span><span class="p">,</span> <span class="n">nonsmoker</span><span class="p">])</span><span class="o">.</span><span class="n">exclude_subject</span><span class="p">([</span><span class="n">smoker</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">healthy_nonsmoker</span><span class="p">)</span>
-<span class="n">display</span><span class="p">(</span><span class="n">healthy_nonsmoker</span><span class="o">.</span><span class="n">groups_mi</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
-<span class="n">PKData</span> <span class="p">(</span><span class="mi">140073376596112</span><span class="p">)</span>
-<span class="o">------------------------------</span>
-<span class="n">studies</span>           <span class="mi">140</span>  <span class="p">(</span>  <span class="mi">140</span><span class="p">)</span>
-<span class="n">groups</span>            <span class="mi">202</span>  <span class="p">(</span> <span class="mi">1960</span><span class="p">)</span>
-<span class="n">individuals</span>      <span class="mi">1241</span>  <span class="p">(</span><span class="mi">12212</span><span class="p">)</span>
-<span class="n">interventions</span>     <span class="mi">339</span>  <span class="p">(</span>  <span class="mi">550</span><span class="p">)</span>
-<span class="n">outputs</span>         <span class="mi">18013</span>  <span class="p">(</span><span class="mi">18013</span><span class="p">)</span>
-<span class="n">timecourses</span>       <span class="mi">115</span>  <span class="p">(</span>  <span class="mi">115</span><span class="p">)</span>
-<span class="o">------------------------------</span>
-</pre></div>
-</div>
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th></th>
-      <th>Unnamed: 0</th>
-      <th>study_name</th>
-      <th>study_sid</th>
-      <th>measurement_type</th>
-      <th>group_count</th>
-      <th>group_name</th>
-      <th>max</th>
-      <th>substance</th>
-      <th>count</th>
-      <th>group_parent_pk</th>
-      <th>sd</th>
-      <th>unit</th>
-      <th>se</th>
-      <th>min</th>
-      <th>cv</th>
-      <th>median</th>
-      <th>mean</th>
-      <th>choice</th>
-      <th>value</th>
-    </tr>
-    <tr>
-      <th>group_pk</th>
-      <th>characteristica_pk</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th rowspan="5" valign="top">4</th>
-      <th>5</th>
-      <td>19</td>
-      <td>Abernethy1982</td>
-      <td>PKDB00198</td>
+      <th>67385</th>
+      <td>12</td>
+      <td>Abernethy1985</td>
+      <td>PKDB00001</td>
       <td>species</td>
-      <td>14</td>
-      <td>obese women</td>
+      <td>9</td>
+      <td>OCS</td>
       <td>NaN</td>
       <td>nan</td>
-      <td>42</td>
-      <td>2</td>
+      <td>18</td>
+      <td>3462</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -1808,17 +1078,17 @@ groups via</p>
       <td>NaN</td>
     </tr>
     <tr>
-      <th>6</th>
-      <td>20</td>
-      <td>Abernethy1982</td>
-      <td>PKDB00198</td>
+      <th>67386</th>
+      <td>13</td>
+      <td>Abernethy1985</td>
+      <td>PKDB00001</td>
       <td>healthy</td>
-      <td>14</td>
-      <td>obese women</td>
+      <td>9</td>
+      <td>OCS</td>
       <td>NaN</td>
       <td>nan</td>
-      <td>42</td>
-      <td>2</td>
+      <td>18</td>
+      <td>3462</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -1830,61 +1100,17 @@ groups via</p>
       <td>NaN</td>
     </tr>
     <tr>
-      <th>11</th>
-      <td>21</td>
-      <td>Abernethy1982</td>
-      <td>PKDB00198</td>
-      <td>obesity index</td>
+      <th>67387</th>
       <td>14</td>
-      <td>obese women</td>
-      <td>NaN</td>
-      <td>nan</td>
-      <td>21</td>
-      <td>2</td>
-      <td>NaN</td>
-      <td>percent</td>
-      <td>NaN</td>
-      <td>133.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>22</td>
-      <td>Abernethy1982</td>
-      <td>PKDB00198</td>
-      <td>weight (categorial)</td>
-      <td>14</td>
-      <td>obese women</td>
-      <td>NaN</td>
-      <td>nan</td>
-      <td>21</td>
-      <td>2</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>obese</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>27</th>
-      <td>23</td>
-      <td>Abernethy1982</td>
-      <td>PKDB00198</td>
+      <td>Abernethy1985</td>
+      <td>PKDB00001</td>
       <td>sex</td>
-      <td>14</td>
-      <td>obese women</td>
+      <td>9</td>
+      <td>OCS</td>
       <td>NaN</td>
       <td>nan</td>
-      <td>14</td>
-      <td>2</td>
+      <td>18</td>
+      <td>3462</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -1919,62 +1145,62 @@ groups via</p>
       <td>...</td>
     </tr>
     <tr>
-      <th rowspan="5" valign="top">1433</th>
-      <th>27416</th>
-      <td>11419</td>
-      <td>TubicGrozdanis2008</td>
-      <td>18213452</td>
-      <td>age</td>
-      <td>7</td>
-      <td>all</td>
-      <td>42.0</td>
+      <th rowspan="5" valign="top">4001</th>
+      <th>80932</th>
+      <td>3677</td>
+      <td>Tian2019</td>
+      <td>30387917</td>
+      <td>CYP1A2 genotype</td>
+      <td>12</td>
+      <td>men</td>
+      <td>NaN</td>
       <td>nan</td>
-      <td>7</td>
-      <td>-1</td>
-      <td>NaN</td>
-      <td>year</td>
-      <td>NaN</td>
-      <td>26.0</td>
+      <td>1</td>
+      <td>3999</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>30.0</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>*1a/*1a</td>
       <td>NaN</td>
     </tr>
     <tr>
-      <th>27417</th>
-      <td>11420</td>
-      <td>TubicGrozdanis2008</td>
-      <td>18213452</td>
-      <td>weight</td>
-      <td>7</td>
-      <td>all</td>
-      <td>84.0</td>
+      <th>80933</th>
+      <td>3678</td>
+      <td>Tian2019</td>
+      <td>30387917</td>
+      <td>CYP1A2 genotype</td>
+      <td>12</td>
+      <td>men</td>
+      <td>NaN</td>
       <td>nan</td>
-      <td>7</td>
-      <td>-1</td>
-      <td>NaN</td>
-      <td>kilogram</td>
-      <td>NaN</td>
-      <td>70.5</td>
+      <td>1</td>
+      <td>3999</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>77.3</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>*1c/*1f</td>
       <td>NaN</td>
     </tr>
     <tr>
-      <th>27418</th>
-      <td>11421</td>
-      <td>TubicGrozdanis2008</td>
-      <td>18213452</td>
-      <td>medication</td>
-      <td>7</td>
-      <td>all</td>
+      <th>80934</th>
+      <td>3681</td>
+      <td>Tian2019</td>
+      <td>30387917</td>
+      <td>CYP1A2 genotype</td>
+      <td>12</td>
+      <td>men</td>
       <td>NaN</td>
       <td>nan</td>
-      <td>7</td>
-      <td>-1</td>
+      <td>2</td>
+      <td>3999</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -1982,21 +1208,21 @@ groups via</p>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>N</td>
+      <td>*1c*1f/*1c*1f</td>
       <td>NaN</td>
     </tr>
     <tr>
-      <th>27419</th>
-      <td>11422</td>
-      <td>TubicGrozdanis2008</td>
-      <td>18213452</td>
-      <td>smoking</td>
-      <td>7</td>
-      <td>all</td>
+      <th>80935</th>
+      <td>3682</td>
+      <td>Tian2019</td>
+      <td>30387917</td>
+      <td>CYP1A2 genotype</td>
+      <td>12</td>
+      <td>men</td>
       <td>NaN</td>
       <td>nan</td>
-      <td>7</td>
-      <td>-1</td>
+      <td>6</td>
+      <td>3999</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -2004,101 +1230,476 @@ groups via</p>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>N</td>
+      <td>*1a/*1f</td>
       <td>NaN</td>
     </tr>
     <tr>
-      <th>27420</th>
-      <td>11423</td>
-      <td>TubicGrozdanis2008</td>
-      <td>18213452</td>
-      <td>fasting (duration)</td>
-      <td>7</td>
-      <td>all</td>
+      <th>80936</th>
+      <td>3683</td>
+      <td>Tian2019</td>
+      <td>30387917</td>
+      <td>CYP1A2 genotype</td>
+      <td>12</td>
+      <td>men</td>
       <td>NaN</td>
       <td>nan</td>
-      <td>7</td>
-      <td>-1</td>
-      <td>NaN</td>
-      <td>day</td>
+      <td>2</td>
+      <td>3999</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>*1f/*1f</td>
       <td>NaN</td>
     </tr>
   </tbody>
 </table>
-<p>1960 rows × 19 columns</p>
-</div><pre class="literal-block">                             Unnamed: 0          study_name  study_sid  group_pk characteristica_pk
-4        5                           19       Abernethy1982  PKDB00198
-         6                           20       Abernethy1982  PKDB00198
-         11                          21       Abernethy1982  PKDB00198
-         12                          22       Abernethy1982  PKDB00198
-         27                          23       Abernethy1982  PKDB00198
-...                                 ...                 ...        ...
-1433     27416                    11419  TubicGrozdanis2008   18213452
-         27417                    11420  TubicGrozdanis2008   18213452
-         27418                    11421  TubicGrozdanis2008   18213452
-         27419                    11422  TubicGrozdanis2008   18213452
-         27420                    11423  TubicGrozdanis2008   18213452
+<p>1396 rows × 19 columns</p>
+</div><pre class="literal-block">                             Unnamed: 0     study_name  study_sid  group_pk characteristica_pk
+3463     67383                       10  Abernethy1985  PKDB00001
+         67384                       11  Abernethy1985  PKDB00001
+         67385                       12  Abernethy1985  PKDB00001
+         67386                       13  Abernethy1985  PKDB00001
+         67387                       14  Abernethy1985  PKDB00001
+...                                 ...            ...        ...
+4001     80932                     3677       Tian2019   30387917
+         80933                     3678       Tian2019   30387917
+         80934                     3681       Tian2019   30387917
+         80935                     3682       Tian2019   30387917
+         80936                     3683       Tian2019   30387917
 
-                                measurement_type  group_count   group_name  group_pk characteristica_pk
-4        5                               species           14  obese women
-         6                               healthy           14  obese women
-         11                        obesity index           14  obese women
-         12                  weight (categorial)           14  obese women
-         27                                  sex           14  obese women
-...                                          ...          ...          ...
-1433     27416                               age            7          all
-         27417                            weight            7          all
-         27418                        medication            7          all
-         27419                           smoking            7          all
-         27420                fasting (duration)            7          all
+                            measurement_type  group_count group_name   max  group_pk characteristica_pk
+3463     67383                       smoking            9        OCS   NaN
+         67384                           age            9        OCS  30.0
+         67385                       species            9        OCS   NaN
+         67386                       healthy            9        OCS   NaN
+         67387                           sex            9        OCS   NaN
+...                                      ...          ...        ...   ...
+4001     80932               CYP1A2 genotype           12        men   NaN
+         80933               CYP1A2 genotype           12        men   NaN
+         80934               CYP1A2 genotype           12        men   NaN
+         80935               CYP1A2 genotype           12        men   NaN
+         80936               CYP1A2 genotype           12        men   NaN
 
-                              max substance  count  group_parent_pk  sd  group_pk characteristica_pk
-4        5                    NaN       nan     42                2 NaN
-         6                    NaN       nan     42                2 NaN
-         11                   NaN       nan     21                2 NaN
-         12                   NaN       nan     21                2 NaN
-         27                   NaN       nan     14                2 NaN
-...                           ...       ...    ...              ...  ..
-1433     27416               42.0       nan      7               -1 NaN
-         27417               84.0       nan      7               -1 NaN
-         27418                NaN       nan      7               -1 NaN
-         27419                NaN       nan      7               -1 NaN
-         27420                NaN       nan      7               -1 NaN
+                            substance  count  group_parent_pk  sd  unit   se  group_pk characteristica_pk
+3463     67383                    nan     18             3462 NaN   NaN  NaN
+         67384                    nan     18             3462 NaN  year  1.0
+         67385                    nan     18             3462 NaN   NaN  NaN
+         67386                    nan     18             3462 NaN   NaN  NaN
+         67387                    nan     18             3462 NaN   NaN  NaN
+...                               ...    ...              ...  ..   ...  ...
+4001     80932                    nan      1             3999 NaN   NaN  NaN
+         80933                    nan      1             3999 NaN   NaN  NaN
+         80934                    nan      2             3999 NaN   NaN  NaN
+         80935                    nan      6             3999 NaN   NaN  NaN
+         80936                    nan      2             3999 NaN   NaN  NaN
 
-                                 unit  se    min  cv  median  mean  group_pk characteristica_pk
-4        5                        NaN NaN    NaN NaN     NaN   NaN
-         6                        NaN NaN    NaN NaN     NaN   NaN
-         11                   percent NaN  133.0 NaN     NaN   NaN
-         12                       NaN NaN    NaN NaN     NaN   NaN
-         27                       NaN NaN    NaN NaN     NaN   NaN
-...                               ...  ..    ...  ..     ...   ...
-1433     27416                   year NaN   26.0 NaN     NaN  30.0
-         27417               kilogram NaN   70.5 NaN     NaN  77.3
-         27418                    NaN NaN    NaN NaN     NaN   NaN
-         27419                    NaN NaN    NaN NaN     NaN   NaN
-         27420                    day NaN    NaN NaN     NaN   NaN
-
-                                   choice  value
+                              min  cv  median  mean         choice  value
 group_pk characteristica_pk
-4        5                   homo sapiens    NaN
-         6                              Y    NaN
-         11                           NaN    NaN
-         12                         obese    NaN
-         27                             F    NaN
-...                                   ...    ...
-1433     27416                        NaN    NaN
-         27417                        NaN    NaN
-         27418                          N    NaN
-         27419                          N    NaN
-         27420                        NaN    NaN
+3463     67383                NaN NaN     NaN   NaN              N    NaN
+         67384               23.0 NaN     NaN  26.0            NaN    NaN
+         67385                NaN NaN     NaN   NaN   homo sapiens    NaN
+         67386                NaN NaN     NaN   NaN              Y    NaN
+         67387                NaN NaN     NaN   NaN              F    NaN
+...                           ...  ..     ...   ...            ...    ...
+4001     80932                NaN NaN     NaN   NaN        <a href="#id1"><span class="problematic" id="id2">*</span></a>1a/<a href="#id3"><span class="problematic" id="id4">*</span></a>1a    NaN
+         80933                NaN NaN     NaN   NaN        <a href="#id5"><span class="problematic" id="id6">*</span></a>1c/<a href="#id7"><span class="problematic" id="id8">*</span></a>1f    NaN
+         80934                NaN NaN     NaN   NaN  <a href="#id9"><span class="problematic" id="id10">*</span></a>1c*1f/<a href="#id11"><span class="problematic" id="id12">*</span></a>1c*1f    NaN
+         80935                NaN NaN     NaN   NaN        <a href="#id13"><span class="problematic" id="id14">*</span></a>1a/<a href="#id15"><span class="problematic" id="id16">*</span></a>1f    NaN
+         80936                NaN NaN     NaN   NaN        <a href="#id17"><span class="problematic" id="id18">*</span></a>1f/<a href="#id19"><span class="problematic" id="id20">*</span></a>1f    NaN
 
-[1960 rows x 19 columns]</pre>
+[1396 rows x 19 columns]</pre>
+<p>Often attributes are mixed for groups so we have to exclude the
+opposites. In the example, the group <code class="docutils literal notranslate"><span class="pre">20</span></code> consists of 5 smokers and 1
+nonsmoker. So for a subset of the group smoking is No. We can exclude
+groups via</p>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">healthy_nonsmoker</span> <span class="o">=</span> <span class="n">test_data</span><span class="o">.</span><span class="n">filter_subject</span><span class="p">([</span><span class="n">is_healthy</span><span class="p">,</span> <span class="n">nonsmoker</span><span class="p">])</span><span class="o">.</span><span class="n">exclude_subject</span><span class="p">([</span><span class="n">smoker</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">healthy_nonsmoker</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">healthy_nonsmoker</span><span class="o">.</span><span class="n">groups_mi</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">139890842843216</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>            <span class="mi">74</span>  <span class="p">(</span>   <span class="mi">74</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">124</span>  <span class="p">(</span> <span class="mi">1144</span><span class="p">)</span>
+<span class="n">individuals</span>       <span class="mi">927</span>  <span class="p">(</span> <span class="mi">8619</span><span class="p">)</span>
+<span class="n">interventions</span>     <span class="mi">221</span>  <span class="p">(</span>  <span class="mi">221</span><span class="p">)</span>
+<span class="n">outputs</span>          <span class="mi">9539</span>  <span class="p">(</span><span class="mi">13730</span><span class="p">)</span>
+<span class="n">timecourses</span>       <span class="mi">397</span>  <span class="p">(</span>  <span class="mi">397</span><span class="p">)</span>
+<span class="n">scatters</span>           <span class="mi">80</span>  <span class="p">(</span>   <span class="mi">80</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>Unnamed: 0</th>
+      <th>study_name</th>
+      <th>study_sid</th>
+      <th>measurement_type</th>
+      <th>group_count</th>
+      <th>group_name</th>
+      <th>max</th>
+      <th>substance</th>
+      <th>count</th>
+      <th>group_parent_pk</th>
+      <th>sd</th>
+      <th>unit</th>
+      <th>se</th>
+      <th>min</th>
+      <th>cv</th>
+      <th>median</th>
+      <th>mean</th>
+      <th>choice</th>
+      <th>value</th>
+    </tr>
+    <tr>
+      <th>group_pk</th>
+      <th>characteristica_pk</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="5" valign="top">3463</th>
+      <th>67383</th>
+      <td>10</td>
+      <td>Abernethy1985</td>
+      <td>PKDB00001</td>
+      <td>smoking</td>
+      <td>9</td>
+      <td>OCS</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>18</td>
+      <td>3462</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>N</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>67384</th>
+      <td>11</td>
+      <td>Abernethy1985</td>
+      <td>PKDB00001</td>
+      <td>age</td>
+      <td>9</td>
+      <td>OCS</td>
+      <td>30.0</td>
+      <td>nan</td>
+      <td>18</td>
+      <td>3462</td>
+      <td>NaN</td>
+      <td>year</td>
+      <td>1.0</td>
+      <td>23.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>26.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>67385</th>
+      <td>12</td>
+      <td>Abernethy1985</td>
+      <td>PKDB00001</td>
+      <td>species</td>
+      <td>9</td>
+      <td>OCS</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>18</td>
+      <td>3462</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>homo sapiens</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>67386</th>
+      <td>13</td>
+      <td>Abernethy1985</td>
+      <td>PKDB00001</td>
+      <td>healthy</td>
+      <td>9</td>
+      <td>OCS</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>18</td>
+      <td>3462</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Y</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>67387</th>
+      <td>14</td>
+      <td>Abernethy1985</td>
+      <td>PKDB00001</td>
+      <td>sex</td>
+      <td>9</td>
+      <td>OCS</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>18</td>
+      <td>3462</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>F</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th rowspan="5" valign="top">4001</th>
+      <th>80932</th>
+      <td>3677</td>
+      <td>Tian2019</td>
+      <td>30387917</td>
+      <td>CYP1A2 genotype</td>
+      <td>12</td>
+      <td>men</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>1</td>
+      <td>3999</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>*1a/*1a</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>80933</th>
+      <td>3678</td>
+      <td>Tian2019</td>
+      <td>30387917</td>
+      <td>CYP1A2 genotype</td>
+      <td>12</td>
+      <td>men</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>1</td>
+      <td>3999</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>*1c/*1f</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>80934</th>
+      <td>3681</td>
+      <td>Tian2019</td>
+      <td>30387917</td>
+      <td>CYP1A2 genotype</td>
+      <td>12</td>
+      <td>men</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>2</td>
+      <td>3999</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>*1c*1f/*1c*1f</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>80935</th>
+      <td>3682</td>
+      <td>Tian2019</td>
+      <td>30387917</td>
+      <td>CYP1A2 genotype</td>
+      <td>12</td>
+      <td>men</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>6</td>
+      <td>3999</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>*1a/*1f</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>80936</th>
+      <td>3683</td>
+      <td>Tian2019</td>
+      <td>30387917</td>
+      <td>CYP1A2 genotype</td>
+      <td>12</td>
+      <td>men</td>
+      <td>NaN</td>
+      <td>nan</td>
+      <td>2</td>
+      <td>3999</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>*1f/*1f</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+<p>1144 rows × 19 columns</p>
+</div><pre class="literal-block">                             Unnamed: 0     study_name  study_sid  group_pk characteristica_pk
+3463     67383                       10  Abernethy1985  PKDB00001
+         67384                       11  Abernethy1985  PKDB00001
+         67385                       12  Abernethy1985  PKDB00001
+         67386                       13  Abernethy1985  PKDB00001
+         67387                       14  Abernethy1985  PKDB00001
+...                                 ...            ...        ...
+4001     80932                     3677       Tian2019   30387917
+         80933                     3678       Tian2019   30387917
+         80934                     3681       Tian2019   30387917
+         80935                     3682       Tian2019   30387917
+         80936                     3683       Tian2019   30387917
+
+                            measurement_type  group_count group_name   max  group_pk characteristica_pk
+3463     67383                       smoking            9        OCS   NaN
+         67384                           age            9        OCS  30.0
+         67385                       species            9        OCS   NaN
+         67386                       healthy            9        OCS   NaN
+         67387                           sex            9        OCS   NaN
+...                                      ...          ...        ...   ...
+4001     80932               CYP1A2 genotype           12        men   NaN
+         80933               CYP1A2 genotype           12        men   NaN
+         80934               CYP1A2 genotype           12        men   NaN
+         80935               CYP1A2 genotype           12        men   NaN
+         80936               CYP1A2 genotype           12        men   NaN
+
+                            substance  count  group_parent_pk  sd  unit   se  group_pk characteristica_pk
+3463     67383                    nan     18             3462 NaN   NaN  NaN
+         67384                    nan     18             3462 NaN  year  1.0
+         67385                    nan     18             3462 NaN   NaN  NaN
+         67386                    nan     18             3462 NaN   NaN  NaN
+         67387                    nan     18             3462 NaN   NaN  NaN
+...                               ...    ...              ...  ..   ...  ...
+4001     80932                    nan      1             3999 NaN   NaN  NaN
+         80933                    nan      1             3999 NaN   NaN  NaN
+         80934                    nan      2             3999 NaN   NaN  NaN
+         80935                    nan      6             3999 NaN   NaN  NaN
+         80936                    nan      2             3999 NaN   NaN  NaN
+
+                              min  cv  median  mean         choice  value
+group_pk characteristica_pk
+3463     67383                NaN NaN     NaN   NaN              N    NaN
+         67384               23.0 NaN     NaN  26.0            NaN    NaN
+         67385                NaN NaN     NaN   NaN   homo sapiens    NaN
+         67386                NaN NaN     NaN   NaN              Y    NaN
+         67387                NaN NaN     NaN   NaN              F    NaN
+...                           ...  ..     ...   ...            ...    ...
+4001     80932                NaN NaN     NaN   NaN        <a href="#id21"><span class="problematic" id="id22">*</span></a>1a/<a href="#id23"><span class="problematic" id="id24">*</span></a>1a    NaN
+         80933                NaN NaN     NaN   NaN        <a href="#id25"><span class="problematic" id="id26">*</span></a>1c/<a href="#id27"><span class="problematic" id="id28">*</span></a>1f    NaN
+         80934                NaN NaN     NaN   NaN  <a href="#id29"><span class="problematic" id="id30">*</span></a>1c*1f/<a href="#id31"><span class="problematic" id="id32">*</span></a>1c*1f    NaN
+         80935                NaN NaN     NaN   NaN        <a href="#id33"><span class="problematic" id="id34">*</span></a>1a/<a href="#id35"><span class="problematic" id="id36">*</span></a>1f    NaN
+         80936                NaN NaN     NaN   NaN        <a href="#id37"><span class="problematic" id="id38">*</span></a>1f/<a href="#id39"><span class="problematic" id="id40">*</span></a>1f    NaN
+
+[1144 rows x 19 columns]</pre>
 <p>In addition often combinations of attributes have to be used to find the
 correct subjects. For instance a combination of <code class="docutils literal notranslate"><span class="pre">healthy</span></code> and reported
 <code class="docutils literal notranslate"><span class="pre">disease</span></code></p>
@@ -2120,34 +1721,37 @@ correct subjects. For instance a combination of <code class="docutils literal no
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
-<span class="n">PKData</span> <span class="p">(</span><span class="mi">140073376598800</span><span class="p">)</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">139890842843920</span><span class="p">)</span>
 <span class="o">------------------------------</span>
-<span class="n">studies</span>           <span class="mi">409</span>  <span class="p">(</span>  <span class="mi">409</span><span class="p">)</span>
-<span class="n">groups</span>            <span class="mi">760</span>  <span class="p">(</span> <span class="mi">6858</span><span class="p">)</span>
-<span class="n">individuals</span>      <span class="mi">4939</span>  <span class="p">(</span><span class="mi">43337</span><span class="p">)</span>
-<span class="n">interventions</span>    <span class="mi">1088</span>  <span class="p">(</span> <span class="mi">1722</span><span class="p">)</span>
-<span class="n">outputs</span>         <span class="mi">61672</span>  <span class="p">(</span><span class="mi">61672</span><span class="p">)</span>
-<span class="n">timecourses</span>       <span class="mi">384</span>  <span class="p">(</span>  <span class="mi">384</span><span class="p">)</span>
-<span class="o">------------------------------</span>
-<span class="o">------------------------------</span>
-<span class="n">PKData</span> <span class="p">(</span><span class="mi">140073396104400</span><span class="p">)</span>
-<span class="o">------------------------------</span>
-<span class="n">studies</span>           <span class="mi">424</span>  <span class="p">(</span>  <span class="mi">424</span><span class="p">)</span>
-<span class="n">groups</span>            <span class="mi">797</span>  <span class="p">(</span> <span class="mi">7111</span><span class="p">)</span>
-<span class="n">individuals</span>      <span class="mi">5006</span>  <span class="p">(</span><span class="mi">43686</span><span class="p">)</span>
-<span class="n">interventions</span>    <span class="mi">1120</span>  <span class="p">(</span> <span class="mi">1762</span><span class="p">)</span>
-<span class="n">outputs</span>         <span class="mi">63558</span>  <span class="p">(</span><span class="mi">63558</span><span class="p">)</span>
-<span class="n">timecourses</span>       <span class="mi">402</span>  <span class="p">(</span>  <span class="mi">402</span><span class="p">)</span>
+<span class="n">studies</span>           <span class="mi">111</span>  <span class="p">(</span>  <span class="mi">111</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">228</span>  <span class="p">(</span> <span class="mi">2093</span><span class="p">)</span>
+<span class="n">individuals</span>      <span class="mi">2165</span>  <span class="p">(</span><span class="mi">17531</span><span class="p">)</span>
+<span class="n">interventions</span>     <span class="mi">345</span>  <span class="p">(</span>  <span class="mi">345</span><span class="p">)</span>
+<span class="n">outputs</span>         <span class="mi">15746</span>  <span class="p">(</span><span class="mi">25008</span><span class="p">)</span>
+<span class="n">timecourses</span>       <span class="mi">607</span>  <span class="p">(</span>  <span class="mi">607</span><span class="p">)</span>
+<span class="n">scatters</span>           <span class="mi">80</span>  <span class="p">(</span>   <span class="mi">80</span><span class="p">)</span>
 <span class="o">------------------------------</span>
 <span class="o">------------------------------</span>
-<span class="n">PKData</span> <span class="p">(</span><span class="mi">140073396101584</span><span class="p">)</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">139890839534800</span><span class="p">)</span>
 <span class="o">------------------------------</span>
-<span class="n">studies</span>           <span class="mi">407</span>  <span class="p">(</span>  <span class="mi">407</span><span class="p">)</span>
-<span class="n">groups</span>            <span class="mi">744</span>  <span class="p">(</span> <span class="mi">6670</span><span class="p">)</span>
-<span class="n">individuals</span>      <span class="mi">4869</span>  <span class="p">(</span><span class="mi">42651</span><span class="p">)</span>
-<span class="n">interventions</span>    <span class="mi">1081</span>  <span class="p">(</span> <span class="mi">1711</span><span class="p">)</span>
-<span class="n">outputs</span>         <span class="mi">60992</span>  <span class="p">(</span><span class="mi">60992</span><span class="p">)</span>
-<span class="n">timecourses</span>       <span class="mi">384</span>  <span class="p">(</span>  <span class="mi">384</span><span class="p">)</span>
+<span class="n">studies</span>           <span class="mi">119</span>  <span class="p">(</span>  <span class="mi">119</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">234</span>  <span class="p">(</span> <span class="mi">2107</span><span class="p">)</span>
+<span class="n">individuals</span>      <span class="mi">2259</span>  <span class="p">(</span><span class="mi">17906</span><span class="p">)</span>
+<span class="n">interventions</span>     <span class="mi">349</span>  <span class="p">(</span>  <span class="mi">349</span><span class="p">)</span>
+<span class="n">outputs</span>         <span class="mi">16367</span>  <span class="p">(</span><span class="mi">25485</span><span class="p">)</span>
+<span class="n">timecourses</span>       <span class="mi">620</span>  <span class="p">(</span>  <span class="mi">620</span><span class="p">)</span>
+<span class="n">scatters</span>           <span class="mi">80</span>  <span class="p">(</span>   <span class="mi">80</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="o">------------------------------</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">139890849160720</span><span class="p">)</span>
+<span class="o">------------------------------</span>
+<span class="n">studies</span>           <span class="mi">110</span>  <span class="p">(</span>  <span class="mi">110</span><span class="p">)</span>
+<span class="n">groups</span>            <span class="mi">222</span>  <span class="p">(</span> <span class="mi">2028</span><span class="p">)</span>
+<span class="n">individuals</span>      <span class="mi">2058</span>  <span class="p">(</span><span class="mi">16812</span><span class="p">)</span>
+<span class="n">interventions</span>     <span class="mi">337</span>  <span class="p">(</span>  <span class="mi">337</span><span class="p">)</span>
+<span class="n">outputs</span>         <span class="mi">15472</span>  <span class="p">(</span><span class="mi">24590</span><span class="p">)</span>
+<span class="n">timecourses</span>       <span class="mi">603</span>  <span class="p">(</span>  <span class="mi">603</span><span class="p">)</span>
+<span class="n">scatters</span>           <span class="mi">80</span>  <span class="p">(</span>   <span class="mi">80</span><span class="p">)</span>
 <span class="o">------------------------------</span>
 </pre></div>
 </div>
@@ -2175,14 +1779,15 @@ correct subjects. For instance a combination of <code class="docutils literal no
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
-<span class="n">PKData</span> <span class="p">(</span><span class="mi">140073376303632</span><span class="p">)</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">139890848739472</span><span class="p">)</span>
 <span class="o">------------------------------</span>
-<span class="n">studies</span>            <span class="mi">81</span>  <span class="p">(</span>   <span class="mi">81</span><span class="p">)</span>
-<span class="n">groups</span>            <span class="mi">136</span>  <span class="p">(</span> <span class="mi">1336</span><span class="p">)</span>
-<span class="n">individuals</span>      <span class="mi">1022</span>  <span class="p">(</span><span class="mi">10148</span><span class="p">)</span>
-<span class="n">interventions</span>     <span class="mi">153</span>  <span class="p">(</span>  <span class="mi">260</span><span class="p">)</span>
-<span class="n">outputs</span>          <span class="mi">9864</span>  <span class="p">(</span> <span class="mi">9864</span><span class="p">)</span>
-<span class="n">timecourses</span>        <span class="mi">43</span>  <span class="p">(</span>   <span class="mi">43</span><span class="p">)</span>
+<span class="n">studies</span>             <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">groups</span>              <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">individuals</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">outputs</span>             <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">timecourses</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">scatters</span>           <span class="mi">80</span>  <span class="p">(</span>   <span class="mi">80</span><span class="p">)</span>
 <span class="o">------------------------------</span>
 </pre></div>
 </div>
@@ -2203,14 +1808,15 @@ correct subjects. For instance a combination of <code class="docutils literal no
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
-<span class="n">PKData</span> <span class="p">(</span><span class="mi">140073378072784</span><span class="p">)</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">139890841988752</span><span class="p">)</span>
 <span class="o">------------------------------</span>
-<span class="n">studies</span>           <span class="mi">311</span>  <span class="p">(</span>  <span class="mi">311</span><span class="p">)</span>
-<span class="n">groups</span>            <span class="mi">470</span>  <span class="p">(</span> <span class="mi">4492</span><span class="p">)</span>
-<span class="n">individuals</span>       <span class="mi">717</span>  <span class="p">(</span> <span class="mi">7014</span><span class="p">)</span>
-<span class="n">interventions</span>     <span class="mi">694</span>  <span class="p">(</span>  <span class="mi">998</span><span class="p">)</span>
-<span class="n">outputs</span>          <span class="mi">3324</span>  <span class="p">(</span> <span class="mi">3324</span><span class="p">)</span>
+<span class="n">studies</span>             <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">groups</span>              <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">individuals</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">outputs</span>             <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
 <span class="n">timecourses</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">scatters</span>           <span class="mi">80</span>  <span class="p">(</span>   <span class="mi">80</span><span class="p">)</span>
 <span class="o">------------------------------</span>
 </pre></div>
 </div>
@@ -2243,14 +1849,15 @@ for cyp2d6.</p>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">------------------------------</span>
-<span class="n">PKData</span> <span class="p">(</span><span class="mi">140073346167888</span><span class="p">)</span>
+<span class="n">PKData</span> <span class="p">(</span><span class="mi">139890848654736</span><span class="p">)</span>
 <span class="o">------------------------------</span>
-<span class="n">studies</span>             <span class="mi">3</span>  <span class="p">(</span>    <span class="mi">3</span><span class="p">)</span>
-<span class="n">groups</span>              <span class="mi">5</span>  <span class="p">(</span>   <span class="mi">41</span><span class="p">)</span>
-<span class="n">individuals</span>        <span class="mi">14</span>  <span class="p">(</span>   <span class="mi">98</span><span class="p">)</span>
-<span class="n">interventions</span>       <span class="mi">3</span>  <span class="p">(</span>    <span class="mi">3</span><span class="p">)</span>
-<span class="n">outputs</span>            <span class="mi">19</span>  <span class="p">(</span>   <span class="mi">19</span><span class="p">)</span>
+<span class="n">studies</span>             <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">groups</span>              <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">individuals</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">interventions</span>       <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">outputs</span>             <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
 <span class="n">timecourses</span>         <span class="mi">0</span>  <span class="p">(</span>    <span class="mi">0</span><span class="p">)</span>
+<span class="n">scatters</span>           <span class="mi">80</span>  <span class="p">(</span>   <span class="mi">80</span><span class="p">)</span>
 <span class="o">------------------------------</span>
 </pre></div>
 </div>

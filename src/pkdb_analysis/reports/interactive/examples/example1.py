@@ -1,14 +1,31 @@
 """Example to create interactive pharmacokinetics plot."""
+import os
 
+# os.environ["API_BASE"] = "https://alpha.pk-db.com"
+os.environ["API_BASE"] = "http://localhost:8000"
 from pathlib import Path
 
 import pandas as pd
-
+from pkdb_analysis.reports.interactive.interactive import (
+    interactive_plot_factory,
+    LegendArgs as LA,
+)
 from pkdb_analysis import PKData
 from pkdb_analysis.filter import f_effective_n_oc, f_n_oc, f_n_smoking, f_oc, f_smoking
-from pkdb_analysis.reports.interactive.interactive import LegendArgs as LA
-from pkdb_analysis.reports.interactive.interactive import interactive_plot_factory
-from pkdb_analysis.test import TEST_HDF5, TESTDATA_CONCISE_FALSE_ZIP
+from pkdb_analysis.plotting.factory import PlotContentDefinition
+from pkdb_analysis.test import TESTDATA_CONCISE_FALSE_ZIP
+
+from pkdb_analysis import PKDB
+from pkdb_analysis.core import Sid as BaseSid, Core
+from dataclasses import field, dataclass
+
+
+@dataclass(frozen=True)
+class Sid(BaseSid):
+    """This queries the latest info nodes."""
+
+    # FIXME: set the API once & better solution for this
+    core: Core = field(default=Core(sids=PKDB.query_info_nodes_sids()))
 
 
 # substances used in the interventions
@@ -19,15 +36,15 @@ OUTPUT_SUBSTANCES = {"caffeine"}
 
 # create plotting categories
 PLOTTING_CATEGORIES = [
-    PlotContentDefinition("auc_end", []),
-    PlotContentDefinition("auc_inf", []),
-    PlotContentDefinition("vd", []),
-    PlotContentDefinition("thalf", [], infer_by_output=False),
-    PlotContentDefinition("clearance", ["milliliter / meter ** 2 / minute"]),
-    PlotContentDefinition("cmax", [], infer_by_output=False),
-    PlotContentDefinition("kel", []),
-    PlotContentDefinition("tmax", [], infer_by_output=False),
-    PlotContentDefinition("vd", []),
+    PlotContentDefinition(Sid("auc-end"), []),
+    PlotContentDefinition(Sid("auc-inf"), []),
+    PlotContentDefinition(Sid("vd"), []),
+    PlotContentDefinition(Sid("thalf"), [], infer_by_output=False),
+    PlotContentDefinition(Sid("clearance"), ["milliliter / meter ** 2 / minute"]),
+    PlotContentDefinition(Sid("cmax"), [], infer_by_output=False),
+    PlotContentDefinition(Sid("kel"), []),
+    PlotContentDefinition(Sid("tmax"), [], infer_by_output=False),
+    PlotContentDefinition(Sid("vd"), []),
 ]
 
 # Change formating on specific values in specific columns
@@ -47,28 +64,15 @@ MULTI_LEGEND = {"Study": "study_name"}
 
 MULTI_COLOR_LEGEND = {
     "Data type": LA("data_type"),
-    "Outlier": LA(
-        "outlier",
-        [
-            False,
-        ],
-    ),
+    "Outlier": LA("outlier", [False,]),
     "Sex": LA("sex"),
-    "Healthy": LA(
-        "healthy",
-        [True],
-    ),
-    "Lifestyle": LA(
-        "life_style",
-    ),
+    "Healthy": LA("healthy", [True],),
+    "Lifestyle": LA("life_style",),
     "Administration route": LA("intervention_route"),
-    "Number of interventions": LA(
-        "intervention_number",
-        [
-            1,
-        ],
-    ),
+    "Coadministration": LA("intervention_extra"),
+    "Number of interventions": LA("intervention_number", [1,]),
     "Tissue": LA("tissue"),
+    "Assay": LA("method"),
 }
 # Information shown on hover.
 TOOLTIP = [
@@ -97,7 +101,6 @@ def outlier_studies(df):
 
 
 def lifestyle(df):
-    print(df.extra)
 
     if not df.extra[f_smoking].empty and df.extra[f_n_smoking].empty:
         return "smoking"

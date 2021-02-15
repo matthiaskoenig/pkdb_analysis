@@ -154,53 +154,19 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Set</span>
 <span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">parse</span> <span class="k">as</span> <span class="n">urlparse</span>
-
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 
 <span class="kn">from</span> <span class="nn">pkdb_analysis.data</span> <span class="kn">import</span> <span class="n">PKData</span>
 <span class="kn">from</span> <span class="nn">pkdb_analysis.envs</span> <span class="kn">import</span> <span class="n">API_URL</span><span class="p">,</span> <span class="n">BASE_URL</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">,</span> <span class="n">USER</span>
+<span class="kn">from</span> <span class="nn">pkdb_analysis.utils</span> <span class="kn">import</span> <span class="n">recursive_iter</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">query_pkdb_data</span><span class="p">(</span>
-    <span class="n">h5_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">study_names</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PKData</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Query the complete database.</span>
-
-<span class="sd">    Filtering by study name is supported.</span>
-
-<span class="sd">    :param filter_study_names: Iterable of study_names to filter for.</span>
-<span class="sd">    :param username: filter studies by username</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">h5_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Existing data file is overwritten: </span><span class="si">{</span><span class="n">h5_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">study_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">study_filter</span> <span class="o">=</span> <span class="n">PKFilter</span><span class="p">()</span>
-        <span class="n">study_filter</span><span class="o">.</span><span class="n">add_to_all</span><span class="p">(</span><span class="s2">&quot;study_name__in&quot;</span><span class="p">,</span> <span class="s2">&quot;__&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">study_names</span><span class="p">))</span>
-        <span class="n">pkdata</span> <span class="o">=</span> <span class="n">PKDB</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">pkfilter</span><span class="o">=</span><span class="n">study_filter</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">pkdata</span> <span class="o">=</span> <span class="n">PKDB</span><span class="o">.</span><span class="n">query</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="n">username</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># Filter studies by username</span>
-        <span class="n">pkdata</span><span class="o">.</span><span class="n">studies</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pkdata</span><span class="o">.</span><span class="n">studies</span><span class="o">.</span><span class="n">creator</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span><span class="o">.</span><span class="n">username</span>
-        <span class="n">pkdata</span> <span class="o">=</span> <span class="n">pkdata</span><span class="o">.</span><span class="n">filter_study</span><span class="p">(</span>
-            <span class="n">f_idx</span><span class="o">=</span><span class="k">lambda</span> <span class="n">pkdata</span><span class="p">:</span> <span class="n">pkdata</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">username</span>
-        <span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">h5_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Storing pkdb data: </span><span class="si">{</span><span class="n">h5_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">pkdata</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">(</span><span class="n">h5_path</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">pkdata</span>
 
 
 <div class="viewcode-block" id="PKFilter"><a class="viewcode-back" href="../../api.html#pkdb_analysis.query.PKFilter">[docs]</a><span class="k">class</span> <span class="nc">PKFilter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -213,14 +179,14 @@
         <span class="s2">&quot;interventions&quot;</span><span class="p">,</span>
         <span class="s2">&quot;outputs&quot;</span><span class="p">,</span>
         <span class="s2">&quot;timecourses&quot;</span><span class="p">,</span>
+
+        <span class="c1"># special keys</span>
+        <span class="s2">&quot;concise&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;download&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Create new Filter instance.</span>
-
-<span class="sd">        :param normed: [True, False, None] return [normed data, unnormalized data,</span>
-<span class="sd">                        normed and unnormalized data]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">concise</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create new Filter instance.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">studies</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">groups</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">individuals</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -228,131 +194,104 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timecourses</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_normed</span><span class="p">(</span><span class="n">normed</span><span class="p">)</span>
+        <span class="c1"># special arguments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">concise</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">concise</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">download</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">download</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_set_normed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Set the normed attribute</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">url_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Parse filters to url &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;?&quot;</span> <span class="o">+</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_flat_params</span><span class="p">())</span>
 
-<span class="sd">        :param normed:</span>
-<span class="sd">        :return: None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">normed</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span>
+    <span class="k">def</span> <span class="nf">_flat_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Helper function to parse filters to url&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;__&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span> <span class="n">value</span> <span class="k">for</span> <span class="n">keys</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">recursive_iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="p">}</span>
 
-        <span class="k">if</span> <span class="n">normed</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="n">normed</span><span class="p">:</span>
-                <span class="n">normed_value</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">normed_value</span> <span class="o">=</span> <span class="s2">&quot;false&quot;</span>
-            <span class="k">for</span> <span class="n">filter_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;interventions&quot;</span><span class="p">,</span> <span class="s2">&quot;outputs&quot;</span><span class="p">]:</span>
-                <span class="n">d</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_key</span><span class="p">)</span>
-                <span class="n">d</span><span class="p">[</span><span class="s2">&quot;normed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">normed_value</span>
-
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
-
-    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="PKFilter.to_dict"><a class="viewcode-back" href="../../api.html#pkdb_analysis.query.PKFilter.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Reformat filter instance to a dictonary.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="n">filter_key</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_key</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">filter_key</span> <span class="ow">in</span> <span class="n">PKFilter</span><span class="o">.</span><span class="n">KEYS</span>
-        <span class="p">}</span>
-
-<div class="viewcode-block" id="PKFilter.add_to_all"><a class="viewcode-back" href="../../api.html#pkdb_analysis.query.PKFilter.add_to_all">[docs]</a>    <span class="k">def</span> <span class="nf">add_to_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Adds entry (key, value) to all KEY dictionaries</span>
-
-<span class="sd">        :return: None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">filter_key</span> <span class="ow">in</span> <span class="n">PKFilter</span><span class="o">.</span><span class="n">KEYS</span><span class="p">:</span>
-            <span class="c1"># FIXME: THIS IS A REPLACE, NOT A ADD !!!!</span>
-            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_key</span><span class="p">)[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div></div>
+        <span class="p">}</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">PKFilterFactory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Factory for simple creation of PKFilters. &quot;&quot;&quot;</span>
+<span class="k">def</span> <span class="nf">query_pkdb_data</span><span class="p">(</span>
+    <span class="n">h5_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">zip_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">pkfilter</span><span class="p">:</span> <span class="n">PKFilter</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">creator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">curators</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">study_names</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PKData</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Query the PK-DB database.</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">by_study_sid</span><span class="p">(</span><span class="n">study_sid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PKFilter</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Creates filter based on study_sid.</span>
-<span class="sd">        Only data for the given study_sid is returned.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">    If no usernames or study_names are provided the complete database will be</span>
+<span class="sd">    queried.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># update filters</span>
+    <span class="k">if</span> <span class="n">pkfilter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">pkfilter</span> <span class="o">=</span> <span class="n">PKFilter</span><span class="p">()</span>
-        <span class="n">pkfilter</span><span class="o">.</span><span class="n">add_to_all</span><span class="p">(</span><span class="s2">&quot;study_sid&quot;</span><span class="p">,</span> <span class="n">study_sid</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">pkfilter</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">by_study_name</span><span class="p">(</span><span class="n">study_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PKFilter</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Creates filter based on study_name.</span>
-<span class="sd">        Only data for the given study_name is returned.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">pkfilter</span> <span class="o">=</span> <span class="n">PKFilter</span><span class="p">()</span>
-        <span class="n">pkfilter</span><span class="o">.</span><span class="n">add_to_all</span><span class="p">(</span><span class="s2">&quot;study_name&quot;</span><span class="p">,</span> <span class="n">study_name</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">pkfilter</span>
+    <span class="k">if</span> <span class="n">creator</span><span class="p">:</span>
+        <span class="n">pkfilter</span><span class="o">.</span><span class="n">studies</span><span class="p">[</span><span class="s2">&quot;creator&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">creator</span>
+    <span class="k">if</span> <span class="n">curators</span><span class="p">:</span>
+        <span class="n">pkfilter</span><span class="o">.</span><span class="n">studies</span><span class="p">[</span><span class="s2">&quot;curators__in&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;__&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">curators</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">study_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pkfilter</span><span class="o">.</span><span class="n">studies</span><span class="p">[</span><span class="s2">&quot;name__in&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;__&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">study_names</span><span class="p">)</span>
+
+    <span class="c1"># query data</span>
+    <span class="n">pkdata</span> <span class="o">=</span> <span class="n">PKDB</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">pkfilter</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">h5_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Storing pkdata to HDF5: </span><span class="si">{</span><span class="n">h5_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">pkdata</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">(</span><span class="n">h5_path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">zip_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Storing pkdata to zip archive: </span><span class="si">{</span><span class="n">zip_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">pkdata</span><span class="o">.</span><span class="n">to_archive</span><span class="p">(</span><span class="n">zip_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pkdata</span>
 
 
 <div class="viewcode-block" id="PKDB"><a class="viewcode-back" href="../../api.html#pkdb_analysis.query.PKDB">[docs]</a><span class="k">class</span> <span class="nc">PKDB</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Querying PKData from PK-DB. &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Interface to PK-DB.</span>
+
+<span class="sd">    Helpers for querying PKData from PK-DB.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PKDB.query"><a class="viewcode-back" href="../../api.html#pkdb_analysis.query.PKDB.query">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pkfilter</span><span class="p">:</span> <span class="n">PKFilter</span> <span class="o">=</span> <span class="n">PKFilter</span><span class="p">(),</span> <span class="n">page_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PKData&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create a PKData representation and gets the data for the provided filters.</span>
+    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pkfilter</span><span class="p">:</span> <span class="n">PKFilter</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PKData</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Creates a PKData representation and gets the data for the provided filters.</span>
+
 <span class="sd">        If no filters are given the complete data is retrieved.</span>
-
-<span class="sd">        :param pkfilter: Filter object to select subset of data, if no Filter is provided the complete data is returned</span>
-<span class="sd">        :param page_size: number of entries per query</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">pkfilter</span> <span class="o">=</span> <span class="n">pkfilter</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
-        <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="n">page_size</span><span class="p">}</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;*** Querying data ***&quot;</span><span class="p">)</span>
-        <span class="n">pkdata</span> <span class="o">=</span> <span class="n">PKData</span><span class="p">(</span>
-            <span class="n">studies</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_subset</span><span class="p">(</span>
-                <span class="s2">&quot;pkdata/studies&quot;</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">pkfilter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;studies&quot;</span><span class="p">,</span> <span class="p">{})}</span>
-            <span class="p">),</span>
-            <span class="n">interventions</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_subset</span><span class="p">(</span>
-                <span class="s2">&quot;pkdata/interventions&quot;</span><span class="p">,</span>
-                <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">pkfilter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;interventions&quot;</span><span class="p">,</span> <span class="p">{})},</span>
-            <span class="p">),</span>
-            <span class="n">individuals</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_subset</span><span class="p">(</span>
-                <span class="s2">&quot;pkdata/individuals&quot;</span><span class="p">,</span>
-                <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">pkfilter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;individuals&quot;</span><span class="p">,</span> <span class="p">{})},</span>
-            <span class="p">),</span>
-            <span class="n">groups</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_subset</span><span class="p">(</span>
-                <span class="s2">&quot;pkdata/groups&quot;</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">pkfilter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;groups&quot;</span><span class="p">,</span> <span class="p">{})}</span>
-            <span class="p">),</span>
-            <span class="n">outputs</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_subset</span><span class="p">(</span>
-                <span class="s2">&quot;pkdata/outputs&quot;</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">pkfilter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">,</span> <span class="p">{})}</span>
-            <span class="p">),</span>
-            <span class="n">timecourses</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_subset</span><span class="p">(</span>
-                <span class="s2">&quot;pkdata/timecourses&quot;</span><span class="p">,</span>
-                <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">pkfilter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;timecourses&quot;</span><span class="p">,</span> <span class="p">{})},</span>
-            <span class="p">),</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">pkdata</span><span class="o">.</span><span class="n">_intervention_pk_update</span><span class="p">()</span></div>
+        <span class="k">if</span> <span class="n">pkfilter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pkfilter</span> <span class="o">=</span> <span class="n">PKFilter</span><span class="p">()</span>
 
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_get_subset</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;FIXME: document me.</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">API_URL</span> <span class="o">+</span> <span class="s2">&quot;/filter/&quot;</span> <span class="o">+</span> <span class="n">pkfilter</span><span class="o">.</span><span class="n">url_params</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_authentication_headers</span><span class="p">(</span><span class="n">BASE_URL</span><span class="p">,</span> <span class="n">USER</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 
-<span class="sd">        :param name: name of the view</span>
-<span class="sd">        :param parameters: query parameters</span>
-<span class="sd">        :return:</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span>
-            <span class="s2">&quot;pkdata/individuals&quot;</span><span class="p">,</span>  <span class="c1"># individuals</span>
-            <span class="s2">&quot;pkdata/groups&quot;</span><span class="p">,</span>  <span class="c1"># groups</span>
-            <span class="s2">&quot;pkdata/interventions&quot;</span><span class="p">,</span>  <span class="c1"># interventions</span>
-            <span class="s2">&quot;pkdata/outputs&quot;</span><span class="p">,</span>  <span class="c1"># outputs</span>
-            <span class="s2">&quot;pkdata/timecourses&quot;</span><span class="p">,</span>  <span class="c1"># timecourses</span>
-            <span class="s2">&quot;pkdata/studies&quot;</span><span class="p">,</span>  <span class="c1"># studies</span>
-        <span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> not supported&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">r</span><span class="p">:</span>
+            <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+            <span class="n">bytes_buffer</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="n">chunk_size</span><span class="o">=</span><span class="mi">8192</span><span class="p">):</span>
+                <span class="n">bytes_buffer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">PKData</span><span class="o">.</span><span class="n">from_download</span><span class="p">(</span><span class="n">bytes_buffer</span><span class="p">)</span></div>
 
-        <span class="n">url</span> <span class="o">=</span> <span class="n">API_URL</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">/&quot;</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_data</span><span class="p">(</span>
-            <span class="n">url</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_authentication_headers</span><span class="p">(</span><span class="n">BASE_URL</span><span class="p">,</span> <span class="n">USER</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">),</span> <span class="o">**</span><span class="n">parameters</span>
-        <span class="p">)</span>
+<div class="viewcode-block" id="PKDB.query_info_nodes_sids"><a class="viewcode-back" href="../../api.html#pkdb_analysis.query.PKDB.query_info_nodes_sids">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">query_info_nodes_sids</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Queries the sids of the info nodes&quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">API_URL</span> <span class="o">+</span> <span class="s2">&quot;/info_nodes/&quot;</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_authentication_headers</span><span class="p">(</span><span class="n">BASE_URL</span><span class="p">,</span> <span class="n">USER</span><span class="p">,</span> <span class="n">PASSWORD</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_data</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">page_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;sid&quot;</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="PKDB.get_authentication_headers"><a class="viewcode-back" href="../../api.html#pkdb_analysis.query.PKDB.get_authentication_headers">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_authentication_headers</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">api_base</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_authentication_headers</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">api_base</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get authentication header with token for given user.</span>
 
 <span class="sd">        Returns admin authentication as default.</span>
@@ -405,12 +344,9 @@
 
         <span class="c1"># convert to data frame</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">is_timecourse</span> <span class="o">=</span> <span class="s2">&quot;timecourse&quot;</span> <span class="ow">in</span> <span class="n">url</span>
-        <span class="k">return</span> <span class="n">PKData</span><span class="o">.</span><span class="n">_clean_types</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">is_timecourse</span><span class="p">)</span></div>
+        <span class="n">is_array</span> <span class="o">=</span> <span class="s2">&quot;timecourse&quot;</span> <span class="ow">in</span> <span class="n">url</span> <span class="ow">or</span> <span class="s2">&quot;scatters&quot;</span> <span class="ow">in</span> <span class="n">url</span>
 
-
-
-
+        <span class="k">return</span> <span class="n">PKData</span><span class="o">.</span><span class="n">_clean_types</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">is_array</span><span class="p">)</span></div>
 
 </pre></div>
 

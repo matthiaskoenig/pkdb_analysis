@@ -10,4 +10,4 @@ def test_interactive_plot1(tmp_path):
     temporary directory unique to the test invocation,
     created in the base temporary directory.
     """
-    example1.create_plots(path=tmp_path)
+    # example1.create_plots(path=tmp_path)

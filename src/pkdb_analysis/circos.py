@@ -36,29 +36,20 @@ def create_config_files(studies_data: pd.DataFrame, path: Path):
     studies_data = pd.concat(frames)
     # names 2d track
     studies_data[["label", "start", "end", "name"]].to_csv(
-          data_dir / "study_names.txt", sep=" ", header=False, index=False
+        data_dir / "study_names.txt", sep=" ", header=False, index=False
     )
     # all subjects number for number track
     studies_data[["label", "start", "end", "subjects"]].to_csv(
-       data_dir / "all_subjects_number.txt",
-        sep=" ",
-        header=False,
-        index=False,
+        data_dir / "all_subjects_number.txt", sep=" ", header=False, index=False,
     )
     studies_data[["label", "start", "end", "timecourses"]].to_csv(
-        data_dir / "timecourse_number.txt",
-        sep=" ",
-        header=False,
-        index=False,
+        data_dir / "timecourse_number.txt", sep=" ", header=False, index=False,
     )
     studies_data[["label", "start", "end", "outputs"]].to_csv(
-          data_dir / "output_number.txt", sep=" ", header=False, index=False
+        data_dir / "output_number.txt", sep=" ", header=False, index=False
     )
     studies_data[["label", "start", "end", "interventions"]].to_csv(
-        data_dir / "intervention_number.txt",
-        sep=" ",
-        header=False,
-        index=False,
+        data_dir / "intervention_number.txt", sep=" ", header=False, index=False,
     )
 
     bubbles_data_dict = bubbles_data(studies_data, 25)
@@ -70,14 +61,14 @@ def create_config_files(studies_data: pd.DataFrame, path: Path):
 
 def bubbles_data(studies_data, big_bubble_size):
     studies_data["outputs_raw"] = (
-            studies_data["outputs"] - studies_data["outputs_calculated"]
+        studies_data["outputs"] - studies_data["outputs_calculated"]
     )
     studies_data["subjects_minus_individuals"] = (
-            studies_data["subjects"] - studies_data["individuals"]
+        studies_data["subjects"] - studies_data["individuals"]
     )
-    #studies_data["group_not_individual"] = studies_data[
+    # studies_data["group_not_individual"] = studies_data[
     #    "group_not_individual"
-    #].mask(studies_data["group_not_individual"] < 0, 0)
+    # ].mask(studies_data["group_not_individual"] < 0, 0)
 
     outputs_df = pd.DataFrame()
     timecourses_df = pd.DataFrame()
@@ -105,23 +96,22 @@ def bubbles_data(studies_data, big_bubble_size):
             interventions_df = interventions_df.append(interventions)
 
         group_subject = study_expand(
-            study, "subjects_minus_individuals", big_bubble_size, "subjects"
+            study, "subjects_minus_individuals", big_bubble_size, "group_subjects"
         )
         if len(group_subject) > 0:
             group_members_df = group_members_df.append(group_subject)
 
-        individuals = study_expand(
-            study, "individuals", big_bubble_size, "individuals"
-        )
+        individuals = study_expand(study, "individuals", big_bubble_size, "individuals")
         if len(individuals) > 0:
             group_members_df = group_members_df.append(individuals)
 
     return {
-            "outputs": outputs_df,
-            "timecourses": timecourses_df,
-            "interventions": interventions_df,
-            "group_members": group_members_df,
-        }
+        "outputs": outputs_df,
+        "timecourses": timecourses_df,
+        "interventions": interventions_df,
+        "group_members": group_members_df,
+    }
+
 
 def study_expand(study, count_label, threshold, type_name="raw"):
     outputs = pd.DataFrame()

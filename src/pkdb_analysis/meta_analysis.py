@@ -50,7 +50,14 @@ def markers(d: pd.Series) -> str:
 class MetaAnalysis(object):
     """ Main class for meta analysis. Main functionality of the class is to merge the tables of an PKData objet into
     one Dataframe (self.results). The result is used for interactive plots, static plots, and table reports."""
-    def __init__(self, pkdata: PKData, intervention_substances: Set[str], url: str = ""):
+
+    def __init__(
+        self,
+        pkdata: PKData,
+        intervention_substances: Set[str] = None,
+        url: str = "",
+        first_intervention: bool = False,
+    ):
         self.pkdata = pkdata
         self.results = None
         self.group_pk = pkdata.groups.pk
@@ -58,24 +65,35 @@ class MetaAnalysis(object):
         self.intervention_pk = pkdata.interventions.pk
         self.intervention_substances = intervention_substances
         self.url = url
+        self.first_intervention = first_intervention
 
     def create_intervention_extra(self):
         """ Returns the 'intervention_extra' column with complete information on intervention."""
         table = self.pkdata.interventions
         _table = pd.DataFrame()
         for table_pk, df in table.df.groupby(table.pk):
-            subset = df[df["substance"].isin(self.intervention_substances)].copy()
+            if self.intervention_substances:
+                subset = df[df["substance"].isin(self.intervention_substances)].copy()
+            else:
+                subset = df.copy()
             subset["number"] = len(df)
             if len(subset) == 1:
                 subset = subset.iloc[0]
                 subset["extra"] = df
                 _table = _table.append(subset)
             else:
-                ds = df.iloc[0]
-                warnings.warn(f"Outputs with interventions <{list(subset['name'])}> in study <{ds['study_name']}> are "
-                              f"removed from the plots. Due to the administration of one of the "
-                              f"substances <{self.intervention_substances}> multiple times. It is not clear how to "
-                              f"calculated the dosage and compare to a single dose application.")
+                if self.first_intervention:
+                    subset = subset.sort_values("time").iloc[0]
+                    subset["extra"] = df
+                    _table = _table.append(subset)
+                else:
+                    ds = df.iloc[0]
+                    warnings.warn(
+                        f"Outputs with interventions <{list(subset['name'])}> in study <{ds['study_name']}> are "
+                        f"removed from the plots. Due to the administration of one of the "
+                        f"substances <{self.intervention_substances}> multiple times. It is not clear how to "
+                        f"calculated the dosage and compare to a single dose application."
+                    )
         return _table
 
     @staticmethod
@@ -88,11 +106,11 @@ class MetaAnalysis(object):
             return tuple([np.nan for _ in NUMERIC_FIELDS])
 
     def create_subject_table(
-            self,
-            subject: str,
-            numeric_fields: Tuple[str] = ("weight", "age"),
-            categorical_fields: Tuple[str] = ("sex",),
-            add_healthy: bool = True,
+        self,
+        subject: str,
+        numeric_fields: Tuple[str] = ("weight", "age"),
+        categorical_fields: Tuple[str] = ("sex",),
+        add_healthy: bool = True,
     ) -> pd.DataFrame:
         """ Creates a table with subject information compatible with outputs table. """
 
@@ -122,7 +140,9 @@ class MetaAnalysis(object):
             )
 
         for categorical_field in categorical_fields:
-            subject_core[categorical_field] = subject_core[categorical_field].fillna(MISSING_VALUE)
+            subject_core[categorical_field] = subject_core[categorical_field].fillna(
+                MISSING_VALUE
+            )
 
         pk = subject_df.pk
 
@@ -131,7 +151,10 @@ class MetaAnalysis(object):
         )
         for measurement_type in ["age", "weight"]:
             subject_extra = subject_core.apply(
-                self.subject_numeric_info, args=(measurement_type,), axis=1, result_type="expand"
+                self.subject_numeric_info,
+                args=(measurement_type,),
+                axis=1,
+                result_type="expand",
             )
             if subject_extra.empty:
                 subject_core[
@@ -145,7 +168,9 @@ class MetaAnalysis(object):
 
     def add_extra_info(self, replacements: Dict[str, Dict[str, str]]):
         """ a generic function to """
-        self.results["unit_category"] = self.results[["per_bw", "intervention_per_bw"]].apply(figure_category, axis=1)
+        self.results["unit_category"] = self.results[
+            ["per_bw", "intervention_per_bw"]
+        ].apply(figure_category, axis=1)
         self.results["y"] = self.results[["mean", "median", "value"]].max(axis=1)
         self.results["y_min"] = self.results["y"] - self.results["sd"]
         self.results["y_max"] = self.results["y"] + self.results["sd"]
@@ -154,10 +179,10 @@ class MetaAnalysis(object):
             ["mean_weight", "median_weight", "value_weight"]
         ].max(axis=1)
         self.results["min_sd_weight"] = (
-                self.results["weight"] - self.results["sd_weight"]
+            self.results["weight"] - self.results["sd_weight"]
         )
         self.results["max_sd_weight"] = (
-                self.results["weight"] + self.results["sd_weight"]
+            self.results["weight"] + self.results["sd_weight"]
         )
 
         self.results["age"] = self.results[["mean_age", "median_age", "value_age"]].max(
@@ -165,10 +190,14 @@ class MetaAnalysis(object):
         )
         self.results["min_sd_age"] = self.results["age"] - self.results["sd_age"]
         self.results["max_sd_age"] = self.results["age"] + self.results["sd_age"]
+        if "group_count" in self.results:
+            self.results["subject_count"] = self.results["group_count"].fillna(1)
+        else:
+            self.results["subject_count"] = 1
 
-        self.results["subject_count"] = self.results["group_count"].fillna(1)
-
-        self.results["url"] = self.results["study_sid"].apply(lambda x: f"{self.url}/data/{x}")
+        self.results["url"] = self.results["study_sid"].apply(
+            lambda x: f"{self.url}/data/{x}"
+        )
         # self.results = self.results.replace({"NR", "not reported"}, regex=True)
 
         for column, replace_dict in replacements.items():
@@ -231,6 +260,9 @@ class MetaAnalysis(object):
             on=self.group_pk,
             how="left",
         )
+
+    def beautiful_units(self):
+        raise NotImplementedError
 
     def add_subject_info(self):
         self.results = self.individual_results().df.append(self.group_results())

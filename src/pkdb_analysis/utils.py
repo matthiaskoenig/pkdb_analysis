@@ -3,7 +3,9 @@ import logging
 import warnings
 import functools
 from pathlib import Path
+
 logger = logging.getLogger(__name__)
+
 
 def create_parent(path: Path):
     _dir = path.parent
@@ -11,18 +13,23 @@ def create_parent(path: Path):
         logger.warning(f"Creating directory: {_dir}")
         _dir.mkdir(parents=True)
 
+
 def deprecated(func):
     """This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
     when the function is used."""
+
     @functools.wraps(func)
     def new_func(*args, **kwargs):
-        warnings.simplefilter('always', DeprecationWarning)  # turn off filter
-        warnings.warn("Call to deprecated function {}.".format(func.__name__),
-                      category=DeprecationWarning,
-                      stacklevel=2)
-        warnings.simplefilter('default', DeprecationWarning)  # reset filter
+        warnings.simplefilter("always", DeprecationWarning)  # turn off filter
+        warnings.warn(
+            "Call to deprecated function {}.".format(func.__name__),
+            category=DeprecationWarning,
+            stacklevel=2,
+        )
+        warnings.simplefilter("default", DeprecationWarning)  # reset filter
         return func(*args, **kwargs)
+
     return new_func
 
 

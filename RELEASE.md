@@ -5,7 +5,7 @@
 
 ## create release
 * sort imports (`isort src/pkdb_analysis`)
-* code formating (`black src/pkdb_analysis`)
+* code formatting (`black src/pkdb_analysis`)
 * make sure all tests run (`tox --`)
 * update release notes in `release-notes`
 * bump version (`bumpversion patch` or `bumpversion` minor)
