@@ -1,23 +1,22 @@
 """Example to create interactive pharmacokinetics plot."""
 import os
 
+
 # os.environ["API_BASE"] = "https://alpha.pk-db.com"
 os.environ["API_BASE"] = "http://localhost:8000"
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import pandas as pd
-from pkdb_analysis.reports.interactive.interactive import (
-    interactive_plot_factory,
-    LegendArgs as LA,
-)
-from pkdb_analysis import PKData
+
+from pkdb_analysis import PKDB, PKData
+from pkdb_analysis.core import Core
+from pkdb_analysis.core import Sid as BaseSid
 from pkdb_analysis.filter import f_effective_n_oc, f_n_oc, f_n_smoking, f_oc, f_smoking
 from pkdb_analysis.plotting.factory import PlotContentDefinition
+from pkdb_analysis.reports.interactive.interactive import LegendArgs as LA
+from pkdb_analysis.reports.interactive.interactive import interactive_plot_factory
 from pkdb_analysis.test import TESTDATA_CONCISE_FALSE_ZIP
-
-from pkdb_analysis import PKDB
-from pkdb_analysis.core import Sid as BaseSid, Core
-from dataclasses import field, dataclass
 
 
 @dataclass(frozen=True)
@@ -64,13 +63,28 @@ MULTI_LEGEND = {"Study": "study_name"}
 
 MULTI_COLOR_LEGEND = {
     "Data type": LA("data_type"),
-    "Outlier": LA("outlier", [False,]),
+    "Outlier": LA(
+        "outlier",
+        [
+            False,
+        ],
+    ),
     "Sex": LA("sex"),
-    "Healthy": LA("healthy", [True],),
-    "Lifestyle": LA("life_style",),
+    "Healthy": LA(
+        "healthy",
+        [True],
+    ),
+    "Lifestyle": LA(
+        "life_style",
+    ),
     "Administration route": LA("intervention_route"),
     "Coadministration": LA("intervention_extra"),
-    "Number of interventions": LA("intervention_number", [1,]),
+    "Number of interventions": LA(
+        "intervention_number",
+        [
+            1,
+        ],
+    ),
     "Tissue": LA("tissue"),
     "Assay": LA("method"),
 }

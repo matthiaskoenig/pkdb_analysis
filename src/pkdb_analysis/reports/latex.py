@@ -1,9 +1,11 @@
+import shutil
+import subprocess
 from pathlib import Path
 from typing import List
+
 import pandas as pd
-import shutil
+
 from pkdb_analysis.core import Sid
-import subprocess
 
 
 def create_latex_report(
@@ -84,7 +86,8 @@ class LatexTables:
         template_dir = Path(__file__).parent / "latex"
         for filename in ["main.tex", "tables.tex"]:
             shutil.copy(
-                src=str(template_dir / filename), dst=str(self.output_dir / filename),
+                src=str(template_dir / filename),
+                dst=str(self.output_dir / filename),
             )
 
         # update table captions

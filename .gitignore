@@ -16,6 +16,7 @@ dist/
 .eggs/
 .tox
 .coverage
+.coverage*
 coverage.xml
 
 # too large due to failing filters

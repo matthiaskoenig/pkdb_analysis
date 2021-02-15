@@ -1,13 +1,14 @@
 import warnings
-from typing import Set, Tuple, Dict
+from typing import Dict, Set, Tuple
 
 import numpy as np
 import pandas as pd
-from pkdb_analysis import PKData
 
+from pkdb_analysis import PKData
 from pkdb_analysis.deprecated.analysis import figure_category
 from pkdb_analysis.filter import pk_info
 from pkdb_analysis.inference.body_weight import infer_weight
+
 
 INTERVENTION_FIELDS = ["substance", "value", "unit", "route", "form", "application"]
 NUMERIC_FIELDS_NO_VALUE = ["mean", "min", "max", "median", "count", "sd", "se", "unit"]
@@ -48,7 +49,7 @@ def markers(d: pd.Series) -> str:
 
 
 class MetaAnalysis(object):
-    """ Main class for meta analysis. Main functionality of the class is to merge the tables of an PKData objet into
+    """Main class for meta analysis. Main functionality of the class is to merge the tables of an PKData objet into
     one Dataframe (self.results). The result is used for interactive plots, static plots, and table reports."""
 
     def __init__(

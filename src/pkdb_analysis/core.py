@@ -1,16 +1,16 @@
 """
 Definition of core objects.
 """
-from typing import Set
-from pathlib import Path
-
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Set
+
 import pandas as pd
 
 
 class Core:
     """This class mange the the source containing all info nodes.
-    This source is used for validation. """
+    This source is used for validation."""
 
     def __init__(self, source: Path = None, sids: Set[str] = None):
         self.source = source

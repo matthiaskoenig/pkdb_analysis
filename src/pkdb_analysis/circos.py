@@ -1,6 +1,8 @@
 """ This module creates configuration files for circos plots."""
 from pathlib import Path
+
 import pandas as pd
+
 from pkdb_analysis.utils import create_parent
 
 
@@ -40,16 +42,25 @@ def create_config_files(studies_data: pd.DataFrame, path: Path):
     )
     # all subjects number for number track
     studies_data[["label", "start", "end", "subjects"]].to_csv(
-        data_dir / "all_subjects_number.txt", sep=" ", header=False, index=False,
+        data_dir / "all_subjects_number.txt",
+        sep=" ",
+        header=False,
+        index=False,
     )
     studies_data[["label", "start", "end", "timecourses"]].to_csv(
-        data_dir / "timecourse_number.txt", sep=" ", header=False, index=False,
+        data_dir / "timecourse_number.txt",
+        sep=" ",
+        header=False,
+        index=False,
     )
     studies_data[["label", "start", "end", "outputs"]].to_csv(
         data_dir / "output_number.txt", sep=" ", header=False, index=False
     )
     studies_data[["label", "start", "end", "interventions"]].to_csv(
-        data_dir / "intervention_number.txt", sep=" ", header=False, index=False,
+        data_dir / "intervention_number.txt",
+        sep=" ",
+        header=False,
+        index=False,
     )
 
     bubbles_data_dict = bubbles_data(studies_data, 25)

@@ -1,5 +1,6 @@
 import pint
 
+
 # Define unit registry for examples
 
 ureg = pint.UnitRegistry()

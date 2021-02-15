@@ -1,8 +1,9 @@
 """ Utils for analysis """
+import functools
 import logging
 import warnings
-import functools
 from pathlib import Path
+
 
 logger = logging.getLogger(__name__)
 

@@ -5,17 +5,15 @@
 """ Non-stationary kernels that can be used with sklearn's GP module. """
 
 import numpy as np
-
 from scipy.special import gamma, kv
-
 from sklearn.cluster import KMeans
-from sklearn.metrics.pairwise import pairwise_kernels
 from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import Kernel, _approx_fprime, Hyperparameter, RBF
+from sklearn.gaussian_process.kernels import RBF, Hyperparameter, Kernel, _approx_fprime
+from sklearn.metrics.pairwise import pairwise_kernels
 
 
 class ManifoldKernel(Kernel):
-    """ Non-stationary correlation model based on manifold learning.
+    """Non-stationary correlation model based on manifold learning.
     This non-stationary kernel consists internally of two parts:
     a mapping from the actual data space onto a manifold and a stationary
     kernel on this manifold. The mapping is realized by a neural
@@ -205,7 +203,7 @@ def determine_network_layout(architecture):
 
 
 class LocalLengthScalesKernel(Kernel):
-    """ Non-stationary kernel based on local smoothness estimates.
+    """Non-stationary kernel based on local smoothness estimates.
     This non-stationary correlation model learns internally point estimates of
     local smoothness using a second-level Gaussian Process. For this, it
     selects a subset of the training data and learns length-scales at this
@@ -406,7 +404,7 @@ class LocalLengthScalesKernel(Kernel):
                 return K, _approx_fprime(self.weights, f, 1e-7)
 
     def _parse_weights(self, weights):
-        """ Parse parameter vector weights into its components.
+        """Parse parameter vector weights into its components.
         Parameters
         ----------
         weights : array_like

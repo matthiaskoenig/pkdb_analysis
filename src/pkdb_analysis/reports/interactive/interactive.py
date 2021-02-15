@@ -2,21 +2,23 @@ import math
 import os
 import shutil
 from pathlib import Path
-from typing import List, Set, Dict, Callable
+from typing import Callable, Dict, List, Set
 
 import altair as alt
 import pandas as pd
 import pint
 import seaborn as sns
 import yaml
-from pkdb_analysis.data import PKData
+
 from pkdb_analysis.core import Sid
+from pkdb_analysis.data import PKData
 from pkdb_analysis.plotting.factory import (
+    PlotContentDefinition,
     pkdata_by_plot_content,
     results,
-    PlotContentDefinition,
 )
 from pkdb_analysis.utils import create_parent
+
 
 alt.data_transformers.disable_max_rows()
 # alt.data_transformers.enable('json')
@@ -32,7 +34,10 @@ class LegendArgs(object):
 
 def column_to_color(column):
     mapping = {v: n for n, v in enumerate(column.unique())}
-    colors = sns.color_palette("colorblind", 12,).as_hex()
+    colors = sns.color_palette(
+        "colorblind",
+        12,
+    ).as_hex()
 
     return column.apply(lambda x: colors[mapping[x]])
 
@@ -311,7 +316,9 @@ def create_interactive_plot(
     histo_y = filter_transform_all(
         alt.Chart(df)
         .properties(height=350, width=80)
-        .mark_bar(opacity=0.9,)
+        .mark_bar(
+            opacity=0.9,
+        )
         .encode(
             y=alt.Y(
                 "y:Q",
@@ -328,7 +335,9 @@ def create_interactive_plot(
     histo_x = filter_transform_all(
         alt.Chart(df)
         .properties(height=80, width=500)
-        .mark_bar(opacity=0.9,)
+        .mark_bar(
+            opacity=0.9,
+        )
         .encode(
             x=alt.X(
                 "intervention_value:Q",
@@ -372,7 +381,9 @@ def create_interactive_plot(
     )
 
     if create_json:
-        chart.save(f"{path}.json",)
+        chart.save(
+            f"{path}.json",
+        )
     else:
         chart.save(
             f"{path}.html", webdriver="firefox", embed_options={"renderer": "svg"}

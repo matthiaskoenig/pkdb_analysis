@@ -1,5 +1,6 @@
 """ Defines frequently used filters for the PKData instances."""
-from typing import Iterable, Callable, Dict
+from typing import Callable, Dict, Iterable
+
 import numpy as np
 import pandas as pd
 
@@ -70,7 +71,7 @@ def pk_info(
     concise: bool = True,
     aggfunc: Callable = combine,
 ):
-    """ Pivots a pd.Dataframe to get a single rows for a measurement_type on a selected column.
+    """Pivots a pd.Dataframe to get a single rows for a measurement_type on a selected column.
     If multiple values exists such configuration (e.g. df=pkdata.groups, measurement_type=sex, column=choice,
     can contain males and females). The argument: aggfunc is applied to combine theses values.
     """
@@ -114,14 +115,14 @@ def f_substance_in(d: pd.DataFrame, substances: Iterable[str]) -> pd.Series:
 
 
 def f_dosing(d: pd.DataFrame, substance: str) -> pd.Series:
-    """ Filter for one substance which are applied as dosing.
-       This filter is typically used in PKData.filter_interventions. """
+    """Filter for one substance which are applied as dosing.
+    This filter is typically used in PKData.filter_interventions."""
     return f_substance(d, substance) & f_measurement_type(d, "dosing")
 
 
 def f_dosing_in(d: pd.DataFrame, substances: Iterable[str]) -> pd.Series:
-    """ Filter for substances which are applied as dosing.
-     This filter is typically used in PKData.filter_interventions. """
+    """Filter for substances which are applied as dosing.
+    This filter is typically used in PKData.filter_interventions."""
     return d["substance"].isin(substances) & f_measurement_type(d, "dosing")
 
 
@@ -186,7 +187,7 @@ def f_female(d: pd.DataFrame) -> pd.Series:
 
 
 def f_effective_n_oc(d: pd.DataFrame) -> pd.Series:
-    """ Filter for not taking oral contraceptives, assuming that men do not take
+    """Filter for not taking oral contraceptives, assuming that men do not take
     oral contraceptives."""
     return (f_n_oc(d)) | (f_male(d))
 

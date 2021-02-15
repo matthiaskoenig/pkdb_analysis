@@ -1,5 +1,6 @@
-import pytest
 import pandas as pd
+import pytest
+
 from pkdb_analysis.reports.effect_analysis import (
     OutputPair,
     fixed_effect,
@@ -8,7 +9,7 @@ from pkdb_analysis.reports.effect_analysis import (
 
 
 def test_esc_mean_sd():
-    """ From https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/a.html
+    """From https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/a.html
     ##     Effect Size:  -0.7082
     ##  Standard Error:   0.1916
     ##        Variance:   0.0367
@@ -54,9 +55,9 @@ def test_fixed_effect():
 
 def test_random_effects():
     """
-      from https://www.meta-analysis.com/downloads/M-a_f_e_v_r_e_sv.pdf
+    from https://www.meta-analysis.com/downloads/M-a_f_e_v_r_e_sv.pdf
 
-      """
+    """
     data = {
         "study": ["Caroll", "Grant", "Peck", "Donat", "Stewart", "Young"],
         "hedges_g": [0.1, 0.3, 0.35, 0.65, 0.45, 0.15],

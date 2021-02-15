@@ -7,6 +7,7 @@ from io import BytesIO
 from pathlib import Path
 from typing import List, Set
 from urllib import parse as urlparse
+
 import pandas as pd
 import requests
 

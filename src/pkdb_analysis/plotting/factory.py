@@ -1,41 +1,44 @@
-"""
-Module for static plot creation.
-"""
+"""Module for static plot creation."""
 import logging
-import pandas as pd
-from typing import List, Set, Dict, Callable, Tuple
-from pathlib import Path
-import numpy as np
 import warnings
-from matplotlib import colors
-from matplotlib.colors import LinearSegmentedColormap
-from pkdb_analysis.kernels import HeteroscedasticKernel
-from sklearn.cluster import KMeans
-from sklearn.gaussian_process.kernels import RBF, ConstantKernel, Matern
-from sklearn.preprocessing import StandardScaler
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import WhiteKernel, ConstantKernel as C
-from pkdb_analysis.filter import f_dosing_in, f_mt_in_substance_in
-from pkdb_analysis.deprecated.analysis import mscatter, get_one
-from pkdb_analysis.data import PKData
-from pkdb_analysis.meta_analysis import MetaAnalysis
+from pathlib import Path
+from typing import Callable, Dict, List, Set, Tuple
 
-# ---- Styles for plotting ----
+import matplotlib.font_manager as font_manager
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from matplotlib import colors, ticker
+from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.lines import Line2D
 from matplotlib.ticker import FormatStrFormatter, LogFormatter
-import matplotlib.font_manager as font_manager
-from matplotlib import ticker
-from pkdb_analysis.units import ureg
+from sklearn.cluster import KMeans
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import RBF
+from sklearn.gaussian_process.kernels import ConstantKernel
+from sklearn.gaussian_process.kernels import ConstantKernel as C
+from sklearn.gaussian_process.kernels import Matern, WhiteKernel
+from sklearn.preprocessing import StandardScaler
+
 from pkdb_analysis.core import Sid
+from pkdb_analysis.data import PKData
+from pkdb_analysis.deprecated.analysis import get_one, mscatter
+from pkdb_analysis.filter import f_dosing_in, f_mt_in_substance_in
+from pkdb_analysis.kernels import HeteroscedasticKernel
+from pkdb_analysis.meta_analysis import MetaAnalysis
+from pkdb_analysis.units import ureg
 from pkdb_analysis.utils import create_parent
+
 
 logger = logging.getLogger(__file__)
 
-# FIXME: get rid of global module definitions! This overwrites local settings on import!
 
+# FIXME: get rid of global module definitions! This overwrites local settings on import!
 font = font_manager.FontProperties(
-    family="Roboto Mono", weight="normal", style="normal", size=16,
+    family="Roboto Mono",
+    weight="normal",
+    style="normal",
+    size=16,
 )
 plt.rcParams.update(
     {
@@ -49,9 +52,6 @@ plt.rcParams.update(
         "figure.facecolor": "1.00",
     }
 )
-# ------------------------------
-
-# FIXME:
 
 
 class PlotContentDefinition:
@@ -82,7 +82,11 @@ class PlotContentDefinition:
 
 
 class PlotContentDefinitionMulti(PlotContentDefinition):
-    """Defines all settings for a given output plot with multiple measurement types plotted together on the y axis."""
+    """Define settings for plot.
+
+    Defines all settings for a given output plot with multiple measurement types
+    plotted together on the y axis.
+    """
 
     def __init__(
         self,
@@ -117,8 +121,11 @@ def results(
     url: str,
     replacements: Dict[str, Dict[str, str]],
 ) -> Dict[PlotContentDefinition, pd.DataFrame]:
-    """ Creates single dataframes from a pkdata instances and infers additional results from body weight. """
+    """Create result DataFrames.
 
+    Create single dataframes from a pkdata instances and infers additional results
+    from body weight.
+    """
     results_dict = {}
     for plot_content, pkd in data_dict.items():
         meta_analysis = MetaAnalysis(pkd, intervention_substances, url)
@@ -159,8 +166,10 @@ def add_legends(
     if pd.isnull(biggest_group):
         biggest_group = 30
     str_max_len = df[color_label].str.len().max()
+
     if not group_size_scaling:
         group_size_scaling = nothing
+
     for plotting_type, d in df.groupby(color_label):
         individuals_data = d[d.group_pk == -1]
         group_data = d[d.group_pk != -1]
@@ -179,6 +188,7 @@ def add_legends(
             markersize=10,
         )
         legend_elements.append(label)
+
     legend2_elements = [
         Line2D(
             [0],
@@ -256,7 +266,7 @@ def add_legends(
 def group_values(
     df_group: pd.DataFrame, color_by: str, group_size_scaling: Callable = None
 ) -> (pd.Series, pd.Series, pd.Series, pd.Series, pd.Series, pd.Series):
-    """ Returns the values for plotting of group data"""
+    """Return the values for plotting of group data."""
     yerr_group = df_group.se
     yerr_group = np.nan_to_num(yerr_group)
 
@@ -273,12 +283,12 @@ def group_values(
 def add_group_scatter(
     df_group: pd.DataFrame, color_by: str, ax: plt.Axes, group_size_scaling: Callable
 ) -> None:
-    """ Adds scatter plots of outputs related to groups. """
+    """Add scatter plots of outputs related to groups."""
     x_group, y_group, yerr_group, ms, color, marker = group_values(
         df_group, color_by, group_size_scaling
     )
     mfc = color
-    #if color ==  (0, 0, 0, 0.7):
+    # if color ==  (0, 0, 0, 0.7):
     #    mfc = (0, 0, 0, 0)
 
     ax.errorbar(
@@ -286,7 +296,7 @@ def add_group_scatter(
         y_group,
         yerr=yerr_group,
         xerr=0,
-        #color=color,
+        # color=color,
         mfc=mfc,
         ecolor=color,
         mec=color,
@@ -305,7 +315,7 @@ def add_text(
     log_y: bool,
     text_column: str = None,
 ) -> None:
-    """ Annotates every scatter point related to a group with the respective study name."""
+    """Annotate scatter points related to a group with the respective study name."""
     x_group, y_group, _, _, _, _ = group_values(df_group, color_by=color_by)
     if text_column:
         txt = df_group[text_column]
@@ -326,7 +336,9 @@ def add_text(
     isnan = np.isnan(np.array(data_values))
     if not any(isnan):
         ax.annotate(
-            txt, (x_group + aditional_x, y_group + aditional_y), alpha=0.7,
+            txt,
+            (x_group + aditional_x, y_group + aditional_y),
+            alpha=0.7,
         )
 
 
@@ -480,7 +492,9 @@ def _gaussian_regression(
                     alpha=0.2,
                 )
                 axes[ii][i].plot(
-                    xplot_2d[:, 0], y_pred, color=color_i,
+                    xplot_2d[:, 0],
+                    y_pred,
+                    color=color_i,
                 )
 
                 add_axis_config(
@@ -596,7 +610,16 @@ def create_plot(
                 text_column,
             )
 
-    add_legends(df, color_label, color_by, ax, group_size_scaling, loc1=loc1, loc2=loc2, loc3=loc3)
+    add_legends(
+        df,
+        color_label,
+        color_by,
+        ax,
+        group_size_scaling,
+        loc1=loc1,
+        loc2=loc2,
+        loc3=loc3,
+    )
     add_axis_config(
         ax,
         substance,
@@ -616,7 +639,10 @@ def create_plot(
     if figure:
         create_parent(file_name)
         figure.savefig(
-            file_name, bbox_inches="tight", dpi=72, format="svg",
+            file_name,
+            bbox_inches="tight",
+            dpi=72,
+            format="svg",
         )
     else:
         return ax

@@ -216,7 +216,7 @@ class TimecoursePKNoDosing(object):
         return [slope, intercept, r_value, p_value, std_err, max_index]
 
     def _auc(self, t: np.ndarray, c: np.ndarray, rm_nan: bool = True):
-        """ Calculates the area under the curve (AUC) via trapezoid rule
+        """Calculates the area under the curve (AUC) via trapezoid rule
         :param t = time array
         :param c = concentration array
         :param rm_nan = remove nan values array

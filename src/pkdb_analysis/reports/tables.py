@@ -1,5 +1,4 @@
-"""
-Summary tables from a PKdata instance.
+"""Summary tables from a PKdata instance.
 
 Tables can be either stored to disk or uploaded to a google spreadsheet.
 """
@@ -13,11 +12,10 @@ from typing import Dict, Iterable, List, Sequence, Union
 import pandas as pd
 
 from pkdb_analysis import filter, query_pkdb_data
-from pkdb_analysis.data import PKData
 from pkdb_analysis.core import Sid
-
-# from gspread_pandas import Spread -> removing gspread support for now
+from pkdb_analysis.data import PKData
 from pkdb_analysis.utils import create_parent
+
 
 Spread = None
 logger = logging.getLogger(__name__)
@@ -650,7 +648,11 @@ class TableReport(object):
 
         # columns rename
         table.rename(
-            columns={"sid": "PKDB", "reference_pmid": "pubmed",}, inplace=True,
+            columns={
+                "sid": "PKDB",
+                "reference_pmid": "pubmed",
+            },
+            inplace=True,
         )
         # sort
         table.sort_values(by="name", inplace=True)
@@ -661,7 +663,9 @@ class TableReport(object):
 
     def circos_table(self):
         return self.base_table().apply(
-            self.add_counts, args=(self.pkdata, self.pkdata_concised, False), axis=1,
+            self.add_counts,
+            args=(self.pkdata, self.pkdata_concised, False),
+            axis=1,
         )
 
     def studies_table(self, table_df: pd.DataFrame) -> pd.DataFrame:
@@ -687,7 +691,9 @@ class TableReport(object):
             axis=1,
         )
         table_groups = table_groups.apply(
-            self.add_counts, args=(self.pkdata, self.pkdata_concised), axis=1,
+            self.add_counts,
+            args=(self.pkdata, self.pkdata_concised),
+            axis=1,
         )
         table_groups[["subjects", "groups"]] = table_groups[
             ["subjects", "groups"]
@@ -731,7 +737,8 @@ class TableReport(object):
         )
         table_df = pd.merge(table_df, table_interventions[i_keys], on="sid")
         table_df = pd.merge(
-            table_df, self._combine(table_outputs[o_keys], table_timecourses[o_keys]),
+            table_df,
+            self._combine(table_outputs[o_keys], table_timecourses[o_keys]),
         )
 
         return table_df[table_keys]
@@ -764,9 +771,12 @@ class TableReport(object):
 
     @staticmethod
     def add_counts(
-        study, pkdata: PKData, pkdata_concised: PKData, only_groups: bool = True,
+        study,
+        pkdata: PKData,
+        pkdata_concised: PKData,
+        only_groups: bool = True,
     ):
-        """ Add counts of
+        """Add counts of
         individuals, groups, subjects (group=all -> group_count), interventions, outputs, timecourses, scatters"""
         additional_dict = {}
         if only_groups:

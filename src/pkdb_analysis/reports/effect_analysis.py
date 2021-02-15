@@ -1,12 +1,12 @@
+from typing import Dict, List
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
-from typing import List, Dict
 
 from pkdb_analysis import PKData
 from pkdb_analysis.meta_analysis import MetaAnalysis
-import matplotlib.pyplot as plt
 
 
 class OutputPair(object):
@@ -60,8 +60,8 @@ class OutputPair(object):
         sd_1: float,
         sd_2: float,
     ) -> pd.Series:
-        """ To calculate Hedges’ g from the Mean, Standard Deviation, and counts of both trial arms
-         ( adopted from r package https://github.com/strengejacke/esc/tree/eba3c6a62875d9c894466012fe82c0d2253e6137).
+        """To calculate Hedges’ g from the Mean, Standard Deviation, and counts of both trial arms
+        ( adopted from r package https://github.com/strengejacke/esc/tree/eba3c6a62875d9c894466012fe82c0d2253e6137).
         """
 
         total_n = count_2 + count_1

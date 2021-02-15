@@ -5,22 +5,24 @@ Functions for working with PKDB data.
 """
 import logging
 import os
-import zipfile
 import tempfile
+import zipfile
 from abc import ABC
 from ast import literal_eval
 from collections import OrderedDict
 from io import BytesIO
 from pathlib import Path
-from typing import Callable, List, Union, Iterable, Dict
-from pkdb_analysis.units import ureg
+from typing import Callable, Dict, Iterable, List, Union
+
 import numpy as np
 import pandas as pd
 import requests
 from IPython.display import display
 
-from pkdb_analysis.utils import create_parent
 from pkdb_analysis.filter import f_healthy, f_n_healthy, filter_factory
+from pkdb_analysis.units import ureg
+from pkdb_analysis.utils import create_parent
+
 
 # from pandas.errors import PerformanceWarning
 # This is not fixing anything, but just ignoring the problem !!!
@@ -110,14 +112,12 @@ class PKDataFrame(pd.DataFrame, ABC):
     def _change_unit(sd, unit):
         infer_fields = ["value", "mean", "median", "min", "max", "sd", "se"]
         return PKDataFrame._change_unit_generic(
-            sd=sd,
-            unit=unit,
-            infer_fields=infer_fields,
-            unit_field="unit")
+            sd=sd, unit=unit, infer_fields=infer_fields, unit_field="unit"
+        )
 
     @staticmethod
     def _change_unit_generic(sd, unit: str, infer_fields: List[str], unit_field: str):
-        if isinstance( sd[unit_field], str):
+        if isinstance(sd[unit_field], str):
             if ureg(sd[unit_field]).check(unit):
                 factor = ureg(sd[unit_field]).to(unit).m
                 sd[infer_fields] = sd[infer_fields] * factor
@@ -129,10 +129,8 @@ class PKDataFrame(pd.DataFrame, ABC):
         infer_fields = ["time"]
         unit_field = "time_unit"
         return PKDataFrame._change_unit_generic(
-            sd=sd,
-            unit=unit,
-            infer_fields=infer_fields,
-            unit_field=unit_field)
+            sd=sd, unit=unit, infer_fields=infer_fields, unit_field=unit_field
+        )
 
     def change_unit(self, unit):
         df = self.df.apply(self._change_unit, unit=unit, axis=1)

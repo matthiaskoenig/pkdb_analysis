@@ -6,8 +6,10 @@ from typing import Optional, Tuple
 
 import numpy as np
 import pandas as pd
-from pkdb_analysis.units import ureg
 from pint import Quantity, UnitRegistry
+
+from pkdb_analysis.units import ureg
+
 
 Q_ = ureg.Quantity
 
