@@ -5,4 +5,4 @@ from pkdb_analysis.query import query_pkdb_data
 from pkdb_analysis.utils import show_versions
 
 
-__version__ = "0.1.7"
+__version__ = "0.2.0"
