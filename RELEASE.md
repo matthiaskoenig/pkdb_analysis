@@ -4,10 +4,8 @@
 * build documentation `cd docs_builder` and `./make_docs.sh 2>&1 | tee ./make_docs.log`
 
 ## create release
-* sort imports (`isort src/pkdb_analysis`)
-* code formatting (`black src/pkdb_analysis`)
-* make sure all tests run (`tox --`)
 * update release notes in `release-notes`
+* make sure all tests run (`tox -p`)
 * bump version (`bumpversion patch` or `bumpversion` minor)
 * `git push --tags`
 
