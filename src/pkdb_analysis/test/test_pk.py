@@ -1,7 +1,6 @@
 import numpy as np
 import pytest
 from matplotlib import pyplot as plt
-from pkdb_analysis.units import ureg
 
 from pkdb_analysis.pk.pharmacokinetics import TimecoursePK
 from pkdb_analysis.pk.pharmacokinetics_example import (
@@ -14,6 +13,7 @@ from pkdb_analysis.pk.pharmacokinetics_example import (
     example_midazolam,
     show_results,
 )
+from pkdb_analysis.units import ureg
 
 
 def test_pharmacokinetics_nan():
@@ -67,7 +67,6 @@ def test_pharmacokinetics_small_values():
     This results of replacement of the values with NaN.
     This also tests the NaN regression.
     """
-    ureg = UnitRegistry()
     Q_ = ureg.Quantity
     t = np.linspace(0, 100, num=50)
     kel = 1.0
@@ -89,7 +88,6 @@ def test_pharmacokinetics_small_values():
 def test_mg_per_kg_units():
     # failing due to pint bug: https://github.com/hgrecco/pint/issues/1058
     # (required to go to base units first)
-    ureg = UnitRegistry()
     Q_ = ureg.Quantity
     dose = Q_(10.0, "mg/kg") * Q_(1.0, "mole/g")
     print(dose)
@@ -98,7 +96,6 @@ def test_mg_per_kg_units():
 
 
 def test_pharmacokinetics_per_bodyweight():
-    ureg = UnitRegistry()
     Q_ = ureg.Quantity
     t = np.linspace(0, 100, num=50)
     kel = 1.0
@@ -119,7 +116,6 @@ def test_pharmacokinetics_per_bodyweight():
 
 
 def test_pharmacokinetics_shifted_intervention():
-    ureg = UnitRegistry()
     Q_ = ureg.Quantity
     t = np.linspace(0, 100, num=50)
     kel = 1.0
@@ -146,7 +142,6 @@ def test_pharmacokinetics_shifted_intervention():
 
 
 def test_pharmacokinetics_per_bodyweight2():
-    ureg = UnitRegistry()
     Q_ = ureg.Quantity
     t = np.linspace(0, 100, num=50)
     kel = 1.0
