@@ -14,6 +14,7 @@ from pkdb_analysis.inference.body_weight import (
 from pkdb_analysis.meta_analysis import MetaAnalysis
 from pkdb_analysis.test import TESTDATA_CONCISE_TRUE_ZIP
 
+
 INDIVIDUAL_OUTPUT = {
     "value": 2.0,
     "mean": None,
