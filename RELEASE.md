@@ -6,7 +6,7 @@
 ## create release
 * update release notes in `release-notes`
 * make sure all tests run (`tox -p`)
-* bump version (`bumpversion patch` or `bumpversion` minor)
+* bump version (`bumpversion patch` or `bumpversion minor`)
 * `git push --tags`
 
 
