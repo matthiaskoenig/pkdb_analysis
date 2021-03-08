@@ -1,0 +1,9 @@
+study	group	count	intervention	measurement_type	substance	tissue	label	time	time_unit	mean	mean_pm	sd	se	unit
+Lane2014	healthy	10	placebo	concentration	caffeine	saliva	healthy_placebo_caffeine	-30	min	993.7206	1270.829	876.293702765003	277.1084	ng/ml
+Lane2014	healthy	10	placebo	concentration	caffeine	saliva	healthy_placebo_caffeine	30	min	829.06506	1051.9661	704.874979220299	222.90104	ng/ml
+Lane2014	healthy	10	placebo	concentration	caffeine	saliva	healthy_placebo_caffeine	90	min	821.0267	1068.0146	781.044318501902	246.9879	ng/ml
+Lane2014	healthy	10	placebo	concentration	caffeine	saliva	healthy_placebo_caffeine	150	min	794.92535	1035.8987	762.024641400936	240.97335	ng/ml
+Lane2014	cocaine_dependent	11	placebo	concentration	caffeine	saliva	cocaine_dependent_placebo_caffeine	-30	min	861.0391	1210.4462	1158.85224978619	349.4071	ng/ml
+Lane2014	cocaine_dependent	11	placebo	concentration	caffeine	saliva	cocaine_dependent_placebo_caffeine	30	min	684.3449	961.4723	919.127604926737	277.1274	ng/ml
+Lane2014	cocaine_dependent	11	placebo	concentration	caffeine	saliva	cocaine_dependent_placebo_caffeine	90	min	555.8529	754.64813	659.329188022404	198.79523	ng/ml
+Lane2014	cocaine_dependent	11	placebo	concentration	caffeine	saliva	cocaine_dependent_placebo_caffeine	150	min	493.6071	680.3446	619.338221788992	186.7375	ng/ml

@@ -1,18 +1,25 @@
-# Notebook Checkpoints
 .ipynb_checkpoints/
 .~lock*
-pkdb_analysis.egg-info/
+src/pkdb_analysis.egg-info
 .idea/
+pkdb_analysis.egg-info/
 
 __pycache__/
 .pytest_cache
-
 *.pyc
+
 .env
 .env.develop
 .env.production
 results/
 dist/
 .eggs/
+.tox
+.coverage
+.coverage*
+coverage.xml
 
-pkdb_analysis/pkdb_analysis/reports/interactive/examples/results
+# src/pkdb_analysis/test/data/testdata_concise_true.zip
+# src/pkdb_analysis/test/data/testdata_concise_false.zip
+
+src/pkdb_analysis/pkdb_analysis/reports/interactive/examples/results
