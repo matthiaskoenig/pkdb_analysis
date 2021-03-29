@@ -101,11 +101,10 @@ respective environment variables.::
 
 The public instances of PK-DB are available from::
 
-    API_BASE=https://pk-db.com
     API_BASE=https://alpha.pk-db.com
-    API_BASE=https://develop.pk-db.com
+    API_BASE=https://pk-db.com
 
 By default the alpha server is used.
 
 
-© 2018-2020 Jan Grzegorzewski & Matthias König.
+© 2018-2021 Jan Grzegorzewski & Matthias König.

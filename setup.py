@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""Setup script for pkdb_analysis."""
 from setuptools import setup
 
 

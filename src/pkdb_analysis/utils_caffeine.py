@@ -1,4 +1,4 @@
-""" caffeine specific utils"""
+"""Caffeine specific utility functions."""
 
 INTERVENTION_FIELDS = ["substance", "value", "unit", "route", "form", "application"]
 

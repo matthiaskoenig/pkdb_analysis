@@ -6,6 +6,7 @@ Pharmacokinetic parameters are than calculated and returned.
 """
 import warnings
 from dataclasses import dataclass
+from typing import List
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -21,6 +22,8 @@ with warnings.catch_warnings():
 
 @dataclass
 class PKParametersNoDosing:
+    """Pharmacokinetics parameters without dose."""
+
     compound: str
     auc: Quantity
     aucinf: Quantity
@@ -38,11 +41,13 @@ class PKParametersNoDosing:
     max_idx: int
 
     @property
-    def parameters(self):
+    def parameters(self) -> List[str]:
+        """Get parameter ids."""
         return ["auc", "aucinf", "tmax", "cmax", "tmaxhalf", "cmaxhalf", "kel", "thalf"]
 
     @property
-    def regression_parameters(self):
+    def regression_parameters(self) -> List[str]:
+        """Get regression parameter ids."""
         return ["slope", "intercept", "r_value", "p_value", "std_err", "max_idx"]
 
     def to_dict(self):
@@ -65,18 +70,21 @@ class PKParametersNoDosing:
 
 @dataclass
 class PKParameters(PKParametersNoDosing):
+    """Pharmacokinetics parameters with dose."""
+
     dose: Quantity
     vd: Quantity
     vdss: Quantity
     cl: Quantity
 
     @property
-    def parameters(self):
+    def parameters(self) -> List[str]:
+        """Get parameter ids."""
         return super().parameters + ["dose", "vd", "vdss", "cl"]
 
 
-class TimecoursePKNoDosing(object):
-    """ Class for calculating pharmacokinetics from timecourses without dose information """
+class TimecoursePKNoDosing:
+    """Class for pharmacokinetics from timecourses without dose information."""
 
     def __init__(
         self,
@@ -120,7 +128,7 @@ class TimecoursePKNoDosing(object):
         )  # only take non-zero values
         cmax = np.nanmax(concentration)
         if (min_treshold * cmin) < cmax:
-            warnings.warn(f"Very small concentrations values are set to NaN.")
+            warnings.warn("Very small concentrations values are set to NaN.")
             concentration[concentration * min_treshold < cmax] = np.nan
 
         self.t = time
@@ -128,12 +136,11 @@ class TimecoursePKNoDosing(object):
         self.substance = substance
 
     def _f_pk(self) -> PKParametersNoDosing:
-        """Calculates all pk parameters from given time course.
+        """Calculate all pk parameters.
 
         The returned data structure can be used to
         - create a report with pk_report
         - create a visualization with pk_figure
-
         """
         c = self.c
         t = self.t
@@ -216,7 +223,8 @@ class TimecoursePKNoDosing(object):
         return [slope, intercept, r_value, p_value, std_err, max_index]
 
     def _auc(self, t: np.ndarray, c: np.ndarray, rm_nan: bool = True):
-        """Calculates the area under the curve (AUC) via trapezoid rule
+        """Calculate the area under the curve (AUC) via trapezoid rule.
+
         :param t = time array
         :param c = concentration array
         :param rm_nan = remove nan values array
@@ -228,8 +236,11 @@ class TimecoursePKNoDosing(object):
         return auc
 
     def _aucinf(self, t, c, slope=None, auc=None, rm_nan: bool = True):
-        """Calculates the area under the curve (AUC) via trapezoid rule
-        and extrapolated to infinity"""
+        """Area under the curve extrapolated to infinity.
+
+        Calculate the area under the curve (AUC) via trapezoid rule
+        and extrapolated to infinity.
+        """
         if rm_nan:
             idx = np.where(~np.isnan(c))
             t, c = t[idx], c[idx]
@@ -243,7 +254,7 @@ class TimecoursePKNoDosing(object):
         print()
 
         if auc_d > auc:
-            warnings.warn(f"AUC(t-oo) > AUC(0-tend), no AUC(0-oo) calculated.")
+            warnings.warn("AUC(t-oo) > AUC(0-tend), no AUC(0-oo) calculated.")
             # return self.Q_(np.nan, auc.units)
 
         if auc_d > 0.25 * auc:
@@ -259,7 +270,7 @@ class TimecoursePKNoDosing(object):
         return auc + auc_d
 
     def _max(self, t, c):
-        """Returns timepoint of maximal value and maximal value based on curve.
+        """Return timepoint of maximal value and maximal value based on curve.
 
         The tmax depends on the value of both the absorption rate constant (ka)
         and the elimination rate constant (kel).
@@ -270,7 +281,7 @@ class TimecoursePKNoDosing(object):
         return t[idx], c[idx]
 
     def _max_half(self, t, c):
-        """Calculates timepoint of half maximal value.
+        """Calculate timepoint of half maximal value.
 
         The max half is the timepoint before reaching the maximal value.
 
@@ -294,7 +305,8 @@ class TimecoursePKNoDosing(object):
             return self.Q_(np.nan, t.units), self.Q_(np.nan, c.units)
 
     def _kel(self, slope):
-        """
+        """Elimination rate constant.
+
         Elimination half-life (t1/2) and elimination rate constant were
         computed by linear regression of the log plasma concentrations vs.
         time after the maximum.
@@ -313,7 +325,7 @@ class TimecoursePKNoDosing(object):
         return std_err / slope
 
     def _thalf(self, kel):
-        """Calculates the half-life using the elimination constant.
+        """Calculate the half-life using the elimination constant.
 
         Definition: Time it takes for the plasma concentration or the amount
         of drug in the body to be reduced by 50%.
@@ -349,9 +361,7 @@ class TimecoursePKNoDosing(object):
         return "\n".join(lines)
 
     def figure(self, title=None) -> Figure:
-        """
-        Create figure from time course and pharmacokinetic parameters.
-        """
+        """Create figure from time course and pharmacokinetic parameters."""
         fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
         for ax in (ax1, ax2):
             if title is None:
@@ -376,10 +386,6 @@ class TimecoursePKNoDosing(object):
         tend = t[-1]
         cend = c[-1]
 
-        kwargs = {
-            "linestyle": "-",
-            "linewidth": 2.0,
-        }
         for ax in (ax1, ax2):
 
             # auc
@@ -441,7 +447,7 @@ class TimecoursePKNoDosing(object):
 
 
 class TimecoursePK(TimecoursePKNoDosing):
-    """ Class for calculating pharmacokinetics from timecourses. """
+    """Class for calculating pharmacokinetics from timecourses."""
 
     def __init__(
         self,
@@ -509,7 +515,7 @@ class TimecoursePK(TimecoursePKNoDosing):
         self.pk = self._f_pk()
 
     def _f_pk(self) -> PKParameters:
-        """Calculates all pk parameters from given time course.
+        """Calculate all pk parameters from given time course.
 
         The returned data structure can be used to
         - create a report with pk_report
@@ -576,8 +582,8 @@ class TimecoursePK(TimecoursePKNoDosing):
         )
 
     def _vdss(self, dose, intercept=None):
-        """
-        Apparent volume of distribution.
+        """Apparent volume of distribution.
+
         Not a physical space, but a dilution space.
 
         Definition: Fluid volume that would be required to contain the amount of drug present
@@ -601,8 +607,8 @@ class TimecoursePK(TimecoursePKNoDosing):
         return dose / self.Q_(np.exp(intercept.magnitude), intercept.units)
 
     def _vd(self, aucinf, dose, kel):
-        """
-        Apparent volume of distribution.
+        """Apparent volume of distribution.
+
         Not a physical space, but a dilution space.
 
         Volume of distribution is calculated via

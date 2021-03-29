@@ -1,7 +1,6 @@
 import numpy as np
 import pytest
 from matplotlib import pyplot as plt
-from pkdb_analysis.units import ureg
 
 from pkdb_analysis.pk.pharmacokinetics import TimecoursePK
 from pkdb_analysis.pk.pharmacokinetics_example import (
@@ -14,9 +13,10 @@ from pkdb_analysis.pk.pharmacokinetics_example import (
     example_midazolam,
     show_results,
 )
+from pkdb_analysis.units import ureg
 
 
-def test_pharmacokinetics_nan():
+def test_pharmacokinetics_nan() -> None:
     """Test pharmacokinetics calculation with NaN values."""
     Q_ = ureg.Quantity
     c = [
@@ -42,7 +42,8 @@ def test_pharmacokinetics_nan():
     assert not np.isnan(pk.aucinf.m)
 
 
-def test_pharmacokinetics():
+def test_pharmacokinetics() -> None:
+    """Test pharmacokinetics calculation."""
     Q_ = ureg.Quantity
     t = np.linspace(0, 100, num=50)
     kel = 1.0
@@ -61,13 +62,12 @@ def test_pharmacokinetics():
     assert pk.vd.units == ureg.Unit("liter")
 
 
-def test_pharmacokinetics_small_values():
+def test_pharmacokinetics_small_values() -> None:
     """Test pharmacokinetics with very small values.
 
     This results of replacement of the values with NaN.
     This also tests the NaN regression.
     """
-    ureg = UnitRegistry()
     Q_ = ureg.Quantity
     t = np.linspace(0, 100, num=50)
     kel = 1.0
@@ -86,19 +86,17 @@ def test_pharmacokinetics_small_values():
     assert pk.vd.units == ureg.Unit("liter")
 
 
-def test_mg_per_kg_units():
+def test_mg_per_kg_units() -> None:
+    """Test unit bug."""
     # failing due to pint bug: https://github.com/hgrecco/pint/issues/1058
     # (required to go to base units first)
-    ureg = UnitRegistry()
     Q_ = ureg.Quantity
     dose = Q_(10.0, "mg/kg") * Q_(1.0, "mole/g")
-    print(dose)
     dose = dose.to_base_units().to_reduced_units()
-    print(dose)
 
 
-def test_pharmacokinetics_per_bodyweight():
-    ureg = UnitRegistry()
+def test_pharmacokinetics_per_bodyweight() -> None:
+    """Test pharmacokinetics calculation normalized per bodyweight."""
     Q_ = ureg.Quantity
     t = np.linspace(0, 100, num=50)
     kel = 1.0
@@ -118,8 +116,8 @@ def test_pharmacokinetics_per_bodyweight():
     assert pk.vd.units == ureg.Unit("liter/kg")
 
 
-def test_pharmacokinetics_shifted_intervention():
-    ureg = UnitRegistry()
+def test_pharmacokinetics_shifted_intervention() -> None:
+    """Test pk calculation with time shifted intervention."""
     Q_ = ureg.Quantity
     t = np.linspace(0, 100, num=50)
     kel = 1.0
@@ -145,8 +143,8 @@ def test_pharmacokinetics_shifted_intervention():
     assert pk.vd.units == ureg.Unit("liter")
 
 
-def test_pharmacokinetics_per_bodyweight2():
-    ureg = UnitRegistry()
+def test_pharmacokinetics_per_bodyweight2() -> None:
+    """Test pk calculation per bodyweight."""
     Q_ = ureg.Quantity
     t = np.linspace(0, 100, num=50)
     kel = 1.0

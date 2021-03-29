@@ -12,11 +12,11 @@ from pkdb_analysis.test import (
 )
 
 
-API_URL = "http://localhost:8000/api/v1"
+# API_URL = "http://localhost:8000/api/v1"
+API_URL = "https://alpha.pk-db.com/api/v1"
 
 
 def update_test_data(path_zip: Path, concise: bool) -> None:
-
     """Downloads latest test data with concise True/False.
 
     :param path_zip: Path to output zip file for storage
@@ -38,8 +38,11 @@ def update_test_data(path_zip: Path, concise: bool) -> None:
             print(path_zip)
 
 
-if __name__ == "__main__":
+def update_all() -> None:
+    """Update all test data files."""
     update_test_data(TESTDATA_CONCISE_FALSE_ZIP, concise=False)
     update_test_data(TESTDATA_CONCISE_TRUE_ZIP, concise=True)
-    pkdata = PKData.from_archive(path=TESTDATA_CONCISE_FALSE_ZIP)
-    pkdata.to_hdf5(TEST_HDF5)
+
+
+if __name__ == "__main__":
+    update_all()

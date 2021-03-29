@@ -19,10 +19,7 @@ dist/
 .coverage*
 coverage.xml
 
-# too large due to failing filters
-src/pkdb_analysis/test/data/test.h5
-
-src/pkdb_analysis/test/data/testdata_concise_true.zip
-src/pkdb_analysis/test/data/testdata_concise_false.zip
+# src/pkdb_analysis/test/data/testdata_concise_true.zip
+# src/pkdb_analysis/test/data/testdata_concise_false.zip
 
 src/pkdb_analysis/pkdb_analysis/reports/interactive/examples/results

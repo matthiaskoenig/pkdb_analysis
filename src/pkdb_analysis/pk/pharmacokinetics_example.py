@@ -1,4 +1,5 @@
-"""
+"""Examples for pharmacokinetics calculation.
+
 This examples shows how based on time and concentration vector the
 pharmacokinetic parameters can be calculated.
 """
@@ -41,10 +42,7 @@ def example0() -> List[TimecoursePK]:
 
 
 def example1() -> List[TimecoursePK]:
-    """Example for pharmacokinetics calculation.
-
-    :return:
-    """
+    """Create example for pharmacokinetics calculation."""
     results = []
     df = pd.read_csv(
         TESTDATA_PATH / "pk" / "data_example1.csv", sep="\t", na_values="NA"
@@ -74,10 +72,7 @@ def example1() -> List[TimecoursePK]:
 
 
 def example1_NoDosing() -> List[TimecoursePKNoDosing]:
-    """Example for pharmacokinetics calculation.
-
-    :return:
-    """
+    """Creaete example for pharmacokinetics calculation."""
     results = []
     df = pd.read_csv(
         TESTDATA_PATH / "pk" / "data_example1.csv", sep="\t", na_values="NA"
@@ -106,13 +101,11 @@ def example1_NoDosing() -> List[TimecoursePKNoDosing]:
 
 
 def example2() -> List[TimecoursePK]:
-    """Example for pharmacokinetics calculation.
+    """Create example for pharmacokinetics calculation.
 
     This demonstrates the extreme examples of time courses with only limited data points.
     On caffeine the regressions can be calculated, on paraxanthine this is not possible any more (only a single datapoint
     or one data point after the maximum.
-
-    :return:
     """
     results = []
     df = pd.read_csv(
@@ -156,10 +149,7 @@ def example2() -> List[TimecoursePK]:
 
 
 def example_midazolam() -> List[TimecoursePK]:
-    """Example for pharmacokinetics calculation.
-
-    :return:
-    """
+    """Create example for pharmacokinetics calculation."""
     results = []
     df = pd.read_csv(TESTDATA_PATH / "pk" / "midazolam.tsv", sep="\t", na_values="NA")
 
@@ -182,10 +172,7 @@ def example_midazolam() -> List[TimecoursePK]:
 
 
 def example_Kim2011_Fig2() -> List[TimecoursePK]:
-    """Example for pharmacokinetics calculation.
-
-    :return:
-    """
+    """Create example for pharmacokinetics calculation."""
     results = []
     df = pd.read_csv(
         TESTDATA_PATH / "pk" / "Kim2011_Fig2.tsv", sep="\t", na_values="NA"
@@ -211,10 +198,7 @@ def example_Kim2011_Fig2() -> List[TimecoursePK]:
 
 
 def example_Divoll1982_Fig1() -> List[TimecoursePK]:
-    """Example for pharmacokinetics calculation.
-
-    :return:
-    """
+    """Create example for pharmacokinetics calculation."""
     results = []
     df = pd.read_csv(
         TESTDATA_PATH / "pk" / "Divoll1982_Fig1.tsv", sep="\t", na_values="NA"
@@ -239,10 +223,7 @@ def example_Divoll1982_Fig1() -> List[TimecoursePK]:
 
 
 def example_Lane2014_Fig1() -> List[TimecoursePK]:
-    """Example for pharmacokinetics calculation.
-
-    :return:
-    """
+    """Create example for pharmacokinetics calculation."""
     results = []
     df = pd.read_csv(
         TESTDATA_PATH / "pk" / "Lane2014_Fig1.tsv", sep="\t", na_values="NA"
@@ -270,7 +251,7 @@ def show_results(results: List[TimecoursePK]):
     """Show given results."""
     for tcpk in results:
         print(tcpk.info())
-        f = tcpk.figure()
+        _ = tcpk.figure()
         plt.show()
 
 
