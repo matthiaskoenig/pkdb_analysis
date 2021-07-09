@@ -757,7 +757,7 @@ def create_plot(
                 else:
                     y_axis_label = f"{measurement_type}".capitalize()
                     axes[i][ii].set_ylabel(f"{y_axis_label} [{u_unit.u :~P}]")
-
+        print(file_name.parent / f"{file_name.stem}_hexbins.svg")
         figure.savefig(
             file_name.parent / f"{file_name.stem}_hexbins.svg",
             bbox_inches="tight",
