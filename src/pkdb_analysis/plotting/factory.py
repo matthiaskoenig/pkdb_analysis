@@ -148,6 +148,19 @@ def results(
 def nothing(x):
     return x
 
+def make_label_text(df, drop_duplicates):
+
+    individuals_data = df[df.group_pk == -1]
+    group_data = df[df.group_pk != -1]
+
+    if drop_duplicates:
+        individuals_data = individuals_data.drop_duplicates(["study_name", "individual_pk", "intervention_names"])
+        group_data = group_data.drop_duplicates(["study_name", "group_pk", "intervention_names"])
+
+    individuals_number = len(individuals_data)
+    group_number = len(group_data)
+    total_group_individuals = group_data["group_count"].sum()
+    return  f"I: {individuals_number:<3} G: {group_number:<3} TI: {int(total_group_individuals + individuals_number):<3}"
 
 def add_legends(
     df: pd.DataFrame,
@@ -171,13 +184,8 @@ def add_legends(
         group_size_scaling = nothing
 
     for plotting_type, d in df.groupby(color_label):
-        individuals_data = d[d.group_pk == -1]
-        group_data = d[d.group_pk != -1]
-        individuals_number = len(individuals_data)
-        group_number = len(group_data)
-        total_group_individuals = group_data["group_count"].sum()
         color = get_one(d[color_by])
-        label_text = f"{plotting_type:<{str_max_len}} I: {individuals_number:<3} G: {group_number:<3} TI: {int(total_group_individuals + individuals_number):<3}"
+        label_text = f"{plotting_type:<{str_max_len}} {make_label_text(d, drop_duplicates=False)}"
         label = Line2D(
             [0],
             [0],
@@ -535,6 +543,7 @@ def create_plot(
     loc1: Tuple = "upper right",
     loc2: Tuple = "upper left",
     loc3: Tuple = "center right",
+    which_legends: List[int] = [1,2,3],
     ax=None,
     figure=None,
 ) -> None:
@@ -616,6 +625,7 @@ def create_plot(
         color_by,
         ax,
         group_size_scaling,
+        which_legends=which_legends,
         loc1=loc1,
         loc2=loc2,
         loc3=loc3,
@@ -747,7 +757,7 @@ def create_plot(
                 else:
                     y_axis_label = f"{measurement_type}".capitalize()
                     axes[i][ii].set_ylabel(f"{y_axis_label} [{u_unit.u :~P}]")
-
+        print(file_name.parent / f"{file_name.stem}_hexbins.svg")
         figure.savefig(
             file_name.parent / f"{file_name.stem}_hexbins.svg",
             bbox_inches="tight",

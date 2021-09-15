@@ -265,7 +265,7 @@ class PKData(object):
         def _transform_strings_tuple(value):
             if isinstance(value, str):
                 if value.startswith("[") or value.startswith("("):
-                    return tuple(literal_eval(value))
+                    return tuple(np.fromstring(value[1:-1], sep=", "))
                     # return tuple([z for z in value[1:-1].split(",")])
             return value
 
@@ -1085,7 +1085,7 @@ class PKData(object):
             "cv",
             "min",
             "max",
-            "time",
+            # "time",
         ]
         # convert columns to int columns
         int_columns = [

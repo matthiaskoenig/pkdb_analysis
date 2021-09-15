@@ -145,6 +145,9 @@ def f_choice(d: pd.DataFrame, choice: str) -> pd.Series:
     """ Generic filter on the choice field. """
     return d["choice"] == choice
 
+def f_exclude_choice(d: pd.DataFrame, choice: str) -> pd.Series:
+    """ Generic filter on the choice field. """
+    return d["choice"] != choice
 
 def f_smoking(d: pd.DataFrame) -> pd.Series:
     """ Filter for smoking subjects.  """

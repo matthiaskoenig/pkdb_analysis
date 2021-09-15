@@ -2,7 +2,6 @@ import shutil
 import subprocess
 from pathlib import Path
 from typing import List
-
 import pandas as pd
 
 from pkdb_analysis.core import Sid
@@ -120,7 +119,6 @@ class LatexTables:
             )
 
         df = pd.read_csv(table_path, sep="\t")  # , keep_default_na=False)
-
         # manual processing of table headers
         # delete columns
         del_keys = ["pubmed"]
@@ -247,6 +245,8 @@ class LatexTables:
             if citet:
                 df["name"] = df["name"].apply(lambda x: "\citet{" + str(x) + "}")
                 df["PKDB"] = df["PKDB"].astype(str).apply(self.latex_href)
+            pos = df.columns.get_loc('name')
+            df.iloc[::2,pos] =  df.iloc[::2,pos].apply(lambda x: r"\rowcolor{Lightgrey} "+ str(x) )
 
             if number_header:
                 header_row = {}
@@ -295,6 +295,7 @@ class LatexTables:
             latex = latex.replace("\}", "}")
             latex = latex.replace("⅟", "$⅟$")
 
+
             n_sids = len(self.substance_sids)
 
             if table_key == "timecourses":
@@ -336,6 +337,7 @@ class LatexTables:
                     )
                     + "\n\\rowcolor{white}",
                 )
+
 
                 # rotate headers
                 for measurement in [
@@ -388,6 +390,7 @@ class LatexTables:
                     )
                     + "\n\\rowcolor{white}",
                 )
+
 
             # remove the empty columns
             for k in range(10):
