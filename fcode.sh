@@ -1,4 +1,4 @@
 # format code
-isort src/sbmlutils
-black src/sbmlutils --exclude resources
-tox -p
+isort src/pkdb_analysis
+black src/pkdb_analysis --exclude resources
+# tox -p

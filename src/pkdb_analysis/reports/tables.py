@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 def create_table_report(
     dosing_substances: Iterable[Union[str, Sid]],
     report_substances: Iterable[Union[str, Sid]],
-    columns: List[str] =  None,
+    columns: List[str] = None,
     study_info: Dict = None,
     timecourse_info: Dict = None,
     pharmacokinetic_info: Dict = None,
@@ -78,7 +78,7 @@ def create_table_report(
         study_info=study_info,
         timecourse_info=timecourse_info,
         pharmacokinetic_info=pharmacokinetic_info,
-        columns=columns, 
+        columns=columns,
     )
     if nbib_path:
         table_report.pkdata.to_medline(nbib_path)
@@ -388,14 +388,13 @@ class TableReport(object):
         study_info: Dict = None,
         timecourse_info: Dict = None,
         pharmacokinetic_info: Dict = None,
-        columns: List[str] = None
+        columns: List[str] = None,
     ):
         self.columns = columns
         self.substances_intervention = substances_intervention
         self.pkdata = pkdata
         self.filter_intervention_substances()
         print(self.pkdata)
-
 
         # make a conciced copy of data
         tmp_pkdata = self.pkdata.copy()
@@ -748,7 +747,7 @@ class TableReport(object):
             self._combine(table_outputs[o_keys], table_timecourses[o_keys]),
         )
         if self.columns:
-            return  table_df[self.columns]
+            return table_df[self.columns]
 
         return table_df[table_keys]
 

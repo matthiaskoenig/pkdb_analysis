@@ -148,19 +148,25 @@ def results(
 def nothing(x):
     return x
 
+
 def make_label_text(df, drop_duplicates):
 
     individuals_data = df[df.group_pk == -1]
     group_data = df[df.group_pk != -1]
 
     if drop_duplicates:
-        individuals_data = individuals_data.drop_duplicates(["study_name", "individual_pk", "intervention_names"])
-        group_data = group_data.drop_duplicates(["study_name", "group_pk", "intervention_names"])
+        individuals_data = individuals_data.drop_duplicates(
+            ["study_name", "individual_pk", "intervention_names"]
+        )
+        group_data = group_data.drop_duplicates(
+            ["study_name", "group_pk", "intervention_names"]
+        )
 
     individuals_number = len(individuals_data)
     group_number = len(group_data)
     total_group_individuals = group_data["group_count"].sum()
-    return  f"I: {individuals_number:<3} G: {group_number:<3} TI: {int(total_group_individuals + individuals_number):<3}"
+    return f"I: {individuals_number:<3} G: {group_number:<3} TI: {int(total_group_individuals + individuals_number):<3}"
+
 
 def add_legends(
     df: pd.DataFrame,
@@ -543,7 +549,7 @@ def create_plot(
     loc1: Tuple = "upper right",
     loc2: Tuple = "upper left",
     loc3: Tuple = "center right",
-    which_legends: List[int] = [1,2,3],
+    which_legends: List[int] = [1, 2, 3],
     ax=None,
     figure=None,
 ) -> None:
