@@ -99,7 +99,7 @@ def create_table_report(
 
 @dataclass
 class TableContentDefinition:
-    """Helper Class to define how an interactive value can be selected. """
+    """Helper Class to define how an interactive value can be selected."""
 
     measurement_types: Union[str, List] = "any"
     value_field: Sequence = "choice"
@@ -425,7 +425,7 @@ class TableReport(object):
         self.df_pharmacokinetics = None
 
     def filter_intervention_substances(self):
-        """ Filter the pkdata instance by for studies in which intervetion_substances where administrated"""
+        """Filter the pkdata instance by for studies in which intervetion_substances where administrated"""
         # substance must occur in intervention
         if self.substances_intervention:
             study_sids = self.pkdata.filter_intervention(
@@ -625,7 +625,7 @@ class TableReport(object):
         )
 
     def base_table(self):
-        """ Create the base table."""
+        """Create the base table."""
         table = self.pkdata.studies.df.copy()
         table_keys = ["name", "sid", "reference_pmid"]
         table["reference_pmid"] = table["reference_pmid"].apply(self.int_or_none)

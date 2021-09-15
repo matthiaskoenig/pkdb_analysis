@@ -39,7 +39,7 @@ class InferWeight(object):
         weight_fields=("value_weight", "mean_weight", "median_weight"),
         weight_unit_field="unit_weight",
     ) -> Tuple[Optional[Quantity], Optional[str]]:
-        """ helper function to get the weight of a subject or group"""
+        """helper function to get the weight of a subject or group"""
         for weight_field in weight_fields:
             if weight_field in self.series:
                 this_value = self.series[weight_field]
@@ -56,7 +56,7 @@ class InferWeight(object):
         infer_fields=("value", "mean", "median", "min", "max", "sd", "se"),
         per_bw_field="per_bw",
     ) -> pd.Series:
-        """ helper function to infer values from the weight of a subject or group"""
+        """helper function to infer values from the weight of a subject or group"""
         if self.weight is not None and self.series[unit_field] is not None:
             per_bw = self.per_bw(unit_field)
             per_bw_exp = self.per_bw_exp(per_bw)

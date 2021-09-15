@@ -55,7 +55,7 @@ plt.rcParams.update(
 
 
 class PlotContentDefinition:
-    """Defines all settings for a given output plot. """
+    """Defines all settings for a given output plot."""
 
     def __init__(
         self,
@@ -179,7 +179,7 @@ def add_legends(
     loc3: Tuple = "center right",
     which_legends=[1, 2, 3],
 ):
-    """ Adds legends to axis"""
+    """Adds legends to axis"""
     legend_elements = []
     biggest_group = df["group_count"].max()
     if pd.isnull(biggest_group):
@@ -553,7 +553,7 @@ def create_plot(
     ax=None,
     figure=None,
 ) -> None:
-    """ Creates a single plot from the dataframe created by MetaAnalysis.create_results()"""
+    """Creates a single plot from the dataframe created by MetaAnalysis.create_results()"""
     df["x"] = df[x_value]
     measurement_type = df["measurement_type"].unique()[0]
     substance = df["substance"].unique()[0]  # fixme: multiple substances are possible.
@@ -867,7 +867,7 @@ def plot_factory(
     standardize: bool = False,
     replacements: Dict[str, Dict[str, str]] = {},
 ) -> None:
-    """ Factory function to create multiple plots defined by each entry of the plotting_categories."""
+    """Factory function to create multiple plots defined by each entry of the plotting_categories."""
     intervention_substances_str = {
         substance.sid for substance in intervention_substances
     }

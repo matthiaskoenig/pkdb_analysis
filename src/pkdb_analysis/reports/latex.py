@@ -236,7 +236,7 @@ class LatexTables:
         citet: bool = False,
         number_header: bool = False,
     ):
-        """ Convert dataframe to latex tables."""
+        """Convert dataframe to latex tables."""
         for k, df in enumerate(dfs):
             # create pandas latex content
             latex_path = self.output_dir / f"{table_key}.tex"
@@ -400,4 +400,4 @@ class LatexTables:
                 f.write(latex)
 
         def _post_processing2():
-            """ Long tables and pubmed ids."""
+            """Long tables and pubmed ids."""
