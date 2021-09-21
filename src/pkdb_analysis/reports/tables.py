@@ -78,7 +78,7 @@ def create_table_report(
         study_info=study_info,
         timecourse_info=timecourse_info,
         pharmacokinetic_info=pharmacokinetic_info,
-        columns=columns, 
+        columns=columns,
     )
     if nbib_path:
         table_report.pkdata.to_medline(nbib_path)
@@ -95,6 +95,7 @@ def create_table_report(
             f"https://github.com/matthiaskoenig/pkdb_analysis/issues/36"
         )
         table_report.to_google_sheet(google_sheets)
+    return table_report
 
 
 @dataclass
@@ -470,7 +471,7 @@ class TableReport(object):
                 df1 = df.copy()
                 # hyperlink replacements:
                 df1["PKDB"] = df1["PKDB"].apply(
-                    lambda x: f'=HYPERLINK("https://alpha.pk-db.com/data/{x}", "{x}")'
+                    lambda x: f'=HYPERLINK("https://pk-db.com/data/{x}", "{x}")'
                 )
                 df1["pubmed"] = df1["pubmed"].apply(
                     lambda x: f'=HYPERLINK("https://www.ncbi.nlm.nih.gov/pubmed/{x}", "{x}")'
