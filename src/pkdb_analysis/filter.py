@@ -70,7 +70,7 @@ def pk_info(
     suffix: str = None,
     concise: bool = True,
     aggfunc: Callable = combine,
-):
+) -> pd.DataFrame:
     """Pivots a pd.Dataframe to get a single rows for a measurement_type on a selected column.
     If multiple values exists such configuration (e.g. df=pkdata.groups, measurement_type=sex, column=choice,
     can contain males and females). The argument: aggfunc is applied to combine theses values.
