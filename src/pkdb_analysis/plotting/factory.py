@@ -560,7 +560,14 @@ def create_plot(
     substance_intervention = df["intervention_substance"].unique()[
         0
     ]  # fixme: multiple substances are possible.
-    u_unit = get_one(df["unit"].apply(ureg))
+    unique_units = df["unit"].dropna().unique()
+    u_unique_units = [ureg(x) for x in unique_units]
+    print(u_unique_units)
+    if len(set(u_unique_units)) == 1:
+        u_unit = u_unique_units[0]
+    else:
+        u_unit = get_one(u_unique_units)
+    #u_unit = get_one(df["unit"].apply(ureg))
     if x_value == "intervention_value":
         u_unit_x = ureg(get_one(df["intervention_unit"]))
     else:
