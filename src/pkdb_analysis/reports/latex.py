@@ -2,6 +2,7 @@ import shutil
 import subprocess
 from pathlib import Path
 from typing import List
+
 import pandas as pd
 
 from pkdb_analysis.core import Sid
@@ -235,7 +236,7 @@ class LatexTables:
         citet: bool = False,
         number_header: bool = False,
     ):
-        """ Convert dataframe to latex tables."""
+        """Convert dataframe to latex tables."""
         for k, df in enumerate(dfs):
             # create pandas latex content
             latex_path = self.output_dir / f"{table_key}.tex"
@@ -245,8 +246,10 @@ class LatexTables:
             if citet:
                 df["name"] = df["name"].apply(lambda x: "\citet{" + str(x) + "}")
                 df["PKDB"] = df["PKDB"].astype(str).apply(self.latex_href)
-            pos = df.columns.get_loc('name')
-            df.iloc[::2,pos] =  df.iloc[::2,pos].apply(lambda x: r"\rowcolor{Lightgrey} "+ str(x) )
+            pos = df.columns.get_loc("name")
+            df.iloc[::2, pos] = df.iloc[::2, pos].apply(
+                lambda x: r"\rowcolor{Lightgrey} " + str(x)
+            )
 
             if number_header:
                 header_row = {}
@@ -295,7 +298,6 @@ class LatexTables:
             latex = latex.replace("\}", "}")
             latex = latex.replace("⅟", "$⅟$")
 
-
             n_sids = len(self.substance_sids)
 
             if table_key == "timecourses":
@@ -337,7 +339,6 @@ class LatexTables:
                     )
                     + "\n\\rowcolor{white}",
                 )
-
 
                 # rotate headers
                 for measurement in [
@@ -391,7 +392,6 @@ class LatexTables:
                     + "\n\\rowcolor{white}",
                 )
 
-
             # remove the empty columns
             for k in range(10):
                 latex = latex.replace(f"empty{k}", "")
@@ -400,4 +400,4 @@ class LatexTables:
                 f.write(latex)
 
         def _post_processing2():
-            """ Long tables and pubmed ids."""
+            """Long tables and pubmed ids."""

@@ -55,7 +55,7 @@ plt.rcParams.update(
 
 
 class PlotContentDefinition:
-    """Defines all settings for a given output plot. """
+    """Defines all settings for a given output plot."""
 
     def __init__(
         self,
@@ -148,19 +148,25 @@ def results(
 def nothing(x):
     return x
 
+
 def make_label_text(df, drop_duplicates):
 
     individuals_data = df[df.group_pk == -1]
     group_data = df[df.group_pk != -1]
 
     if drop_duplicates:
-        individuals_data = individuals_data.drop_duplicates(["study_name", "individual_pk", "intervention_names"])
-        group_data = group_data.drop_duplicates(["study_name", "group_pk", "intervention_names"])
+        individuals_data = individuals_data.drop_duplicates(
+            ["study_name", "individual_pk", "intervention_names"]
+        )
+        group_data = group_data.drop_duplicates(
+            ["study_name", "group_pk", "intervention_names"]
+        )
 
     individuals_number = len(individuals_data)
     group_number = len(group_data)
     total_group_individuals = group_data["group_count"].sum()
-    return  f"I: {individuals_number:<3} G: {group_number:<3} TI: {int(total_group_individuals + individuals_number):<3}"
+    return f"I: {individuals_number:<3} G: {group_number:<3} TI: {int(total_group_individuals + individuals_number):<3}"
+
 
 def add_legends(
     df: pd.DataFrame,
@@ -173,7 +179,7 @@ def add_legends(
     loc3: Tuple = "center right",
     which_legends=[1, 2, 3],
 ):
-    """ Adds legends to axis"""
+    """Adds legends to axis"""
     legend_elements = []
     biggest_group = df["group_count"].max()
     if pd.isnull(biggest_group):
@@ -543,11 +549,11 @@ def create_plot(
     loc1: Tuple = "upper right",
     loc2: Tuple = "upper left",
     loc3: Tuple = "center right",
-    which_legends: List[int] = [1,2,3],
+    which_legends: List[int] = [1, 2, 3],
     ax=None,
     figure=None,
 ) -> None:
-    """ Creates a single plot from the dataframe created by MetaAnalysis.create_results()"""
+    """Creates a single plot from the dataframe created by MetaAnalysis.create_results()"""
     df["x"] = df[x_value]
     measurement_type = df["measurement_type"].unique()[0]
     substance = df["substance"].unique()[0]  # fixme: multiple substances are possible.
@@ -868,7 +874,7 @@ def plot_factory(
     standardize: bool = False,
     replacements: Dict[str, Dict[str, str]] = {},
 ) -> None:
-    """ Factory function to create multiple plots defined by each entry of the plotting_categories."""
+    """Factory function to create multiple plots defined by each entry of the plotting_categories."""
     intervention_substances_str = {
         substance.sid for substance in intervention_substances
     }

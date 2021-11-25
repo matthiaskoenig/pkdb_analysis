@@ -6,7 +6,7 @@ import pandas as pd
 
 
 def filter_factory(filter_dict: Dict):
-    """ generic filter factory """
+    """generic filter factory"""
     f_idx = []
     for key, value in filter_dict.items():
 
@@ -52,7 +52,7 @@ def exclude_tests(data: "PKData") -> "PKData":
 
 
 def combine(args: Iterable):
-    """ Helper function join values. This function designed to be used in df.pivot_table as aggfunc."""
+    """Helper function join values. This function designed to be used in df.pivot_table as aggfunc."""
     args = sorted(set([str(arg) for arg in args]))
     str_value = " || ".join(args)
     if str_value == "nan":
@@ -95,22 +95,22 @@ def pk_info(
 
 
 def f_unit(d: pd.DataFrame, unit: str) -> pd.Series:
-    """ Filter for units. """
+    """Filter for units."""
     return d["unit"] == unit
 
 
 def f_measurement_type(d: pd.DataFrame, measurement_type: str) -> pd.Series:
-    """ Filter for measurement types. """
+    """Filter for measurement types."""
     return d["measurement_type"] == measurement_type
 
 
 def f_substance(d: pd.DataFrame, substance: str) -> pd.Series:
-    """ Filter for one substance. """
+    """Filter for one substance."""
     return d["substance"] == substance
 
 
 def f_substance_in(d: pd.DataFrame, substances: Iterable[str]) -> pd.Series:
-    """ Filter for substances. """
+    """Filter for substances."""
     return d["substance"].isin(substances)
 
 
@@ -127,7 +127,7 @@ def f_dosing_in(d: pd.DataFrame, substances: Iterable[str]) -> pd.Series:
 
 
 def f_mt_substance(d: pd.DataFrame, measurement_type: str, substance: str) -> pd.Series:
-    """ Combined filter on one measurement_type  and one substance. """
+    """Combined filter on one measurement_type  and one substance."""
 
     return f_measurement_type(d, measurement_type) & f_substance(d, substance)
 
@@ -135,57 +135,59 @@ def f_mt_substance(d: pd.DataFrame, measurement_type: str, substance: str) -> pd
 def f_mt_in_substance_in(
     d: pd.DataFrame, measurement_types: Iterable[str], substances: Iterable[str]
 ) -> pd.Series:
-    """ Combined filter on  measurement_types and substances. """
+    """Combined filter on  measurement_types and substances."""
     return d["measurement_type"].isin(measurement_types) & d["substance"].isin(
         substances
     )
 
 
 def f_choice(d: pd.DataFrame, choice: str) -> pd.Series:
-    """ Generic filter on the choice field. """
+    """Generic filter on the choice field."""
     return d["choice"] == choice
 
+
 def f_exclude_choice(d: pd.DataFrame, choice: str) -> pd.Series:
-    """ Generic filter on the choice field. """
+    """Generic filter on the choice field."""
     return d["choice"] != choice
 
+
 def f_smoking(d: pd.DataFrame) -> pd.Series:
-    """ Filter for smoking subjects.  """
+    """Filter for smoking subjects."""
     return f_measurement_type(d, "smoking") & f_choice(d, "Y")
 
 
 def f_n_smoking(d: pd.DataFrame) -> pd.Series:
-    """ Filter for non smoking subjects. """
+    """Filter for non smoking subjects."""
     return f_measurement_type(d, "smoking") & f_choice(d, "N")
 
 
 def f_oc(d: pd.DataFrame) -> pd.Series:
-    """ Filter for subject taking oral contraceptives """
+    """Filter for subject taking oral contraceptives"""
     return f_measurement_type(d, "oral contraceptives") & f_choice(d, "Y")
 
 
 def f_n_oc(d: pd.DataFrame) -> pd.Series:
-    """ Filter for subject not taking oral contraceptives. """
+    """Filter for subject not taking oral contraceptives."""
     return f_measurement_type(d, "oral contraceptives") & f_choice(d, "N")
 
 
 def f_pregnant(d: pd.DataFrame) -> pd.Series:
-    """ Filter for subject pregnant """
+    """Filter for subject pregnant"""
     return f_measurement_type(d, "pregnant") & f_choice(d, "Y")
 
 
 def f_n_pregnant(d: pd.DataFrame) -> pd.Series:
-    """ Filter for subject not pregnant. """
+    """Filter for subject not pregnant."""
     return f_measurement_type(d, "pregnant") & f_choice(d, "N")
 
 
 def f_male(d: pd.DataFrame) -> pd.Series:
-    """ Filter for male subjects. """
+    """Filter for male subjects."""
     return f_measurement_type(d, "sex") & f_choice(d, "M")
 
 
 def f_female(d: pd.DataFrame) -> pd.Series:
-    """ Filter for female subjects. """
+    """Filter for female subjects."""
     return f_measurement_type(d, "sex") & f_choice(d, "F")
 
 
@@ -196,10 +198,10 @@ def f_effective_n_oc(d: pd.DataFrame) -> pd.Series:
 
 
 def f_healthy(d: pd.DataFrame) -> pd.Series:
-    """ Filter for healthy subjects. CAUTION: This are not exclusively healthy subjects,. """
+    """Filter for healthy subjects. CAUTION: This are not exclusively healthy subjects,."""
     return f_measurement_type(d, "healthy") & f_choice(d, "Y")
 
 
 def f_n_healthy(d: pd.DataFrame) -> pd.Series:
-    """ Filter for non healthy subjects.. CAUTION: This are not exclusively non healthy subjects,. """
+    """Filter for non healthy subjects.. CAUTION: This are not exclusively non healthy subjects,."""
     return f_measurement_type(d, "healthy") & f_choice(d, "N")

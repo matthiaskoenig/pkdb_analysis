@@ -17,19 +17,19 @@ MISSING_VALUE = "unknown"
 
 
 def len1(d: pd.DataFrame) -> pd.DataFrame:
-    """ return DataFrame if length 1 """
+    """return DataFrame if length 1"""
     if len(d) == 1:
         return d
 
 
 def validate_len1(d: pd.DataFrame) -> pd.DataFrame:
-    """ validates Dataframe has the length of 1. """
+    """validates Dataframe has the length of 1."""
     assert 1 == len(d[d]), d
     return d
 
 
 def data_type(d: pd.Series) -> str:
-    """ returns values for a new column called data_type."""
+    """returns values for a new column called data_type."""
     if d["calculated"]:
         return "from timecourse"
     elif d["inferred"]:
@@ -39,7 +39,7 @@ def data_type(d: pd.Series) -> str:
 
 
 def markers(d: pd.Series) -> str:
-    """ returns markers depending on data_type for plotting."""
+    """returns markers depending on data_type for plotting."""
     if d["calculated"]:
         return "s"
     elif d["inferred"]:
@@ -69,7 +69,7 @@ class MetaAnalysis(object):
         self.first_intervention = first_intervention
 
     def create_intervention_extra(self):
-        """ Returns the 'intervention_extra' column with complete information on intervention."""
+        """Returns the 'intervention_extra' column with complete information on intervention."""
         table = self.pkdata.interventions
         _table = pd.DataFrame()
         for table_pk, df in table.df.groupby(table.pk):
@@ -99,7 +99,7 @@ class MetaAnalysis(object):
 
     @staticmethod
     def subject_numeric_info(df: pd.DataFrame, measurement_type: str) -> Tuple:
-        """ Returns values for a numeric measurement type (e.g weight , height, age) """
+        """Returns values for a numeric measurement type (e.g weight , height, age)"""
         measurement_data = df.extra[df.extra["measurement_type"] == measurement_type]
         if len(measurement_data) == 1:
             return tuple(measurement_data.iloc[0][NUMERIC_FIELDS].values)
@@ -113,7 +113,7 @@ class MetaAnalysis(object):
         categorical_fields: Tuple[str] = ("sex",),
         add_healthy: bool = True,
     ) -> pd.DataFrame:
-        """ Creates a table with subject information compatible with outputs table. """
+        """Creates a table with subject information compatible with outputs table."""
 
         subject_core = getattr(self.pkdata, f"{subject}_core")
         subject_df = getattr(self.pkdata, subject)
@@ -168,7 +168,7 @@ class MetaAnalysis(object):
         return subject_core
 
     def add_extra_info(self, replacements: Dict[str, Dict[str, str]]):
-        """ a generic function to """
+        """a generic function to"""
         self.results["unit_category"] = self.results[
             ["per_bw", "intervention_per_bw"]
         ].apply(figure_category, axis=1)

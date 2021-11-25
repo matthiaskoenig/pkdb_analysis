@@ -148,7 +148,7 @@ class ManifoldKernel(Kernel):
         return np.diag(self(X))  # XXX
 
     def is_stationary(self):
-        """Returns whether the kernel is stationary. """
+        """Returns whether the kernel is stationary."""
         return False
 
     def _project_manifold(self, X, w=None):
@@ -190,7 +190,7 @@ class ManifoldKernel(Kernel):
 
 
 def determine_network_layout(architecture):
-    """ Determine number of outputs and params of given architecture."""
+    """Determine number of outputs and params of given architecture."""
     n_outputs = 0
     n_params = 0
     for subnet in architecture:
@@ -461,7 +461,7 @@ class LocalLengthScalesKernel(Kernel):
         return np.diag(self(X))  # XXX
 
     def is_stationary(self):
-        """Returns whether the kernel is stationary. """
+        """Returns whether the kernel is stationary."""
         return False
 
     def __repr__(self):
@@ -592,7 +592,7 @@ class HeteroscedasticKernel(Kernel):
             return K  # XXX: similar entries?
 
     def is_stationary(self):
-        """Returns whether the kernel is stationary. """
+        """Returns whether the kernel is stationary."""
         return False
 
     def diag(self, X):

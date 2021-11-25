@@ -39,14 +39,14 @@ class PKDataFrame(pd.DataFrame, ABC):
 
     @property
     def _constructor(self):
-        """Internal function need for inheritances from pd.DataFrame. """
+        """Internal function need for inheritances from pd.DataFrame."""
         return PKDataFrame._internal_ctor
 
     _metadata = ["pk"]
 
     @classmethod
     def _internal_ctor(cls, *args, **kwargs):
-        """Internal function need for inheritances from pd.DataFrame. """
+        """Internal function need for inheritances from pd.DataFrame."""
         kwargs["pk"] = None
         return cls(*args, **kwargs)
 
@@ -142,12 +142,12 @@ class PKDataFrame(pd.DataFrame, ABC):
 
     @property
     def pk_column(self):
-        """ Returns the column containing the primary value of this table"""
+        """Returns the column containing the primary value of this table"""
         return self[self.pk]
 
     @property
     def pks(self) -> set:
-        """ Set of pks."""
+        """Set of pks."""
         if self.pk in self.df.columns:
             return set(self[self.pk].unique())
         else:
@@ -161,21 +161,21 @@ class PKDataFrame(pd.DataFrame, ABC):
 
     @property
     def df(self) -> pd.DataFrame:
-        """ Returns a copied DataFrame."""
+        """Returns a copied DataFrame."""
         df = self.copy()
         del df.pk
         return pd.DataFrame(self)
 
     @property
     def study_sids(self) -> set:
-        """ Set of study_sids."""
+        """Set of study_sids."""
         study_sids = set([])
         if "study_sid" in self.df.columns:
             study_sids = set(self.study_sid.unique())
         return study_sids
 
     def _emptify(self) -> "PKDataFrame":
-        """ Removes all entries from table."""
+        """Removes all entries from table."""
         empty_df = pd.DataFrame([], columns=self.columns)
         return PKDataFrame(empty_df, pk=self.pk)
 
@@ -297,11 +297,11 @@ class PKData(object):
             )
 
     def __dict___(self):
-        """ serialises pkdata instance to a dict."""
+        """serialises pkdata instance to a dict."""
         return {df_key: getattr(self, df_key).df for df_key in PKData.KEYS}
 
     def as_dict(self):
-        """ serialises pkdata instance to a dict."""
+        """serialises pkdata instance to a dict."""
         return self.__dict___()
 
     def copy(self):
@@ -461,7 +461,7 @@ class PKData(object):
         return study_sids
 
     def healthy(self):
-        """ subset of healthy data."""
+        """subset of healthy data."""
         return self.filter_subject(f_healthy, concise=False).exclude_subject(
             f_n_healthy
         )
@@ -522,7 +522,7 @@ class PKData(object):
 
     @property
     def timecourses_extended(self) -> pd.DataFrame:
-        """ extends the timecourse df with the core information from interventions, individuals and groups"""
+        """extends the timecourse df with the core information from interventions, individuals and groups"""
 
         timecourses = self.timecourses.df.merge(
             self.interventions_core,
@@ -666,7 +666,7 @@ class PKData(object):
         return pkdata
 
     def _pk_exclude(self, df_k, f_idx, concise, **kwargs) -> "PKData":
-        """ Generic function to exclude data selected by the table key (df_k) and filtered by f_idx."""
+        """Generic function to exclude data selected by the table key (df_k) and filtered by f_idx."""
 
         dict_pkdata = self.as_dict()
         dict_pkdata[df_k] = getattr(self, df_k).pk_exclude(f_idx, **kwargs)
@@ -676,7 +676,7 @@ class PKData(object):
         return pkdata
 
     def _emptify(self, df_key, concise=True) -> "PKData":
-        """ generic function to emptify a table selected by the key."""
+        """generic function to emptify a table selected by the key."""
         self._validate_df_key(df_key)
 
         dict_pkdata = self.as_dict()
@@ -689,14 +689,14 @@ class PKData(object):
 
     @staticmethod
     def _validate_df_key(df_key):
-        """ correct key validations function"""
+        """correct key validations function"""
         if df_key not in PKData.KEYS:
             raise ValueError(
                 f"Unsupported key '{df_key}', key must be in '{PKData.KEYS}'"
             )
 
     def filter_study(self, f_idx, concise=True, **kwargs) -> "PKData":
-        """ Filter studies by filter function. """
+        """Filter studies by filter function."""
         return self._pk_filter("studies", f_idx, concise, **kwargs)
 
     def filter_intervention(self, f_idx, concise=True, *args, **kwargs) -> "PKData":
@@ -722,17 +722,17 @@ class PKData(object):
         return self._pk_filter("interventions", f_idx, concise, **kwargs)
 
     def filter_group(self, f_idx, concise=True, **kwargs) -> "PKData":
-        """ Filter groups. """
+        """Filter groups."""
 
         return self._pk_filter("groups", f_idx, concise, **kwargs)
 
     def filter_individual(self, f_idx, concise=True, **kwargs) -> "PKData":
-        """ Filter individuals. """
+        """Filter individuals."""
 
         return self._pk_filter("individuals", f_idx, concise, **kwargs)
 
     def filter_subject(self, f_idx, concise=True, **kwargs) -> "PKData":
-        """ Filter group or individual. """
+        """Filter group or individual."""
         pkdata = self.filter_group(f_idx, concise=False, **kwargs)
         pkdata = pkdata.filter_individual(f_idx, concise=False, **kwargs)
         if concise:
@@ -740,11 +740,11 @@ class PKData(object):
         return pkdata
 
     def filter_output(self, f_idx, concise=True, **kwargs) -> "PKData":
-        """ Filter outputs. """
+        """Filter outputs."""
         return self._pk_filter("outputs", f_idx, concise, **kwargs)
 
     def filter_timecourse(self, f_idx, concise=True, **kwargs) -> "PKData":
-        """ Filter timecourses. """
+        """Filter timecourses."""
         return self._pk_filter("timecourses", f_idx, concise, **kwargs)
 
     def filter(self, filter_dict: Dict) -> "PKData":
@@ -765,22 +765,22 @@ class PKData(object):
         return pkdata
 
     def exclude_study(self, f_idx, concise=True, **kwargs) -> "PKData":
-        """ Excludes studies which cann be selected by a filter (idx)."""
+        """Excludes studies which cann be selected by a filter (idx)."""
 
         return self._pk_exclude("studies", f_idx, concise, **kwargs)
 
     def exclude_intervention(self, f_idx, concise=True, **kwargs) -> "PKData":
-        """ Excludes interventions which cann be selected by a filter (idx)."""
+        """Excludes interventions which cann be selected by a filter (idx)."""
 
         return self._pk_exclude("interventions", f_idx, concise, **kwargs)
 
     def exclude_group(self, f_idx, concise=True, **kwargs) -> "PKData":
-        """ Excludes groups which cann be selected by a filter (idx)."""
+        """Excludes groups which cann be selected by a filter (idx)."""
 
         return self._pk_exclude("groups", f_idx, concise, **kwargs)
 
     def exclude_individual(self, f_idx, concise=True, **kwargs):
-        """ Excludes individuals which cann be selected by a filter (idx)."""
+        """Excludes individuals which cann be selected by a filter (idx)."""
 
         return self._pk_exclude("individuals", f_idx, concise, **kwargs)
 
@@ -832,7 +832,7 @@ class PKData(object):
 
     @property
     def ids(self):
-        """ unique ids of all tables within a pkdata instance."""
+        """unique ids of all tables within a pkdata instance."""
         return {
             "studies": list(self.studies.pks),
             "groups": list(self.groups.pks),
@@ -898,7 +898,7 @@ class PKData(object):
 
     @property
     def _len_total(self):
-        """ The sum of all entries in all tables."""
+        """The sum of all entries in all tables."""
         return sum([len(getattr(self, df_key)) for df_key in PKData.KEYS])
 
     def get_choices(self):
@@ -1017,7 +1017,7 @@ class PKData(object):
         )
 
     def get_updated_intervention_pk(self, frozenset_intervention_pks):
-        """ return new set"""
+        """return new set"""
 
     def _update_timecourses(self, mapping_int_pks):
         """Dates up all intervention_pk in timecourses table."""
@@ -1109,7 +1109,7 @@ class PKData(object):
         return df
 
     def to_medline(self, path: Path):
-        """ create a bibtex file. """
+        """create a bibtex file."""
 
         create_parent(path)
         reference_pmids = [str(int(s)) for s in self.studies.reference_pmid if s]

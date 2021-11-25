@@ -49,17 +49,17 @@ class PKFilter(object):
 
     @property
     def url_params(self) -> str:
-        """ Parse filters to url """
+        """Parse filters to url"""
         return "?" + urlparse.urlencode(self._flat_params())
 
     def _flat_params(self) -> dict:
-        """ Helper function to parse filters to url"""
+        """Helper function to parse filters to url"""
         return {
             "__".join(keys): value for keys, value in recursive_iter(self.to_dict())
         }
 
     def to_dict(self) -> dict:
-        """ Reformat filter instance to a dictonary."""
+        """Reformat filter instance to a dictonary."""
         return {
             filter_key: deepcopy(getattr(self, filter_key))
             for filter_key in PKFilter.KEYS
