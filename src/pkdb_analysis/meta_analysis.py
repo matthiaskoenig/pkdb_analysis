@@ -216,7 +216,6 @@ class MetaAnalysis(object):
 
     def add_intervention_info(self):
         intervention_table = self.create_intervention_extra()
-        print(intervention_table)
         # intervention_table.unit = intervention_table.unit.astype(str)
         intervention_table["per_bw"] = intervention_table.unit.str.endswith(
             "/ kilogram"

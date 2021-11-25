@@ -31,5 +31,9 @@ class Sid:
         return self.sid
 
     def __post_init__(self):
+        self.validate()
+
+    def validate(self):
+        """ validates sid"""
         if self.sid not in self.core.sids:
             raise ValueError(f"{self.sid} is not in info_nodes [{self.core.source}]")

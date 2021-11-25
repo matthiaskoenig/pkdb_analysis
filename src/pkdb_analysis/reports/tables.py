@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 def create_table_report(
     dosing_substances: Iterable[Union[str, Sid]],
     report_substances: Iterable[Union[str, Sid]],
+    method_substances: Iterable[Union[str, Sid]] = None,
     columns: List[str] =  None,
     study_info: Dict = None,
     timecourse_info: Dict = None,
@@ -69,12 +70,14 @@ def create_table_report(
         raise IOError(
             f"One of the following arguments must be provided: 'zip_data_path','h5_data_path', or 'pkdata'."
         )
-
+    if not method_substances:
+        method_substances = []
     # Create table report
     table_report = TableReport(
         pkdata=pkdata,
         substances_output=[str(item) for item in report_substances],
         substances_intervention=[str(item) for item in dosing_substances],
+        substances_method= [str(item) for item in method_substances],
         study_info=study_info,
         timecourse_info=timecourse_info,
         pharmacokinetic_info=pharmacokinetic_info,
@@ -176,15 +179,15 @@ class TableReport(object):
         },
         "intervention_info": {
             "dosing amount": TableContentDefinition(
-                measurement_types=["dosing", "qualitative dosing"],
+                measurement_types=["dosing", "qualitative-dosing"],
                 value_field=["value"],
             ),
             "dosing route": TableContentDefinition(
-                measurement_types=["dosing", "qualitative dosing"],
+                measurement_types=["dosing", "qualitative-dosing"],
                 value_field=["route"],
             ),
             "dosing form": TableContentDefinition(
-                measurement_types=["dosing", "qualitative dosing"], value_field=["form"]
+                measurement_types=["dosing", "qualitative-dosing"], value_field=["form"]
             ),
         },
         "output_info": {
@@ -386,6 +389,7 @@ class TableReport(object):
         pkdata: PKData,
         substances_output: Iterable = None,
         substances_intervention: Iterable = None,
+        substances_method: Iterable = None,
         study_info: Dict = None,
         timecourse_info: Dict = None,
         pharmacokinetic_info: Dict = None,
@@ -393,16 +397,21 @@ class TableReport(object):
     ):
         self.columns = columns
         self.substances_intervention = substances_intervention
+        self.substances_method = substances_method
+
         self.pkdata = pkdata
+        print("Filtered studies")
+        studies_names = set(self.pkdata.studies.name)
         self.filter_intervention_substances()
-        print(self.pkdata)
+        studies_names_filtered = set(self.pkdata.studies.name)
+
+
 
 
         # make a conciced copy of data
         tmp_pkdata = self.pkdata.copy()
         tmp_pkdata._concise()
         self.pkdata_concised = tmp_pkdata
-        print(self.pkdata_concised)
 
         self.substances = (
             substances_output if substances_output is not None else tuple()
@@ -713,12 +722,20 @@ class TableReport(object):
             args=(self.pkdata_concised.individuals, self.study_info["subject_info"]),
             axis=1,
         )
-
         table_outputs = table_df.apply(
+            self.add_assay_names,
+            args=(self.pkdata, self.pkdata_concised, self.substances_method),
+            axis=1,
+        )
+
+
+        table_outputs = table_outputs.apply(
             self._add_information,
             args=(self.pkdata_concised.outputs, self.study_info["output_info"]),
             axis=1,
         )
+        table_keys.extend(["assay"])
+
         table_timecourses = table_df.apply(
             self._add_information,
             args=(self.pkdata_concised.timecourses, self.study_info["output_info"]),
@@ -729,6 +746,7 @@ class TableReport(object):
         s_keys = list(self.study_info["subject_info"].keys())
         i_keys = list(self.study_info["intervention_info"].keys())
         o_keys = list(self.study_info["output_info"].keys())
+
 
         for keys in [s_keys, i_keys, o_keys]:
             table_keys.extend(copy(keys))
@@ -746,7 +764,7 @@ class TableReport(object):
         table_df = pd.merge(table_df, table_interventions[i_keys], on="sid")
         table_df = pd.merge(
             table_df,
-            self._combine(table_outputs[o_keys], table_timecourses[o_keys]),
+            self._combine(table_outputs[[*o_keys,"assay"]], table_timecourses[o_keys]),
         )
         if self.columns:
             return  table_df[self.columns]
@@ -778,6 +796,25 @@ class TableReport(object):
         table_keys.extend(self.pharmacokinetic_info.keys())
 
         return table_df[table_keys]
+
+    @staticmethod
+    def add_assay_names(
+        study,
+        pkdata: PKData,
+        pkdata_concised: PKData,
+        substances_method = None,
+
+    ):
+        additional_dict = {}
+        outputs = pkdata_concised.outputs[pkdata_concised.outputs.study_sid == study.sid]
+        methods = []
+        #[METHOD_CATEGORIES[m] for m in set(outputs.methods)]
+        if substances_method:
+            outputs = outputs[outputs["substance"].isin(substances_method)]
+
+        additional_dict["assay"] = ",".join(set(outputs.method.dropna()))
+        study_result =  study.append(pd.Series(additional_dict))
+        return study_result
 
     @staticmethod
     def add_counts(
@@ -861,7 +898,6 @@ class TableReport(object):
 
         # DataFrame with multiple rows from study table (e.g. multiple groups per study)
         df_sid_subset = table.df[table.study_sid == row.sid]  # type: pd.DataFrame
-
         d = dict()
         for key, content_definition in measurement_types.items():
             d[key] = TableReport._cell_content(
@@ -893,7 +929,7 @@ class TableReport(object):
             return TableReport.CELL_NOT_REPORTED
 
         has_info = []
-        compare_length = 0
+        compare_length = Subjects_individual
 
         if content_definition.substance != "any":
             if isinstance(content_definition.substance, List):
@@ -909,10 +945,10 @@ class TableReport(object):
         if content_definition.only_individual:
             df = df[df["group_pk"] == -1]
             instance_id = "individual_pk"
-            compare_length = Subjects_individual
 
         if not content_definition.groupby:
             instance_id = "study_name"
+
 
         for _, instance in df.groupby(instance_id):
             if content_definition.measurement_types == "any":
@@ -923,7 +959,6 @@ class TableReport(object):
                         content_definition.measurement_types
                     )
                 ]
-
             value_types = (
                 specific_info[content_definition.value_field]
                 .applymap(type)
