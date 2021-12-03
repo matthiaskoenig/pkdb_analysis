@@ -6,7 +6,6 @@ import requests
 from pkdb_analysis import PKData
 from pkdb_analysis.envs import API_URL
 from pkdb_analysis.test import (
-    TEST_HDF5,
     TESTDATA_CONCISE_FALSE_ZIP,
     TESTDATA_CONCISE_TRUE_ZIP,
 )

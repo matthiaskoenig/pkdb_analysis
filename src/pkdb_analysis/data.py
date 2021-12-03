@@ -8,7 +8,6 @@ import os
 import tempfile
 import zipfile
 from abc import ABC
-from ast import literal_eval
 from collections import OrderedDict
 from io import BytesIO
 from pathlib import Path
@@ -19,6 +18,7 @@ import pandas as pd
 import requests
 from IPython.display import display
 
+from pkdb_analysis.dtypes import INT_MINUS_1, DTYPES, DATE_DTYPE, NULLABLE_INT
 from pkdb_analysis.filter import f_healthy, f_n_healthy, filter_factory
 from pkdb_analysis.units import ureg
 from pkdb_analysis.utils import create_parent
@@ -247,54 +247,13 @@ class PKData(object):
 
         """
         self.studies = PKDataFrame(studies, pk="sid")
-
         self.groups = PKDataFrame(groups, pk="group_pk")
         self.individuals = PKDataFrame(individuals, pk="individual_pk")
-        self.interventions = PKDataFrame(interventions, pk="intervention_pk").replace(
-            {np.nan: None}
-        )
+        self.interventions = PKDataFrame(interventions, pk="intervention_pk")
         self.outputs = PKDataFrame(outputs, pk="output_pk")
         self.timecourses = PKDataFrame(timecourses, pk="subset_pk")
         self.scatters = PKDataFrame(scatters, pk="subset_pk")
 
-        if not self.individuals.empty:
-            self.individuals.substance = self.individuals.substance.astype(str)
-        if not self.groups.empty:
-            self.groups.substance = self.groups.substance.astype(str)
-
-        def _transform_strings_tuple(value):
-            if isinstance(value, str):
-                if value.startswith("[") or value.startswith("("):
-                    return tuple(np.fromstring(value[1:-1], sep=", "))
-                    # return tuple([z for z in value[1:-1].split(",")])
-            return value
-
-        if not self.timecourses.empty:
-            self.timecourses[
-                [
-                    "output_pk",
-                    "intervention_pk",
-                    "mean",
-                    "value",
-                    "sd",
-                    "se",
-                    "min",
-                    "max",
-                ]
-            ] = self.timecourses[
-                [
-                    "output_pk",
-                    "intervention_pk",
-                    "mean",
-                    "value",
-                    "sd",
-                    "se",
-                    "min",
-                    "max",
-                ]
-            ].df.applymap(
-                _transform_strings_tuple
-            )
 
     def __dict___(self):
         """serialises pkdata instance to a dict."""
@@ -396,9 +355,7 @@ class PKData(object):
         with zipfile.ZipFile(path, "r") as archive:
             for key in PKData.KEYS:
                 df = pd.read_csv(archive.open(f"{key}.csv", "r"), low_memory=False)
-                data_dict[key] = PKData._clean_types(
-                    df, is_array=key in ["timecourses", "scatters"]
-                )
+                data_dict[key] = PKData.clean_types(df, DTYPES[key])
         # create data from data frames
         return PKData(**data_dict)
 
@@ -1107,6 +1064,39 @@ class PKData(object):
                 df[column] = df[column].replace({np.nan: -1}).astype(int)
 
         return df
+
+    @staticmethod
+    def clean_types(df: pd.DataFrame, dtypes):
+
+        int_minus_1_columns = [column for column, dtype in dtypes.items() if dtype == INT_MINUS_1]
+        df.loc[:, tuple(int_minus_1_columns)] = df[int_minus_1_columns].replace({np.nan: -1})
+
+
+        int_types = [int] #, INT_MINUS_1]
+        standard_types = [str, float, NULLABLE_INT, DATE_DTYPE]
+        list_types = [int, float, str]
+
+
+        standard_types_columns = {column: dtype for column, dtype in dtypes.items() if dtype in standard_types}
+        int_types_columns = {column: dtype for column, dtype in dtypes.items() if dtype in int_types}
+        df.loc[:, tuple(standard_types_columns.keys())] = df.astype(standard_types_columns)
+        df.loc[:, tuple(int_types_columns)] = df[int_types_columns].astype(int)
+
+        for list_type in list_types:
+            list_columns = [column for column, dtype in dtypes.items() if
+                                dtype == List[list_type]]
+            df.loc[:, tuple(list_columns)] = df[list_columns].applymap(
+                PKData.transform_strings_tuple, dtype=list_type)
+
+        return df
+
+    @staticmethod
+    def transform_strings_tuple(value, dtype):
+        if isinstance(value, str):
+            if value.startswith("[") or value.startswith("("):
+                return tuple(np.fromstring(value[1:-1], sep=", ").astype(dtype))
+                # return tuple([z for z in value[1:-1].split(",")])
+        return value
 
     def to_medline(self, path: Path):
         """create a bibtex file."""
