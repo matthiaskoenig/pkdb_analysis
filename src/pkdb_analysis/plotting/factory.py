@@ -129,18 +129,19 @@ def results(
     results_dict = {}
     for plot_content, pkd in data_dict.items():
         meta_analysis = MetaAnalysis(pkd, intervention_substances, url)
-        meta_analysis.create_results()
+        if not pkd.studies.df.empty:
+            meta_analysis.create_results()
 
-        for key, additional_function in additional_information.items():
-            meta_analysis.results[key] = meta_analysis.results.apply(
-                additional_function, axis=1
+            for key, additional_function in additional_information.items():
+                meta_analysis.results[key] = meta_analysis.results.apply(
+                    additional_function, axis=1
+                )
+            meta_analysis.infer_from_body_weight(
+                by_intervention=plot_content.infer_by_intervention,
+                by_output=plot_content.infer_by_output,
             )
-        meta_analysis.infer_from_body_weight(
-            by_intervention=plot_content.infer_by_intervention,
-            by_output=plot_content.infer_by_output,
-        )
-        meta_analysis.add_extra_info(replacements)
-        results_dict[plot_content] = meta_analysis.results
+            meta_analysis.add_extra_info(replacements)
+            results_dict[plot_content] = meta_analysis.results
 
     return results_dict
 

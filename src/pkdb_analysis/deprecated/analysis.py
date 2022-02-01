@@ -41,7 +41,8 @@ plt.rcParams.update(
 
 def get_one(d):
     """return only one element if all elements are the same."""
-    d = d.dropna()
+    if not isinstance(d, list):
+        d = d.dropna()
     assert len(set(d)) <= 1, set(d)
     return list(set(d))[0]
 
