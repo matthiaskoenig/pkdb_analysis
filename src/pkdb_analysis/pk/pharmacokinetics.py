@@ -251,8 +251,6 @@ class TimecoursePKNoDosing:
 
         auc_d = -c[-1] / slope
 
-        print()
-
         if auc_d > auc:
             warnings.warn("AUC(t-oo) > AUC(0-tend), no AUC(0-oo) calculated.")
             # return self.Q_(np.nan, auc.units)
