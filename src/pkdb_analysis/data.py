@@ -116,6 +116,18 @@ class PKDataFrame(pd.DataFrame, ABC):
         )
 
     @staticmethod
+    def _concentrations_to_molar(sd, molar_masses:Dict[str,ureg.Quantity]):
+        infer_fields = ["value", "mean", "median", "min", "max", "sd", "se"]
+        if isinstance(sd["unit"], str):
+            if ureg(sd["unit"]).check("mg"):
+                factor = molar_masses[sd["substance"]]*ureg(sd["unit"])
+                sd[infer_fields] = sd[infer_fields] * factor.m
+                sd["unit"] = factor.u
+        return sd
+
+
+
+    @staticmethod
     def _change_unit_generic(sd, unit: str, infer_fields: List[str], unit_field: str):
         if isinstance(sd[unit_field], str):
             if ureg(sd[unit_field]).check(unit):
@@ -131,6 +143,10 @@ class PKDataFrame(pd.DataFrame, ABC):
         return PKDataFrame._change_unit_generic(
             sd=sd, unit=unit, infer_fields=infer_fields, unit_field=unit_field
         )
+
+    def change_concentration_to_molar(self,molar_masses:Dict[str,ureg.Quantity]):
+        df = self.df.apply(self._concentrations_to_molar, molar_masses=molar_masses, axis=1)
+        return PKDataFrame(df, pk=self.pk)
 
     def change_unit(self, unit):
         df = self.df.apply(self._change_unit, unit=unit, axis=1)
