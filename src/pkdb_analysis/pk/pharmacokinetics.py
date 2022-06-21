@@ -151,6 +151,14 @@ class TimecoursePKNoDosing:
         [slope, intercept, r_value, p_value, std_err, max_idx] = self._ols_regression(
             t, c
         )
+        if slope > 0:
+            warnings.warn(
+                "Timecourse has a positive slope. A positive slope is "
+                "physically not meaningful. k_el, thalf, and aucinf are not "
+                "calculated. "
+            )
+            slope = self.Q_(np.nan, slope.unit)
+
         kel = self._kel(slope=slope)
         thalf = self._thalf(kel=kel)
         aucinf = self._aucinf(t, c, slope=slope, auc=auc)

@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from matplotlib import pyplot as plt
 
-from pkdb_analysis.pk.pharmacokinetics import TimecoursePK
+from pkdb_analysis.pk.pharmacokinetics import TimecoursePK, TimecoursePKNoDosing
 from pkdb_analysis.pk.pharmacokinetics_example import (
     example0,
     example1,
@@ -60,6 +60,27 @@ def test_pharmacokinetics() -> None:
     assert pk.tmax == Q_(0.0, "hr")
     assert pk.cmax == Q_(10.0, "nmol/l")
     assert pk.vd.units == ureg.Unit("liter")
+
+def test_pharmacokinetics_not_neg() -> None:
+    """Test pharmacokinetics calculation with potentially negative auc end values."""
+    Q_ = ureg.Quantity
+    c = [
+        2.23e-06,
+        1.32e-06
+
+    ]
+    #c = [ 1.24e-06,9.63e-07, 4.44e-07]
+    concentration = Q_(c, "mol/l")
+    dose = Q_(np.nan, "gram")
+    t = [4.25, 3.25]
+    #t = [3.25, 4.25, 6.]
+
+    time = Q_(t, "hr")
+    tcpk = TimecoursePKNoDosing(time=time, concentration=concentration, dose=dose, ureg=ureg)
+    pk = tcpk.pk
+    assert pk.auc.m > 0
+    #assert not np.isnan(pk.aucinf.m)
+
 
 
 def test_pharmacokinetics_small_values() -> None:

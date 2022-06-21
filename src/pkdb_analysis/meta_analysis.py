@@ -266,7 +266,12 @@ class MetaAnalysis(object):
         raise NotImplementedError
 
     def add_subject_info(self):
-        self.results = self.individual_results().df.append(self.group_results())
+        results = []
+        if self.pkdata.individuals.pk_len > 0:
+            results.append(self.individual_results().df)
+        if self.pkdata.groups.pk_len > 0:
+            results.append(self.group_results().df)
+        self.results = pd.concat(results)
 
     def infer_from_body_weight(self, by_intervention=True, by_output=True):
         results_inferred = infer_weight(self.results, by_intervention, by_output)
