@@ -503,9 +503,11 @@ def interactive_plot_factory(
     multi_legend,
     tooltip,
     path: Path,
+    table_path: Path,
     url: str = "http://0.0.0.0:8081",
     create_json=True,
     replacements={},
+
 ):
     intervention_substances_str = {
         substance.sid for substance in intervention_substances

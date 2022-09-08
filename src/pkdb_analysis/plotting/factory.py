@@ -867,6 +867,7 @@ def plot_factory(
     exclude_study_names: Set[str],
     additional_information: Dict[str, Callable],
     path: Path,
+    table_path: Path,
     color_by: str,
     color_label: str,
     cluster: bool = False,
@@ -889,13 +890,21 @@ def plot_factory(
         exclude_study_names,
     )
 
-    results_dict = results(
+    results_dict: Dict[str:pd.DataFrame] = results(
         data_dict=data_dict,
         intervention_substances=intervention_substances_str,
         additional_information=additional_information,
         url=None,
         replacements=replacements,
     )
+    if table_path:
+        for plot_content, df_results in results_dict.items():
+            columns = set(df_results.columns)
+            columns.remove("extra")
+            columns.remove("intervention_extra")
+
+            df_results[columns].to_csv(table_path / f"{plot_content.sid}.tsv", sep="\t")
+
 
     create_plots(
         results_dict,
