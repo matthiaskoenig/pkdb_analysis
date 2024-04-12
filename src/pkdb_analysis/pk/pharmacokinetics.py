@@ -128,7 +128,7 @@ class TimecoursePKNoDosing:
         )  # only take non-zero values
         cmax = np.nanmax(concentration)
         if (min_treshold * cmin) < cmax:
-            warnings.warn("Very small concentrations values are set to NaN.")
+            # warnings.warn("Very small concentrations values are set to NaN.")
             concentration[concentration * min_treshold < cmax] = np.nan
 
         self.t = time
