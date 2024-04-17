@@ -5,6 +5,7 @@ Takes concentration~time curves in plasma as input for analysis.
 Pharmacokinetic parameters are than calculated and returned.
 """
 import warnings
+from copy import deepcopy
 from dataclasses import dataclass
 from typing import List
 
@@ -110,6 +111,9 @@ class TimecoursePKNoDosing:
     ):
         self.ureg = ureg
         self.Q_ = ureg.Quantity
+
+        time = deepcopy(time)
+        concentration = deepcopy(concentration)
 
         if not isinstance(time, Quantity):
             raise ValueError(f"'time' must be a pint Quantity: {type(time)}")
@@ -463,7 +467,7 @@ class TimecoursePK(TimecoursePKNoDosing):
         ureg: UnitRegistry,
         intervention_time: Quantity = None,
         substance: str = "substance",
-        min_treshold=1e6,
+        min_treshold: float = 1e8,
         **kwargs,
     ):
         """Pharmacokinetics parameters are calculated for a single dose experiment.
