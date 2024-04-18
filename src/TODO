@@ -1,0 +1,3 @@
+- update dependencies
+- switch coloredlogs -> rich
+- separate tests in test directory

@@ -1,35 +1,26 @@
 pkdb_analysis: PK-DB python interface
 ======================================
+|icon1| |icon2| |icon3| |icon4| |icon5| |icon6| |icon7|
 
-.. image:: https://github.com/matthiaskoenig/pkdb_analysis/workflows/CI-CD/badge.svg
+.. |icon1| image:: https://github.com/matthiaskoenig/pkdb_analysis/workflows/CI-CD/badge.svg
    :target: https://github.com/matthiaskoenig/pkdb_analysis/workflows/CI-CD
    :alt: GitHub Actions CI/CD Status
-
-.. image:: https://img.shields.io/pypi/v/pkdb_analysis.svg
+.. |icon2| image:: https://img.shields.io/pypi/v/pkdb_analysis.svg
    :target: https://pypi.org/project/pkdb_analysis/
    :alt: Current PyPI Version
-
-.. image:: https://img.shields.io/pypi/pyversions/pkdb-analysis.svg
+.. |icon3| image:: https://img.shields.io/pypi/pyversions/pkdb-analysis.svg
    :target: https://pypi.org/project/pkdb-analysis/
    :alt: Supported Python Versions
-
-.. image:: https://img.shields.io/pypi/l/pkdb-analysis.svg
+.. |icon4| image:: https://img.shields.io/pypi/l/pkdb-analysis.svg
    :target: http://opensource.org/licenses/LGPL-3.0
    :alt: GNU Lesser General Public License 3
-
-.. image:: https://codecov.io/gh/matthiaskoenig/pkdb_analysis/branch/develop/graph/badge.svg
-   :target: https://codecov.io/gh/matthiaskoenig/pkdb_analysis
-   :alt: Codecov
-
-.. image:: https://readthedocs.org/projects/pkdb_analysis/badge/?version=latest
+.. |icon5| image:: https://readthedocs.org/projects/pkdb_analysis/badge/?version=latest
    :target: https://pkdb_analysis.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
-
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3997539.svg
+.. |icon6| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3997539.svg
    :target: https://doi.org/10.5281/zenodo.3997539
    :alt: Zenodo DOI
-
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+.. |icon7| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/ambv/black
    :alt: Black
 
@@ -63,8 +54,11 @@ PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 Funding
 =======
-Matthias König and Jan Grzegorzewski are supported by the Federal Ministry of Education and Research (BMBF, Germany)
+Matthias König and Jan Grzegorzewski were supported by the Federal Ministry of Education and Research (BMBF, Germany)
 within the research network Systems Medicine of the Liver (**LiSyM**, grant number 031L0054).
+Matthias König is supported by the German Research Foundation (DFG) within the Research Unit Programme FOR 5151 
+"`QuaLiPerF <https://qualiperf.de>`__ (Quantifying Liver Perfusion-Function Relationship in Complex Resection - 
+A Systems Medicine Approach)" by grant number 436883643 and by grant number 465194077 (Priority Programme SPP 2311, Subproject SimLivA).
 
 
 Installation
@@ -107,4 +101,4 @@ The public instances of PK-DB are available from::
 By default the alpha server is used.
 
 
-© 2018-2021 Jan Grzegorzewski & Matthias König.
+© 2018-2024 Jan Grzegorzewski & Matthias König.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Setup script for pkdb_analysis."""
-from setuptools import setup
+from setuptools import setup  # type: ignore
 
 
 if __name__ == "__main__":

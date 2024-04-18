@@ -1,6 +1,7 @@
-"""
-Helper functions for body weight inferences.
-Takes PKData instance and  calculates  additional outputs based on body weights of subjects.
+"""Helper functions for body weight inferences.
+
+Takes PKData instance and  calculates additional outputs based on body weights of
+subjects.
 """
 from typing import Optional, Tuple
 
@@ -14,10 +15,8 @@ from pkdb_analysis.units import ureg
 Q_ = ureg.Quantity
 
 
-class InferWeight(object):
-    """
-    A helper class for inference of results from body weights of subjects.
-    """
+class InferWeight:
+    """Helper class for inference of results from body weights of subjects."""
 
     def __init__(self, series: pd.Series, ureg: UnitRegistry):
         self.series = series
@@ -88,7 +87,7 @@ def infer_intervention(series: pd.Series):
     )
 
 
-def infer_weight(df: pd.DataFrame, by_intervention=True, by_output=True):
+def infer_weight(df: pd.DataFrame, by_intervention: bool=True, by_output: bool=True):
     result_infer = df.dropna(subset=["unit_weight"])
     result_no_bodyweight = df[df["unit_weight"].isnull()]
     if by_output:

@@ -22,7 +22,7 @@ from sklearn.preprocessing import StandardScaler
 
 from pkdb_analysis.core import Sid
 from pkdb_analysis.data import PKData
-from pkdb_analysis.deprecated.analysis import get_one, mscatter
+from pkdb_analysis.deprecated.analysis_deprecated import get_one, mscatter
 from pkdb_analysis.filter import f_dosing_in, f_mt_in_substance_in
 from pkdb_analysis.kernels import HeteroscedasticKernel
 from pkdb_analysis.meta_analysis import MetaAnalysis
