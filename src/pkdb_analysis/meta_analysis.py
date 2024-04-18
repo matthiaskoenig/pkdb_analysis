@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from pkdb_analysis import PKData
-from pkdb_analysis.deprecated.analysis_deprecated import figure_category
+from pkdb_analysis.analysis_deprecated import figure_category
 from pkdb_analysis.filter import pk_info
 from pkdb_analysis.inference.body_weight import infer_weight
 

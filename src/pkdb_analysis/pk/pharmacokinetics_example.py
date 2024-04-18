@@ -14,7 +14,7 @@ from matplotlib import pyplot as plt
 from pint import Quantity
 
 from pkdb_analysis.pk.pharmacokinetics import TimecoursePK, TimecoursePKNoDosing
-from pkdb_analysis.test import TESTDATA_PATH
+from pkdb_analysis import TESTDATA_PATH
 
 
 with warnings.catch_warnings():

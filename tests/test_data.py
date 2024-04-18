@@ -1,7 +1,7 @@
 import pytest
 
 from pkdb_analysis import PKData
-from pkdb_analysis.test import TESTDATA_CONCISE_FALSE_ZIP, TESTDATA_CONCISE_TRUE_ZIP
+from pkdb_analysis import TESTDATA_CONCISE_FALSE_ZIP, TESTDATA_CONCISE_TRUE_ZIP
 
 
 def test_zips():

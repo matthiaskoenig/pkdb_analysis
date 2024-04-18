@@ -6,7 +6,7 @@ from pkdb_analysis.core import Core
 from pkdb_analysis.core import Sid as BaseSid
 from pkdb_analysis.reports import create_table_report
 from pkdb_analysis.reports.tables import TableReport
-from pkdb_analysis.test import TESTDATA_CONCISE_FALSE_ZIP
+from pkdb_analysis import TESTDATA_CONCISE_FALSE_ZIP
 
 
 @dataclass(frozen=True)

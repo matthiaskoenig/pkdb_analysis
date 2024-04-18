@@ -7,7 +7,7 @@ import logging
 
 from rich.logging import RichHandler
 
-from pymetadata.console import console
+from pkdb_analysis.console import console
 
 
 def get_logger(name: str, level: int = logging.INFO) -> logging.Logger:

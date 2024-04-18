@@ -7,12 +7,12 @@
 * update release notes in `release-notes`
 * make sure all tests run (`tox -p`)
 * bump version (`bumpversion patch` or `bumpversion minor`)
-* `git push --tags`
-
+* `git push --tags` (triggers release)
+* `git push`
 
 ## test release
 * test installation in virtualenv from pypi (install and runs tests)
 ```
-mkvirtualenv test --python=python3.8
+mkvirtualenv test --python=python3.11
 (test) pip install pkdb-analysis
 ```

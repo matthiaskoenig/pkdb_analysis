@@ -55,7 +55,7 @@ def test_pharmacokinetics() -> None:
         time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"), dose=dose, ureg=ureg
     )
     pk = tcpk.pk
-    assert pytest.approx(pk.kel.magnitude, kel)
+    assert pk.kel.magnitude == pytest.approx(kel)
     assert pk.dose == Q_(0.01, "mole")
     assert pk.tmax == Q_(0.0, "hr")
     assert pk.cmax == Q_(10.0, "nmol/l")
@@ -76,10 +76,9 @@ def test_pharmacokinetics_not_neg() -> None:
     #t = [3.25, 4.25, 6.]
 
     time = Q_(t, "hr")
-    tcpk = TimecoursePKNoDosing(time=time, concentration=concentration, dose=dose, ureg=ureg)
+    tcpk = TimecoursePKNoDosing(time=time, concentration=concentration, dose=dose, ureg=ureg, min_treshold=1E7)
     pk = tcpk.pk
     assert pk.auc.m > 0
-    #assert not np.isnan(pk.aucinf.m)
 
 
 

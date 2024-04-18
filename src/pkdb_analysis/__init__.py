@@ -10,9 +10,8 @@ __version__ = "0.2.2"
 
 from pathlib import Path
 
-TEST_PATH = Path(__file__).parent  # directory of test files
-
-TESTDATA_PATH = TEST_PATH / "data"  # directory of data for tests
+RESOURCES_PATH = Path(__file__).parent  # directory of test files
+TESTDATA_PATH = RESOURCES_PATH / "testdata"  # directory of data for tests
 
 # downloaded test data using concise True/False (filter endpoint)
 TESTDATA_CONCISE_TRUE_ZIP = TESTDATA_PATH / "testdata_concise_true.zip"
