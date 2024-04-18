@@ -93,7 +93,7 @@ class TimecoursePKNoDosing:
         concentration: Quantity,
         ureg: UnitRegistry,
         substance: str = "substance",
-        min_treshold=1e6,
+        min_treshold=1e8,
         **kwargs,
     ):
 

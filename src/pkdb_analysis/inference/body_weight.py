@@ -88,17 +88,20 @@ def infer_intervention(series: pd.Series):
 
 
 def infer_weight(df: pd.DataFrame, by_intervention: bool=True, by_output: bool=True):
+    """Infer weights."""
     result_infer = df.dropna(subset=["unit_weight"])
     result_no_bodyweight = df[df["unit_weight"].isnull()]
     if by_output:
         result_infer_outputs = result_infer.apply(infer_output, axis="columns").dropna(
             how="all"
         )
-        result_infer = result_infer.append(result_infer_outputs, ignore_index=True)
+        result_infer = pd.concat([result_infer, result_infer_outputs], ignore_index=True)
+
     if by_intervention:
         result_infer_outputs = result_infer.apply(
             infer_intervention, axis="columns"
         ).dropna(how="all")
-        result_infer = result_infer.append(result_infer_outputs, ignore_index=True)
-    result_infer = result_infer.append(result_no_bodyweight, ignore_index=True)
+        result_infer = pd.concat([result_infer, result_infer_outputs], ignore_index=True)
+
+    result_infer = pd.concat([result_infer, result_no_bodyweight], ignore_index=True)
     return result_infer

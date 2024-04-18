@@ -1088,15 +1088,15 @@ class PKData(object):
         df.loc[:, tuple(int_minus_1_columns)] = df[int_minus_1_columns].replace({np.nan: -1})
 
 
-        int_types = [int] #, INT_MINUS_1]
+        int_types = [int]
         standard_types = [str, float, NULLABLE_INT, DATE_DTYPE]
         list_types = [int, float, str]
 
-
         standard_types_columns = {column: dtype for column, dtype in dtypes.items() if dtype in standard_types}
         int_types_columns = {column: dtype for column, dtype in dtypes.items() if dtype in int_types}
+
         df.loc[:, tuple(standard_types_columns.keys())] = df.astype(standard_types_columns)
-        df.loc[:, tuple(int_types_columns)] = df[int_types_columns].astype(int)
+        df.loc[:, tuple(int_types_columns.keys())] = df.astype(int_types_columns)  # df[tuple(int_types_columns.keys())].astype(int)
 
         for list_type in list_types:
             list_columns = [column for column, dtype in dtypes.items() if

@@ -99,7 +99,7 @@ def test_pharmacokinetics_small_values() -> None:
         time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"), dose=dose, ureg=ureg
     )
     pk = tcpk.pk
-    assert pytest.approx(pk.kel.magnitude, kel)
+    assert pk.kel.magnitude == pytest.approx(kel)
     assert pk.dose == Q_(0.01, "mole")
     assert pk.tmax == Q_(0.0, "hr")
     assert pk.cmax == Q_(10.0, "nmol/l")
@@ -176,7 +176,7 @@ def test_pharmacokinetics_per_bodyweight2() -> None:
         time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"), dose=dose, ureg=ureg
     )
     pk = tcpk.pk
-    assert pytest.approx(pk.kel.magnitude, kel)
+    assert pk.kel.magnitude == pytest.approx(kel)
     assert pk.dose == Q_(10.0, "mg/kg")
     assert pk.tmax == Q_(0.0, "hr")
     assert pk.cmax == Q_(10.0, "nmol/l")

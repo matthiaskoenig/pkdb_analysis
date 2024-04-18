@@ -3,9 +3,8 @@ from pathlib import Path
 
 import requests
 
-from pkdb_analysis import PKData
 from pkdb_analysis.envs import API_URL
-from pkdb_analysis.test import (
+from pkdb_analysis import (
     TESTDATA_CONCISE_FALSE_ZIP,
     TESTDATA_CONCISE_TRUE_ZIP,
 )
@@ -30,9 +29,6 @@ def update_test_data(path_zip: Path, concise: bool) -> None:
         r.raise_for_status()
         with open(path_zip, "wb") as f:
             for chunk in r.iter_content(chunk_size=8192):
-                # If you have chunk encoded response uncomment if
-                # and set chunk_size parameter to None.
-                # if chunk:
                 f.write(chunk)
             print(path_zip)
 

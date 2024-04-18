@@ -10,7 +10,7 @@ __version__ = "0.2.2"
 
 from pathlib import Path
 
-RESOURCES_PATH = Path(__file__).parent  # directory of test files
+RESOURCES_PATH = Path(__file__).parent / "resources"  # directory of test files
 TESTDATA_PATH = RESOURCES_PATH / "testdata"  # directory of data for tests
 
 # downloaded test data using concise True/False (filter endpoint)
