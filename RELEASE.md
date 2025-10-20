@@ -16,3 +16,15 @@
 mkvirtualenv test --python=python3.8
 (test) pip install pkdb-analysis
 ```
+
+# Install development dependencies:
+```bash
+# install core dependencies
+uv sync
+# install dev dependencies
+uv pip install -e .[]
+# install test dependencies
+uv pip install -r pyproject.toml --extra test
+# install tox testing
+uv tool install tox --with tox-uv
+```
