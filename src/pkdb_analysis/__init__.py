@@ -6,7 +6,7 @@ from pkdb_analysis.query import query_pkdb_data
 from pkdb_analysis.utils import show_versions
 
 
-__version__ = "0.2.2"
+__version__ = "0.3.0"
 
 
 __all__ = [PKData, PKDB, PKFilter, query_pkdb_data, show_versions]
