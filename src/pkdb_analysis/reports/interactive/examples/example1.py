@@ -16,7 +16,7 @@ from pkdb_analysis.filter import f_effective_n_oc, f_n_oc, f_n_smoking, f_oc, f_
 from pkdb_analysis.plotting.factory import PlotContentDefinition
 from pkdb_analysis.reports.interactive.interactive import LegendArgs as LA
 from pkdb_analysis.reports.interactive.interactive import interactive_plot_factory
-from pkdb_analysis.test import TESTDATA_CONCISE_FALSE_ZIP
+from tests import TESTDATA_CONCISE_FALSE_ZIP
 
 
 @dataclass(frozen=True)

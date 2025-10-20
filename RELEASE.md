@@ -4,17 +4,20 @@
 * build documentation `cd docs_builder` and `./make_docs.sh 2>&1 | tee ./make_docs.log`
 
 ## create release
-* update release notes in `release-notes`
+* update release notes in `release-notes` with commit
 * make sure all tests run (`tox -p`)
-* bump version (`bumpversion patch` or `bumpversion minor`)
-* `git push --tags`
+* check formating and linting (`ruff check`)
+* test bump version (`uvx bump-my-version bump [major|minor|patch] --dry-run -vv`)
+* bump version (`uvx bump-my-version bump [major|minor|patch]`)
+* `git push --tags` (triggers release)
+* `git push`
 
 
 ## test release
 * test installation in virtualenv from pypi (install and runs tests)
-```
-mkvirtualenv test --python=python3.8
-(test) pip install pkdb-analysis
+```bash
+uv venv --python 3.13
+uv pip install pkdb-analysis
 ```
 
 # Install development dependencies:
@@ -27,4 +30,22 @@ uv pip install -e .[]
 uv pip install -r pyproject.toml --extra test
 # install tox testing
 uv tool install tox --with tox-uv
+```
+
+## Testing
+See information on https://github.com/tox-dev/tox-uv
+Run single tox target
+```bash
+tox r -e py312
+```
+Run all tests in parallel
+```bash
+tox run-parallel
+```
+
+# Setup pre-commit
+```bash
+uv pip install pre-commit
+pre-commit install
+pre-commit run
 ```

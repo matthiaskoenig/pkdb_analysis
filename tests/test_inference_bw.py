@@ -12,7 +12,7 @@ from pkdb_analysis.inference.body_weight import (
     ureg,
 )
 from pkdb_analysis.meta_analysis import MetaAnalysis
-from pkdb_analysis.test import TESTDATA_CONCISE_TRUE_ZIP
+from tests import TESTDATA_CONCISE_TRUE_ZIP
 
 
 INDIVIDUAL_OUTPUT = {
