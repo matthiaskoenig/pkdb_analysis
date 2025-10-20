@@ -273,7 +273,7 @@ class TimecoursePKNoDosing:
             # indicates that more sampling is needed for an accurate estimate of the elimination
             # rate constant and the observed area under the curve.
             warnings.warn(
-                f"AUC(t-oo) is >25% ({round((auc_d/auc*100).magnitude, 2)}%) of total AUC, "
+                f"AUC(t-oo) is >25% ({round((auc_d/auc*100).magnitude, 1)}%) of total AUC, "
                 f"calculation may be unreliable."
             )
 
