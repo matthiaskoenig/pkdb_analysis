@@ -1,18 +1,13 @@
-from pathlib import Path
-
 import numpy as np
 import pandas as pd
 import pytest
 
-from pkdb_analysis.data import PKData
 from pkdb_analysis.inference.body_weight import (
     infer_intervention,
     infer_output,
     infer_weight,
     ureg,
 )
-from pkdb_analysis.meta_analysis import MetaAnalysis
-from tests import TESTDATA_CONCISE_TRUE_ZIP
 
 
 INDIVIDUAL_OUTPUT = {
@@ -122,12 +117,3 @@ def test_inference_by_body_weight2():
     assert len(outputs) == 8
     for group, output_subset in outputs.groupby(["intervention_per_bw", "per_bw"]):
         assert len(output_subset) == 2
-
-
-@pytest.mark.skip(reason="functionality deprecated >=0.3.0")
-def test_inference_by_body_weight3():
-    test_data = PKData.from_archive(TESTDATA_CONCISE_TRUE_ZIP)
-    ma = MetaAnalysis(test_data, {"caf"}, "test/url/")
-    ma.create_results()
-    results_inferred = infer_weight(ma.results)
-    assert len(results_inferred) > len(ma.results)
