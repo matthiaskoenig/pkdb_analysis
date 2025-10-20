@@ -2,6 +2,7 @@ import numpy as np
 import pytest
 from matplotlib import pyplot as plt
 
+from pkdb_analysis.console import console
 from pkdb_analysis.pk.pharmacokinetics import TimecoursePK, TimecoursePKNoDosing
 from pkdb_analysis.pk.pharmacokinetics_example import (
     example0,
@@ -55,7 +56,7 @@ def test_pharmacokinetics() -> None:
         time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"), dose=dose, ureg=ureg
     )
     pk = tcpk.pk
-    assert pytest.approx(pk.kel.magnitude, kel)
+    assert pk.kel.magnitude == pytest.approx(kel)
     assert pk.dose == Q_(0.01, "mole")
     assert pk.tmax == Q_(0.0, "hr")
     assert pk.cmax == Q_(10.0, "nmol/l")
@@ -72,12 +73,12 @@ def test_pharmacokinetics_not_neg() -> None:
     #c = [ 1.24e-06,9.63e-07, 4.44e-07]
     concentration = Q_(c, "mol/l")
     dose = Q_(np.nan, "gram")
-    t = [4.25, 3.25]
-    #t = [3.25, 4.25, 6.]
+    t = [3.25, 4.25]
 
     time = Q_(t, "hr")
     tcpk = TimecoursePKNoDosing(time=time, concentration=concentration, dose=dose, ureg=ureg)
     pk = tcpk.pk
+    console.print(pk)
     assert pk.auc.m > 0
     #assert not np.isnan(pk.aucinf.m)
 
@@ -100,7 +101,7 @@ def test_pharmacokinetics_small_values() -> None:
         time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"), dose=dose, ureg=ureg
     )
     pk = tcpk.pk
-    assert pytest.approx(pk.kel.magnitude, kel)
+    assert pk.kel.magnitude == pytest.approx(kel)
     assert pk.dose == Q_(0.01, "mole")
     assert pk.tmax == Q_(0.0, "hr")
     assert pk.cmax == Q_(10.0, "nmol/l")
@@ -177,7 +178,7 @@ def test_pharmacokinetics_per_bodyweight2() -> None:
         time=Q_(t, "hr"), concentration=Q_(c, "nmol/l"), dose=dose, ureg=ureg
     )
     pk = tcpk.pk
-    assert pytest.approx(pk.kel.magnitude, kel)
+    assert pk.kel.magnitude == pytest.approx(kel)
     assert pk.dose == Q_(10.0, "mg/kg")
     assert pk.tmax == Q_(0.0, "hr")
     assert pk.cmax == Q_(10.0, "nmol/l")

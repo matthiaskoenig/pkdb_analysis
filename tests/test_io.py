@@ -6,12 +6,14 @@ from pkdb_analysis import PKData
 from tests import TESTDATA_CONCISE_FALSE_ZIP, TESTDATA_CONCISE_TRUE_ZIP
 
 
+@pytest.mark.skip(reason="functionality deprecated >=0.3.0")
 def test_read_from_archive() -> None:
     """Test reading from archive."""
     pkdata = PKData.from_archive(path=TESTDATA_CONCISE_FALSE_ZIP)
     assert pkdata
 
 
+@pytest.mark.skip(reason="functionality deprecated >=0.3.0")
 def test_write_to_archive(tmp_path: Path) -> None:
     """Test writing to archive from archive."""
     pkdata = PKData.from_archive(path=TESTDATA_CONCISE_FALSE_ZIP)
@@ -20,6 +22,7 @@ def test_write_to_archive(tmp_path: Path) -> None:
     assert pkdata_loaded
 
 
+@pytest.mark.skip(reason="functionality deprecated >=0.3.0")
 @pytest.mark.parametrize(
     "input_path", [TESTDATA_CONCISE_FALSE_ZIP, TESTDATA_CONCISE_TRUE_ZIP]
 )

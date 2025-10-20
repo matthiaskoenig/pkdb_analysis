@@ -15,6 +15,7 @@ from matplotlib.pyplot import Figure
 from pint import Quantity, UnitRegistry
 from scipy import stats
 
+from pkdb_analysis.console import console
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -244,6 +245,7 @@ class TimecoursePKNoDosing:
         if rm_nan:
             idx = np.where(~np.isnan(c))
             t, c = t[idx], c[idx]
+
         auc = np.sum((t[1:] - t[0:-1]) * (c[1:] + c[0:-1]) / 2.0)
         return auc
 

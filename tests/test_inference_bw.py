@@ -106,6 +106,7 @@ def test_intervention_inference_by_body_weight1():
     assert ureg(output.intervention_unit) == ureg("ng/kg")
 
 
+@pytest.mark.skip(reason="functionality deprecated >=0.3.0")
 def test_inference_by_body_weight1():
     df = pd.DataFrame([INDIVIDUAL_OUTPUT])
     outputs = infer_weight(df)
@@ -114,6 +115,7 @@ def test_inference_by_body_weight1():
         assert len(output_subset) == 1
 
 
+@pytest.mark.skip(reason="functionality deprecated >=0.3.0")
 def test_inference_by_body_weight2():
     df = pd.DataFrame([INDIVIDUAL_OUTPUT, GROUP_OUTPUT])
     outputs = infer_weight(df)
@@ -122,6 +124,7 @@ def test_inference_by_body_weight2():
         assert len(output_subset) == 2
 
 
+@pytest.mark.skip(reason="functionality deprecated >=0.3.0")
 def test_inference_by_body_weight3():
     test_data = PKData.from_archive(TESTDATA_CONCISE_TRUE_ZIP)
     ma = MetaAnalysis(test_data, {"caf"}, "test/url/")

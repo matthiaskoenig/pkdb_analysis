@@ -1,3 +1,5 @@
+import pytest
+
 from dataclasses import dataclass, field
 
 from pkdb_analysis import PKDB, PKData
@@ -14,6 +16,7 @@ class Sid(BaseSid):
     core: Core = field(default=Core(sids=PKDB.query_info_nodes_sids()))
 
 
+@pytest.mark.skip(reason="functionality deprecated >=0.3.0")
 def test_tables(tmp_path):
     output_path = tmp_path / "tables"
     xlsx_path = output_path / "tables.xlsx"
@@ -40,12 +43,14 @@ def test_tables(tmp_path):
     # data = pd.read_csv(output_path / "timecourses.tsv", sep="\t")
 
 
+@pytest.mark.skip(reason="functionality deprecated >=0.3.0")
 def test_circos_table():
     pkdata = PKData.from_archive(TESTDATA_CONCISE_FALSE_ZIP)
     df_circos = TableReport(pkdata).circos_table()
     assert len(df_circos) > 1
 
 
+@pytest.mark.skip(reason="functionality deprecated >=0.3.0")
 def test_create_config_files_circos(tmp_path):
     pkdata = PKData.from_archive(TESTDATA_CONCISE_FALSE_ZIP)
     df_circos = TableReport(pkdata).circos_table()

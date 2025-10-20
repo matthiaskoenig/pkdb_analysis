@@ -25,7 +25,7 @@ uv pip install pkdb-analysis
 # install core dependencies
 uv sync
 # install dev dependencies
-uv pip install -e .[]
+uv pip install -r pyproject.toml --extra dev
 # install test dependencies
 uv pip install -r pyproject.toml --extra test
 # install tox testing

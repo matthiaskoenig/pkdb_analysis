@@ -1,11 +1,11 @@
-import os
+import pytest
 
 from pkdb_analysis import PKDB, PKFilter
 
 
 # os.environ["API_BASE"] = "http://localhost:8000/api/v1"
 
-
+@pytest.mark.skip(reason="functionality deprecated >=0.3.0")
 def test_pkfilter_creator():
     """Test filtering of data by creator."""
     creator_username = "yduport"

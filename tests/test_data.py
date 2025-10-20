@@ -4,6 +4,7 @@ from pkdb_analysis import PKData
 from tests import TESTDATA_CONCISE_FALSE_ZIP, TESTDATA_CONCISE_TRUE_ZIP
 
 
+@pytest.mark.skip(reason="functionality deprecated >=0.3.0")
 def test_zips():
     """Test if the pks of remote concise=True/False are different."""
     d1 = PKData.from_archive(path=TESTDATA_CONCISE_TRUE_ZIP)
@@ -13,6 +14,7 @@ def test_zips():
     assert d1.individuals.pks != d2.individuals.pks
 
 
+@pytest.mark.skip(reason="functionality deprecated >=0.3.0")
 def test_concise_pks_1():
     """Test if the pks of local concise=True/False are different."""
     d1 = PKData.from_archive(path=TESTDATA_CONCISE_FALSE_ZIP)
@@ -23,6 +25,7 @@ def test_concise_pks_1():
     assert d1.individuals.pks != d2.individuals.pks
 
 
+@pytest.mark.skip(reason="functionality deprecated >=0.3.0")
 def test_concise_pks_2():
     """Test concise has no effect on concised data."""
     d1 = PKData.from_archive(path=TESTDATA_CONCISE_TRUE_ZIP)
@@ -37,6 +40,7 @@ def test_concise_pks_2():
     assert d1.timecourses.pks == d2.timecourses.pks
 
 
+@pytest.mark.skip(reason="functionality deprecated >=0.3.0")
 def test_concise_pks_3():
     """Test if the pks of the concise=True/False data are identical."""
     d1 = PKData.from_archive(path=TESTDATA_CONCISE_TRUE_ZIP)
