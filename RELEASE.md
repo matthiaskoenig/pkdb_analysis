@@ -1,8 +1,5 @@
 # Release information
 
-## update documentation
-* build documentation `cd docs_builder` and `./make_docs.sh 2>&1 | tee ./make_docs.log`
-
 ## create release
 * update release notes in `release-notes` with commit
 * make sure all tests run (`tox -p`)
