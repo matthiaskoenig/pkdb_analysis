@@ -132,7 +132,7 @@ A `FitResult` is an `xarray.Dataset` over the sample dimensions of the input, wi
 | `p_se` | \(\mathrm{se}(\hat p)\) | unit of `p` | standard error, from the Jacobian or from the bootstrap replicates |
 | `p_ci_low`, `p_ci_high` | \(p(q \pm t\,\mathrm{se}(q))\) | unit of `p` | confidence interval at `ci_level` (percentiles of the replicates with a bootstrap) |
 | `p_cv` | \(\mathrm{se}(\hat p) / \lvert \hat p \rvert\) | 1 | relative standard error, a fraction |
-| `cost` | \(\tfrac12\sum_i \rho(r_i^2)\) | - | the objective at the optimum |
+| `cost` | \(\tfrac12\sum_i \rho(r_i^2)\) | square of residual unit | the objective at the optimum |
 | `r2` | see Math | - | coefficient of determination of the unweighted residuals |
 | `rmse` | see Math | unit of `y` | root mean squared error of the unweighted residuals |
 | `aic`, `aicc`, `bic` | see Math | - | information criteria, \(K = k + 1\) |
@@ -141,11 +141,11 @@ A `FitResult` is an `xarray.Dataset` over the sample dimensions of the input, wi
 | `n_starts_converged` | | - | starts which converged, of `n_starts` |
 | `n_bootstrap` | \(B\) | - | converged bootstrap replicates, 0 without a bootstrap |
 | `x_data`, `y_data`, `sd_data` | | unit of `x`, of `y` | the data of the fit, over the dimension `point` |
-| `y_pred`, `residuals` | \(f(x_i; \hat p)\), \(r_i\) | unit of `y`, - | prediction and weighted residual per point |
+| `y_pred`, `residuals` | \(f(x_i; \hat p)\), \(r_i\) | unit of `y`, weighting dependent | prediction and weighted residual per point |
 | `correlation` | \(\mathrm{cov}(q)_{ij} / (\mathrm{se}(q_i)\mathrm{se}(q_j))\) | - | correlation matrix over `(parameter, parameter_)` |
 | `flags` | | - | `FitFlag` bits, see above |
 
-Discrete indicators (`flip_flop`) and the counts carry no uncertainty variables. The `_cv` variables are fractions (`0.12` is a relative standard error of 12 %, the convention of the whole package, which a table formats as a percentage where it prints). Three kinds of variable carry `attrs["units"] = "dimensionless"` without being dimensionless: `rmse` carries the unit of `y`, a weighted residual is dimensionless only under `INV_SD` (it is the residual divided by the square root of the variance model otherwise), and `cost` is the sum of the squared weighted residuals and carries \([y]^2\) under `NONE`. `proportionality_test` returns a `ProportionalityResult` with `slope`, `ci_low`, `ci_high`, `bounds`, `proportional`, `inconclusive`, `dose_range` and `criterion`, and `to_dict`.
+Discrete indicators (`flip_flop`) and the counts carry no uncertainty variables. The `_cv` variables are fractions (`0.12` is a relative standard error of 12 %, the convention of the whole package, which a table formats as a percentage where it prints). `rmse` carries the unit of `y`. Weighted residuals carry that unit under `NONE`, its square root under `INV_Y`, and are dimensionless under `INV_Y2` and `INV_SD`. `cost` carries the square of the residual unit for every loss function, with the robust loss scale fixed at one in the residual unit. `proportionality_test` returns a `ProportionalityResult` with `slope`, `ci_low`, `ci_high`, `bounds`, `proportional`, `inconclusive`, `dose_range` and `criterion`, and `to_dict`.
 
 ## API
 
@@ -315,7 +315,7 @@ The power model of the dose escalation above (`examples/dose_proportionality.py`
 
 ![The allometric model of the clearance against the body weight on log-log axes](images/covariate.png)
 
-The units of `fit_table` come from `attrs["units"]` of the `x` and `y` variables and fall back to `dimensionless`, so a coordinate without units (the `dose` of an `NCAResult`) is best given one before the fit. A sample dimension must not share its name with a variable of the result (a dimension `k` with a model that has a rate constant `k` raises a `ValueError`), and the candidate models of `compare_models` need distinct names, which `Allometric(exponent=0.75)` gets as `allometric_0.75`.
+The units of `fit_table` come from `attrs["units"]` of the `x` and `y` variables and fall back to `dimensionless`, so a coordinate without units (the `dose` of an `NCAResult`) is best given one before the fit. An `sd` variable with explicit compatible units is converted to the unit of `y` before weighting and stored in that unit; incompatible units raise `ValueError`. Without an explicit unit, `sd` is assumed to use the unit of `y`. Custom models need unique parameter and derived names and cannot use result names such as `cost`, `flags` or `parameter`, or reserved suffixes such as `_se`. A sample dimension must not share its name with a variable of the result (a dimension `k` with a model that has a rate constant `k` raises a `ValueError`), and the candidate models of `compare_models` need distinct names, which `Allometric(exponent=0.75)` gets as `allometric_0.75`.
 
 Figures: `plot_fit`, `plot_goodness_of_fit` and `plot_dose_proportionality`, see [Plotting](plotting.md). Examples: `examples/fitting_exponential.py`, `examples/emax.py`, `examples/dose_proportionality.py` and `examples/covariate.py`. The reference of the modules is in [API: fit](api/fit.md) and [API: fit.models](api/fit.models.md); the concentration-effect models are described in [Pharmacodynamics](pd.md).
 

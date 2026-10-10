@@ -77,8 +77,8 @@ def segment_areas(
     dt = t2 - t1
     in_curve = np.arange(tp.shape[1] - 1)[None, :] < (n_valid - 1)[:, None]
 
-    lin_area = 0.5 * (c1 + c2) * dt
-    lin_moment = 0.5 * (t1 * c1 + t2 * c2) * dt
+    lin_area = _midpoint(c1, c2) * dt
+    lin_moment = _midpoint(t1 * c1, t2 * c2) * dt
     positive = (c1 > 0) & (c2 > 0) & (c1 != c2)
     with np.errstate(divide="ignore", invalid="ignore"):
         log_ratio = np.log(c1 / c2)
@@ -98,6 +98,17 @@ def segment_areas(
     area = np.where(in_curve, area, 0.0)
     moment = np.where(in_curve, moment, 0.0)
     return area, moment
+
+
+def _midpoint(first: np.ndarray, last: np.ndarray) -> np.ndarray:
+    """Half a sum, avoiding overflow while preserving subnormal rounding."""
+    with np.errstate(over="ignore"):
+        midpoint = first + last
+    midpoint *= 0.5
+    overflow = np.isinf(midpoint)
+    if np.any(overflow):
+        midpoint[overflow] = 0.5 * first[overflow] + 0.5 * last[overflow]
+    return midpoint
 
 
 def auc_aumc(

@@ -268,6 +268,15 @@ The three studies agree on the direction and disagree on the size, which is what
 
 Figures: `plot_parameters`, `plot_ratio` and `plot_forest`, see [Plotting](plotting.md). Examples: `examples/bioequivalence.py`, `examples/ddi.py` and `examples/meta_analysis.py`. The reference of the modules is in [API: stats](api/stats.md), [API: stats.bioequivalence](api/stats.bioequivalence.md), [API: stats.ddi](api/stats.ddi.md) and [API: stats.meta](api/stats.meta.md).
 
+Confidence levels must lie strictly between 0 and 1, including when the
+sample is too small to estimate an interval. Invalid levels raise `ValueError`
+consistently in summaries, ratios, comparisons, bioequivalence and meta-analysis.
+Log-normal summary conversions work on logarithms instead of squaring large
+coefficients of variation. Meta-analysis scales inverse-variance weights before
+normalizing them, preserving finite estimates and standard errors for very small
+positive variances. A heterogeneity statistic beyond floating point range is
+reported as infinity while the between-study variance can remain finite.
+
 ## References
 
 [^fda_be]: U.S. Food and Drug Administration. *Statistical Approaches to Establishing Bioequivalence.* 2026. See [References](references.md#regulatory-guidance).

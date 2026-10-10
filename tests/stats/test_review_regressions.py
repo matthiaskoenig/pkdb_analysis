@@ -7,9 +7,15 @@ from pkpdutils.stats import (
     ParameterSample,
     compare,
     effect_size,
+    effects_from_arrays,
+    fixed_effect,
+    heterogeneity,
     hodges_lehmann,
+    moments_from_lognormal,
     multiple_comparison,
+    random_effects,
     ratio,
+    summarize,
     tost,
 )
 from pkpdutils.stats import tests as statistical_tests
@@ -190,3 +196,97 @@ def test_pair_midpoint_preserves_subnormal_and_cancellation_precision():
     with np.errstate(over="raise", invalid="raise"):
         actual = statistical_tests._midpoint(a, b)
     np.testing.assert_array_equal(actual, [small, largest, 0.0, 1.0])
+
+
+@pytest.mark.parametrize("ci_level", [0, 1, -0.1, 1.1, np.nan, np.inf])
+@pytest.mark.parametrize(
+    "function", [ratio, tost, compare, hodges_lehmann, effect_size]
+)
+def test_invalid_confidence_level_rejected_consistently(function, ci_level):
+    sample = ParameterSample(values=np.array([1, 2, 3]))
+    with pytest.raises(ValueError, match="ci_level"):
+        function(sample, sample, ci_level=ci_level)
+
+
+@pytest.mark.parametrize("ci_level", [0, 1, np.nan])
+def test_invalid_confidence_level_rejected_without_estimable_interval(ci_level):
+    with pytest.raises(ValueError, match="ci_level"):
+        summarize([1], ci_level=ci_level)
+    with pytest.raises(ValueError, match="ci_level"):
+        effects_from_arrays([], [], ci_level=ci_level)
+    effects = effects_from_arrays([1], [1])
+    for pool in (fixed_effect, random_effects):
+        with pytest.raises(ValueError, match="ci_level"):
+            pool(effects, ci_level=ci_level)
+
+
+def test_confidence_level_just_below_one_has_finite_bounds():
+    level = np.nextafter(1.0, 0.0)
+    sample = ParameterSample(values=np.array([1, 2, 3, 4]))
+    effect = effect_size(sample, sample, ci_level=level)
+    assert np.isfinite(effect.ci_low) and np.isfinite(effect.ci_high)
+    summary = summarize(sample, scale="linear", ci_level=level)
+    assert np.isfinite(summary.ci_low) and np.isfinite(summary.ci_high)
+
+
+@pytest.mark.filterwarnings("error")
+@pytest.mark.parametrize("pool", [fixed_effect, random_effects])
+@pytest.mark.parametrize("variance", [1e-310, np.nextafter(0.0, 1.0)])
+def test_pooling_tiny_positive_variances_preserves_standard_error(pool, variance):
+    result = pool(effects_from_arrays([1, 1], [variance, 2 * variance]))
+    assert result.estimate == pytest.approx(1)
+    assert result.weights == pytest.approx([2 / 3, 1 / 3])
+    assert result.se > 0
+    assert result.se / np.sqrt(variance) == pytest.approx(np.sqrt(2 / 3))
+    assert result.tau2 == 0
+
+
+@pytest.mark.filterwarnings("error")
+def test_random_pooling_keeps_finite_tau_when_q_exceeds_float_range():
+    effects = effects_from_arrays([1, 2], [1e-310, 2e-310])
+    het = heterogeneity(effects)
+    assert het.q == np.inf
+    assert het.i2 == 100
+    assert het.tau2 == pytest.approx(0.5)
+    result = random_effects(effects)
+    assert result.estimate == pytest.approx(1.5)
+    assert result.se == pytest.approx(0.5)
+    assert result.weights == pytest.approx([0.5, 0.5])
+
+
+@pytest.mark.filterwarnings("error")
+def test_log_moments_of_large_finite_summary_do_not_overflow():
+    geometric = ParameterSample(geomean=1, geocv=1e200, n=10)
+    mu, sigma = geometric.log_moments()
+    assert mu == 0
+    assert sigma == pytest.approx(np.sqrt(400 * np.log(10)))
+    arithmetic = ParameterSample(mean=1e-200, sd=1e200, n=10)
+    mu, sigma = arithmetic.log_moments()
+    assert mu == pytest.approx(-600 * np.log(10))
+    assert sigma == pytest.approx(np.sqrt(800 * np.log(10)))
+    assert ratio(arithmetic, arithmetic).gmr == pytest.approx(1)
+
+
+@pytest.mark.filterwarnings("error")
+@pytest.mark.parametrize("mean,sd", [(1e-200, 1), (1e-200, 1e200), (1, 0)])
+def test_large_log_variance_round_trip_retains_finite_arithmetic_moments(mean, sd):
+    arithmetic = ParameterSample(mean=mean, sd=sd, n=10)
+    restored_mean, restored_sd = moments_from_lognormal(*arithmetic.log_moments())
+    assert restored_mean / mean == pytest.approx(1)
+    if sd:
+        assert restored_sd / sd == pytest.approx(1)
+    else:
+        assert restored_sd == 0
+
+
+@pytest.mark.filterwarnings("error")
+def test_geometric_summary_retains_large_finite_cv():
+    result = summarize(ParameterSample(geomean=1, geocv=1e200, n=10))
+    assert result.geocv / 1e200 == pytest.approx(1)
+
+
+@pytest.mark.filterwarnings("error")
+def test_dominant_inverse_variance_weight_keeps_between_study_variance():
+    result = heterogeneity(effects_from_arrays([1, 3], [1e-20, 1]))
+    assert result.q == pytest.approx(4)
+    assert result.tau2 == pytest.approx(1.5)

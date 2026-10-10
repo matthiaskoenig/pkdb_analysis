@@ -1256,10 +1256,13 @@ class ParameterResult:
             The summary over the remaining sample dimensions.
 
         Raises:
-            ValueError: if `dim` is not a sample dimension of the result.
+            ValueError: if `dim` is not a sample dimension of the result or
+                `ci_level` is not finite and strictly between 0 and 1.
         """
         if dim not in self.sample_dims:
             raise ValueError(f"'{dim}' is not a sample dimension {self.sample_dims}")
+        if not 0.0 < ci_level < 1.0:
+            raise ValueError("'ci_level' must be finite and strictly between 0 and 1")
         alpha = 1.0 - ci_level
         keep = self._keep(include_excluded)
         data_vars: dict[str, Any] = {}
@@ -1293,7 +1296,7 @@ class ParameterResult:
                 mean = np.nanmean(filled, axis=-1)
                 sd = np.where(count > 1, np.nanstd(filled, axis=-1, ddof=1), np.nan)
                 se = sd / np.sqrt(count)
-                tq = student_t.ppf(1.0 - alpha / 2.0, np.maximum(count - 1.0, 1.0))
+                tq = student_t.isf(alpha / 2.0, np.maximum(count - 1.0, 1.0))
                 low, high = mean - tq * se, mean + tq * se
                 median = np.nanmedian(filled, axis=-1)
                 q25, q75 = nan_percentile(filled, (25.0, 75.0))

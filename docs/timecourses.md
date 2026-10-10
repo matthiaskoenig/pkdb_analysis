@@ -51,6 +51,13 @@ flowchart LR
 
 ## Dosing protocols
 
+`Dose`, `Dosing`, `DosingRegimen` and `Timecourse` reject unknown keyword fields,
+so a misspelled field raises instead of silently using a default. Dose amounts,
+administration times, regimen intervals and assay limits must be finite;
+generated regimen times are also checked for overflow. Zero doses remain valid
+for control curves, but normalization by a curve's own dose requires a positive
+first dose. An explicit normalization reference must be finite and positive.
+
 A `Dosing` is a frozen model of the doses given and the times they were given: `amounts`, `times` and `durations` (`None` unless the route is `IV_INFUSION`), one `unit` and one `route` for the whole protocol. The doses are sorted by time on construction and duplicate times raise. `Dosing.single(dose)` wraps a single `Dose` into a protocol of one, `Dosing.from_doses(doses)` builds one from a list of `Dose` objects sharing a unit and a route, and `Dosing.regimen(dose, interval, n_doses)` builds a regular protocol at `dose.time + k * interval`; `DosingRegimen(dose=..., interval=..., n_doses=...).dosing()` delegates to the same constructor and stays the convenient way to describe a regimen.
 
 `n_doses`, `doses` (the protocol as a list of `Dose`), `first` and `last` (the first and the last `Dose`), `intervals` (`np.diff(times)`), `tau` (the common interval when every interval is equal within a relative tolerance, `None` for an irregular protocol or a single dose), `is_regular`, `total_amount` and `shifted(offset)` (a copy with every time shifted by `-offset`) read and transform a protocol.

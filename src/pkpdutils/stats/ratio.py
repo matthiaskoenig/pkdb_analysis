@@ -12,6 +12,7 @@ from pkpdutils.result import format_number
 from pkpdutils.stats.sample import (
     ParameterSample,
     Scale,
+    _check_ci_level,
     _in_unit,
     exp_t_interval,
     labels_match,
@@ -116,8 +117,10 @@ def ratio(
 
     Raises:
         ValueError: for a paired ratio on summary data, unequal sizes,
-            labels which do not match, or no pair of finite values.
+            labels which do not match, no pair of finite values, or a
+            `ci_level` outside `(0, 1)`.
     """
+    _check_ci_level(ci_level)
     reference = _in_unit(reference, test.unit)
     is_paired = labels_match(test, reference) if paired is None else paired
     if is_paired:

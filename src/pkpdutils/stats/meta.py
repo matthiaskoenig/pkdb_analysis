@@ -22,6 +22,7 @@ from scipy.stats import chi2, norm
 from pkpdutils.stats.sample import (
     ParameterSample,
     Scale,
+    _check_ci_level,
     _in_unit,
     coerce,
     cohen_d,
@@ -324,7 +325,8 @@ def _z(ci_level: float) -> float:
     Returns:
         \(z_{1 - \alpha/2}\).
     """
-    return float(norm.ppf(1.0 - (1.0 - ci_level) / 2.0))
+    _check_ci_level(ci_level)
+    return float(norm.isf((1.0 - ci_level) / 2.0))
 
 
 def _effect(
@@ -405,8 +407,9 @@ def effect_size(
         The effect size.
 
     Raises:
-        ValueError: if `kind` is not an `EffectKind`.
+        ValueError: if `kind` is not an `EffectKind` or `ci_level` is outside `(0, 1)`.
     """
+    _check_ci_level(ci_level)
     treatment = _in_unit(treatment, control.unit)
     kind = coerce(kind, EffectKind)
     scale = Scale.LOG if kind is EffectKind.LOG_RATIO else Scale.LINEAR
@@ -458,8 +461,10 @@ def effects_from_arrays(
         The effect sizes (`n_control` and `n_treatment` are 0).
 
     Raises:
-        ValueError: if `kind` is not an `EffectKind` or the lengths differ.
+        ValueError: for an unknown `kind`, differing lengths, or a `ci_level`
+            outside `(0, 1)`.
     """
+    _check_ci_level(ci_level)
     kind = coerce(kind, EffectKind)
     est = np.asarray(estimates, dtype=np.float64).ravel()
     var = np.asarray(variances, dtype=np.float64).ravel()
@@ -546,11 +551,17 @@ def _pool(
         The pooled effect; the weights of the studies which were dropped
         are `NaN`, the others sum to 1.
     """
+    variance = v[usable] + tau2
+    scale = float(variance.min())
+    scaled = scale / variance
+    total = float(scaled.sum())
+    scaled /= total
     w = np.full(theta.shape, np.nan)
-    w[usable] = 1.0 / (v[usable] + tau2)
-    total = float(w[usable].sum())
-    estimate = float((w[usable] * theta[usable]).sum() / total)
-    se = float(np.sqrt(1.0 / total))
+    w[usable] = scaled
+    estimate = float(np.dot(scaled, theta[usable]))
+    # Separate square roots preserve representable standard errors when
+    # scale / total would underflow to zero.
+    se = float(np.sqrt(scale) / np.sqrt(total))
     z = estimate / se
     zq = _z(ci_level)
     return PooledEffect(
@@ -561,7 +572,7 @@ def _pool(
         ci_level=ci_level,
         z=float(z),
         p_value=float(2.0 * norm.sf(abs(z))),
-        weights=w / total,
+        weights=w,
         model=model,
         tau2=tau2,
     )
@@ -584,8 +595,10 @@ def fixed_effect(
 
     Raises:
         ValueError: as `_arrays`, without effects, for a study with a
-            variance which is not positive, or without a usable study.
+            variance which is not positive, without a usable study, or a
+            `ci_level` outside `(0, 1)`.
     """
+    _check_ci_level(ci_level)
     theta, v, usable = _arrays(effects)
     return _pool(theta, v, usable, "fixed", 0.0, ci_level)
 
@@ -609,7 +622,8 @@ def heterogeneity(effects: Sequence[EffectSize]) -> Heterogeneity:
 
     Raises:
         ValueError: as `_arrays`, without effects, for a study with a
-            variance which is not positive, or without a usable study.
+            variance which is not positive, without a usable study, or a
+            `ci_level` outside `(0, 1)`.
     """
     theta, v, usable = _arrays(effects)
     return _heterogeneity(theta, v, usable)
@@ -629,14 +643,22 @@ def _heterogeneity(
         The statistics.
     """
     theta, v = theta[usable], v[usable]
-    w = 1.0 / v
+    scale = float(v.min())
+    w = scale / v
+    total = float(w.sum())
     k = theta.size
-    theta_f = (w * theta).sum() / w.sum()
-    q = float((w * (theta - theta_f) ** 2).sum())
+    theta_f = float(np.dot(w / total, theta))
+    q_scaled = float(np.dot(w, (theta - theta_f) ** 2))
+    with np.errstate(over="ignore"):
+        q = float(np.float64(q_scaled) / scale)
     df = k - 1
-    c = float(w.sum() - (w**2).sum() / w.sum())
-    tau2 = max(0.0, (q - df) / c) if df > 0 and c > 0 else 0.0
-    i2 = max(0.0, (q - df) / q) * 100.0 if q > 0 else 0.0
+    # Compute the DL ratio before removing the common weight scale. Sum
+    # cross products to avoid cancellation when one study dominates.
+    c_scaled = float(2.0 * np.dot(w[1:], np.cumsum(w[:-1])) / total)
+    tau2 = (
+        max(0.0, (q_scaled - df * scale) / c_scaled) if df > 0 and c_scaled > 0 else 0.0
+    )
+    i2 = max(0.0, 1.0 - df / q) * 100.0 if q > 0 else 0.0
     return Heterogeneity(
         q=q,
         df=df,
@@ -664,8 +686,10 @@ def random_effects(
 
     Raises:
         ValueError: as `_arrays`, without effects, for a study with a
-            variance which is not positive, or without a usable study.
+            variance which is not positive, without a usable study, or a
+            `ci_level` outside `(0, 1)`.
     """
+    _check_ci_level(ci_level)
     theta, v, usable = _arrays(effects)
     tau2 = _heterogeneity(theta, v, usable).tau2
     return _pool(theta, v, usable, "random", tau2, ci_level)
@@ -694,8 +718,9 @@ def meta_analysis(
     Raises:
         ValueError: without studies, for an unknown `kind`, for a study
             whose effect has a variance which is not positive, or when no
-            study is left to pool.
+            study is left to pool, or for a `ci_level` outside `(0, 1)`.
     """
+    _check_ci_level(ci_level)
     if not studies:
         raise ValueError("A meta-analysis needs at least one study")
     kind = coerce(kind, EffectKind)
@@ -735,6 +760,7 @@ def meta_analysis_by(
         ValueError: as `meta_analysis`.
     """
     kind = coerce(kind, EffectKind)
+    _check_ci_level(ci_level)
     groups: dict[str, list[Study]] = {}
     for study in studies:
         groups.setdefault(study.category or "", []).append(study)

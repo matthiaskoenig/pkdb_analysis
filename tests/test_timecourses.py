@@ -1623,6 +1623,27 @@ def test_dose_normalized_scales_the_uncertainty() -> None:
     assert normalized.ds["sd"].attrs["units"] == normalized.unit
 
 
+@pytest.mark.parametrize("reference", [np.inf, -np.inf, np.nan, 0.0, -1.0])
+def test_dose_normalized_rejects_invalid_reference(reference: float) -> None:
+    with pytest.raises(ValueError, match="finite and positive"):
+        make_batch().dose_normalized(reference=reference)
+    with pytest.raises(ValueError, match="finite and positive"):
+        make_batch().dose_normalized(reference=Q_(reference, "g"))
+
+
+def test_dose_normalized_rejects_zero_dose() -> None:
+    batch = Timecourse(
+        time=[0, 1],
+        value=[1, 2],
+        time_unit="h",
+        unit="mg/l",
+        dose=Dose(amount=0, unit="mg"),
+    ).to_batch()
+    with pytest.raises(ValueError, match="positive"):
+        batch.dose_normalized()
+    np.testing.assert_allclose(batch.dose_normalized(reference=2).values, [[0.5, 1]])
+
+
 def test_dose_normalized_without_doses() -> None:
     tcs = Timecourses.from_arrays(
         T,

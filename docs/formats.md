@@ -345,6 +345,13 @@ USUBJID PPTESTCD                   PPTEST  PPCAT      PPSCAT PPORRES PPORRESU
 
 ## The result tables of other tools
 
+The PKNCA result reader preserves profiles with missing parameter values or
+missing grouping labels, in the order they appear. Duplicate parameters for
+one profile and interval raise instead of silently choosing the first value.
+Rows explicitly excluded by PKNCA are removed before this check. For exports
+that combine observed and imputed analyses at the same interval, pass
+`duplicates="first"` to explicitly select the first reported value.
+
 A result compared against, or handed on to, another tool is wanted in the table that tool writes. `pkpdutils.crosswalk` holds the names of every parameter in Phoenix WinNonlin, PKNCA and NonCompart and writes a result in their layouts: `to_winnonlin` the "Final Parameters Pivoted" table of Phoenix (one row per subject, `AUCINF_obs`, `Cl_F_obs`, the extrapolated fractions in percent), `to_pknca_results` the long table of `as.data.frame(pk.nca(...))` (one row per subject and parameter, `PPTESTCD` and `PPORRES`) and `to_noncompart` the table of `NonCompart::tblNCA`, whose columns are the CDISC codes. The `write_*` functions write the same tables as csv files, and the `read_*` functions read a table of the tool back into the variables of `pkpdutils`, with the percentages as fractions, so that a published result compares against `NCAResult.to_dataframe` column by column:
 
 ```python

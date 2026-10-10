@@ -60,6 +60,18 @@ def test_generic_result_classification() -> None:
     assert r.flag_table()["WORSE"].tolist() == [False, False, True]
 
 
+@pytest.mark.parametrize("level", [0.0, 1.0, -0.1, 1.1, np.nan, np.inf, -np.inf])
+def test_generic_summarize_rejects_invalid_confidence(level: float) -> None:
+    with pytest.raises(ValueError, match="ci_level"):
+        make().summarize("s", ci_level=level)
+
+
+def test_generic_summarize_retains_finite_high_confidence_interval() -> None:
+    summary = make().summarize("s", ci_level=np.nextafter(1.0, 0.0))
+    assert np.isfinite(summary["a_ci_low"].item())
+    assert np.isfinite(summary["a_ci_high"].item())
+
+
 def test_generic_summarize_uses_class_sets() -> None:
     s = make().summarize("s")
     q = s.to_quantities()

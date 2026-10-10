@@ -104,12 +104,12 @@ class Dose(BaseModel):
             otherwise
     """
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
-    amount: float = Field(ge=0)
+    amount: float = Field(ge=0, allow_inf_nan=False)
     unit: str
     route: Route = Route.ORAL
-    time: float = 0.0
+    time: float = Field(default=0.0, allow_inf_nan=False)
     duration: float | None = None
 
     @model_validator(mode="after")
@@ -149,21 +149,27 @@ class DosingRegimen(BaseModel):
             state analyses only need `tau`)
     """
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     dose: Dose
-    interval: float = Field(gt=0)
+    interval: float = Field(gt=0, allow_inf_nan=False)
     n_doses: int | None = Field(default=None, ge=1)
 
     def dose_times(self) -> np.ndarray:
         """Times of the administrations, `dose.time + k * interval`.
 
         Raises:
-            ValueError: if `n_doses` is `None`.
+            ValueError: if `n_doses` is `None` or the generated times overflow.
         """
         if self.n_doses is None:
             raise ValueError("'n_doses' is required for the dose times")
-        return self.dose.time + self.interval * np.arange(self.n_doses, dtype=float)
+        with np.errstate(over="ignore", invalid="ignore"):
+            times = self.dose.time + self.interval * np.arange(
+                self.n_doses, dtype=float
+            )
+        if not np.isfinite(times).all():
+            raise ValueError("The generated dose times must be finite")
+        return times
 
     def dosing(self) -> "Dosing":
         """The protocol of the regimen, `Dosing.regimen` of `dose`, `interval` and `n_doses`.
@@ -267,7 +273,7 @@ class Dosing(BaseModel):
         route: route of administration, shared by every dose of the protocol
     """
 
-    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
+    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True, extra="forbid")
 
     amounts: np.ndarray
     times: np.ndarray
@@ -442,13 +448,12 @@ class Dosing(BaseModel):
             ValueError: if `interval` is not positive or `n_doses` is less
                 than 1.
         """
-        if interval <= 0:
-            raise ValueError("'interval' must be positive")
-        if n_doses < 1:
-            raise ValueError("'n_doses' must be at least 1")
-        times = dose.time + interval * np.arange(n_doses, dtype=float)
-        amounts = np.full(n_doses, dose.amount)
-        durations = None if dose.duration is None else np.full(n_doses, dose.duration)
+        regimen = DosingRegimen(dose=dose, interval=interval, n_doses=n_doses)
+        times = regimen.dose_times()
+        amounts = np.full(times.size, dose.amount)
+        durations = (
+            None if dose.duration is None else np.full(times.size, dose.duration)
+        )
         return cls(
             amounts=amounts,
             times=times,
@@ -590,7 +595,7 @@ class Timecourse(BaseModel):
             or two analytes carries a limit per curve
     """
 
-    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
+    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True, extra="forbid")
 
     time: np.ndarray
     value: np.ndarray
@@ -603,7 +608,7 @@ class Timecourse(BaseModel):
     substance: str = "substance"
     label: str | None = None
     tissue: str | None = None
-    lloq: float | None = Field(default=None, gt=0.0)
+    lloq: float | None = Field(default=None, gt=0.0, allow_inf_nan=False)
 
     def __init__(
         self,
@@ -3758,7 +3763,8 @@ class Timecourses:
             The normalized batch.
 
         Raises:
-            ValueError: without doses, if `reference` is not positive or
+            ValueError: without doses, if a first dose is zero, if `reference`
+                is not finite and positive or
                 carries a unit which is not a dose unit of the batch.
         """
         amounts = self.first_dose_amount
@@ -3773,11 +3779,15 @@ class Timecourses:
             )
         if reference is None:
             divisor = np.asarray(amounts, dtype=np.float64)
+            if np.any(divisor <= 0) or np.isinf(divisor).any():
+                raise ValueError("First dose amounts must be finite and positive")
         else:
             if isinstance(reference, Quantity):
                 reference = float(reference.to(dose_unit).magnitude)
-            if not float(reference) > 0:
-                raise ValueError(f"'reference' must be positive, got {reference}")
+            if not np.isfinite(reference) or not float(reference) > 0:
+                raise ValueError(
+                    f"'reference' must be finite and positive, got {reference}"
+                )
             divisor = np.full(self.sample_shape, float(reference))
         unit = str((Q_(1.0, self.unit) / Q_(1.0, dose_unit)).units)
         ds = self.ds.copy()

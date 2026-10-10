@@ -85,7 +85,8 @@ def analyse(scenario):
 def references(scenario):
     """The result tables of the three tools, one row per subject."""
     s = scenarios.loc[scenario]
-    pknca = read_pknca_results(f"benchmarks/pknca/{scenario}.csv")
+    # The export combines observed and imputed analyses; use observed tmax.
+    pknca = read_pknca_results(f"benchmarks/pknca/{scenario}.csv", duplicates="first")
     return {
         "WinNonlin": read_winnonlin(f"benchmarks/winnonlin/{s.winnonlin}"),
         "PKNCA": pknca.droplevel(["start", "end"]),

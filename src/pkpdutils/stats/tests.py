@@ -32,6 +32,7 @@ from scipy.stats import t as student_t
 from pkpdutils.stats.sample import (
     ParameterSample,
     Scale,
+    _check_ci_level,
     _in_unit,
     coerce,
     cohen_d,
@@ -200,9 +201,9 @@ def _interval(
     """
     alpha = 1.0 - ci_level
     if alternative is Alternative.TWO_SIDED:
-        tq = float(student_t.ppf(1.0 - alpha / 2.0, df))
+        tq = float(student_t.isf(alpha / 2.0, df))
         return center - tq * se, center + tq * se
-    tq = float(student_t.ppf(1.0 - alpha, df))
+    tq = float(student_t.isf(alpha, df))
     if alternative is Alternative.LESS:
         return -np.inf, center + tq * se
     return center - tq * se, np.inf
@@ -379,8 +380,7 @@ def compare(
             paired test on unpaired or unequal samples, a non-t test on
             summary data, or non-positive values on the log scale.
     """
-    if not 0 < ci_level < 1:
-        raise ValueError("'ci_level' must lie in (0, 1)")
+    _check_ci_level(ci_level)
     if permutation_batch < 1 or int(permutation_batch) != permutation_batch:
         raise ValueError("'permutation_batch' must be a positive whole number")
     method = coerce(test, TestMethod)
@@ -874,8 +874,7 @@ def hodges_lehmann(
             as `paired_values` for an unpairable pair of samples, incompatible
             units.
     """
-    if not 0 < ci_level < 1:
-        raise ValueError(f"'ci_level' must lie in (0, 1), got {ci_level}")
+    _check_ci_level(ci_level)
     if not (a.is_individual and b.is_individual):
         raise ValueError(
             f"'{a.name}' or '{b.name}' has no individual values, the "

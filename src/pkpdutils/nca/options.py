@@ -557,7 +557,9 @@ class NCAOptions(BaseModel):
         ci_level: level of the confidence intervals
         bootstrap_spread: whether the replicates are drawn with `se` or `sd`
         bootstrap_distribution: normal or log-normal draws
-        delta_step: relative perturbation of a point, in units of its `se`, for the delta method
+        delta_step: requested perturbation of a point in units of its `se` for
+            the delta method; enlarged to at least `sqrt(machine epsilon) * abs(value)`
+            when needed to avoid floating-point cancellation
     """
 
     model_config = ConfigDict(frozen=True, extra="forbid")
