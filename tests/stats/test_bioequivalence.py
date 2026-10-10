@@ -163,6 +163,7 @@ def test_crossover_validation() -> None:
     test, reference = crossover_samples()
     bad_period = ParameterSample(
         values=REF_VALUES,
+        unit="mg*hr/l",
         labels=SUBJECTS,
         coords={"period": PERIOD_TEST, "sequence": SEQUENCE},
     )
@@ -170,6 +171,7 @@ def test_crossover_validation() -> None:
         tost(test, bad_period)
     one_sequence = ParameterSample(
         values=REF_VALUES,
+        unit="mg*hr/l",
         labels=SUBJECTS,
         coords={"period": PERIOD_REF, "sequence": np.array(["RT"] * N)},
     )
@@ -177,11 +179,13 @@ def test_crossover_validation() -> None:
         tost(test, one_sequence)
     same_period_test = ParameterSample(
         values=TEST_VALUES,
+        unit="mg*hr/l",
         labels=SUBJECTS,
         coords={"period": np.full(N, 2), "sequence": SEQUENCE},
     )
     same_period_reference = ParameterSample(
         values=REF_VALUES,
+        unit="mg*hr/l",
         labels=SUBJECTS,
         coords={"period": np.full(N, 1), "sequence": SEQUENCE},
     )

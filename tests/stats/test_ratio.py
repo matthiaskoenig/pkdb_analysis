@@ -15,7 +15,7 @@ LABELS = np.array([f"s{i}" for i in range(12)])
 def test_paired_by_label_order_independent() -> None:
     t = ParameterSample(values=TEST, labels=LABELS, name="auc_inf_obs", unit="mg*hr/l")
     perm = RNG.permutation(12)
-    r = ParameterSample(values=REF[perm], labels=LABELS[perm])
+    r = ParameterSample(values=REF[perm], labels=LABELS[perm], unit="mg*hr/l")
     res = ratio(t, r)
     assert isinstance(res, RatioResult) and res.paired
     d = np.log(TEST) - np.log(REF)

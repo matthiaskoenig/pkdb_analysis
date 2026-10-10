@@ -40,6 +40,7 @@ from pkpdutils.result import ParameterResult
 from pkpdutils.stats.ratio import RatioResult, ratio
 from pkpdutils.stats.sample import (
     ParameterSample,
+    _in_unit,
     coerce,
     exp_t_interval,
     labels_match,
@@ -1191,6 +1192,7 @@ def tost(
             design the samples do not support, or a scaling the design
             cannot carry.
     """
+    reference = _in_unit(reference, test.unit)
     if not 0 < limits[0] < limits[1]:
         raise ValueError(
             f"'limits' must be (low, high) with 0 < low < high, got {limits}"

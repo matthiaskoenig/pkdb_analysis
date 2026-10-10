@@ -121,7 +121,7 @@ def test_hedges_g_matches_the_esc_port() -> None:
 
 def test_mean_difference_and_log_ratio() -> None:
     control = ParameterSample(mean=100.0, sd=30.0, n=12, name="cl", unit="l/hr")
-    treatment = ParameterSample(mean=130.0, sd=35.0, n=10)
+    treatment = ParameterSample(mean=130.0, sd=35.0, n=10, unit="l/hr")
     md = effect_size(control, treatment, EffectKind.MEAN_DIFF)
     assert md.estimate == 30.0 and md.variance == pytest.approx(
         30.0**2 / 12 + 35.0**2 / 10

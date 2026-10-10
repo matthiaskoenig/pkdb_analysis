@@ -55,3 +55,21 @@ def test_flags() -> None:
         "FLIP_FLOP",
     ]
     assert FitFlag.NO_DATA == 32
+
+
+def test_unknown_options_are_rejected():
+    with pytest.raises(ValueError, match="Extra inputs"):
+        FitOptions.model_validate({"n_start": 10})
+
+
+@pytest.mark.parametrize(
+    "values",
+    [
+        {"fixed": {"k": float("nan")}},
+        {"initial": {"k": float("inf")}},
+        {"bounds": {"k": (float("nan"), 1)}},
+    ],
+)
+def test_nonfinite_option_values_are_rejected(values):
+    with pytest.raises(ValueError):
+        FitOptions(**values)

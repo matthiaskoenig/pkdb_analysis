@@ -144,3 +144,22 @@ def test_the_acceptability_table_needs_a_sample_dimension_and_the_areas() -> Non
     result = nca(study(0), options=OPTIONS)
     with pytest.raises(ValueError, match="is not a sample dimension"):
         acceptability_table(result, "subject")
+
+
+def test_no_evaluable_ratios_has_no_acceptance_verdict() -> None:
+    data = Timecourses.from_arrays(
+        [0, 1, 2], [[0, 1, 2]], time_unit="h", unit="mg/l", dims=("individual",)
+    )
+    table, acceptable = acceptability_table(nca(data), "individual")
+    assert table["ratio"].isna().all()
+    assert acceptable is None
+
+
+@pytest.mark.parametrize(
+    "threshold,share", [(0, 0.2), (1.1, 0.2), (0.8, -0.1), (0.8, 1.1)]
+)
+def test_acceptability_rejects_invalid_rules(threshold: float, share: float) -> None:
+    with pytest.raises(ValueError, match="threshold"):
+        acceptability_table(
+            nca(study(0)), "individual", threshold=threshold, share=share
+        )

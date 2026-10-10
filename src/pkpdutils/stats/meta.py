@@ -22,6 +22,7 @@ from scipy.stats import chi2, norm
 from pkpdutils.stats.sample import (
     ParameterSample,
     Scale,
+    _in_unit,
     coerce,
     cohen_d,
     hedges_correction,
@@ -406,6 +407,7 @@ def effect_size(
     Raises:
         ValueError: if `kind` is not an `EffectKind`.
     """
+    treatment = _in_unit(treatment, control.unit)
     kind = coerce(kind, EffectKind)
     scale = Scale.LOG if kind is EffectKind.LOG_RATIO else Scale.LINEAR
     m_c, s_c, n_c = control.moments(scale)

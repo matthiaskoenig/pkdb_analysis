@@ -67,6 +67,7 @@ from pkpdutils.nca.options import (
     TerminalMethod,
     TerminalPhase,
     UncertaintyMethod,
+    serialize_nca_options,
 )
 from pkpdutils.nca.result import (
     DOSE_COORDINATE,
@@ -79,9 +80,9 @@ from pkpdutils.nca.terminal import CANDIDATE_DIM, CANDIDATE_PREFIX, terminal_fit
 from pkpdutils.nca.uncertainty import bootstrap, delta
 from pkpdutils.parallel import (
     NCA_WORKER_THRESHOLD,
-    executor,
     resolve_workers,
     split_rows,
+    worker_pool,
 )
 from pkpdutils.result import (
     SUMMARY_SUFFIXES,
@@ -1452,7 +1453,8 @@ def run_rows(
         logger.debug(
             "NCA: %d rows in %d chunks over %d threads", n_rows, len(jobs), n_workers
         )
-        parts = list(executor("thread", n_workers).map(_compute_chunk, jobs))
+        with worker_pool("thread", n_workers) as pool:
+            parts = list(pool.map(_compute_chunk, jobs))
     else:
         parts = [_compute_chunk(job) for job in jobs]
     # a chunk of single dose rows reports fewer variables than one holding a
@@ -1463,6 +1465,61 @@ def run_rows(
         # it took: it is filled in for every row of the batch, so that a single
         # dose row reports its own count wherever the chunks happen to cut
         values["n_doses"] = dose_counts(dose_time, n_rows)
+    return values
+
+
+def run_analysis_rows(
+    t: np.ndarray,
+    c: np.ndarray,
+    *,
+    dose_amount: np.ndarray | None,
+    dose_time: np.ndarray | None,
+    dose_duration: np.ndarray | None,
+    route: Route | None,
+    options: NCAOptions,
+    lloq: np.ndarray | None = None,
+    windows: np.ndarray | None = None,
+    routes: np.ndarray | None = None,
+) -> dict[str, np.ndarray]:
+    """Compute the same parameters for original, resampled and perturbed rows."""
+    values = run_rows(
+        t,
+        c,
+        dose_amount=dose_amount,
+        dose_time=dose_time,
+        dose_duration=dose_duration,
+        route=route,
+        options=options,
+        lloq=lloq,
+        windows=windows,
+        routes=routes,
+    )
+    if options.partial_aucs:
+        collision = sorted(set(options.partial_aucs) & reserved_variables(values))
+        if collision:
+            raise ValueError(
+                f"the partial areas {collision} carry the name of a variable of "
+                "the result; name them differently"
+            )
+        first_time, reference_time = dose_times(
+            dose_amount, dose_time, dose_duration, options, n_rows=t.shape[0]
+        )
+        cleaned, _, _ = apply_blq(
+            c, resolve_lloq(options, lloq, t.shape[0]), options.blq_rules
+        )
+        areas, extrapolated = named_partial_aucs(
+            t - first_time[:, None],
+            cleaned,
+            values,
+            route=route,
+            options=options,
+            shift=reference_time - first_time,
+            routes=routes,
+        )
+        values.update(areas)
+        values["flags"] |= np.where(
+            extrapolated, NCAFlag.PARTIAL_EXTRAPOLATED, 0
+        ).astype(values["flags"].dtype)
     return values
 
 
@@ -1544,7 +1601,7 @@ def nca(timecourses: Timecourses, *, options: NCAOptions | None = None) -> NCARe
     lloq = None if batch_lloq is None else batch_lloq.reshape(n_rows)
     windows = sample_windows(timecourses, options.terminal)
 
-    values = run_rows(
+    values = run_analysis_rows(
         t,
         c,
         dose_amount=dose_amount,
@@ -1563,30 +1620,8 @@ def nca(timecourses: Timecourses, *, options: NCAOptions | None = None) -> NCARe
 
     units: dict[str, str] = {}
     if options.partial_aucs:
-        collision = sorted(set(options.partial_aucs) & reserved_variables(values))
-        if collision:
-            raise ValueError(
-                f"the partial areas {collision} carry the name of a variable of "
-                "the result; name them differently"
-            )
-        first_time, reference_time = dose_times(
-            dose_amount, dose_time, dose_duration, options, n_rows=n_rows
-        )
-        areas, extrapolated = named_partial_aucs(
-            t - first_time[:, None],
-            c,
-            values,
-            route=route,
-            options=options,
-            shift=reference_time - first_time,
-            routes=routes,
-        )
-        values.update(areas)
         units.update(
             dict.fromkeys(options.partial_aucs, PARAMETER_UNITS["auc_partial"])
-        )
-        flags = flags | np.where(extrapolated, NCAFlag.PARTIAL_EXTRAPOLATED, 0).astype(
-            flags.dtype
         )
 
     method = options.resolve_uncertainty(timecourses.has_uncertainty)
@@ -1639,6 +1674,8 @@ def nca(timecourses: Timecourses, *, options: NCAOptions | None = None) -> NCARe
         ),
         units=units,
     )
+    resolved = options.model_copy(update={"uncertainty": method})
+    result.ds.attrs["nca_options"] = serialize_nca_options(resolved)
     if options.partial_aucs:
         # the intervals travel with the result, so that a figure can shade a
         # named area without being given the options again (`NCAResult.partial_aucs`)
@@ -1808,7 +1845,13 @@ def _to_result(
     overrides = dict(units or {})
     for name, array in values.items():
         unit, factor = parameter_unit(
-            overrides.get(name) or unit_expression(name),
+            overrides.get(name)
+            or (
+                overrides.get(base_name(name))
+                if not name.endswith(("_geocv", "_n"))
+                else None
+            )
+            or unit_expression(name),
             unit=timecourses.unit,
             time_unit=timecourses.time_unit,
             dose_unit=timecourses.dose_unit,

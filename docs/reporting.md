@@ -33,7 +33,7 @@ flowchart LR
 
 ## API
 
-The whole package of a single dose study in one call. The `by` coordinate groups the subjects in the summary table and in the mean curve figure; `options` is what the analysis was run with and is what the methods sentence describes.
+The whole package of a single dose study in one call. The `by` coordinate groups the subjects in the summary table and in the mean curve figure. The methods sentence uses the resolved options recorded in the result. Passing `options` checks them against that record and rejects a mismatch; older results without a record require explicit options. An extrapolation with no finite ratios is reported as unevaluable, rather than acceptable.
 
 ```python
 import numpy as np

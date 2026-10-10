@@ -84,8 +84,16 @@ def window_statistics(
         `se_slope`; column `s` describes the window `s..end`. Windows with
         fewer than 3 points are `NaN`.
     """
-    x0 = np.where(valid, x, 0.0)
-    y0 = np.where(valid, y, 0.0)
+    # Translate before forming raw moments to avoid cancellation for large
+    # time offsets and almost constant logarithmic concentrations.
+    if x.shape[1]:
+        first = np.argmax(valid, axis=1)
+        x_origin = np.take_along_axis(x, first[:, None], axis=1)
+        y_origin = np.take_along_axis(y, first[:, None], axis=1)
+    else:
+        x_origin = y_origin = np.zeros((x.shape[0], 1))
+    x0 = np.where(valid, x - x_origin, 0.0)
+    y0 = np.where(valid, y - y_origin, 0.0)
     n = _suffix_sum(valid.astype(np.float64))
     sx = _suffix_sum(x0)
     sy = _suffix_sum(y0)
@@ -97,12 +105,12 @@ def window_statistics(
         sxy_c = sxy - sx * sy / n
         syy_c = syy - sy * sy / n
         slope = sxy_c / sxx_c
-        intercept = (sy - slope * sx) / n
+        intercept = (sy - slope * sx) / n + y_origin - slope * x_origin
         ss_res = syy_c - slope * sxy_c
-        r2 = 1.0 - ss_res / syy_c
+        r2 = np.clip(1.0 - ss_res / syy_c, 0.0, 1.0)
         r2_adj = 1.0 - (1.0 - r2) * (n - 1.0) / (n - 2.0)
         se_slope = np.sqrt(np.maximum(ss_res, 0.0) / (n - 2.0) / sxx_c)
-    enough = n >= 3
+    enough = (n >= 3) & (sxx_c > 0) & (syy_c > 0)
     nan = np.nan
     return {
         "n": np.where(enough, n, nan),

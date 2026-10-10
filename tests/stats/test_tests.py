@@ -189,7 +189,7 @@ def test_every_unpaired_test_runs_on_the_finite_values_alone(
     np.testing.assert_equal(result.to_dict(), run(sample(finite), sample(B)).to_dict())
     if test is TestMethod.WELCH_T:
         # summary data of `b`: the moments of `a` come from its finite values
-        summary = ParameterSample(mean=130.0, sd=35.0, n=10)
+        summary = ParameterSample(mean=130.0, sd=35.0, n=10, unit="mg*hr/l")
         np.testing.assert_equal(
             run(sample(values_a), summary).to_dict(),
             run(sample(finite), summary).to_dict(),
@@ -198,8 +198,12 @@ def test_every_unpaired_test_runs_on_the_finite_values_alone(
 
 def test_single_value_and_zero_variance_give_nan_statistics() -> None:
     nan_fields = ("statistic", "p_value", "df", "ci_low", "ci_high")
-    one_value = compare(ParameterSample(values=np.array([1.0])), sample(B))
-    one_summary = compare(ParameterSample(mean=1.0, sd=0.1, n=1), sample(B))
+    one_value = compare(
+        ParameterSample(values=np.array([1.0]), unit="mg*hr/l"), sample(B)
+    )
+    one_summary = compare(
+        ParameterSample(mean=1.0, sd=0.1, n=1, unit="mg*hr/l"), sample(B)
+    )
     constant = compare(
         sample(np.full(5, 7.0)), sample(np.full(4, 7.0)), scale=Scale.LINEAR
     )

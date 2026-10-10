@@ -14,7 +14,9 @@ from pkpdutils.parallel import (
     evict,
     executor,
     resolve_workers,
+    shutdown_executors,
     split_rows,
+    worker_pool,
 )
 
 
@@ -74,6 +76,29 @@ def test_executor_is_shared_per_kind_and_size() -> None:
 def test_executor_runs_work() -> None:
     pool = executor("thread", 2)
     assert list(pool.map(abs, [-1, 2, -3])) == [1, 2, 3]
+
+
+def test_managed_pools_bound_the_idle_cache() -> None:
+    shutdown_executors()
+    with worker_pool("thread", 1) as first:
+        assert list(first.map(abs, [-1])) == [1]
+    with worker_pool("thread", 2):
+        pass
+    with worker_pool("thread", 3):
+        pass
+    with pytest.raises(RuntimeError, match="shutdown"):
+        first.submit(abs, -1)
+    shutdown_executors()
+
+
+def test_pool_eviction_preserves_concurrent_leases() -> None:
+    shutdown_executors()
+    with worker_pool("thread", 1) as first, worker_pool("thread", 2) as second:
+        with worker_pool("thread", 3):
+            pass
+        assert first.submit(abs, -1).result() == 1
+        assert second.submit(abs, -2).result() == 2
+    shutdown_executors()
 
 
 def test_process_executor_is_shared() -> None:
