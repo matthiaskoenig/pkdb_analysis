@@ -12,6 +12,7 @@ This file provides guidance when working with code in this repository.
 # environment (uv based)
 uv sync --extra dev
 uv run pre-commit install
+uv lock                                  # after every change of a dependency in pyproject.toml
 
 # tests
 pytest                                   # all tests, in parallel with pytest-xdist
@@ -103,5 +104,6 @@ Documentation is [Zensical](https://zensical.org/): markdown sources in `docs/`,
 - `docs/workflows.md` holds the five walk-throughs from the data of a study to its table and figure (a study table, bioequivalence, drug-drug interaction, steady state, dose proportionality); `docs/data/` holds the only files a page may read: `study.csv`, the event table the quickstart of `docs/index.md` reads, and `benchmarks/`, the datasets, the scenario manifest and the WinNonlin, PKNCA and NonCompart result tables of `docs/benchmark_datasets.md` (the snippet runner copies both next to a page).
 - `tests/docs/test_snippets.py` executes every ` ```python ` fence of every page of `docs/` in the order it appears, one namespace per page, in a subprocess with warnings as errors and a temporary working directory with `docs/data/` next to it. A fence whose first line is `# not executed` is a fragment and is skipped. A number a page pastes as output has to come from a real run of that snippet.
 - `docs/benchmark_datasets.md` pastes no output by hand: every snippet is followed by `<!-- output:start -->`/`<!-- output:end -->`, which `scripts/benchmark_datasets.py` fills with what the snippet prints; `tests/docs/test_benchmark_datasets.py` fails when the page is stale.
+- `uv.lock` is committed and pins the local development environment (`uv sync`, `uv run`, so also `uv run ty check`), the `documentation` workflow, which runs `uv sync --locked`, and the ruff version of the `ruff` workflow; the tox environments, i.e. the test matrix and the `ty` check of continuous integration, resolve from `pyproject.toml` and do not use it. After changing a dependency in `pyproject.toml` run `uv lock`, otherwise the `documentation` workflow fails; `uv lock --upgrade` moves the lock to the newest releases. Dependabot bumps the lock weekly with `versioning-strategy: lockfile-only`, so the lower bounds in `pyproject.toml`, which users install against, are only changed by hand.
 - Markdown carries no hard line wraps: a paragraph, a list item or a table row is a single line. Code fences, headings and the rows of badges keep their line structure.
 - Release notes go in `release-notes/` as part of a release commit.
