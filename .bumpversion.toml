@@ -25,7 +25,11 @@ values = ["0", "final"]
 filename = "./src/pkpdutils/__init__.py"
 
 [[tool.bumpversion.files]]
+# only the version of the software: a bare search would also replace the
+# `cff-version` of the file format whenever the two happen to be equal
 filename = "./CITATION.cff"
+search = 'version: "{current_version}"'
+replace = 'version: "{new_version}"'
 
 [[tool.bumpversion.files]]
 filename = "./tests/test_package.py"
