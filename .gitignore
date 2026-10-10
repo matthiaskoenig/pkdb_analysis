@@ -19,9 +19,6 @@ coverage.xml
 # rendered documentation, built by the `documentation` workflow
 site/
 
-# the lock file is not committed, pkpdutils is a library and pins nothing
-uv.lock
-
 # output of the examples, they write into the working directory
 examples/**/results/
 /results/
