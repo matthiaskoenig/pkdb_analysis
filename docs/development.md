@@ -110,7 +110,7 @@ and the complete matrix, including the `ty` environment, in parallel with
 tox run-parallel
 ```
 
-This needs the interpreters to be available, which uv installs with `uv python install 3.13 3.14 3.15`. It is the complete test and is run before a pull request is opened: continuous integration runs only `py3.14`, on linux, macos and windows, as `uvx --with tox-uv tox -e py3.14 -- --durations=15`, which lists the slowest tests in the log.
+This needs the interpreters to be available, which uv installs with `uv python install 3.13 3.14 3.15`. It is the complete test and is run before a pull request is opened: continuous integration runs only `py3.14`, on linux, macos and windows, as `uvx --with tox-uv tox -e py3.14 -- --durations=15`, which lists the slowest tests in the log. The snippets of the documentation and the example scripts (the markers `docs` and `examples`) start an interpreter each and dominate the time of the suite, so continuous integration runs them on linux only and deselects them on macos and windows with `-m "not docs and not examples"`; locally they always run.
 
 To run the tests directly against the development environment use
 
@@ -125,7 +125,7 @@ The tests run in parallel, `addopts = "-n auto"` in `pyproject.toml` gives pytes
 
 The `conftest.py` at the root of the repository selects the non-interactive matplotlib backend for the session and puts the repository on `sys.path`, so that the tests can import the examples.
 
-`tests/examples/test_example_scripts.py` runs the examples as `python -m examples.<module>` in a temporary working directory, so a broken example fails the test suite.
+`tests/examples/test_examples.py` runs the examples as `python -m examples.<module>` in a temporary working directory, so a broken example fails the test suite.
 
 ## Linting and formatting
 

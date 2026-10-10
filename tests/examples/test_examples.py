@@ -12,6 +12,9 @@ from pathlib import Path
 
 import pytest
 
+#: deselected with `-m "not examples"`, continuous integration runs these on linux only
+pytestmark = pytest.mark.examples
+
 #: the root of the repository, `python -m examples.<module>` is run from here
 REPO_DIR = Path(__file__).parent.parent.parent
 

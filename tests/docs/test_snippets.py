@@ -27,6 +27,9 @@ from pathlib import Path
 
 import pytest
 
+#: deselected with `-m "not docs"`, continuous integration runs these on linux only
+pytestmark = pytest.mark.docs
+
 #: the root of the repository
 REPO_DIR = Path(__file__).parent.parent.parent
 

@@ -47,9 +47,14 @@ jobs:
         # the interpreter is cached with the packages instead of downloaded by every run
         cache-python: ${{ !startsWith(github.ref, 'refs/tags/') }}  # zizmor: ignore[cache-poisoning]
     - name: Test with tox
+      env:
+        TOX_ENV: py${{ matrix.python-version }}
+        # the snippets of the documentation and the example scripts run on linux
+        # only, they start an interpreter each and test no platform specific code
+        MARKERS: ${{ runner.os != 'Linux' && 'not docs and not examples' || '' }}
       # the slowest tests are listed in the log, so that they stay visible
-      run:
-        uvx --with tox-uv tox -e py${{ matrix.python-version }} -- --durations=15
+      run: uvx --with tox-uv tox -e "${TOX_ENV}" -- --durations=15 -m "${MARKERS}"
+      shell: bash
 
   tests:
     # the one check the branch protection requires; the names of the matrix
