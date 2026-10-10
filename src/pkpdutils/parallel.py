@@ -47,7 +47,7 @@ import multiprocessing
 import os
 import sys
 import threading
-from collections.abc import Iterator
+from collections.abc import Generator
 from concurrent.futures import Executor, ProcessPoolExecutor, ThreadPoolExecutor
 from contextlib import contextmanager
 from typing import Literal
@@ -197,7 +197,7 @@ def evict(kind: ExecutorKind, n_workers: int) -> None:
 
 
 @contextmanager
-def worker_pool(kind: ExecutorKind, n_workers: int) -> Iterator[Executor]:
+def worker_pool(kind: ExecutorKind, n_workers: int) -> Generator[Executor]:
     """Lease a shared pool, bounding the cache without retiring active work.
 
     Analyses hold the lease through submission and completion. Up to two
