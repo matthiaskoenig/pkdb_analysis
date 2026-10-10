@@ -9,6 +9,8 @@ variance recovers the formulation effect exactly and the within-subject
 variance of a formulation is the closed form \(\sum_i d_i^2 / (2(n - s))\).
 """
 
+from dataclasses import replace
+
 import numpy as np
 import pytest
 from scipy.stats import chi2
@@ -179,7 +181,10 @@ def test_a_replicate_sample_without_the_coordinates_is_rejected() -> None:
     """The analysis needs the period and the sequence of every administration."""
     samples = build()
     bare = ParameterSample(
-        values=samples["T"].values, labels=samples["T"].labels, name="cmax"
+        values=samples["T"].values,
+        labels=samples["T"].labels,
+        name="cmax",
+        unit=samples["T"].unit,
     )
     with pytest.raises(ValueError, match="missing the coordinates"):
         tost(bare, samples["R"], design="replicate")
@@ -216,7 +221,7 @@ def test_ema_scaling_leaves_an_area_and_a_low_variability_alone() -> None:
         name="auc_inf_obs",
         unit="hour * milligram / liter",
     )
-    result = tost(area, samples["R"], scaling="ema")
+    result = tost(area, replace(samples["R"], unit=area.unit), scaling="ema")
     assert result.scaled is False
     assert result.limits == (0.8, 1.25)
     low = build(cv_r=0.20)

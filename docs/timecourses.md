@@ -248,6 +248,8 @@ print(grouped.sample_shape, one.sample_shape)
 
 The labels of the samples keep the dtype of what they came from: a subject column of integers gives an integer coordinate in `from_dataframe`, as the `labels` of `from_timecourses` do.
 
+For several identifier columns, `Timecourses.from_dataframe(sample=["subject", "period"])` uses `sample_layout="auto"` by default. Complete combinations become separate dimensions. Sparse combinations stay along one `_sample` dimension, with the identifiers as coordinates, so nested subject/study identifiers do not allocate all missing combinations. Filter these batches with `batch.select(subject="a", period=1)` and read a single selected curve with `.isel(_sample=0)`. `to_dataframe()` keeps the identifier columns for roundtrips. Set `sample_layout="dense"` to include missing combinations as curves of `NaN` values, or `sample_layout="observed"` to keep only observed combinations even for a complete grid.
+
 `Timecourses.relative_to_dose(which="first" | "last")` is the batch counterpart of `Timecourse.relative_to_dose`: every sample is shifted by the time of its own first (or last) dose, and its protocol with it. Equal shifts keep the layout of the batch; shifts which differ from sample to sample move the samples against each other, so the values are placed on the union of the shifted grids with `NaN` where a sample has no point at the time of another.
 
 ```python

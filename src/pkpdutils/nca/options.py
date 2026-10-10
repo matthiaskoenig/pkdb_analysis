@@ -7,9 +7,12 @@ the dosing intervals of a multiple dose analysis. `NCAFlag` names the
 conditions an analysis reports per sample instead of raising or warning.
 """
 
+import json
+from datetime import date, datetime
 from enum import IntFlag, StrEnum
 from typing import Any, Self
 
+import numpy as np
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from pkpdutils.result import decode_flags as decode_flag_names
@@ -213,7 +216,7 @@ class BLQRules(BaseModel):
             may enter the terminal regression
     """
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     first: BLQAction | float | None = None
     middle: BLQAction | float | None = None
@@ -341,7 +344,7 @@ class Acceptance(BaseModel):
             statistics of `pkpdutils.stats`
     """
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     r2_adj_min: float | None = Field(default=None, ge=0.0, le=1.0)
     extrapolation_max: float | None = Field(default=None, gt=0.0, le=1.0)
@@ -442,7 +445,7 @@ class TerminalPhase(BaseModel):
             many of them
     """
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     method: TerminalMethod = TerminalMethod.BEST_FIT
     min_points: int = Field(default=3, ge=3)
@@ -557,7 +560,7 @@ class NCAOptions(BaseModel):
         delta_step: relative perturbation of a point, in units of its `se`, for the delta method
     """
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     kind: Kind = Kind.CONCENTRATION
     auc_method: AUCMethod = AUCMethod.LINEAR_LOG
@@ -631,3 +634,78 @@ class NCAOptions(BaseModel):
         return (
             UncertaintyMethod.BOOTSTRAP if has_uncertainty else UncertaintyMethod.NONE
         )
+
+
+def _encode_window_key(key: Any) -> dict[str, Any]:
+    """Encode scalar or tuple sample labels without JSON's string key coercion."""
+    if isinstance(key, tuple):
+        return {"type": "tuple", "value": [_encode_window_key(item) for item in key]}
+    if isinstance(key, np.generic):
+        key = key.item()
+    if key is None:
+        return {"type": "none", "value": None}
+    if isinstance(key, datetime):
+        return {"type": "datetime", "value": key.isoformat()}
+    if isinstance(key, date):
+        return {"type": "date", "value": key.isoformat()}
+    for kind, cls in (("bool", bool), ("str", str), ("int", int), ("float", float)):
+        if isinstance(key, cls):
+            return {"type": kind, "value": key}
+    raise ValueError(
+        f"terminal window sample labels of type {type(key).__name__} cannot be saved"
+    )
+
+
+def _decode_window_key(encoded: dict[str, Any]) -> Any:
+    """Decode only the supported label types; never instantiate arbitrary objects."""
+    kind, value = encoded["type"], encoded["value"]
+    if kind == "tuple":
+        return tuple(_decode_window_key(item) for item in value)
+    if kind == "none":
+        return None
+    if kind == "datetime":
+        return datetime.fromisoformat(value)
+    if kind == "date":
+        return date.fromisoformat(value)
+    scalar_types = {"bool": bool, "str": str, "int": int, "float": float}
+    if kind not in scalar_types:
+        raise ValueError(f"unknown terminal window sample label type {kind!r}")
+    return scalar_types[kind](value)
+
+
+def serialize_nca_options(options: NCAOptions) -> str:
+    """Save options with typed terminal-window labels for faithful round trips.
+
+    Ordinary options keep their public JSON structure. Terminal windows are
+    stored separately as records because JSON object keys cannot distinguish
+    strings, numbers and tuples.
+    """
+    payload = options.model_dump(mode="json", exclude={"terminal": {"windows"}})
+    payload["_nca_options_version"] = 1
+    windows = options.terminal.windows
+    payload["_terminal_windows"] = (
+        None
+        if windows is None
+        else [
+            {"key": _encode_window_key(key), "window": list(window)}
+            for key, window in windows.items()
+        ]
+    )
+    return json.dumps(payload, allow_nan=False)
+
+
+def deserialize_nca_options(payload: str) -> NCAOptions:
+    """Restore saved options, including scalar and tuple terminal-window labels."""
+    values = json.loads(payload)
+    version = values.pop("_nca_options_version", None)
+    if version is None:
+        return NCAOptions.model_validate(values)
+    if version != 1:
+        raise ValueError(f"unknown NCA options metadata version {version!r}")
+    windows = values.pop("_terminal_windows")
+    values["terminal"]["windows"] = (
+        None
+        if windows is None
+        else {_decode_window_key(record["key"]): record["window"] for record in windows}
+    )
+    return NCAOptions.model_validate(values)

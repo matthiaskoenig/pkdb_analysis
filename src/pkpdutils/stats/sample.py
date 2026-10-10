@@ -10,13 +10,16 @@ are translated with the moment relations of the log-normal distribution
 """
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from enum import StrEnum
 from typing import Any
 
 import numpy as np
 from numpy.typing import ArrayLike
+from pint import DimensionalityError, OffsetUnitCalculusError
 from scipy.stats import t as student_t
+
+from pkpdutils.units import Q_, parse_unit
 
 logger = logging.getLogger(__name__)
 
@@ -634,6 +637,35 @@ class ParameterSample:
             The summary.
         """
         return summarize(self, scale=scale, ci_level=ci_level)
+
+
+def _in_unit(sample: ParameterSample, unit: str) -> ParameterSample:
+    """Convert individual values or summary moments to a compatible unit.
+
+    Statistical ratios require a multiplicative unit conversion; offset units
+    are rejected rather than changing their interpretation silently.
+    """
+    source, target = parse_unit(sample.unit), parse_unit(unit)
+    if source == target:
+        return sample
+    try:
+        zero = float(Q_(0.0, source).to(target).magnitude)
+        factor = float(Q_(1.0, source).to(target).magnitude) - zero
+    except (DimensionalityError, OffsetUnitCalculusError) as err:
+        raise ValueError(f"Cannot compare units '{sample.unit}' and '{unit}'") from err
+    if zero != 0.0 or not np.isfinite(factor) or factor <= 0:
+        raise ValueError(
+            "Statistical samples need a positive multiplicative unit conversion"
+        )
+    if sample.values is not None:
+        return replace(sample, values=sample.values * factor, unit=unit)
+    return replace(
+        sample,
+        mean=None if sample.mean is None else sample.mean * factor,
+        sd=None if sample.sd is None else sample.sd * factor,
+        geomean=None if sample.geomean is None else sample.geomean * factor,
+        unit=unit,
+    )
 
 
 def labels_match(a: ParameterSample, b: ParameterSample) -> bool:

@@ -31,6 +31,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+import pandas as pd
 
 from pkpdutils import (
     Dose,
@@ -44,6 +45,7 @@ from pkpdutils import (
 from pkpdutils.fit.models import MonoExp
 from pkpdutils.fit.options import FitOptions
 from pkpdutils.nca.options import UncertaintyMethod
+from pkpdutils.parallel import worker_pool
 
 #: set in the environment of the child process which runs one case
 CHILD_ENV = "PKPDUTILS_BENCHMARK_CHILD"
@@ -197,6 +199,56 @@ def case_iterate() -> Case:
     return Case("5 000 curves of a batch", lambda: [tc.size for tc in batch])
 
 
+def case_mean_ragged() -> Case:
+    """Aggregation when every sample has distinct actual sampling times."""
+    n_rows, n_time = 3_000, 20
+    times = np.arange(n_time)[None, :] + np.arange(n_rows)[:, None] / n_rows
+    batch = Timecourses.from_arrays(
+        times,
+        np.exp(-0.1 * times),
+        time_unit="hr",
+        unit="mg/l",
+        dims=("individual",),
+    )
+    return Case("3 000 curves x 20 distinct times", lambda: batch.mean("individual"))
+
+
+def case_nested_samples() -> Case:
+    """Construction of observed pairs instead of a Cartesian grid."""
+    frame = pd.DataFrame(
+        {
+            "subject": np.repeat(np.arange(1_000), 2),
+            "group": np.repeat(np.arange(1_000), 2),
+            "time": np.tile([0.0, 1.0], 1_000),
+            "value": np.tile([2.0, 1.0], 1_000),
+        }
+    )
+    return Case(
+        "1 000 observed subject/group pairs",
+        lambda: Timecourses.from_dataframe(
+            frame, sample=["subject", "group"], time_unit="hr", unit="mg/l"
+        ),
+    )
+
+
+def case_delta_long() -> Case:
+    """Delta uncertainty on long curves, including perturbation preparation."""
+    batch = mono_batch(40, n_time=256, spread=True)
+    options = NCAOptions(uncertainty=UncertaintyMethod.DELTA, chunk_rows=128)
+    return Case("40 group curves x 256 points", lambda: nca(batch, options=options))
+
+
+def case_worker_churn() -> Case:
+    """Repeated worker-size changes without retaining every idle pool."""
+
+    def run() -> None:
+        for size in range(1, 9):
+            with worker_pool("thread", size) as pool:
+                list(pool.map(abs, [-1] * size))
+
+    return Case("8 successive worker counts", run)
+
+
 CASES: dict[str, Callable[[], Case]] = {
     "nca-small": case_nca_small,
     "nca-large": case_nca_large,
@@ -206,6 +258,10 @@ CASES: dict[str, Callable[[], Case]] = {
     "fit": case_fit,
     "constructors": case_constructors,
     "iterate": case_iterate,
+    "mean-ragged": case_mean_ragged,
+    "nested-samples": case_nested_samples,
+    "delta-long": case_delta_long,
+    "worker-churn": case_worker_churn,
 }
 
 
@@ -225,7 +281,9 @@ def measure(name: str, repeat: int) -> dict[str, Any]:
         The name, the size label, the median time in seconds and the peak RSS.
     """
     case = CASES[name]()
+    first_start = time.perf_counter()
     case.run()
+    first_call_s = time.perf_counter() - first_start
     times: list[float] = []
     for _ in range(repeat):
         gc.collect()
@@ -236,6 +294,7 @@ def measure(name: str, repeat: int) -> dict[str, Any]:
         "case": name,
         "size": case.size,
         "median_s": statistics.median(times),
+        "first_call_s": first_call_s,
         "peak_rss_mb": peak_rss_mb(),
     }
 
@@ -278,10 +337,11 @@ def markdown_table(rows: list[dict[str, Any]]) -> str:
     Returns:
         The table.
     """
-    header = "| case | size | median s | peak RSS MB |"
-    lines = [header, "|---|---|---|---|"]
+    header = "| case | size | first call s | median s | peak RSS MB |"
+    lines = [header, "|---|---|---|---|---|"]
     lines.extend(
-        f"| {row['case']} | {row['size']} | {row['median_s']:.3f} | "
+        f"| {row['case']} | {row['size']} | {row['first_call_s']:.3f} | "
+        f"{row['median_s']:.3f} | "
         f"{row['peak_rss_mb']:.0f} |"
         for row in rows
     )

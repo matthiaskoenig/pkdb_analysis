@@ -331,6 +331,7 @@ def test_from_dataframe_missing_combination() -> None:
     tcs = Timecourses.from_dataframe(
         pd.DataFrame(rows),
         sample=["dose", "individual"],
+        sample_layout="dense",
         time_unit="hr",
         unit="mg/l",
         dose_amount="dose",
@@ -1772,3 +1773,75 @@ def test_from_timecourses_one_substance_keeps_the_attribute() -> None:
     assert batch.ds.attrs["substance"] == "drug"
     assert batch.substance == "drug"
     assert batch.substances is None
+
+
+def test_sparse_identifiers_preserve_observed_samples_and_roundtrip() -> None:
+    frame = pd.DataFrame(
+        {
+            "subject": np.repeat(np.arange(100), 2),
+            "group": np.repeat(np.arange(100), 2),
+            "time": np.tile([0.0, 1.0], 100),
+            "value": 1.0,
+        }
+    )
+    batch = Timecourses.from_dataframe(
+        frame, sample=["subject", "group"], time_unit="hr", unit="mg/L"
+    )
+    assert batch.sample_dims == ("_sample",)
+    assert batch.n_samples == 100
+    selected = batch.select(subject=5, group=5)
+    assert selected.n_samples == 1
+    assert selected.isel(_sample=0).value.tolist() == [1.0, 1.0]
+    rebuilt = Timecourses.from_dataframe(
+        batch.to_dataframe(), sample=["subject", "group"], time_unit="hr", unit="mg/L"
+    )
+    assert rebuilt == batch
+
+
+def test_ragged_mean_does_not_expand_each_curve_on_union(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fail(*args: Any, **kwargs: Any) -> None:
+        raise AssertionError("ragged means must not expand input onto the union grid")
+
+    monkeypatch.setattr(Timecourses, "_shifted_times", fail)
+    size = 400
+    times = np.arange(size * 10.0).reshape(size, 10)
+    batch = Timecourses.from_arrays(
+        times, np.ones_like(times), time_unit="hr", unit="mg/L"
+    )
+    mean = batch.mean("individual")
+    assert mean.n_time == size * 10
+    np.testing.assert_array_equal(mean.values, 1.0)
+    np.testing.assert_array_equal(mean.n, 1.0)
+    assert mean.sd is not None
+    assert np.isnan(mean.sd).all()
+
+
+def test_ragged_mean_keeps_remaining_dimensions_and_stable_variance() -> None:
+    times = np.array([[[0.0, 1.0], [1.0, 2.0]], [[0.0, 2.0], [1.0, 3.0]]])
+    values = np.array([[[1e12, 3.0], [4.0, 5.0]], [[1e12 + 2.0, 7.0], [6.0, 9.0]]])
+    batch = Timecourses.from_arrays(
+        times,
+        values,
+        dims=("individual", "group"),
+        time_unit="hr",
+        unit="mg/L",
+        coords={"group": ["a", "b"]},
+    )
+    result = batch.mean("individual")
+    np.testing.assert_allclose(
+        result.values,
+        [[1e12 + 1.0, 3.0, 7.0, np.nan], [np.nan, 5.0, 5.0, 9.0]],
+        equal_nan=True,
+    )
+    assert result.sd is not None
+    np.testing.assert_allclose(
+        result.sd,
+        [
+            [np.sqrt(2.0), np.nan, np.nan, np.nan],
+            [np.nan, np.sqrt(2.0), np.nan, np.nan],
+        ],
+        equal_nan=True,
+    )
+    np.testing.assert_array_equal(result.ds["group"], ["a", "b"])

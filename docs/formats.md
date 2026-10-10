@@ -47,10 +47,12 @@ flowchart LR
 | `SD`/`SE`/`N` | uncertainty of a group curve | written by `write_events` when the batch carries them and read back into `sd`, `se` and `n`; `N` is constant within a subject |
 | `RATE` | infusion rate | duration `= AMT / RATE` for `RATE > 0`; `RATE -1`/`-2` (a modelled rate) is not data and raises |
 | `TINF` (Monolix `INFUSION DURATION`) | infusion duration | wins over `RATE` when positive |
-| `ADDL` (Monolix `ADDITIONAL DOSES`) | additional doses | expands into `ADDL` further doses at `II` |
+| `ADDL` (Monolix `ADDITIONAL DOSES`) | additional doses | finite non-negative integer; expands into `ADDL` further doses at `II` |
 | `II` (Monolix `INTERDOSE INTERVAL`) | interdose interval | required with a positive `ADDL` or `SS == 1` |
 | `SS` (Monolix `STEADY STATE`) | steady state dose | `1` stands for `ss_doses` (default 5) preceding doses at `II` and sets `attrs["steady_state_marker"]` on the batch; `0` is a plain dose, any other value raises |
 | `CMT`/`ADM` | compartment | not interpreted, not a route |
+
+Numeric columns accept missing cells, `.` and blank strings as missing values. Other non-numeric values raise an error with the column and row, so a typo does not silently remove an observation. `ss_doses` must be a non-negative integer. Dose expansion and padded dose storage are limited to one million records or slots by default; set `max_expanded_doses` in `read_events` or `Timecourses.from_events` explicitly when a larger protocol is needed. The limit is checked before allocating the expanded records or padded arrays.
 
 ```python
 import io
@@ -172,10 +174,10 @@ The two tables are the fixtures `tests/data/formats/pknca_conc.csv` and `pknca_d
 | --- | --- | --- | --- |
 | `subject_col` | `USUBJID` | subject | |
 | `param_col` | `PARAMCD` | analyte code | rows are filtered to `analyte`, the single analyte of the dataset by default |
-| `value_col`, `value_unit_col` | `AVAL`, `AVALU` | value, its unit | `unit` given by the caller wins over `AVALU` |
+| `value_col`, `value_unit_col` | `AVAL`, `AVALU` | value, its unit | row units must agree; a supplied `unit` must agree with `AVALU` |
 | `time_first_col` | `AFRLT` | time since the first dose | the observation time |
 | `time_ref_col` | `ARRLT` | time since the reference dose | `AFRLT - ARRLT` gives the dose times of a subject, one per distinct value |
-| `dose_col`, `dose_unit_col` | `DOSEA`, `DOSEU` | dose amount, its unit | the amount of the dose at the recovered time; disagreeing amounts at the same dose time raise |
+| `dose_col`, `dose_unit_col` | `DOSEA`, `DOSEU` | dose amount, its unit | the amount of the dose at the recovered time; inconsistent units or disagreeing amounts at the same dose time raise |
 | `route_col` | `ROUTE` | route | `ORAL`/`PO`, `IV`/`INTRAVENOUS`/`IV BOLUS`, `IV INFUSION`; the caller's `route=` wins |
 | `duration_col` | `ADUR` | infusion duration | optional, absent in most datasets, `None` reads none; without it an infusion protocol cannot be read and `Route.IV_INFUSION` raises, and such a study is read from the event records or the PKNCA tables instead |
 | `nominal_time_col` | `NRRLT` | nominal time | optional, `None` reads none; it becomes the variable `nominal_time` over `(individual, time)` in the frame of the column itself (`NRRLT` within the dosing interval, `NFRLT` since the first dose, which is the frame of the observation times the reader writes) |

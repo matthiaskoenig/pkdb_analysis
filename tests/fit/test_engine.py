@@ -1,6 +1,7 @@
 """Tests of the fitting engine and the fit result."""
 
 from concurrent.futures.process import BrokenProcessPool
+from contextlib import nullcontext
 from typing import Any
 
 import numpy as np
@@ -206,17 +207,17 @@ def test_pooled_fit_retries_a_broken_pool(monkeypatch: pytest.MonkeyPatch) -> No
         def map(self, fn: Any, rows: Any, chunksize: int = 1) -> Any:
             raise BrokenProcessPool("a worker of the pool died")
 
-    real = engine.executor
+    real = engine.worker_pool
     calls: list[tuple[str, int]] = []
 
     def fake_executor(kind: ExecutorKind, n_workers: int) -> Any:
         calls.append((kind, n_workers))
         if len(calls) == 1:
-            return BrokenPool()
+            return nullcontext(BrokenPool())
         return real(kind, n_workers)
 
     evicted: list[tuple[str, int]] = []
-    monkeypatch.setattr(engine, "executor", fake_executor)
+    monkeypatch.setattr(engine, "worker_pool", fake_executor)
     monkeypatch.setattr(
         engine, "evict", lambda kind, n_workers: evicted.append((kind, n_workers))
     )
@@ -566,3 +567,16 @@ def test_fit_rejects_a_sample_dimension_that_collides_with_a_result_variable() -
         fit(MonoExp(), T, y[None, :], dims=("k",))
     with pytest.raises(ValueError, match="collides"):
         fit(MonoExp(), T, y[None, :], dims=("parameter",))
+
+
+@pytest.mark.parametrize(
+    "options",
+    [
+        FitOptions(fixed={"k": -0.3}),
+        FitOptions(fixed={"k": 2}, bounds={"k": (0, 1)}),
+        FitOptions(bounds={"k": (-1, -0.1)}),
+    ],
+)
+def test_invalid_parameter_options_raise_before_fit(options):
+    with pytest.raises(ValueError):
+        fit(MonoExp(), T, 2 * np.exp(-0.3 * T), options=options)

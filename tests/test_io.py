@@ -955,3 +955,101 @@ def test_read_adnca_without_a_nominal_time_column_carries_none() -> None:
     )
     batch = read_adnca(df.drop(columns=["NFRLT", "NRRLT"]), analyte="XAN")
     assert "nominal_time" not in batch.ds.data_vars
+
+
+@pytest.mark.parametrize(
+    "column,units", [("AVALU", ["mg/L", "ng/mL"]), ("DOSEU", ["mg", "ug"])]
+)
+def test_adnca_rejects_mixed_row_units(column: str, units: list[str]) -> None:
+    frame = pd.DataFrame(
+        {
+            "USUBJID": ["A", "A"],
+            "PARAMCD": ["drug", "drug"],
+            "AVAL": [1.0, 1.0],
+            "AVALU": ["mg/L", "mg/L"],
+            "AFRLT": [0.0, 1.0],
+            "ARRLT": [0.0, 1.0],
+            "DOSEA": [100.0, 100.0],
+            "DOSEU": ["mg", "mg"],
+            "ROUTE": ["ORAL", "ORAL"],
+        }
+    )
+    frame[column] = units
+    with pytest.raises(ValueError, match="inconsistent units"):
+        read_adnca(frame)
+
+
+def test_events_rejects_malformed_numeric_observation() -> None:
+    frame = pd.DataFrame({"ID": [1, 1], "TIME": [0.0, 1.0], "DV": ["typo", 1.0]})
+    with pytest.raises(ValueError, match=r"DV.*non-numeric.*typo"):
+        read_events(frame, time_unit="hr", unit="mg/L", dose_unit="mg", route="oral")
+
+
+@pytest.mark.parametrize("additional", [-1.0, 1.5, np.inf, 1e30])
+def test_events_rejects_invalid_or_excessive_dose_expansion(additional: float) -> None:
+    frame = pd.DataFrame(
+        {
+            "ID": [1, 1, 1],
+            "TIME": [0.0, 1.0, 2.0],
+            "DV": [np.nan, 2.0, 1.0],
+            "AMT": [100.0, 0.0, 0.0],
+            "EVID": [1, 0, 0],
+            "ADDL": [additional, 0.0, 0.0],
+            "II": [24.0, 0.0, 0.0],
+        }
+    )
+    with pytest.raises(ValueError, match=r"ADDL|max_expanded_doses"):
+        read_events(frame, time_unit="hr", unit="mg/L", dose_unit="mg", route="oral")
+    frame["ADDL"] = [10.0, 0.0, 0.0]
+    with pytest.raises(ValueError, match="max_expanded_doses=10"):
+        read_events(
+            frame,
+            time_unit="hr",
+            unit="mg/L",
+            dose_unit="mg",
+            route="oral",
+            max_expanded_doses=10,
+        )
+
+
+def test_events_limits_padded_dose_allocation() -> None:
+    frame = pd.DataFrame(
+        {
+            "ID": [1, 1, 1, 2, 2],
+            "TIME": [0.0, 1.0, 2.0, 1.0, 2.0],
+            "DV": [np.nan, 2.0, 1.0, 2.0, 1.0],
+            "AMT": [100.0, 0.0, 0.0, 0.0, 0.0],
+            "EVID": [1, 0, 0, 0, 0],
+            "ADDL": [9.0, 0.0, 0.0, 0.0, 0.0],
+            "II": [24.0, 0.0, 0.0, 0.0, 0.0],
+        }
+    )
+    with pytest.raises(ValueError, match="Dose padding needs 20 slots"):
+        read_events(
+            frame,
+            time_unit="hr",
+            unit="mg/L",
+            dose_unit="mg",
+            route="oral",
+            max_expanded_doses=10,
+        )
+
+
+@pytest.mark.parametrize("marker", [".", "", "  ", " . "])
+def test_events_accepts_explicit_missing_numeric_markers(marker: str) -> None:
+    frame = pd.DataFrame(
+        {
+            "ID": [1, 1, 1],
+            "TIME": [0.0, 1.0, 2.0],
+            "DV": [marker, 2.0, 1.0],
+            "AMT": [100.0, marker, marker],
+            "EVID": [1, 0, 0],
+            "ADDL": [marker, marker, marker],
+            "II": [marker, marker, marker],
+        }
+    )
+    batch = read_events(
+        frame, time_unit="hr", unit="mg/L", dose_unit="mg", route="oral"
+    )
+    np.testing.assert_array_equal(batch.values, [[2.0, 1.0]])
+    np.testing.assert_array_equal(batch.dose_amount, [[100.0]])

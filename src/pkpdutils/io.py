@@ -167,12 +167,29 @@ def _numeric(
         default: value of the series when the column is absent.
 
     Returns:
-        The series of floats, indexed like `df`; values which are not numbers
-        become `NaN`.
+        The series of floats, indexed like `df`; missing values, blank strings
+        and the NONMEM missing marker `.` become `NaN`.
+
+    Raises:
+        ValueError: if a non-missing value is not numeric, naming its column
+            and row.
     """
     if column is None:
         return pd.Series(default, index=df.index, dtype=np.float64)
-    return pd.to_numeric(df[column], errors="coerce").astype(np.float64)
+    raw = df[column]
+    if pd.api.types.is_object_dtype(raw.dtype) or pd.api.types.is_string_dtype(
+        raw.dtype
+    ):
+        raw = raw.replace(r"^\s*(?:\.)?\s*$", np.nan, regex=True)
+    numeric = pd.to_numeric(raw, errors="coerce")
+    invalid = numeric.isna() & raw.notna()
+    if invalid.any():
+        position = int(np.flatnonzero(invalid.to_numpy())[0])
+        raise ValueError(
+            f"Column '{column}' has non-numeric value {raw.iloc[position]!r} "
+            f"at row {raw.index[position]!r}"
+        )
+    return numeric.astype(np.float64)
 
 
 def _constant_per_subject(
@@ -587,6 +604,7 @@ def _expand_doses(
     interval: np.ndarray,
     steady_state: np.ndarray,
     ss_doses: int,
+    max_expanded_doses: int,
     subjects: Sequence[Any],
     codes: np.ndarray,
 ) -> tuple[np.ndarray, np.ndarray]:
@@ -606,6 +624,7 @@ def _expand_doses(
         interval: interdose interval `II` per record, `NaN` or 0 for none.
         steady_state: whether the record is marked as a steady state dose.
         ss_doses: number of preceding doses a steady state record stands for.
+        max_expanded_doses: maximum number of explicit dose records to allocate.
         subjects: the subjects, in the order of the batch, for the error message.
         codes: the subject of every record, an index into `subjects`.
 
@@ -618,11 +637,25 @@ def _expand_doses(
             interdose interval; the first such record of the first such subject
             is named.
     """
-    with np.errstate(invalid="ignore"):
-        has_interval = np.isfinite(interval) & (interval > 0)
-        additional = np.where(np.isfinite(addl) & (addl > 0), addl, 0.0).astype(
-            np.int64
+    invalid = ~np.isnan(addl) & (
+        ~np.isfinite(addl) | (addl < 0) | (addl != np.floor(addl))
+    )
+    if invalid.any():
+        i = int(np.flatnonzero(invalid)[0])
+        raise ValueError(
+            f"subject {subjects[codes[i]]}: ADDL must be a finite, "
+            f"non-negative integer, got {addl[i]}"
         )
+    # Check the total in Python integers before any int64 cast or allocation.
+    additional_counts = [0 if np.isnan(v) else int(v) for v in addl]
+    total = sum(additional_counts) + time.size + int(steady_state.sum()) * ss_doses
+    if total > max_expanded_doses:
+        raise ValueError(
+            f"Dose expansion needs {total} records, exceeding "
+            f"max_expanded_doses={max_expanded_doses}"
+        )
+    has_interval = np.isfinite(interval) & (interval > 0)
+    additional = np.asarray(additional_counts, dtype=np.int64)
     incomplete = (steady_state | (additional > 0)) & ~has_interval
     if incomplete.any():
         i = int(np.argmax(incomplete))
@@ -663,6 +696,7 @@ def read_events(
     se_col: str = "SE",
     n_col: str = "N",
     ss_doses: int = 5,
+    max_expanded_doses: int = 1_000_000,
     keep_missing: bool = True,
     dim: str = "individual",
     analyte_col: str | None = None,
@@ -730,6 +764,8 @@ def read_events(
         n_col: name of the column with the number of subjects of a group curve
             (constant within a subject)
         ss_doses: number of preceding doses a steady state record stands for
+        max_expanded_doses: maximum expanded dose records or padded dose slots
+            (one million by default); increase explicitly for larger protocols
         keep_missing: whether a missing observation (`MDV` 1 or no `DV`) is
             read as a `NaN` value at its time instead of being dropped
         dim: name of the sample dimension of the batch
@@ -762,6 +798,18 @@ def read_events(
             requested covariate is not a column or not constant within a
             subject, or if the doses of the subjects do not share one unit.
     """
+    for name, count in (
+        ("ss_doses", ss_doses),
+        ("max_expanded_doses", max_expanded_doses),
+    ):
+        if (
+            isinstance(count, bool)
+            or not isinstance(count, (int, np.integer))
+            or count < (1 if name == "max_expanded_doses" else 0)
+        ):
+            raise ValueError(
+                f"'{name}' must be a {'positive' if name == 'max_expanded_doses' else 'non-negative'} integer"
+            )
     if analytes is not None:
         return _read_analytes(
             [str(name) for name in analytes],
@@ -786,6 +834,7 @@ def read_events(
                 se_col=se_col,
                 n_col=n_col,
                 ss_doses=ss_doses,
+                max_expanded_doses=max_expanded_doses,
                 keep_missing=keep_missing,
                 dim=dim,
                 analyte_col=analyte_col,
@@ -905,6 +954,7 @@ def read_events(
         interval=ii_values.to_numpy()[dose_rows],
         steady_state=steady,
         ss_doses=ss_doses,
+        max_expanded_doses=max_expanded_doses,
         subjects=labels,
         codes=dose_of_row,
     )
@@ -913,6 +963,12 @@ def read_events(
     doses_per_subject = np.bincount(
         np.repeat(dose_of_row, expanded_counts), minlength=len(labels)
     )
+    padded_doses = len(labels) * int(doses_per_subject.max(initial=0))
+    if padded_doses > max_expanded_doses:
+        raise ValueError(
+            f"Dose padding needs {padded_doses} slots, exceeding "
+            f"max_expanded_doses={max_expanded_doses}"
+        )
     protocols: list[Dosing | None] = [
         None
         if count == 0
@@ -1387,7 +1443,7 @@ def _adnca_unit(
 
     Args:
         df: the rows of the analyte.
-        given: the unit given by the caller, which wins over the table.
+        given: the unit given by the caller, which must agree with the table.
         column: name of the unit column of the table, `None` when it is absent.
         what: what the unit describes, for the error message.
 
@@ -1395,13 +1451,25 @@ def _adnca_unit(
         The unit string, as given or as spelled in the table.
 
     Raises:
-        ValueError: if there is no unit at all, or the string is not a unit.
+        ValueError: if there is no unit, a string is not a unit, or row units
+            disagree with each other or with the given unit.
     """
     unit = given
-    if unit is None and column is not None:
+    if column is not None:
         values = df[column].dropna()
         if not values.empty:
-            unit = str(values.iloc[0])
+            units = {parse_unit(str(value)) for value in values.unique()}
+            if len(units) != 1:
+                raise ValueError(
+                    f"The '{column}' column has inconsistent units of the {what}: "
+                    f"{sorted(str(value) for value in units)}"
+                )
+            if unit is not None and parse_unit(unit) not in units:
+                raise ValueError(
+                    f"Given unit '{unit}' contradicts '{column}' for the {what}"
+                )
+            if unit is None:
+                unit = str(values.iloc[0])
     if unit is None:
         raise ValueError(
             f"The unit of the {what} is neither given nor in the '{column}' column"

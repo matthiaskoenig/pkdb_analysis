@@ -4,6 +4,10 @@ Statistics on pharmacokinetic parameters: comparisons of two groups, geometric m
 
 ## Concepts
 
+Pairwise analyses convert compatible multiplicative units to the first sample’s unit, including summary means and standard deviations. Incompatible units and conversions involving offsets raise `ValueError`; state the units on both samples.
+
+Permutation tests process at most 128 resamples at once by default; `compare(..., permutation_batch=...)` adjusts this memory bound. Hodges–Lehmann materializes small pair populations; larger populations select exact order statistics from sorted rows without storing the quadratic pair array. Multiple-comparison adjustment preserves missing (`NaN`) p-values and excludes them from the comparison count.
+
 Every analysis of this page starts at a `ParameterSample`, whether the numbers come from an analysis of the package or from a publication:
 
 ```mermaid

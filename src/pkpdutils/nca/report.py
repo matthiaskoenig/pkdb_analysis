@@ -64,7 +64,7 @@ def acceptability_table(
     share: float = 0.2,
     include_excluded: bool = False,
     **indexers: Any,
-) -> tuple[pd.DataFrame, bool]:
+) -> tuple[pd.DataFrame, bool | None]:
     r"""The acceptability of the extrapolation of every subject, and the verdict.
 
     One row per sample with \(\mathrm{AUC}_{0\text{-}t_\mathrm{last}}\),
@@ -93,11 +93,14 @@ def acceptability_table(
     Returns:
         The table with the columns of the sample dimensions, `auc_last`,
         `auc_inf_obs`, `ratio` and `below`, and the verdict of the rule.
+        The verdict is `None` when no finite ratio can be evaluated.
 
     Raises:
         ValueError: if `dim` is not a sample dimension of the result, or if the
             result carries no `auc_last` or `auc_inf_obs`.
     """
+    if not 0 < threshold <= 1 or not 0 <= share <= 1:
+        raise ValueError("'threshold' must be in (0, 1] and 'share' in [0, 1]")
     if dim not in result.sample_dims:
         raise ValueError(f"'{dim}' is not a sample dimension {result.sample_dims}")
     missing = [
@@ -125,8 +128,8 @@ def acceptability_table(
             "below": below,
         }
     )
-    acceptable = counted == 0 or int(below.sum()) / counted <= share
-    return frame, bool(acceptable)
+    acceptable = None if counted == 0 else bool(int(below.sum()) / counted <= share)
+    return frame, acceptable
 
 
 def methods_line(options: NCAOptions, result: NCAResult) -> str:

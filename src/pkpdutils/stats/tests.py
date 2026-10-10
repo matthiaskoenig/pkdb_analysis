@@ -17,6 +17,7 @@ acceptance parameter.
 """
 
 import logging
+import math
 import warnings
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -31,6 +32,7 @@ from scipy.stats import t as student_t
 from pkpdutils.stats.sample import (
     ParameterSample,
     Scale,
+    _in_unit,
     coerce,
     cohen_d,
     labels_match,
@@ -330,6 +332,7 @@ def compare(
     alternative: Alternative | str = Alternative.TWO_SIDED,
     ci_level: float = 0.95,
     n_perm: int = 9999,
+    permutation_batch: int = 128,
     seed: int | None = None,
 ) -> TestResult:
     """Compare two samples of a parameter.
@@ -365,6 +368,7 @@ def compare(
         alternative: the alternative hypothesis.
         ci_level: level of the interval of the effect.
         n_perm: number of resamples of the permutation test.
+        permutation_batch: maximum resamples held in memory at once, at least 1.
         seed: seed of the permutation test.
 
     Returns:
@@ -375,6 +379,10 @@ def compare(
             paired test on unpaired or unequal samples, a non-t test on
             summary data, or non-positive values on the log scale.
     """
+    if not 0 < ci_level < 1:
+        raise ValueError("'ci_level' must lie in (0, 1)")
+    if permutation_batch < 1 or int(permutation_batch) != permutation_batch:
+        raise ValueError("'permutation_batch' must be a positive whole number")
     method = coerce(test, TestMethod)
     scale = coerce(scale, Scale)
     alternative = coerce(alternative, Alternative)
@@ -391,7 +399,8 @@ def compare(
             raise ValueError(
                 f"{method} needs individual data; summary data allows WELCH_T only"
             )
-        return _welch_from_moments(a, b, scale, alternative, ci_level)
+        return _welch_from_moments(a, _in_unit(b, a.unit), scale, alternative, ci_level)
+    b = _in_unit(b, a.unit)
     # every statistic below, the effect of the rank tests included, is computed
     # from these two arrays, so it describes the individuals the p value does
     if paired:
@@ -451,6 +460,7 @@ def compare(
             _mean_difference,
             permutation_type="samples" if paired else "independent",
             n_resamples=n_perm,
+            batch=int(permutation_batch),
             alternative=str(alternative),
             rng=np.random.default_rng(seed),
         )
@@ -537,6 +547,89 @@ def _welch_from_moments(
 #: enumerated by `hodges_lehmann`; above it the quantile of the order
 #: statistic comes from the normal approximation
 EXACT_MAX_N: int = 50
+
+#: Materialize small populations; larger ones select exact order statistics
+#: from sorted rows using O(n_a + n_b) memory.
+HL_MATERIALIZE_PAIRS: int = 250_000
+
+
+class _PairOrderStatistics:
+    """Exact pair order selection without storing the quadratic population."""
+
+    def __init__(self, x: np.ndarray, y: np.ndarray | None = None):
+        self.paired = y is None
+        self.x = np.sort(x)
+        self.y = self.x if y is None else np.sort(-y)
+        n = self.x.size
+        self.size = n * (n + 1) // 2 if self.paired else n * self.y.size
+        self._selected: dict[int, float] = {}
+        if not math.isfinite(self._value(0, 0)) or not math.isfinite(
+            self._value(n - 1, self.y.size - 1)
+        ):
+            raise ValueError("Hodges-Lehmann pair values exceed floating-point range")
+
+    def _value(self, i: int, j: int) -> float:
+        # Match the arithmetic of the materialized implementation exactly.
+        value = float(self.x[i] + self.y[j])
+        return value / 2.0 if self.paired else value
+
+    def _count(self, pivot: float) -> tuple[int, float, float]:
+        n = self.x.size
+        starts = np.arange(n) if self.paired else np.zeros(n, dtype=np.intp)
+        left = starts.copy()
+        right = np.full(n, self.y.size, dtype=np.intp)
+        # Binary-search every sorted row in parallel. Evaluate actual pair
+        # values to preserve ranks even at floating-point rounding boundaries.
+        while np.any(left < right):
+            active = np.flatnonzero(left < right)
+            middle = left[active] + (right[active] - left[active]) // 2
+            values = self.x[active] + self.y[middle]
+            if self.paired:
+                values /= 2.0
+            lower = values <= pivot
+            left[active[lower]] = middle[lower] + 1
+            right[active[~lower]] = middle[~lower]
+        below_rows = np.flatnonzero(left > starts)
+        above_rows = np.flatnonzero(left < self.y.size)
+        below_values = self.x[below_rows] + self.y[left[below_rows] - 1]
+        above_values = self.x[above_rows] + self.y[left[above_rows]]
+        if self.paired:
+            below_values /= 2.0
+            above_values /= 2.0
+        return (
+            int(np.sum(left - starts)),
+            float(np.max(below_values)) if below_rows.size else -math.inf,
+            float(np.min(above_values)) if above_rows.size else math.inf,
+        )
+
+    def __getitem__(self, index: int) -> float:
+        if index in self._selected:
+            return self._selected[index]
+        rank = index + 1
+        low = self._value(0, 0)
+        high = self._value(self.x.size - 1, self.y.size - 1)
+        while low < high:
+            # Select only from actual pair values, tightening each bound to
+            # its nearest populated value so adjacent floats also terminate.
+            count, _, above = self._count(low)
+            if rank <= count:
+                break
+            pivot = low / 2.0 + high / 2.0
+            if pivot <= low or pivot >= high:
+                pivot = low
+            count, below, above = self._count(pivot)
+            if rank <= count:
+                high = below
+            else:
+                low = above
+        self._selected[index] = low
+        return low
+
+    def median(self) -> float:
+        middle = self.size // 2
+        if self.size % 2:
+            return self[middle]
+        return (self[middle - 1] + self[middle]) / 2.0
 
 
 def _signed_rank_counts(n: int) -> np.ndarray:
@@ -753,7 +846,8 @@ def hodges_lehmann(
 
     Raises:
         ValueError: for summary data, for a `ci_level` outside `(0, 1)`, or
-            as `paired_values` for an unpairable pair of samples.
+            as `paired_values` for an unpairable pair of samples, incompatible
+            units.
     """
     if not 0 < ci_level < 1:
         raise ValueError(f"'ci_level' must lie in (0, 1), got {ci_level}")
@@ -762,6 +856,7 @@ def hodges_lehmann(
             f"'{a.name}' or '{b.name}' has no individual values, the "
             "Hodges-Lehmann estimator needs individual data"
         )
+    b = _in_unit(b, a.unit)
     is_paired = labels_match(a, b) if paired is None else bool(paired)
     method = TestMethod.WILCOXON if is_paired else TestMethod.MANN_WHITNEY
     alpha = (1.0 - ci_level) / 2.0
@@ -770,7 +865,12 @@ def hodges_lehmann(
         x, y = paired_values(a, b)
         n_a = n_b = int(x.size)
         differences = x - y
-        estimates = _walsh_averages(differences)
+        pair_count = n_a * (n_a + 1) // 2
+        estimates = (
+            _walsh_averages(differences)
+            if pair_count <= HL_MATERIALIZE_PAIRS
+            else _PairOrderStatistics(differences)
+        )
         counts = _signed_rank_counts(n_a) if n_a <= EXACT_MAX_N else None
         rank = (
             _order_statistic(counts, alpha)
@@ -803,7 +903,11 @@ def hodges_lehmann(
                 n_b,
                 a,
             )
-        estimates = np.sort((x[:, None] - y[None, :]).ravel())
+        estimates = (
+            np.sort((x[:, None] - y[None, :]).ravel())
+            if n_a * n_b <= HL_MATERIALIZE_PAIRS
+            else _PairOrderStatistics(x, y)
+        )
         counts = (
             _mann_whitney_counts(n_a, n_b) if max(n_a, n_b) <= EXACT_MAX_N else None
         )
@@ -817,7 +921,11 @@ def hodges_lehmann(
             )
         )
         statistic, p_value = _rank_test(stats.mannwhitneyu, x, y)
-    effect = float(np.median(estimates))
+    effect = (
+        estimates.median()
+        if isinstance(estimates, _PairOrderStatistics)
+        else float(np.median(estimates))
+    )
     if rank < 1:
         logger.debug(
             "'%s' and '%s' are too small for a %.0f %% distribution free interval, "
@@ -875,13 +983,24 @@ def multiple_comparison(
         method: the adjustment, as the member or as its string.
 
     Returns:
-        The adjusted p values in the order of the input.
+        The adjusted p values in the order of the input. NaNs are preserved
+        and excluded from the number of comparisons.
 
     Raises:
         ValueError: if `method` is not an `AdjustMethod`.
     """
     resolved = coerce(method, AdjustMethod)
-    p = np.asarray(p_values, dtype=np.float64).ravel()
+    original = np.asarray(p_values, dtype=np.float64).ravel()
+    finite = np.isfinite(original)
+    if np.any(~finite & ~np.isnan(original)) or np.any(
+        (original[finite] < 0) | (original[finite] > 1)
+    ):
+        raise ValueError("p values must lie in [0, 1] or be NaN")
+    if not finite.all():
+        result = np.full(original.shape, np.nan)
+        result[finite] = multiple_comparison(original[finite], method=resolved)
+        return result
+    p = original
     m = p.size
     if m == 0:
         return p

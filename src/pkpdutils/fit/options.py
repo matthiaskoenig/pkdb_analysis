@@ -1,5 +1,6 @@
 """Options and flags of the curve fitting."""
 
+import math
 from enum import IntFlag, StrEnum
 from typing import Self
 
@@ -118,7 +119,7 @@ class FitOptions(BaseModel):
             log search space and can never be reached exactly.
     """
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     parameter_scale: ParameterScale = ParameterScale.LOG10
     weighting: Weighting = Weighting.NONE
@@ -151,8 +152,12 @@ class FitOptions(BaseModel):
         if self.loss not in LOSSES:
             raise ValueError(f"'loss' must be one of {LOSSES}, not '{self.loss}'")
         for name, (lower, upper) in self.bounds.items():
-            if upper <= lower:
+            if math.isnan(lower) or math.isnan(upper) or upper <= lower:
                 raise ValueError(f"bounds of '{name}': upper {upper} <= lower {lower}")
+        for kind, values in (("fixed", self.fixed), ("initial", self.initial)):
+            for name, value in values.items():
+                if not math.isfinite(value):
+                    raise ValueError(f"{kind} value of '{name}' must be finite")
         return self
 
     def scale_of(self, parameter: ModelParameter) -> ParameterScale:

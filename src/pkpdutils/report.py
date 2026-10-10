@@ -20,14 +20,16 @@ import base64
 import html
 import io
 import logging
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal
+from urllib.parse import quote
 
 import numpy as np
 import pandas as pd
 
-from pkpdutils.nca.options import NCAOptions
+from pkpdutils.nca.options import NCAOptions, deserialize_nca_options
 from pkpdutils.nca.report import M13A_STATISTICS, acceptability_table, methods_line
 from pkpdutils.nca.result import NCAResult
 from pkpdutils.result import format_number, summary_table
@@ -124,6 +126,19 @@ def _cells(frame: pd.DataFrame, digits: int) -> list[list[str]]:
         [format_cell(value, digits) for value in row]
         for row in frame.itertuples(index=False, name=None)
     ]
+
+
+def _markdown_text(text: str) -> str:
+    """Escape a plain text field for a Markdown heading, cell or caption.
+
+    Args:
+        text: the plain text field.
+
+    Returns:
+        Escaped inline Markdown, with line breaks represented by spaces.
+    """
+    escaped = html.escape(text, quote=False).replace("\r", " ").replace("\n", " ")
+    return re.sub(r"([\\`*_{}\[\]()#+.!|>~-])", r"\\\1", escaped)
 
 
 @dataclass
@@ -342,33 +357,36 @@ class Report:
         """
         target = Path(path)
         target.parent.mkdir(parents=True, exist_ok=True)
-        lines = [f"# {self.title}", ""]
+        lines = [f"# {_markdown_text(self.title)}", ""]
         if self.subtitle:
-            lines.extend([self.subtitle, ""])
+            lines.extend([_markdown_text(self.subtitle), ""])
         number = 0
         for section in self.sections:
             if section.heading:
                 level = min(max(section.level, 1), 6)
-                lines.extend([f"{'#' * level} {section.heading}", ""])
+                lines.extend([f"{'#' * level} {_markdown_text(section.heading)}", ""])
             if section.kind == "text":
-                lines.extend([section.text, ""])
+                # Prose deliberately supports Markdown, but never raw HTML.
+                lines.extend([html.escape(section.text, quote=False), ""])
             elif section.kind == "table":
                 assert section.frame is not None
-                columns = [str(column) for column in section.frame]
+                columns = [_markdown_text(str(column)) for column in section.frame]
                 lines.append("| " + " | ".join(columns) + " |")
                 lines.append("| " + " | ".join("---" for _ in columns) + " |")
                 for row in _cells(section.frame, section.digits):
-                    lines.append("| " + " | ".join(row) + " |")
+                    lines.append("| " + " | ".join(map(_markdown_text, row)) + " |")
                 lines.append("")
                 if section.caption:
-                    lines.extend([f"*{section.caption}*", ""])
+                    lines.extend([f"*{_markdown_text(section.caption)}*", ""])
             else:
                 number += 1
                 name = f"{target.stem}_{number}.png"
                 (target.parent / name).write_bytes(section.image)
-                lines.extend([f"![{section.caption}]({name})", ""])
+                lines.extend(
+                    [f"![{_markdown_text(section.caption)}]({quote(name)})", ""]
+                )
                 if section.caption:
-                    lines.extend([f"*{section.caption}*", ""])
+                    lines.extend([f"*{_markdown_text(section.caption)}*", ""])
         target.write_text("\n".join(lines), encoding="utf-8")
         logger.info("report written: %s", target)
         return target
@@ -406,8 +424,8 @@ def study_report(
         dim: the sample dimension of the individuals.
         by: coordinate along `dim` grouping the subjects (the treatment, the
             dose group), one group by default.
-        options: the options the analysis was run with, for the methods
-            sentence; the defaults are described when none are given.
+        options: optional confirmation of the recorded analysis options;
+            required for older results without recorded options.
         title: the title of the document.
         subtitle: the line below the title.
 
@@ -425,7 +443,23 @@ def study_report(
 
     if dim not in result.sample_dims:
         raise ValueError(f"'{dim}' is not a sample dimension {result.sample_dims}")
-    resolved = NCAOptions() if options is None else options
+    saved_options = result.ds.attrs.get("nca_options")
+    if saved_options is not None:
+        resolved = deserialize_nca_options(saved_options)
+        if options is not None:
+            requested = options.model_copy(
+                update={
+                    "uncertainty": options.resolve_uncertainty(batch.has_uncertainty)
+                }
+            )
+            if requested != resolved:
+                raise ValueError(
+                    "report options differ from the recorded analysis options"
+                )
+    elif options is not None:
+        resolved = options
+    else:
+        raise ValueError("the result has no recorded NCA options; supply 'options'")
     report = Report(title=title, subtitle=subtitle)
     report.add_text(methods_line(resolved, result), heading="Methods")
     report.add_table(
@@ -435,12 +469,15 @@ def study_report(
     )
     if "auc_inf_obs" in result.ds.data_vars and "auc_last" in result.ds.data_vars:
         table, accepted = acceptability_table(result, dim)
-        verdict = (
-            "The extrapolation is acceptable."
-            if accepted
-            else "The ratio is below the threshold in more than the accepted share "
-            "of the observations; the study is questioned by this criterion."
-        )
+        if accepted is None:
+            verdict = "The extrapolation cannot be evaluated: no finite ratios."
+        elif accepted:
+            verdict = "The extrapolation is acceptable."
+        else:
+            verdict = (
+                "The ratio is below the threshold in more than the accepted share "
+                "of the observations; the study is questioned by this criterion."
+            )
         report.add_table(
             table,
             f"AUC(0-t) / AUC(0-inf) of every subject. {verdict}",

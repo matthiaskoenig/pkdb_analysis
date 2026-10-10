@@ -185,3 +185,40 @@ def test_the_study_report_rejects_a_dimension_which_is_none() -> None:
     data = batch()
     with pytest.raises(ValueError, match="is not a sample dimension"):
         study_report(data, nca(data), dim="subject")
+
+
+def test_report_uses_recorded_analysis_options() -> None:
+    data = batch()
+    result = nca(data, options=NCAOptions(auc_method="linear"))
+    report = study_report(data, result, dim="individual")
+    assert "linear trapezoidal method" in report.sections[0].text
+    with pytest.raises(ValueError, match="differ"):
+        study_report(data, result, dim="individual", options=NCAOptions())
+
+
+def test_report_requires_options_for_legacy_results() -> None:
+    data = batch()
+    result = nca(data)
+    result.ds.attrs.pop("nca_options")
+    with pytest.raises(ValueError, match="no recorded NCA options"):
+        study_report(data, result, dim="individual")
+
+
+def test_markdown_escapes_data_and_raw_html(tmp_path: Path) -> None:
+    report = Report(title="<script>title</script>")
+    report.add_table(pd.DataFrame({"a|b": ["x | y\n<script>bad</script>"]}))
+    report.add_text("**Markdown** and <script>bad</script>")
+    text = report.write_markdown(tmp_path / "report.md").read_text()
+    assert "a\\|b" in text and "x \\| y" in text
+    assert "<script>" not in text and "&lt;script&gt;" in text
+    assert "**Markdown**" in text
+
+
+def test_report_distinguishes_unevaluable_extrapolation() -> None:
+    data = Timecourses.from_arrays(
+        [0, 1, 2], [[0, 1, 2]], time_unit="h", unit="mg/l", dims=("individual",)
+    )
+    report = study_report(data, nca(data), dim="individual")
+    caption = report.sections[2].caption
+    assert "cannot be evaluated" in caption
+    assert "is acceptable" not in caption

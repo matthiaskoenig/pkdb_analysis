@@ -58,7 +58,7 @@ from scipy.stats import t as student_t
 from pkpdutils.fit.model import Model, parameter_unit_expression
 from pkpdutils.fit.options import FitFlag, FitOptions, ParameterScale, Weighting
 from pkpdutils.fit.result import FitResult
-from pkpdutils.parallel import evict, executor, resolve_workers
+from pkpdutils.parallel import evict, resolve_workers, worker_pool
 from pkpdutils.result import base_name, check_coordinate_collision, nan_percentile
 
 logger = logging.getLogger(__name__)
@@ -366,6 +366,22 @@ def _problem(
     for name, (lo, hi) in options.bounds.items():
         i = names.index(name)
         lower[i], upper[i] = lo, hi
+    for i, parameter in enumerate(model.parameters):
+        name = parameter.name
+        if np.isnan(lower[i]) or np.isnan(upper[i]) or upper[i] <= lower[i]:
+            raise ValueError(f"Invalid bounds of '{name}'")
+        if parameter.positive and (lower[i] < 0 or upper[i] <= 0):
+            raise ValueError(
+                f"Bounds of positive parameter '{name}' must be non-negative"
+            )
+        if name in options.fixed:
+            value = options.fixed[name]
+            if not np.isfinite(value) or not lower[i] <= value <= upper[i]:
+                raise ValueError(
+                    f"Fixed value of '{name}' must be finite and within its bounds"
+                )
+        if name in options.initial and not np.isfinite(options.initial[name]):
+            raise ValueError(f"Initial value of '{name}' must be finite")
     scales = [options.scale_of(parameter) for parameter in model.parameters]
     fixed_values = np.array([options.fixed.get(name, np.nan) for name in names])
     return free, lower, upper, scales, fixed_values
@@ -1056,6 +1072,7 @@ def fit_rows(
     Returns:
         One `RowFit` per row, in row order.
     """
+    _problem(model, options)  # Validate once before starting workers.
     n_rows = int(y.shape[0])
     rng = np.random.default_rng(options.seed)
     seeds = rng.integers(0, 2**32 - 1, size=n_rows)
@@ -1076,8 +1093,8 @@ def fit_rows(
             chunksize,
         )
         try:
-            pool = executor("process", n_workers)
-            return list(pool.map(job, rows, chunksize=chunksize))
+            with worker_pool("process", n_workers) as pool:
+                return list(pool.map(job, rows, chunksize=chunksize))
         except BrokenProcessPool:
             # a worker died (killed by the operating system, or by a crash in
             # a native extension); the pool is shared, so it is dropped before
@@ -1088,8 +1105,8 @@ def fit_rows(
                 n_rows,
             )
             evict("process", n_workers)
-            pool = executor("process", n_workers)
-            return list(pool.map(job, rows, chunksize=chunksize))
+            with worker_pool("process", n_workers) as pool:
+                return list(pool.map(job, rows, chunksize=chunksize))
     return [job(row) for row in rows]
 
 
@@ -1115,18 +1132,14 @@ def _as_rows(
         y_arr = y_arr[None, :]
     x_arr = np.asarray(x, dtype=np.float64)
     if x_arr.ndim == 1:
-        x_arr = np.broadcast_to(x_arr, y_arr.shape).copy()
+        x_arr = np.broadcast_to(x_arr, y_arr.shape)
     if x_arr.shape != y_arr.shape:
         raise ValueError(f"'x' has shape {x_arr.shape}, 'y' has shape {y_arr.shape}")
     sd_arr = None
     if sd is not None:
         sd_arr = np.asarray(sd, dtype=np.float64)
         if sd_arr.ndim == 1:
-            sd_arr = (
-                sd_arr[None, :]
-                if single
-                else np.broadcast_to(sd_arr, y_arr.shape).copy()
-            )
+            sd_arr = sd_arr[None, :] if single else np.broadcast_to(sd_arr, y_arr.shape)
         if sd_arr.shape != y_arr.shape:
             raise ValueError(
                 f"'sd' has shape {sd_arr.shape}, 'y' has shape {y_arr.shape}"
@@ -1396,7 +1409,11 @@ def build_result(
     point_shape = (*sample_shape, n_points)
     data_vars["x_data"] = (point_dims, x.reshape(point_shape), {"units": x_unit})
     data_vars["y_data"] = (point_dims, y.reshape(point_shape), {"units": y_unit})
-    sd_values = np.full(point_shape, np.nan) if sd is None else sd.reshape(point_shape)
+    sd_values = (
+        np.broadcast_to(np.asarray(np.nan), point_shape)
+        if sd is None
+        else sd.reshape(point_shape)
+    )
     data_vars["sd_data"] = (point_dims, sd_values, {"units": y_unit})
     data_vars["y_pred"] = (
         point_dims,

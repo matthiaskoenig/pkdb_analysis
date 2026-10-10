@@ -34,6 +34,7 @@ tc = Timecourse(
 """
 
 import logging
+import math
 import warnings
 from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
@@ -2613,6 +2614,7 @@ class Timecourses:
         df: pd.DataFrame,
         *,
         sample: Sequence[str],
+        sample_layout: Literal["auto", "dense", "observed"] = "auto",
         time_unit: str,
         unit: str,
         time: str = "time",
@@ -2632,16 +2634,19 @@ class Timecourses:
     ) -> "Timecourses":
         """Create a batch from a long data frame, one row per sample and time point.
 
-        Several sample columns span their cartesian product; a combination
-        without rows in `df` becomes a sample with `NaN` values, which iteration
-        and `sel`/`isel` return as a `Timecourse` with `NaN` values and
-        `dose=None`.
+        Complete grids of several sample columns span their cartesian product.
+        Sparse grids keep only observed combinations along `_sample`, with
+        the identifier columns as coordinates. `select` filters those
+        coordinates. `sample_layout="dense"` explicitly includes missing
+        combinations as samples with `NaN` values and no dosing protocol.
 
         Args:
             df: the data frame
             sample: the columns which identify a sample; they become the sample
-                dimensions, several columns give their cartesian product with
-                `NaN` for missing combinations
+                dimensions for a complete grid
+            sample_layout: `"auto"` keeps complete grids dense and sparse grids
+                observed; `"dense"` always expands the cartesian product and
+                `"observed"` keeps several identifiers along `_sample`
             time_unit: unit of the time column
             unit: unit of the value column
             time: name of the time column
@@ -2692,6 +2697,8 @@ class Timecourses:
                 protocol; every one of them names the sample.
         """
         sample = list(sample)
+        if sample_layout not in ("auto", "dense", "observed"):
+            raise ValueError("'sample_layout' must be 'auto', 'dense' or 'observed'")
         if not sample:
             raise ValueError("'sample' needs at least one column")
         if dose_amount is not None and DOSE_DIM in sample:
@@ -2802,6 +2809,21 @@ class Timecourses:
         for k in keys:
             assert isinstance(k, tuple)
             tuple_keys.append(k)
+        cartesian_size = math.prod(
+            len({key[i] for key in tuple_keys}) for i in range(len(sample))
+        )
+        if sample_layout == "observed" or (
+            sample_layout == "auto" and cartesian_size != len(tuple_keys)
+        ):
+            flat.ds.attrs["sample_columns"] = sample
+            return cls(
+                flat.ds.assign_coords(
+                    {
+                        name: ("_sample", [key[i] for key in tuple_keys])
+                        for i, name in enumerate(sample)
+                    }
+                )
+            )
         index = pd.MultiIndex.from_tuples(tuple_keys, names=sample)
         mindex_coords = xr.Coordinates.from_pandas_multiindex(index, "_sample")
         ds = (
@@ -3531,24 +3553,62 @@ class Timecourses:
         if spread not in ("sd", "se"):
             raise ValueError(f"'spread' must be 'sd' or 'se', got '{spread}'")
         batch = self
-        if TIMES_VAR in self.ds:
-            batch = Timecourses(
-                self._shifted_times(np.zeros(self.sample_shape), uniform=False)
-            )
         rest = tuple(d for d in batch.sample_dims if d != dim)
-        values = batch.ds["value"].transpose(dim, *rest, TIME_DIM).to_numpy()
-        finite = np.isfinite(values)
-        count = finite.sum(axis=0).astype(np.float64)
-        enough = count >= min_n
+        if TIMES_VAR in self.ds:
+            # Accumulate directly on the union grid. Materializing each curve
+            # on that grid costs O(samples ** 2 * points) for distinct times.
+            times = self.ds[TIMES_VAR].transpose(dim, *rest, TIME_DIM).to_numpy()
+            values = self.ds["value"].transpose(dim, *rest, TIME_DIM).to_numpy()
+            grid = np.unique(times[np.isfinite(times)])
+            shape = (*[self.ds.sizes[d] for d in rest], grid.size)
+            count = np.zeros(shape, dtype=np.float64)
+            mean = np.zeros(shape, dtype=np.float64)
+            m2 = np.zeros(shape, dtype=np.float64)
+            # Welford's update avoids cancellation for nearly equal values.
+            # Each sample has at most one observation at a given time.
+            for sample_times, sample_values in zip(times, values, strict=True):
+                valid = np.isfinite(sample_times) & np.isfinite(sample_values)
+                positions = (
+                    *np.nonzero(valid)[:-1],
+                    np.searchsorted(grid, sample_times[valid]),
+                )
+                old_mean = mean[positions]
+                new_count = count[positions] + 1
+                delta = sample_values[valid] - old_mean
+                new_mean = old_mean + delta / new_count
+                m2[positions] += delta * (sample_values[valid] - new_mean)
+                mean[positions] = new_mean
+                count[positions] = new_count
+            enough = count >= min_n
+            mean = np.where(enough, mean, np.nan)
+            with np.errstate(invalid="ignore", divide="ignore"):
+                scatter = np.where(
+                    enough & (count > 1), np.sqrt(m2 / (count - 1)), np.nan
+                )
+            time_coordinate = xr.DataArray(
+                grid, dims=(TIME_DIM,), attrs={"units": self.time_unit}
+            )
+        else:
+            values = batch.ds["value"].transpose(dim, *rest, TIME_DIM).to_numpy()
+            finite = np.isfinite(values)
+            values = np.where(finite, values, np.nan)
+            count = finite.sum(axis=0).astype(np.float64)
+            enough = count >= min_n
+            with (
+                np.errstate(invalid="ignore", divide="ignore"),
+                warnings.catch_warnings(),
+            ):
+                warnings.simplefilter("ignore", RuntimeWarning)
+                mean = np.where(enough, np.nanmean(values, axis=0), np.nan)
+                scatter = np.where(
+                    enough & (count > 1), np.nanstd(values, axis=0, ddof=1), np.nan
+                )
+            time_coordinate = batch.ds[TIME_DIM]
         with (
             np.errstate(invalid="ignore", divide="ignore"),
             warnings.catch_warnings(),
         ):
             warnings.simplefilter("ignore", RuntimeWarning)
-            mean = np.where(enough, np.nanmean(values, axis=0), np.nan)
-            scatter = np.where(
-                enough & (count > 1), np.nanstd(values, axis=0, ddof=1), np.nan
-            )
             # `n` is the count of the point, so the two statistics imply each
             # other wherever the count is the same
             root_n = np.sqrt(count)
@@ -3569,7 +3629,7 @@ class Timecourses:
         ds = xr.Dataset(
             data_vars=data_vars,
             coords={
-                TIME_DIM: batch.ds[TIME_DIM],
+                TIME_DIM: time_coordinate,
                 **{
                     str(name): coord
                     for name, coord in batch.ds.coords.items()
@@ -3765,7 +3825,12 @@ class Timecourses:
             # `from_dataframe` reads the frame back (a `NaN` time is not a time)
             df[TIME_DIM] = self.times.ravel()
             df = df[df[TIME_DIM].notna()].reset_index(drop=True)
-        return df[[*dim_order, *names]]
+        sample_columns = [
+            name
+            for name in self.ds.attrs.get("sample_columns", [])
+            if name in df.columns and name not in dim_order
+        ]
+        return df[[*dim_order, *sample_columns, *names]]
 
     # --- exchange formats ---------------------------------------------------
     #

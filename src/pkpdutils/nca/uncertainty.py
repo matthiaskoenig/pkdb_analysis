@@ -537,7 +537,7 @@ def bootstrap(
         chunk_bounds,
         merge_rows,
         row_routes,
-        run_rows,
+        run_analysis_rows,
         sample_windows,
     )
 
@@ -579,6 +579,11 @@ def bootstrap(
     route, routes = row_routes(timecourses, n_rows)
     parts: list[dict[str, np.ndarray]] = []
     counts: list[int] = []
+    n_subjects = (
+        None
+        if timecourses.n_subjects is None
+        else np.asarray(timecourses.n_subjects, dtype=np.float64).reshape(n_rows)
+    )
     for start, stop in chunk_bounds(n_rows, n_blocks):
         rows = stop - start
         draws = resample_values(
@@ -589,44 +594,38 @@ def bootstrap(
             options.bootstrap_distribution,
             clip_at_zero=options.kind is Kind.CONCENTRATION,
         )
+        block = run_analysis_rows(
+            np.repeat(t[start:stop], b, axis=0),
+            draws.reshape(rows * b, n_time),
+            dose_amount=repeat_block(dose_amount, start, stop, b),
+            dose_time=repeat_block(dose_time, start, stop, b),
+            dose_duration=repeat_block(dose_duration, start, stop, b),
+            route=route,
+            options=options,
+            lloq=None if lloq is None else np.repeat(lloq[start:stop], b),
+            routes=None if routes is None else np.repeat(routes[start:stop], b),
+            windows=_repeat_windows(
+                None if windows is None else windows[start:stop], b
+            ),
+        )
+        replicates = {
+            name: array.reshape(rows, b)
+            for name, array in block.items()
+            if array.ndim == 1
+        }
         parts.append(
-            run_rows(
-                np.repeat(t[start:stop], b, axis=0),
-                draws.reshape(rows * b, n_time),
-                dose_amount=repeat_block(dose_amount, start, stop, b),
-                dose_time=repeat_block(dose_time, start, stop, b),
-                dose_duration=repeat_block(dose_duration, start, stop, b),
-                route=route,
-                options=options,
-                lloq=None if lloq is None else np.repeat(lloq[start:stop], b),
-                routes=None if routes is None else np.repeat(routes[start:stop], b),
-                windows=_repeat_windows(
-                    None if windows is None else windows[start:stop], b
-                ),
+            reduce_replicates(
+                replicates,
+                {name: array[start:stop] for name, array in point.items()},
+                spread_kind=options.bootstrap_spread,
+                n_subjects=None if n_subjects is None else n_subjects[start:stop],
+                ci_level=options.ci_level,
+                usable_rows=any_usable[start:stop],
             )
         )
-        counts.append(rows * b)
-    values = merge_rows(parts, counts)
-    # the per-interval parameters carry an extra dimension and are no
-    # parameters of a sample: they are left to the point estimate
-    replicates = {
-        name: array.reshape(n_rows, b)
-        for name, array in values.items()
-        if array.ndim == 1
-    }
-    n_subjects = (
-        None
-        if timecourses.n_subjects is None
-        else np.asarray(timecourses.n_subjects, dtype=np.float64).reshape(n_rows)
-    )
-    return reduce_replicates(
-        replicates,
-        point,
-        spread_kind=options.bootstrap_spread,
-        n_subjects=n_subjects,
-        ci_level=options.ci_level,
-        usable_rows=any_usable,
-    )
+        counts.append(rows)
+        del draws, block, replicates
+    return merge_rows(parts, counts)
 
 
 def delta(
@@ -678,7 +677,7 @@ def delta(
     """
     # the analysis of the perturbed curves runs through the same core as the
     # original curves, whose module imports this one
-    from pkpdutils.nca.nca import row_routes, run_rows, sample_windows
+    from pkpdutils.nca.nca import row_routes, run_analysis_rows, sample_windows
 
     n_rows, n_time = timecourses.n_samples, timecourses.n_time
     t = timecourses.times.reshape(n_rows, n_time)
@@ -688,30 +687,58 @@ def delta(
         usable = np.isfinite(se) & (se > 0) & np.isfinite(c)
     h = np.where(usable, options.delta_step * se, 0.0)
 
-    # every row is repeated `n_time` times, the j-th copy perturbed at point j
-    rows = np.arange(n_rows * n_time)
-    cols = np.tile(np.arange(n_time), n_rows)
-    c_pert = np.repeat(c, n_time, axis=0)
-    c_pert[rows, cols] += np.repeat(h, n_time, axis=0)[rows, cols]
-
-    logger.info("delta method: %d curves x %d perturbations", n_rows, n_time)
+    # Only usable perturbations are generated, in bounded blocks. Variances
+    # are accumulated directly; no (N * T, T) batch or Jacobian is retained.
+    owners, columns = np.nonzero(usable)
+    independent = terminal_independent(options)
+    variances = {
+        name: np.zeros(n_rows)
+        for name, base in point.items()
+        if name not in DISCRETE_PARAMETERS
+        and base_name(name) is None
+        and base.ndim == 1
+    }
+    flags = np.zeros(n_rows, dtype=np.int64)
     delta_route, delta_routes = row_routes(timecourses, n_rows)
-    perturbed = run_rows(
-        np.repeat(t, n_time, axis=0),
-        c_pert,
-        dose_amount=repeat_rows(timecourses.dose_amount, n_rows, n_time),
-        dose_time=repeat_rows(timecourses.dose_time, n_rows, n_time),
-        dose_duration=repeat_rows(timecourses.dose_duration, n_rows, n_time),
-        route=delta_route,
-        options=options,
-        routes=None if delta_routes is None else np.repeat(delta_routes, n_time),
-        lloq=(
-            None
-            if timecourses.lloq is None
-            else np.repeat(timecourses.lloq.reshape(n_rows), n_time)
-        ),
-        windows=_repeat_windows(sample_windows(timecourses, options.terminal), n_time),
-    )
+    windows = sample_windows(timecourses, options.terminal)
+    amounts = flatten_rows(timecourses.dose_amount, n_rows)
+    times = flatten_rows(timecourses.dose_time, n_rows)
+    durations = flatten_rows(timecourses.dose_duration, n_rows)
+    limits = None if timecourses.lloq is None else timecourses.lloq.reshape(n_rows)
+    logger.info("delta method: %d usable perturbations", owners.size)
+    for start in range(0, owners.size, options.chunk_rows):
+        rows = owners[start : start + options.chunk_rows]
+        cols = columns[start : start + options.chunk_rows]
+        c_pert = c[rows].copy()
+        c_pert[np.arange(rows.size), cols] += h[rows, cols]
+        perturbed = run_analysis_rows(
+            t[rows],
+            c_pert,
+            dose_amount=None if amounts is None else amounts[rows],
+            dose_time=None if times is None else times[rows],
+            dose_duration=None if durations is None else durations[rows],
+            route=delta_route,
+            options=options,
+            routes=None if delta_routes is None else delta_routes[rows],
+            lloq=None if limits is None else limits[rows],
+            windows=None if windows is None else windows[rows],
+        )
+        changed = _window_changed(
+            {name: base[rows] for name, base in point.items()},
+            perturbed,
+            rows.size,
+            1,
+        ).ravel()
+        flags[rows[changed]] |= int(NCAFlag.DELTA_WINDOW_CHANGE)
+        for name, variance in variances.items():
+            if name not in perturbed:
+                continue
+            keep = np.ones(rows.size, dtype=bool) if name in independent else ~changed
+            with np.errstate(invalid="ignore", divide="ignore", over="ignore"):
+                derivative = np.where(
+                    keep, (perturbed[name] - point[name][rows]) / h[rows, cols], 0.0
+                )
+                np.add.at(variance, rows, (derivative * se[rows, cols]) ** 2)
     alpha = 1.0 - options.ci_level
     z = float(norm.ppf(1.0 - alpha / 2.0))
     n_subjects = (
@@ -720,31 +747,12 @@ def delta(
         else np.asarray(timecourses.n_subjects, dtype=np.float64).reshape(n_rows)
     )
     any_usable = usable.any(axis=1)
-    independent = terminal_independent(options)
-    step = np.where(usable, h, 1.0)
-    weight = np.where(usable, se, 0.0)
-    window_changed = _window_changed(point, perturbed, n_rows, n_time) & usable
-    flags = np.where(
-        window_changed.any(axis=1), int(NCAFlag.DELTA_WINDOW_CHANGE), 0
-    ).astype(np.int64)
     out: dict[str, np.ndarray] = {}
     for name, base in point.items():
-        skip = (
-            name in DISCRETE_PARAMETERS
-            or base_name(name) is not None
-            or name not in perturbed
-            # the per-interval parameters carry an extra dimension
-            or base.ndim > 1
-        )
-        if skip:
+        if name not in variances:
             continue
-        pert = perturbed[name].reshape(n_rows, n_time)
-        # a point at which the terminal window flipped carries no derivative of
-        # the parameters which depend on that window
-        keep = usable if name in independent else usable & ~window_changed
+        var = variances[name]
         with np.errstate(invalid="ignore", divide="ignore", over="ignore"):
-            derivative = np.where(keep, (pert - base[:, None]) / step, 0.0)
-            var = np.sum((derivative * weight) ** 2, axis=1)
             valid = np.isfinite(base) & np.isfinite(var) & any_usable
             x_se = np.where(valid, np.sqrt(np.where(valid, var, 0.0)), np.nan)
             x_sd = (

@@ -34,6 +34,13 @@ def test_defaults() -> None:
     assert options.chunk_rows == 5000
 
 
+def test_option_typos_are_rejected() -> None:
+    with pytest.raises(ValueError, match="n_boots"):
+        NCAOptions.model_validate({"n_boots": 10})
+    with pytest.raises(ValueError, match="min_point"):
+        NCAOptions.model_validate({"terminal": {"min_point": 5}})
+
+
 def test_terminal_last_n_requires_n_points() -> None:
     with pytest.raises(ValueError, match="n_points"):
         TerminalPhase(method=TerminalMethod.LAST_N)

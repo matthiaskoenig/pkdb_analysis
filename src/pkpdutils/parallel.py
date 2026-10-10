@@ -47,7 +47,9 @@ import multiprocessing
 import os
 import sys
 import threading
+from collections.abc import Generator
 from concurrent.futures import Executor, ProcessPoolExecutor, ThreadPoolExecutor
+from contextlib import contextmanager
 from typing import Literal
 
 logger = logging.getLogger(__name__)
@@ -90,9 +92,15 @@ NCA_WORKER_THRESHOLD = 20_000
 #: the live executors, keyed by kind and number of workers
 _EXECUTORS: dict[tuple[str, int], Executor] = {}
 
+# Only leased pools are automatically retired. A caller of the low-level
+# `executor` API owns its lifetime and must evict or shut it down explicitly.
+_MANAGED: set[Executor] = set()
+_LEASES: dict[Executor, int] = {}
+MAX_CACHED_POOLS_PER_KIND = 2
+
 #: guards `_EXECUTORS`; the NCA runs its chunks in threads, so two threads can
 #: ask for an executor at the same time
-_LOCK = threading.Lock()
+_LOCK = threading.RLock()
 
 
 def _is_dead(pool: Executor) -> bool:
@@ -151,6 +159,7 @@ def executor(kind: ExecutorKind, n_workers: int) -> Executor:
         if pool is not None and _is_dead(pool):
             logger.debug("the shared %s executor of %d workers died", kind, size)
             pool.shutdown(wait=False)
+            _MANAGED.discard(pool)
             pool = None
         if pool is None:
             pool = (
@@ -181,8 +190,59 @@ def evict(kind: ExecutorKind, n_workers: int) -> None:
     size = max(1, int(n_workers))
     with _LOCK:
         pool = _EXECUTORS.pop((str(kind), size), None)
+        if pool is not None:
+            _MANAGED.discard(pool)
     if pool is not None:
         pool.shutdown(wait=False)
+
+
+@contextmanager
+def worker_pool(kind: ExecutorKind, n_workers: int) -> Generator[Executor]:
+    """Lease a shared pool, bounding the cache without retiring active work.
+
+    Analyses hold the lease through submission and completion. Up to two
+    managed pools of each kind stay cached; concurrent leases may temporarily
+    exceed that limit. Least recently acquired idle pools are closed when a
+    lease ends. The low-level `executor` API retains its explicit lifecycle.
+
+    Args:
+        kind: the worker kind.
+        n_workers: the number of workers.
+
+    Yields:
+        The executor, protected from automatic eviction until the lease ends.
+    """
+    with _LOCK:
+        pool = executor(kind, n_workers)
+        _MANAGED.add(pool)
+        _LEASES[pool] = _LEASES.get(pool, 0) + 1
+    try:
+        yield pool
+    finally:
+        retired: list[Executor] = []
+        with _LOCK:
+            remaining = _LEASES[pool] - 1
+            if remaining:
+                _LEASES[pool] = remaining
+            else:
+                del _LEASES[pool]
+            managed = [
+                (key, cached)
+                for key, cached in _EXECUTORS.items()
+                if key[0] == kind and cached in _MANAGED
+            ]
+            excess = len(managed) - MAX_CACHED_POOLS_PER_KIND
+            for key, cached in managed:
+                if excess <= 0:
+                    break
+                if cached in _LEASES:
+                    continue
+                del _EXECUTORS[key]
+                _MANAGED.discard(cached)
+                retired.append(cached)
+                excess -= 1
+        for cached in retired:
+            cached.shutdown(wait=False)
 
 
 def shutdown_executors() -> None:
@@ -194,6 +254,7 @@ def shutdown_executors() -> None:
     with _LOCK:
         pools = list(_EXECUTORS.values())
         _EXECUTORS.clear()
+        _MANAGED.clear()
     for pool in pools:
         pool.shutdown(wait=True)
 
@@ -209,8 +270,10 @@ def _forget_executors() -> None:
     parent at the moment of the fork.
     """
     global _LOCK
-    _LOCK = threading.Lock()
+    _LOCK = threading.RLock()
     _EXECUTORS.clear()
+    _MANAGED.clear()
+    _LEASES.clear()
 
 
 atexit.register(shutdown_executors)
