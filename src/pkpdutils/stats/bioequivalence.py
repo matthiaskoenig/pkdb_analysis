@@ -40,6 +40,7 @@ from pkpdutils.result import ParameterResult
 from pkpdutils.stats.ratio import RatioResult, ratio
 from pkpdutils.stats.sample import (
     ParameterSample,
+    _check_ci_level,
     _in_unit,
     coerce,
     exp_t_interval,
@@ -1190,8 +1191,9 @@ def tost(
     Raises:
         ValueError: for reversed limits, an unknown design or scaling, a
             design the samples do not support, or a scaling the design
-            cannot carry.
+            cannot carry, or a `ci_level` outside `(0, 1)`.
     """
+    _check_ci_level(ci_level)
     reference = _in_unit(reference, test.unit)
     if not 0 < limits[0] < limits[1]:
         raise ValueError(
@@ -1484,6 +1486,7 @@ def bioequivalence(
         ValueError: for an unknown design, for a carryover check without the
             batches, or as `tost`.
     """
+    _check_ci_level(ci_level)
     if design is not None:
         design = coerce(design, Design)
     if carryover not in ("ignore", "flag", "exclude"):

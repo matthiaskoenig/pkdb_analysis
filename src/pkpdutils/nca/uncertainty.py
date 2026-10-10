@@ -311,18 +311,19 @@ def resolve_spread(
         if timecourses.n is None
         else np.asarray(timecourses.n, dtype=np.float64).reshape(n_rows, -1)
     )
+    root_n = None if n is None else np.sqrt(np.where(n > 0, n, np.nan))
     if kind is BootstrapSpread.SE:
         if se is not None:
             return se
-        if sd is not None and n is not None:
-            return sd / np.sqrt(n)
+        if sd is not None and root_n is not None:
+            return sd / root_n
         raise ValueError(
             "The batch has no 'se' and it cannot be derived ('sd' and 'n' needed)"
         )
     if sd is not None:
         return sd
-    if se is not None and n is not None:
-        return se * np.sqrt(n)
+    if se is not None and root_n is not None:
+        return se * root_n
     raise ValueError(
         "The batch has no 'sd' and it cannot be derived ('se' and 'n' needed)"
     )
@@ -374,8 +375,11 @@ def resample_values(
             )
         else:
             positive = usable & (mean > 0)
-            sigma2 = np.log1p((s / mean) ** 2)
-            mu = np.log(mean) - sigma2 / 2.0
+            # Computing (s / mean)**2 can overflow even though its logarithm
+            # and the resulting draws are finite. Work on the log scale.
+            log_mean = np.log(mean)
+            sigma2 = np.logaddexp(0.0, 2.0 * (np.log(s) - log_mean))
+            mu = log_mean - sigma2 / 2.0
             draws = np.where(positive, np.exp(mu + np.sqrt(sigma2) * z), mean)
     return draws
 
@@ -429,7 +433,7 @@ def reduce_replicates(
         parameters.
     """
     alpha = 1.0 - ci_level
-    z = float(norm.ppf(1.0 - alpha / 2.0))
+    z = float(norm.isf(alpha / 2.0))
     out: dict[str, np.ndarray] = {}
     n_values = None if n_subjects is None else np.asarray(n_subjects, dtype=np.float64)
     sqrt_n = None if n_values is None else np.sqrt(n_values)
@@ -636,7 +640,9 @@ def delta(
     """Delta method: propagate the standard errors of the points through the numerical Jacobian.
 
     `var(x) = sum_i (dx/dC_i)^2 se_i^2` with `dx/dC_i` from a forward difference
-    of step `options.delta_step * se_i` (Efron & Tibshirani 1993, ch. 5). The
+    of step `options.delta_step * se_i`, enlarged when needed to avoid
+    cancellation at the value's floating-point scale (Efron & Tibshirani
+    1993, ch. 5). The actual representable increment is the denominator. The
     method always propagates `se`, the uncertainty of the mean curve, so
     `options.bootstrap_spread` does not apply. The interval is the normal
     interval `x +- z se`, on the log scale for log-normal parameters; discrete
@@ -685,13 +691,21 @@ def delta(
     se = resolve_spread(timecourses, options, spread=BootstrapSpread.SE)
     with np.errstate(invalid="ignore"):
         usable = np.isfinite(se) & (se > 0) & np.isfinite(c)
-    h = np.where(usable, options.delta_step * se, 0.0)
+    with np.errstate(invalid="ignore", over="ignore"):
+        h = np.where(
+            usable,
+            np.maximum(
+                np.maximum(options.delta_step * se, np.nextafter(0.0, 1.0)),
+                np.sqrt(np.finfo(float).eps) * np.abs(c),
+            ),
+            0.0,
+        )
 
     # Only usable perturbations are generated, in bounded blocks. Variances
     # are accumulated directly; no (N * T, T) batch or Jacobian is retained.
     owners, columns = np.nonzero(usable)
     independent = terminal_independent(options)
-    variances = {
+    propagated_se = {
         name: np.zeros(n_rows)
         for name, base in point.items()
         if name not in DISCRETE_PARAMETERS
@@ -710,7 +724,15 @@ def delta(
         rows = owners[start : start + options.chunk_rows]
         cols = columns[start : start + options.chunk_rows]
         c_pert = c[rows].copy()
-        c_pert[np.arange(rows.size), cols] += h[rows, cols]
+        indices = np.arange(rows.size), cols
+        original = c[rows, cols]
+        with np.errstate(over="ignore", invalid="ignore"):
+            forward = original + h[rows, cols]
+        # At the upper finite limit only a backwards difference exists.
+        c_pert[indices] = np.where(
+            np.isfinite(forward), forward, original - h[rows, cols]
+        )
+        actual_step = c_pert[indices] - c[rows, cols]
         perturbed = run_analysis_rows(
             t[rows],
             c_pert,
@@ -730,17 +752,19 @@ def delta(
             1,
         ).ravel()
         flags[rows[changed]] |= int(NCAFlag.DELTA_WINDOW_CHANGE)
-        for name, variance in variances.items():
+        for name, standard_error in propagated_se.items():
             if name not in perturbed:
                 continue
             keep = np.ones(rows.size, dtype=bool) if name in independent else ~changed
             with np.errstate(invalid="ignore", divide="ignore", over="ignore"):
                 derivative = np.where(
-                    keep, (perturbed[name] - point[name][rows]) / h[rows, cols], 0.0
+                    keep, (perturbed[name] - point[name][rows]) / actual_step, 0.0
                 )
-                np.add.at(variance, rows, (derivative * se[rows, cols]) ** 2)
+                # Accumulate the norm without squaring first: a finite SE can
+                # have a variance outside the floating-point range.
+                np.hypot.at(standard_error, rows, derivative * se[rows, cols])
     alpha = 1.0 - options.ci_level
-    z = float(norm.ppf(1.0 - alpha / 2.0))
+    z = float(norm.isf(alpha / 2.0))
     n_subjects = (
         None
         if timecourses.n_subjects is None
@@ -749,12 +773,12 @@ def delta(
     any_usable = usable.any(axis=1)
     out: dict[str, np.ndarray] = {}
     for name, base in point.items():
-        if name not in variances:
+        if name not in propagated_se:
             continue
-        var = variances[name]
+        standard_error = propagated_se[name]
         with np.errstate(invalid="ignore", divide="ignore", over="ignore"):
-            valid = np.isfinite(base) & np.isfinite(var) & any_usable
-            x_se = np.where(valid, np.sqrt(np.where(valid, var, 0.0)), np.nan)
+            valid = np.isfinite(base) & np.isfinite(standard_error) & any_usable
+            x_se = np.where(valid, standard_error, np.nan)
             x_sd = (
                 x_se * np.sqrt(n_subjects)
                 if n_subjects is not None

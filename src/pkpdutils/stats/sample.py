@@ -60,6 +60,26 @@ def coerce[E: StrEnum](value: E | str, enum_type: type[E]) -> E:
         ) from None
 
 
+def _check_ci_level(ci_level: float) -> None:
+    """Reject confidence levels outside the open unit interval."""
+    if not 0 < ci_level < 1:
+        raise ValueError(f"'ci_level' must lie in (0, 1), got {ci_level}")
+
+
+def _log1p_square(log_value: float) -> float:
+    """Compute log(1 + value**2) without materializing a large value."""
+    return float(np.logaddexp(0.0, 2.0 * log_value))
+
+
+def _log_expm1(value: float) -> float:
+    """Compute log(exp(value) - 1) for a nonnegative log variance."""
+    if value == 0:
+        return float("-inf")
+    if value < np.log(2.0):
+        return float(np.log(np.expm1(value)))
+    return float(value + np.log1p(-np.exp(-value)))
+
+
 def lognormal_from_moments(mean: float, sd: float) -> tuple[float, float]:
     r"""Log-scale moments of a log-normal distribution with the given mean and standard deviation.
 
@@ -81,7 +101,7 @@ def lognormal_from_moments(mean: float, sd: float) -> tuple[float, float]:
         )
     if sd < 0:
         raise ValueError(f"The standard deviation must not be negative, got {sd}")
-    sigma2 = float(np.log1p((sd / mean) ** 2))
+    sigma2 = _log1p_square(float(np.log(sd) - np.log(mean))) if sd else 0.0
     return float(np.log(mean) - sigma2 / 2.0), float(np.sqrt(sigma2))
 
 
@@ -104,7 +124,8 @@ def lognormal_from_geometric(geomean: float, geocv: float) -> tuple[float, float
         raise ValueError(f"The geometric mean must be positive, got {geomean}")
     if geocv < 0:
         raise ValueError(f"The geometric CV must not be negative, got {geocv}")
-    return float(np.log(geomean)), float(np.sqrt(np.log1p(geocv**2)))
+    sigma2 = _log1p_square(float(np.log(geocv))) if geocv else 0.0
+    return float(np.log(geomean)), float(np.sqrt(sigma2))
 
 
 def moments_from_lognormal(mu: float, sigma: float) -> tuple[float, float]:
@@ -119,8 +140,12 @@ def moments_from_lognormal(mu: float, sigma: float) -> tuple[float, float]:
     Returns:
         The arithmetic mean and standard deviation.
     """
-    mean = float(np.exp(mu + sigma**2 / 2.0))
-    return mean, float(mean * np.sqrt(np.expm1(sigma**2)))
+    with np.errstate(over="ignore", invalid="ignore"):
+        sigma2 = float(np.float64(sigma) * sigma)
+        log_mean = mu + sigma2 / 2.0
+        mean = float(np.exp(log_mean))
+        sd = 0.0 if sigma2 == 0 else float(np.exp(log_mean + _log_expm1(sigma2) / 2.0))
+    return mean, sd
 
 
 def log_positive(values: np.ndarray, name: str) -> np.ndarray:
@@ -269,10 +294,14 @@ def exp_t_interval(
     Returns:
         The lower and the upper bound of the interval of the ratio, both
         `NaN` when `se` or `df` is not a positive number.
+
+    Raises:
+        ValueError: if `ci_level` is outside `(0, 1)`.
     """
+    _check_ci_level(ci_level)
     if not np.isfinite(se) or not df > 0:
         return float("nan"), float("nan")
-    tq = float(student_t.ppf(1.0 - (1.0 - ci_level) / 2.0, df))
+    tq = float(student_t.isf((1.0 - ci_level) / 2.0, df))
     return float(np.exp(center - tq * se)), float(np.exp(center + tq * se))
 
 
@@ -811,8 +840,9 @@ def summarize(
 
     Raises:
         ValueError: if `scale` is not a `Scale`, or for a non-positive value
-            on the log scale.
+            on the log scale, or for a `ci_level` outside `(0, 1)`.
     """
+    _check_ci_level(ci_level)
     scale = coerce(scale, Scale)
     sample = (
         values
@@ -847,7 +877,7 @@ def summarize(
         if scale is Scale.LOG:
             ci = exp_t_interval(mu, float(sigma / np.sqrt(n)), float(n - 1), ci_level)
         else:
-            tq = float(student_t.ppf(1.0 - (1.0 - ci_level) / 2.0, n - 1))
+            tq = float(student_t.isf((1.0 - ci_level) / 2.0, n - 1))
             ci = (mean - tq * se, mean + tq * se)
     else:
         ci = (nan, nan)
@@ -858,7 +888,7 @@ def summarize(
         se=float(se),
         cv=float(sd / mean) if mean else nan,
         geomean=float(np.exp(mu)),
-        geocv=float(np.sqrt(np.expm1(sigma**2))),
+        geocv=float(np.exp(_log_expm1(sigma**2) / 2.0)),
         median=median,
         q25=q25,
         q75=q75,

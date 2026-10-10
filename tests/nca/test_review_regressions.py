@@ -2,12 +2,133 @@
 
 import importlib
 import json
+import warnings
 
 import numpy as np
 import pytest
 
 from pkpdutils import Timecourse, Timecourses
 from pkpdutils.nca import NCAOptions, nca, nca_single
+
+
+@pytest.mark.parametrize("scale", [1.0, 1e6, 1e-6, 1e-200, 1e200])
+def test_delta_retains_spread_below_floating_point_increment(scale: float) -> None:
+    se = scale * 1e-15
+    tc = Timecourse(
+        time=[0, 1, 2, 3],
+        value=[scale] * 4,
+        se=[se] * 4,
+        n=10,
+        time_unit="h",
+        unit="mg/l",
+    )
+    result = nca_single(
+        tc,
+        options=NCAOptions(
+            auc_method="linear", uncertainty="delta", delta_step=1e-4, n_workers=1
+        ),
+    )
+    # Trapezoidal area has weights (1/2, 1, 1, 1/2), independent of scale.
+    assert float(result.ds.auc_last_se) == pytest.approx(
+        np.sqrt(2.5) * se, rel=1e-6, abs=0
+    )
+
+
+def test_lognormal_bootstrap_keeps_finite_draws_at_large_spread() -> None:
+    tc = Timecourse(
+        time=[0, 1, 2, 3],
+        value=[1, 0.7, 0.5, 0.3],
+        se=[1e155] * 4,
+        n=10,
+        time_unit="h",
+        unit="mg/l",
+    )
+    result = nca_single(
+        tc,
+        options=NCAOptions(
+            uncertainty="bootstrap",
+            bootstrap_distribution="lognormal",
+            n_boot=20,
+            seed=1,
+            n_workers=1,
+        ),
+    )
+    assert np.isfinite(float(result.ds.cmax_geomean))
+    assert 0 < float(result.ds.cmax_se) < np.inf
+
+
+@pytest.mark.parametrize(
+    "values,times,kind,parameter",
+    [
+        ([0, 0, 0], [0, 1, 2], "concentration", "cmax"),
+        ([-3, -1, -2], [0, 1, 2], "effect", "emax_obs"),
+        ([0, np.finfo(float).max, 0], [0, 1e-308, 2e-308], "concentration", "cmax"),
+    ],
+)
+def test_delta_steps_at_zero_negative_and_upper_finite_limit(
+    values: list[float], times: list[float], kind: str, parameter: str
+) -> None:
+    tc = Timecourse(
+        time=times,
+        value=values,
+        se=[0, 1, 0],
+        n=10,
+        time_unit="h",
+        unit="mg/l",
+    )
+    result = nca_single(
+        tc,
+        options=NCAOptions(
+            auc_method="linear", uncertainty="delta", kind=kind, n_workers=1
+        ),
+    )
+    assert float(result.ds[f"{parameter}_se"]) == pytest.approx(1.0)
+
+
+def test_delta_retains_smallest_positive_spread_at_zero() -> None:
+    smallest = np.nextafter(0.0, 1.0)
+    tc = Timecourse(
+        time=[0, 1, 2],
+        value=[0, 0, 0],
+        se=[0, smallest, 0],
+        time_unit="h",
+        unit="mg/l",
+    )
+    result = nca_single(tc, options=NCAOptions(uncertainty="delta", n_workers=1))
+    assert float(result.ds.cmax_se) == smallest
+
+
+def test_linear_auc_keeps_finite_area_when_concentration_sum_overflows() -> None:
+    tc = Timecourse(
+        time=[0, 1e-308, 2e-308],
+        value=[1e308] * 3,
+        time_unit="h",
+        unit="mg/l",
+    )
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", RuntimeWarning)
+        result = nca_single(
+            tc, options=NCAOptions(uncertainty="none", auc_method="linear")
+        )
+    assert float(result.ds.auc_last) == pytest.approx(2.0)
+
+
+def test_zero_counts_on_empty_points_do_not_warn_in_uncertainty() -> None:
+    batch = Timecourses.from_arrays(
+        [0, 1, 2],
+        [[np.nan] * 3],
+        sd=[[0.0] * 3],
+        n=0,
+        time_unit="h",
+        unit="mg/l",
+        dims=("individual",),
+    )
+    # A dataset from another producer may carry SD without a derived SE.
+    batch = Timecourses(batch.ds.drop_vars("se"))
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", RuntimeWarning)
+        result = nca(batch, options=NCAOptions(n_boot=10, seed=1))
+    assert np.isnan(result.ds.auc_last_se.to_numpy()).all()
 
 
 def curve(*, offset: float = 0.0, rate: float = 0.3) -> Timecourse:

@@ -71,7 +71,11 @@ def reference(scenario: str, tool: str) -> pd.DataFrame:
     if tool == "winnonlin":
         return read_winnonlin(DATA_DIR / "winnonlin" / s["winnonlin"])
     if tool == "pknca":
-        table = read_pknca_results(DATA_DIR / "pknca" / f"{scenario}.csv")
+        # These exports combine observed and imputed analyses at one interval;
+        # the first tmax is the observed maximum, matching this comparison.
+        table = read_pknca_results(
+            DATA_DIR / "pknca" / f"{scenario}.csv", duplicates="first"
+        )
         return table.droplevel(["start", "end"])
     return read_noncompart(DATA_DIR / "noncompart" / f"{scenario}.csv")
 
@@ -109,4 +113,7 @@ def test_every_reference_column_is_named() -> None:
             noncompart.columns
         ) - len(unnamed)
         pknca = pd.read_csv(DATA_DIR / "pknca" / f"{scenario}.csv")
-        assert len(read_pknca_results(pknca).columns) == pknca["PPTESTCD"].nunique()
+        assert (
+            len(read_pknca_results(pknca, duplicates="first").columns)
+            == pknca["PPTESTCD"].nunique()
+        )

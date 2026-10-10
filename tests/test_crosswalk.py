@@ -168,6 +168,68 @@ def test_read_pknca_results_drops_excluded_rows_and_needs_a_route() -> None:
         read_pknca_results(frame.drop(columns="PPORRES"))
 
 
+@pytest.mark.parametrize("label", ["subject", None])
+@pytest.mark.parametrize("value", [2.0, np.nan])
+def test_read_pknca_preserves_missing_results_and_labels(label, value: float) -> None:
+    frame = pd.DataFrame(
+        {
+            "ID": [label],
+            "start": [0],
+            "end": [np.inf],
+            "PPTESTCD": ["cmax"],
+            "PPORRES": [value],
+        }
+    )
+    back = read_pknca_results(frame, route="oral")
+    assert len(back) == 1
+    assert list(back.columns) == ["cmax"]
+    np.testing.assert_equal(back["cmax"].iloc[0], value)
+    if label is None:
+        assert pd.isna(back.index[0][0])
+    else:
+        assert back.index[0][0] == label
+
+
+def test_read_pknca_rejects_duplicate_parameters() -> None:
+    frame = pd.DataFrame(
+        {
+            "ID": ["subject", "subject"],
+            "start": [0, 0],
+            "end": [np.inf, np.inf],
+            "PPTESTCD": ["cmax", "cmax"],
+            "PPORRES": [1.0, 2.0],
+        }
+    )
+    with pytest.raises(ValueError, match=r"Duplicate.*cmax.*subject"):
+        read_pknca_results(frame, route="oral")
+    first = read_pknca_results(frame, route="oral", duplicates="first")
+    assert first["cmax"].iloc[0] == 1.0
+    # Explicitly excluded rows are removed before duplicate detection.
+    back = read_pknca_results(frame.assign(exclude=[None, "excluded"]), route="oral")
+    assert back["cmax"].iloc[0] == 1.0
+
+
+def test_read_pknca_preserves_profile_and_parameter_order() -> None:
+    frame = pd.DataFrame(
+        {
+            "ID": ["z", "z", "a", "a"],
+            "start": 0,
+            "end": np.inf,
+            "PPTESTCD": ["tmax", "cmax", "tmax", "cmax"],
+            "PPORRES": [1, 2, 3, 4],
+        }
+    )
+    back = read_pknca_results(frame, route="oral")
+    assert back.index.get_level_values("ID").tolist() == ["z", "a"]
+    assert list(back.columns) == ["tmax", "cmax"]
+    np.testing.assert_array_equal(back.to_numpy(), [[1, 2], [3, 4]])
+
+
+def test_read_pknca_rejects_invalid_duplicate_policy() -> None:
+    with pytest.raises(ValueError, match="duplicates"):
+        read_pknca_results(pd.DataFrame(), duplicates="last")  # ty: ignore[invalid-argument-type]
+
+
 def test_write_noncompart(tmp_path) -> None:
     written = write_noncompart(result(Route.ORAL), tmp_path / "nc.csv")
     assert pd.read_csv(tmp_path / "nc.csv").shape == written.shape

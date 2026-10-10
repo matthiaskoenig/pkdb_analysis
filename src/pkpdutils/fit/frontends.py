@@ -4,6 +4,7 @@ from typing import Any
 
 import numpy as np
 import xarray as xr
+from pint import DimensionalityError, OffsetUnitCalculusError
 
 from pkpdutils.fit.engine import _named, build_result, fit_rows
 from pkpdutils.fit.model import Model
@@ -11,6 +12,7 @@ from pkpdutils.fit.options import FitOptions
 from pkpdutils.fit.result import FitResult
 from pkpdutils.result import sample_coordinates
 from pkpdutils.timecourse import Timecourse, Timecourses
+from pkpdutils.units import Q_, parse_unit
 
 #: the placeholder name of a batch which does not name its substance; the
 #: figures then label the value axis `value` instead of `substance`
@@ -172,7 +174,9 @@ def fit_table(
         x: name of the independent variable
         y: name of the dependent variable
         dim: the dimension along which the points of one fit lie (e.g. `"dose"`)
-        sd: name of the standard deviation variable of `y`, for `Weighting.INV_SD`
+        sd: name of the standard deviation variable of `y`, for `Weighting.INV_SD`;
+            explicit units are converted to those of `y`, absent units assume
+            the unit of `y`
         options: the options, defaults for `None`
 
     Returns:
@@ -200,13 +204,32 @@ def fit_table(
     shape = tuple(int(y_da.sizes[d]) for d in sample_dims)
     n = int(y_da.sizes[dim])
     n_rows = int(np.prod(shape, dtype=int)) if shape else 1
-    x_arr = x_da.to_numpy().astype(np.float64).reshape(n_rows, n)
-    y_arr = y_da.to_numpy().astype(np.float64).reshape(n_rows, n)
+    x_arr = x_da.to_numpy().astype(np.float64, copy=False).reshape(n_rows, n)
+    y_arr = y_da.to_numpy().astype(np.float64, copy=False).reshape(n_rows, n)
     sd_arr = None
+    y_unit = str(ds[y].attrs.get("units", "dimensionless"))
     if sd is not None:
         _check_broadcastable(ds[sd], y_da, sd, y)
         sd_da = xr.broadcast(ds[sd], y_da)[0].transpose(*y_da.dims)
-        sd_arr = sd_da.to_numpy().astype(np.float64).reshape(n_rows, n)
+        sd_arr = sd_da.to_numpy().astype(np.float64, copy=False).reshape(n_rows, n)
+        sd_unit = str(ds[sd].attrs.get("units", y_unit))
+        source, target = parse_unit(sd_unit), parse_unit(y_unit)
+        if source != target:
+            try:
+                # A spread is a difference, so unit offsets do not apply.
+                factor = float(Q_(1.0, source).to(target).magnitude) - float(
+                    Q_(0.0, source).to(target).magnitude
+                )
+            except (DimensionalityError, OffsetUnitCalculusError) as err:
+                raise ValueError(
+                    f"Standard deviation '{sd}' has incompatible units "
+                    f"'{sd_unit}' for '{y}' in '{y_unit}'"
+                ) from err
+            if not np.isfinite(factor) or factor <= 0:
+                raise ValueError(
+                    "Standard deviation unit conversion must be positive and finite"
+                )
+            sd_arr = sd_arr * factor
     rows = fit_rows(model, x_arr, y_arr, sd_arr, options)
     coords: dict[str, Any] = {d: ds[d] for d in sample_dims if d in ds.coords}
     result = build_result(
@@ -216,7 +239,7 @@ def fit_table(
         y=y_arr,
         sd=sd_arr,
         x_unit=str(ds[x].attrs.get("units", "dimensionless")),
-        y_unit=str(ds[y].attrs.get("units", "dimensionless")),
+        y_unit=y_unit,
         dims=sample_dims,
         coords=coords,
         options=options,

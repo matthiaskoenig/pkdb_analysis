@@ -1,9 +1,59 @@
+from typing import Any
+
 import numpy as np
 import pandas as pd
 import pytest
 
 from pkpdutils.timecourse import Dose, Dosing, DosingRegimen, Route, Timecourse
 from pkpdutils.units import ureg
+
+
+@pytest.mark.parametrize("field", ["amount", "time"])
+@pytest.mark.parametrize("value", [np.nan, np.inf, -np.inf])
+def test_dose_rejects_nonfinite_fields(field: str, value: float) -> None:
+    fields: dict[str, Any] = {"amount": 1, "unit": "mg", field: value}
+    with pytest.raises(ValueError, match=field):
+        Dose(**fields)
+
+
+@pytest.mark.parametrize("interval", [np.nan, np.inf, -np.inf])
+def test_regimens_reject_nonfinite_intervals(interval: float) -> None:
+    dose = Dose(amount=1, unit="mg")
+    with pytest.raises(ValueError, match="interval"):
+        DosingRegimen(dose=dose, interval=interval, n_doses=2)
+    with pytest.raises(ValueError, match="interval"):
+        Dosing.regimen(dose, interval=interval, n_doses=2)
+
+
+def test_regimens_reject_overflowing_times() -> None:
+    dose = Dose(amount=1, unit="mg", time=1e308)
+    regimen = DosingRegimen(dose=dose, interval=1e308, n_doses=2)
+    with pytest.raises(ValueError, match="finite"):
+        regimen.dose_times()
+    with pytest.raises(ValueError, match="finite"):
+        regimen.dosing()
+
+
+@pytest.mark.parametrize(
+    "model,fields",
+    [
+        (Dose, {"amount": 1, "unit": "mg"}),
+        (Dosing, {"amounts": [1], "times": [0], "unit": "mg"}),
+        (DosingRegimen, {"dose": Dose(amount=1, unit="mg"), "interval": 12}),
+        (
+            Timecourse,
+            {"time": [0, 1], "value": [1, 2], "time_unit": "h", "unit": "mg/l"},
+        ),
+    ],
+)
+def test_curve_models_reject_unknown_fields(model: Any, fields: dict[str, Any]) -> None:
+    with pytest.raises(ValueError, match="unexpected"):
+        model(**fields, unexpected=True)
+
+
+def test_timecourse_rejects_infinite_lloq() -> None:
+    with pytest.raises(ValueError, match="lloq"):
+        Timecourse(time=[0, 1], value=[1, 2], time_unit="h", unit="mg/l", lloq=np.inf)
 
 
 def test_route() -> None:
@@ -437,3 +487,44 @@ def test_timecourse_rejects_an_empty_unit() -> None:
         Timecourse(time=[0, 1], value=[1, 2], time_unit="", unit="mg/l")
     tc = Timecourse(time=[0, 1], value=[1, 2], time_unit="hr", unit="dimensionless")
     assert tc.unit == "dimensionless"
+
+
+@pytest.mark.parametrize("bad_time", [np.inf, -np.inf])
+def test_timecourse_rejects_infinite_sampling_time(bad_time: float) -> None:
+    with pytest.raises(ValueError, match=r"time.*finite"):
+        Timecourse(time=[0.0, bad_time], value=[1.0, 2.0], time_unit="hr", unit="mg/L")
+
+
+@pytest.mark.parametrize(
+    "field,bad_value",
+    [
+        ("n", 0.0),
+        ("n", -1.0),
+        ("n", np.inf),
+        ("sd", -1.0),
+        ("sd", np.inf),
+        ("se", -1.0),
+        ("se", np.inf),
+    ],
+)
+def test_timecourse_rejects_invalid_uncertainty(field: str, bad_value: float) -> None:
+    fields: dict[str, Any] = {
+        field: bad_value if field == "n" else [bad_value, bad_value]
+    }
+    with pytest.raises(ValueError, match=field):
+        Timecourse(
+            time=[0.0, 1.0], value=[1.0, 2.0], time_unit="hr", unit="mg/L", **fields
+        )
+
+
+def test_timecourse_keeps_unknown_counts_zero_spread_and_empty_points() -> None:
+    tc = Timecourse(
+        time=[0.0, 1.0, 2.0],
+        value=[1.0, np.nan, 2.0],
+        n=[np.nan, 0.0, 4.0],
+        sd=[0.0, np.nan, 1.0],
+        time_unit="hr",
+        unit="mg/L",
+    )
+    assert tc.se is not None
+    np.testing.assert_allclose(tc.se, [np.nan, np.nan, 0.5], equal_nan=True)

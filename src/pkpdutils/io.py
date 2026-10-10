@@ -157,7 +157,11 @@ def _column(
 
 
 def _numeric(
-    df: pd.DataFrame, column: str | None, default: float = np.nan
+    df: pd.DataFrame,
+    column: str | None,
+    default: float = np.nan,
+    *,
+    subject: str | None = None,
 ) -> pd.Series:
     """A column as a float series, `default` everywhere when the column is absent.
 
@@ -165,6 +169,7 @@ def _numeric(
         df: the table.
         column: name of the column, `None` when it is absent.
         default: value of the series when the column is absent.
+        subject: optional subject column for error context.
 
     Returns:
         The series of floats, indexed like `df`; missing values, blank strings
@@ -188,8 +193,33 @@ def _numeric(
         raise ValueError(
             f"Column '{column}' has non-numeric value {raw.iloc[position]!r} "
             f"at row {raw.index[position]!r}"
+            + (f", subject {df[subject].iloc[position]}" if subject is not None else "")
         )
     return numeric.astype(np.float64)
+
+
+def _event_flags(
+    df: pd.DataFrame,
+    column: str | None,
+    subject: str,
+    *,
+    allowed: tuple[int, ...],
+    missing_is_zero: bool = True,
+) -> pd.Series:
+    """Validate discrete event codes before interpreting or filtering any rows."""
+    values = _numeric(df, column, default=0.0, subject=subject)
+    if column is None:
+        return values
+    if missing_is_zero:
+        values = values.fillna(0.0)
+    invalid = ~values.isin(allowed)
+    if bool(invalid.any()):
+        row = invalid.idxmax()
+        raise ValueError(
+            f"Unknown '{column}' value {values[row]:g} at subject {df[subject][row]}, "
+            f"row {row}: expected a finite integer in {allowed}"
+        )
+    return values
 
 
 def _constant_per_subject(
@@ -332,6 +362,10 @@ def _constant_n(
         ValueError: if a subject carries more than one value, named with the
             subject.
     """
+    if (np.isinf(values) | (values < 0)).any():
+        raise ValueError(
+            "'n' must be finite and non-negative, or NaN for unknown counts"
+        )
     starts = np.cumsum(counts) - counts
     known = ~np.isnan(values)
     low = np.minimum.reduceat(np.where(known, values, np.inf), starts)
@@ -715,15 +749,15 @@ def read_events(
     without it the row is dropped. Rows with `EVID` 2 (other type event) or 3 (reset) are
     dropped and counted in a warning; `EVID` 4 (reset and dose) raises, since a
     reset starts a new period which the reader would silently merge into the
-    protocol of the subject (Bauer 2019). A row with `EVID` 1 and a value in
-    `DV` is a dose and an observation, which is how a table records a dose and
-    a sample at the same time.
+    protocol of the subject (Bauer 2019). A row with `EVID` 1 is dose-only:
+    its `DV` is ignored, even when positive, because it can be a dummy value.
+    A sample taken at the dose time needs a separate `EVID` 0 row at that time.
 
     Without an `EVID` column a row with `AMT > 0` is a dose and nothing else,
     the NM-TRAN semantics of a table without event identifiers; every other row
     with a value in `DV` is an observation. A `DV` on such a dose row is
-    ignored and counted in a warning: a table which records a dose and a sample
-    in one row needs an `EVID` column.
+    ignored and counted in a warning. A dose and a sample at the same time
+    need separate rows; the observation row has `AMT == 0`.
 
     The duration of an infusion is `TINF` (Monolix) when it is positive, else
     `AMT / RATE` for a positive `RATE`; modelled rates (`RATE -1`, `RATE -2`)
@@ -732,7 +766,9 @@ def read_events(
     for a dosing history of `ss_doses` preceding doses at the interdose
     interval, and the batch is marked with `attrs["steady_state_marker"]`;
     `ADDL > 0` or `SS == 1` without a positive `II` is an incomplete table and
-    raises.
+    raises. Present `EVID` values must be finite integers from 0 through 4;
+    missing values and unsupported codes raise with row and subject context.
+    `MDV` and `SS` accept 0 or 1; missing cells in these optional flags mean 0.
 
     The Monolix column names `AMOUNT`, `OBSERVATION`, `INFUSION DURATION`,
     `INFUSION RATE`, `ADDITIONAL DOSES`, `INTERDOSE INTERVAL` and `STEADY
@@ -790,8 +826,8 @@ def read_events(
 
     Raises:
         ValueError: if a required column (`id_col`, `time_col`, `dv_col`) is missing, if a
-            row carries `EVID` 4, if a row carries an `SS` value other than 0
-            or 1, if a rate is negative (a modelled rate), if a dose record
+            row carries `EVID` 4 or an invalid event flag (`EVID`, `MDV`,
+            `SS`, named with row and subject), if a rate is negative (a modelled rate), if a dose record
             asks for repeated doses without a positive `II`, if a subject has
             fewer than two observations, duplicate sampling times or a dosing
             protocol which is not valid (named with the subject), if a
@@ -871,13 +907,19 @@ def read_events(
             f"duration in '{tinf_col}' or a positive rate in '{rate_col}'"
         )
 
+    # Validate all flags before filtering other events, so invalid codes never
+    # disappear silently with a dropped row. Optional MDV/SS blanks mean 0.
+    mdv_values = _event_flags(df, c_mdv, c_id, allowed=(0, 1))
+    ss_values = _event_flags(df, c_ss, c_id, allowed=(0, 1))
     if c_evid is not None:
-        evid_column = _numeric(df, c_evid)
+        evid_column = _event_flags(
+            df, c_evid, c_id, allowed=(0, 1, 2, 3, 4), missing_is_zero=False
+        )
         reset_dose = evid_column == 4.0
         if bool(reset_dose.any()):
             subject = df[c_id][reset_dose.idxmax()]
             raise ValueError(
-                f"EVID 4 (reset and dose) at subject {subject}: split the "
+                f"EVID 4 (reset and dose) at subject {subject}, row {reset_dose.idxmax()}: split the "
                 "periods into separate tables"
             )
         other = evid_column.isin([2.0, 3.0])
@@ -892,9 +934,9 @@ def read_events(
     amounts = _numeric(df, c_amt, default=0.0)
     values = _numeric(df, c_dv)
     if c_evid is not None:
-        evid_values = _numeric(df, c_evid, default=0.0)
+        evid_values = evid_column.loc[df.index]
         is_dose = evid_values == 1.0
-        is_observation = evid_values.fillna(0.0) == 0.0
+        is_observation = evid_values == 0.0
     else:
         # without an `EVID` column a row with an amount is a dose and nothing
         # else (NM-TRAN): a `DV` on it is not an observation of the subject
@@ -908,7 +950,7 @@ def read_events(
             )
     missing = values.isna()
     if c_mdv is not None:
-        missing |= _numeric(df, c_mdv, default=0.0).fillna(0.0) != 0.0
+        missing |= mdv_values.loc[df.index] == 1.0
     if keep_missing:
         # the row keeps its time; a `DV` on an `MDV 1` row is not observed
         values = values.where(~missing)
@@ -926,17 +968,7 @@ def read_events(
 
     addl_values = _numeric(df, c_addl, default=0.0)
     ii_values = _numeric(df, c_ii, default=np.nan)
-    ss_values = _numeric(df, c_ss, default=0.0)
-    # `SS` 2 (the dose is added to the steady state of the other doses) and the
-    # remaining NONMEM codes describe a history this reader does not represent
-    unknown_ss = ss_values.notna() & ~ss_values.isin([0.0, 1.0])
-    if bool(unknown_ss.any()):
-        row = unknown_ss.idxmax()
-        raise ValueError(
-            f"Unknown 'SS' value {ss_values[row]:g} at subject {df[c_id][row]}: "
-            "only 0 (no steady state dose) and 1 (a dosing history of "
-            "'ss_doses' doses) are read"
-        )
+    ss_values = ss_values.loc[df.index]
 
     codes, labels = _subject_codes(df, c_id)
     rows_by_subject, rows_per_subject = _grouped_rows(codes, len(labels))
@@ -1075,9 +1107,9 @@ def read_events(
     subject_counts = sample_n if c_n is not None else None
     if subject_counts is not None and not np.isfinite(subject_counts).all():
         logger.warning(
-            "'%s' is missing for some subjects, the batch carries no 'n'", c_n
+            "'%s' is missing for some subjects; retained with NaN for unknown counts",
+            c_n,
         )
-        subject_counts = None
 
     batch = _build_batch(
         labels=labels,

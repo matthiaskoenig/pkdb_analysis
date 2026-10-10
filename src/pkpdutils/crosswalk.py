@@ -33,7 +33,7 @@ documentation compares every name against the output of the three tools.
 import logging
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
 import pandas as pd
@@ -597,6 +597,7 @@ def read_pknca_results(
     source: str | Path | pd.DataFrame,
     *,
     route: Route | str | None = None,
+    duplicates: Literal["raise", "first"] = "raise",
 ) -> pd.DataFrame:
     """Read the long table of PKNCA into one row per profile and interval.
 
@@ -616,14 +617,20 @@ def read_pknca_results(
 
     Keyword Args:
         route: route of the dose, recognized from the parameters by default
+        duplicates: reject duplicate profile/interval/parameter rows by
+            default; `"first"` explicitly selects the first for exports that
+            combine analyses of observed and imputed concentrations
 
     Returns:
         One row per profile and interval, one column per variable.
 
     Raises:
-        ValueError: if the table lacks the columns of PKNCA or the route can
-            not be recognized from it.
+        ValueError: if the table lacks the columns of PKNCA, the route can
+            not be recognized from it, or a profile and interval contain
+            duplicate values for the same parameter.
     """
+    if duplicates not in ("raise", "first"):
+        raise ValueError("'duplicates' must be 'raise' or 'first'")
     frame = _frame(source)
     missing = [c for c in ("start", "end", "PPTESTCD", "PPORRES") if c not in frame]
     if missing:
@@ -657,12 +664,24 @@ def read_pknca_results(
     percent = named["PPTESTCD"].isin(list(PKNCA_PERCENT))
     named.loc[percent, "value"] = named.loc[percent, "value"] / 100.0
     named["variable"] = named["PPTESTCD"].map(reverse)
-    wide = named.pivot_table(
-        index=[*groups, "start", "end"],
+    keys = [*groups, "start", "end"]
+    duplicate = named.duplicated([*keys, "variable"], keep=False)
+    if duplicate.any():
+        if duplicates == "raise":
+            row = named.loc[duplicate].iloc[0]
+            profile = {key: row[key] for key in keys}
+            raise ValueError(
+                f"Duplicate PKNCA parameter '{row['PPTESTCD']}' for {profile}"
+            )
+        named = named.drop_duplicates([*keys, "variable"], keep="first")
+    # A pivot preserves missing values and missing grouping labels; an
+    # aggregation silently drops both and arbitrarily chooses duplicates.
+    wide = named.pivot(
+        index=keys,
         columns="variable",
         values="value",
-        aggfunc="first",
-        sort=False,
     )
+    profiles = pd.MultiIndex.from_frame(named[keys].drop_duplicates())
+    wide = wide.reindex(index=profiles, columns=pd.unique(named["variable"]))
     wide.columns.name = None
     return wide

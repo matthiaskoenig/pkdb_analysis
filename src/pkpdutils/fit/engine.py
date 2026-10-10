@@ -356,6 +356,7 @@ def _problem(
     Raises:
         ValueError: if an option names a parameter the model does not have.
     """
+    _check_model_names(model)
     names = model.parameter_names
     unknown = set(options.fixed) | set(options.bounds) | set(options.initial)
     unknown -= set(names)
@@ -1259,8 +1260,8 @@ def _cv(se: float, value: float) -> float:
         return float(np.float64(se) / np.abs(np.float64(value)))
 
 
-def _check_no_reserved_suffix(model: Model) -> None:
-    """Reject a model whose parameter or derived name ends in a suffix of the result variables.
+def _check_model_names(model: Model) -> None:
+    """Reject ambiguous parameter names before fitting or assembling a result.
 
     The result writes the uncertainty of a parameter `p` as `p_se`,
     `p_ci_low`, ... and the statistics of a summary as `p_median`, `p_min`,
@@ -1275,9 +1276,30 @@ def _check_no_reserved_suffix(model: Model) -> None:
         model: the model, for its parameter and derived names.
 
     Raises:
-        ValueError: if a parameter or derived name ends in a reserved suffix.
+        ValueError: for duplicate names, names used by the result layout,
+            or names ending in a reserved suffix.
     """
-    for name in (*model.parameter_names, *model.derived_units):
+    names = (*model.parameter_names, *model.derived_units)
+    if len(names) != len(set(names)):
+        raise ValueError(f"Parameter and derived names of {model.name} must be unique")
+    reserved = FitResult.statistic_variables | {
+        "x_data",
+        "y_data",
+        "sd_data",
+        "y_pred",
+        "residuals",
+        "correlation",
+        "flags",
+        "point",
+        "parameter",
+        "parameter_",
+    }
+    for name in names:
+        if name in reserved:
+            raise ValueError(
+                f"'{name}' of {model.name} collides with a reserved result name; "
+                "rename the parameter"
+            )
         stem = base_name(name)
         if stem is not None:
             raise ValueError(
@@ -1309,8 +1331,7 @@ def build_result(
     weighted residuals `(y - f) / sqrt(var)`, which are dimensionless only
     under `Weighting.INV_SD` and otherwise carry the unit of `y` divided by
     the square root of the variance model; `rmse` is the root mean square of
-    the unweighted residuals `y - f` and carries the unit of `y`. Both are
-    reported as `dimensionless`, like the other goodness-of-fit statistics.
+    the unweighted residuals `y - f` and carries the unit of `y`.
     Derived parameters listed in `FitResult.discrete_parameters` (indicators
     such as `flip_flop`) are written without `_se`, `_ci_low`, `_ci_high` and
     `_cv`.
@@ -1334,7 +1355,7 @@ def build_result(
 
     Raises:
         ValueError: if a parameter or derived name of the model ends in a
-            reserved suffix (`_check_no_reserved_suffix`), or if a name in
+            reserved suffix (`_check_model_names`), or if a name in
             `dims` or in `coords` collides with a data variable of the result
             or with one of the dimensions `point`, `parameter` and
             `parameter_` it adds (`check_coordinate_collision`, which reads
@@ -1346,11 +1367,19 @@ def build_result(
     )
     names = model.parameter_names
     k = len(names)
-    _check_no_reserved_suffix(model)
+    _check_model_names(model)
 
     def units_of(expr: str) -> str:
         """The unit of a unit expression in the units of the data."""
         return parameter_unit_expression(expr, x_unit=x_unit, y_unit=y_unit)
+
+    residual_unit = (
+        y_unit
+        if options.weighting is Weighting.NONE
+        else units_of("[y]**0.5")
+        if options.weighting is Weighting.INV_Y
+        else "dimensionless"
+    )
 
     data_vars: dict[str, Any] = {}
 
@@ -1398,8 +1427,10 @@ def build_result(
             ],
             "dimensionless",
         )
-    for stat in ("cost", "r2", "rmse", "aic", "aicc", "bic"):
+    for stat in ("r2", "aic", "aicc", "bic"):
         scalar(stat, [getattr(r, stat) for r in rows], "dimensionless")
+    scalar("cost", [r.cost for r in rows], units_of(f"({residual_unit})**2"))
+    scalar("rmse", [r.rmse for r in rows], y_unit)
     scalar("n_points", [r.n_points for r in rows], "dimensionless")
     n_free = int(np.sum([name not in options.fixed for name in names]))
     scalar("n_parameters", [n_free for _ in rows], "dimensionless")
@@ -1423,7 +1454,7 @@ def build_result(
     data_vars["residuals"] = (
         point_dims,
         np.stack([r.residuals for r in rows]).reshape(point_shape),
-        {"units": "dimensionless"},
+        {"units": residual_unit},
     )
     data_vars["correlation"] = (
         (*dims, "parameter", "parameter_"),

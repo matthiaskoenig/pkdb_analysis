@@ -21,7 +21,9 @@ import html
 import io
 import logging
 import re
+from collections.abc import Iterator
 from dataclasses import dataclass, field
+from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal
 from urllib.parse import quote
@@ -112,20 +114,18 @@ def format_cell(value: Any, digits: int = 3) -> str:
     return str(value)
 
 
-def _cells(frame: pd.DataFrame, digits: int) -> list[list[str]]:
+def _cells(frame: pd.DataFrame, digits: int) -> Iterator[list[str]]:
     """Every cell of a frame as a formatted string, row by row.
 
     Args:
         frame: the table.
         digits: significant digits of the numbers.
 
-    Returns:
+    Yields:
         One list of strings per row.
     """
-    return [
-        [format_cell(value, digits) for value in row]
-        for row in frame.itertuples(index=False, name=None)
-    ]
+    for row in frame.itertuples(index=False, name=None):
+        yield [format_cell(value, digits) for value in row]
 
 
 def _markdown_text(text: str) -> str:
@@ -291,56 +291,57 @@ class Report:
         ]
         if self.subtitle:
             parts.append(f'<p class="subtitle">{html.escape(self.subtitle)}</p>')
-        for section in self.sections:
-            parts.extend(self._html_section(section))
-        parts.extend(["</body>", "</html>", ""])
-        target.write_text("\n".join(parts), encoding="utf-8")
+        lines = chain(
+            parts,
+            chain.from_iterable(
+                self._html_section(section) for section in self.sections
+            ),
+            ["</body>", "</html>"],
+        )
+        with target.open("w", encoding="utf-8") as output:
+            output.writelines(line + "\n" for line in lines)
         logger.info("report written: %s", target)
         return target
 
-    def _html_section(self, section: Section) -> list[str]:
+    def _html_section(self, section: Section) -> Iterator[str]:
         """The lines of one section of the HTML document.
 
         Args:
             section: the section.
 
-        Returns:
+        Yields:
             The lines.
         """
-        lines: list[str] = []
         if section.heading:
             level = min(max(section.level, 1), 6)
-            lines.append(f"<h{level}>{html.escape(section.heading)}</h{level}>")
+            yield f"<h{level}>{html.escape(section.heading)}</h{level}>"
         if section.kind == "text":
-            lines.extend(
-                f"<p>{html.escape(paragraph)}</p>"
-                for paragraph in section.text.split("\n\n")
-                if paragraph.strip()
-            )
+            for paragraph in section.text.split("\n\n"):
+                if paragraph.strip():
+                    yield f"<p>{html.escape(paragraph)}</p>"
         elif section.kind == "table":
             assert section.frame is not None
-            lines.append("<table>")
+            yield "<table>"
             header = "".join(
                 f"<th>{html.escape(str(column))}</th>" for column in section.frame
             )
-            lines.append(f"<thead><tr>{header}</tr></thead><tbody>")
+            yield f"<thead><tr>{header}</tr></thead><tbody>"
             for row in _cells(section.frame, section.digits):
                 cells = "".join(f"<td>{html.escape(cell)}</td>" for cell in row)
-                lines.append(f"<tr>{cells}</tr>")
-            lines.append("</tbody></table>")
+                yield f"<tr>{cells}</tr>"
+            yield "</tbody></table>"
             if section.caption:
-                lines.append(f'<p class="caption">{html.escape(section.caption)}</p>')
+                yield f'<p class="caption">{html.escape(section.caption)}</p>'
         else:
             encoded = base64.b64encode(section.image).decode("ascii")
-            lines.append("<figure>")
-            lines.append(
+            yield "<figure>"
+            yield (
                 f'<img src="data:image/png;base64,{encoded}" '
                 f'alt="{html.escape(section.caption)}">'
             )
             if section.caption:
-                lines.append(f"<figcaption>{html.escape(section.caption)}</figcaption>")
-            lines.append("</figure>")
-        return lines
+                yield f"<figcaption>{html.escape(section.caption)}</figcaption>"
+            yield "</figure>"
 
     def write_markdown(self, path: str | Path) -> Path:
         """Write the report as markdown with its figures as files next to it.
@@ -357,39 +358,55 @@ class Report:
         """
         target = Path(path)
         target.parent.mkdir(parents=True, exist_ok=True)
-        lines = [f"# {_markdown_text(self.title)}", ""]
+        with target.open("w", encoding="utf-8") as output:
+            output.writelines(line + "\n" for line in self._markdown_lines(target))
+        logger.info("report written: %s", target)
+        return target
+
+    def _markdown_lines(self, target: Path) -> Iterator[str]:
+        """Yield Markdown rows and write adjacent images without buffering tables.
+
+        Args:
+            target: the destination, determining adjacent image filenames.
+
+        Yields:
+            Lines of the document.
+        """
+        yield f"# {_markdown_text(self.title)}"
+        yield ""
         if self.subtitle:
-            lines.extend([_markdown_text(self.subtitle), ""])
+            yield _markdown_text(self.subtitle)
+            yield ""
         number = 0
         for section in self.sections:
             if section.heading:
                 level = min(max(section.level, 1), 6)
-                lines.extend([f"{'#' * level} {_markdown_text(section.heading)}", ""])
+                yield f"{'#' * level} {_markdown_text(section.heading)}"
+                yield ""
             if section.kind == "text":
                 # Prose deliberately supports Markdown, but never raw HTML.
-                lines.extend([html.escape(section.text, quote=False), ""])
+                yield html.escape(section.text, quote=False)
+                yield ""
             elif section.kind == "table":
                 assert section.frame is not None
                 columns = [_markdown_text(str(column)) for column in section.frame]
-                lines.append("| " + " | ".join(columns) + " |")
-                lines.append("| " + " | ".join("---" for _ in columns) + " |")
+                yield "| " + " | ".join(columns) + " |"
+                yield "| " + " | ".join("---" for _ in columns) + " |"
                 for row in _cells(section.frame, section.digits):
-                    lines.append("| " + " | ".join(map(_markdown_text, row)) + " |")
-                lines.append("")
+                    yield "| " + " | ".join(map(_markdown_text, row)) + " |"
+                yield ""
                 if section.caption:
-                    lines.extend([f"*{_markdown_text(section.caption)}*", ""])
+                    yield f"*{_markdown_text(section.caption)}*"
+                    yield ""
             else:
                 number += 1
                 name = f"{target.stem}_{number}.png"
                 (target.parent / name).write_bytes(section.image)
-                lines.extend(
-                    [f"![{_markdown_text(section.caption)}]({quote(name)})", ""]
-                )
+                yield f"![{_markdown_text(section.caption)}]({quote(name)})"
+                yield ""
                 if section.caption:
-                    lines.extend([f"*{_markdown_text(section.caption)}*", ""])
-        target.write_text("\n".join(lines), encoding="utf-8")
-        logger.info("report written: %s", target)
-        return target
+                    yield f"*{_markdown_text(section.caption)}*"
+                    yield ""
 
 
 def study_report(
