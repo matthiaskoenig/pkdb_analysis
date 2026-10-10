@@ -79,8 +79,8 @@ def executable_blocks(page: Path) -> list[tuple[int, str]]:
     ]
 
 
-#: the pages with at least one snippet to run, `docs/api/` and
-#: `docs/superpowers/` are not pages of the user guide and are left out
+#: the pages with at least one snippet to run, `docs/api/` holds no pages
+#: of the user guide and is left out
 PAGES: list[str] = sorted(
     page.name for page in DOCS_DIR.glob("*.md") if executable_blocks(page)
 )

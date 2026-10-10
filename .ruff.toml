@@ -1,7 +1,3 @@
-# the SDD planning artifacts are a historical record of the design process,
-# not source or rendered documentation, so they are not reformatted
-extend-exclude = ["docs/superpowers/"]
-
 # Same as Black.
 line-length = 88
 indent-width = 4

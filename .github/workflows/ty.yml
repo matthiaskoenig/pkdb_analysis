@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+  cancel-in-progress: true
 
 jobs:
   ty:
@@ -30,6 +30,7 @@ jobs:
         with:
           python-version: "3.14"
           enable-cache: true
+          cache-python: true
       - name: Type check with tox
         env:
           # render diagnostics as GitHub Actions workflow annotations
