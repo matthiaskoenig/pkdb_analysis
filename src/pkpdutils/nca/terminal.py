@@ -44,7 +44,8 @@ class TerminalFit:
         t_first: time of the first point of the regression
         t_last: time of the last point of the regression
         start: packed index of the first point of the window
-        flags: `NCAFlag` bits `POSITIVE_SLOPE` and `TOO_FEW_POINTS`
+        flags: `NCAFlag` bits `POSITIVE_SLOPE`, `TOO_FEW_POINTS` and
+            `TERMINAL_LOW_CONCENTRATION`
         candidates: every candidate window of every row with the columns `row`
             (the index of the row), `start_time`, `n`, `r2_adj` and `slope`,
             `None` unless `TerminalPhase.keep_candidates` asked for it
@@ -190,6 +191,17 @@ def terminal_fit(
                 given,
             )
         )
+    if phase.relative_warning is not None:
+        # Only actual regression points count, including sparse manual masks
+        # and per-row windows. The diagnostic never changes point selection.
+        selected = (
+            regressable & (tp >= fit.t_first[:, None]) & (tp <= fit.t_last[:, None])
+        )
+        if phase.method is TerminalMethod.MANUAL and manual_mask is not None:
+            selected &= given[:, None] | manual_mask
+        peak = np.max(np.where(in_row & np.isfinite(cp), cp, 0.0), axis=1)
+        low = np.any(selected & (cp < phase.relative_warning * peak[:, None]), axis=1)
+        fit.flags[low] |= int(NCAFlag.TERMINAL_LOW_CONCENTRATION)
     if not phase.keep_candidates:
         return fit
     return replace(fit, candidates=candidate_table(tp, y, regressable, tmax_idx, phase))
