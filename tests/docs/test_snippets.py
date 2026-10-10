@@ -27,6 +27,9 @@ from pathlib import Path
 
 import pytest
 
+#: deselected with `-m "not docs"`, continuous integration runs these on linux only
+pytestmark = pytest.mark.docs
+
 #: the root of the repository
 REPO_DIR = Path(__file__).parent.parent.parent
 
@@ -51,7 +54,8 @@ import matplotlib
 
 matplotlib.use("Agg", force=True)
 
-blocks = json.loads(open("blocks.json", encoding="utf-8").read())
+with open("blocks.json", encoding="utf-8") as file:
+    blocks = json.load(file)
 namespace = {"__name__": "__main__"}
 for number, code in blocks:
     try:
@@ -79,8 +83,8 @@ def executable_blocks(page: Path) -> list[tuple[int, str]]:
     ]
 
 
-#: the pages with at least one snippet to run, `docs/api/` and
-#: `docs/superpowers/` are not pages of the user guide and are left out
+#: the pages with at least one snippet to run, `docs/api/` holds no pages
+#: of the user guide and is left out
 PAGES: list[str] = sorted(
     page.name for page in DOCS_DIR.glob("*.md") if executable_blocks(page)
 )

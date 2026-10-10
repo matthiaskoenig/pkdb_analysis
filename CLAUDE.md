@@ -4,7 +4,7 @@ This file provides guidance when working with code in this repository.
 
 ## Project
 
-`pkpdutils` is a python library for the pharmacokinetic and pharmacodynamic analysis of timecourses and parameters: non-compartmental analysis, uncertainty propagation, curve fitting, statistics on parameters (tests, bioequivalence, drug-drug interactions, meta-analysis) and figures. Pure library, no CLI entry points. Requires python >= 3.13, packaged with hatchling (version is read from `src/pkpdutils/__init__.py`). Runtime dependencies are `numpy`, `scipy`, `pandas`, `xarray`, `pint`, `pydantic`, `matplotlib` and `rich`. It was `pkdb_analysis` until 0.3.1; the design of the rewrite is in `docs/superpowers/specs/2026-09-14-pkpdutils-redesign-design.md`.
+`pkpdutils` is a python library for the pharmacokinetic and pharmacodynamic analysis of timecourses and parameters: non-compartmental analysis, uncertainty propagation, curve fitting, statistics on parameters (tests, bioequivalence, drug-drug interactions, meta-analysis) and figures. Pure library, no CLI entry points. Requires python >= 3.13, packaged with hatchling (version is read from `src/pkpdutils/__init__.py`). Runtime dependencies are `numpy`, `scipy`, `pandas`, `xarray`, `pint`, `pydantic`, `matplotlib` and `rich`. It was `pkdb_analysis` until 0.3.1.
 
 ## Commands
 
@@ -17,10 +17,11 @@ uv lock                                  # after every change of a dependency in
 # tests
 pytest                                   # all tests, in parallel with pytest-xdist
 pytest -n 0                              # in one process, e.g. for --pdb
+pytest -m "not docs and not examples"    # without the doc snippets and the example scripts
 pytest tests/test_units.py               # single file
 pytest tests/test_units.py::test_parse_unit  # single test
 tox r -e py3.14                          # single tox env (py3.13, py3.14, py3.15 available)
-tox run-parallel                         # full matrix + ty
+tox run-parallel                         # full matrix + ty, run before opening a pull request
 
 # lint / format / types
 ruff check
@@ -56,7 +57,7 @@ python -m examples.sparse
 python -m examples.report
 ```
 
-`develop` is the default branch and takes every change through a pull request; direct pushes are rejected by the rulesets in `.github/rulesets/` (applied with `.github/rulesets/apply.sh`), which require the `tests`, `ruff`, `ty` and `docs` checks. `main` only tracks the latest release and is fast-forwarded by the `sync-main` job of the release workflow, never by hand.
+`develop` is the default branch and takes every change through a pull request; direct pushes are rejected by the rulesets in `.github/rulesets/` (applied with `.github/rulesets/apply.sh`), which require the `tests`, `ruff`, `ty` and `docs` checks. Continuous integration is kept minimal: `tests` runs only `py3.14`, on linux, macos and windows (the doc snippets and the example scripts, markers `docs` and `examples`, on linux only), every workflow cancels a superseded run (`cancel-in-progress: true`), uv caches packages and interpreters, dependabot runs monthly. The other python versions run only locally. `main` only tracks the latest release and is fast-forwarded by the `sync-main` job of the release workflow, never by hand.
 
 Release steps are in `docs/development.md`: the release is prepared on a branch, `uvx bump-my-version bump [dev|major|minor|patch]` updates `src/pkpdutils/__init__.py` and `CITATION.cff` and commits without tagging, and the tag is created on `develop` after the pull request was merged, which triggers the PyPI release workflow. A development version is finalized with `uvx bump-my-version bump dev` (`1.0.0.dev0` becomes `1.0.0`), while `major|minor|patch` start the next development cycle.
 
@@ -104,6 +105,6 @@ Documentation is [Zensical](https://zensical.org/): markdown sources in `docs/`,
 - `docs/workflows.md` holds the five walk-throughs from the data of a study to its table and figure (a study table, bioequivalence, drug-drug interaction, steady state, dose proportionality); `docs/data/` holds the only files a page may read: `study.csv`, the event table the quickstart of `docs/index.md` reads, and `benchmarks/`, the datasets, the scenario manifest and the WinNonlin, PKNCA and NonCompart result tables of `docs/benchmark_datasets.md` (the snippet runner copies both next to a page).
 - `tests/docs/test_snippets.py` executes every ` ```python ` fence of every page of `docs/` in the order it appears, one namespace per page, in a subprocess with warnings as errors and a temporary working directory with `docs/data/` next to it. A fence whose first line is `# not executed` is a fragment and is skipped. A number a page pastes as output has to come from a real run of that snippet.
 - `docs/benchmark_datasets.md` pastes no output by hand: every snippet is followed by `<!-- output:start -->`/`<!-- output:end -->`, which `scripts/benchmark_datasets.py` fills with what the snippet prints; `tests/docs/test_benchmark_datasets.py` fails when the page is stale.
-- `uv.lock` is committed and pins the local development environment (`uv sync`, `uv run`, so also `uv run ty check`), the `documentation` workflow, which runs `uv sync --locked`, and the ruff version of the `ruff` workflow; the tox environments, i.e. the test matrix and the `ty` check of continuous integration, resolve from `pyproject.toml` and do not use it. After changing a dependency in `pyproject.toml` run `uv lock`, otherwise the `documentation` workflow fails; `uv lock --upgrade` moves the lock to the newest releases. Dependabot bumps the lock weekly with `versioning-strategy: lockfile-only`, so the lower bounds in `pyproject.toml`, which users install against, are only changed by hand.
+- `uv.lock` is committed and pins the local development environment (`uv sync`, `uv run`, so also `uv run ty check`), the `documentation` workflow, which runs `uv sync --locked`, and the ruff version of the `ruff` workflow; the tox environments, i.e. the test matrix and the `ty` check of continuous integration, resolve from `pyproject.toml` and do not use it. After changing a dependency in `pyproject.toml` run `uv lock`, otherwise the `documentation` workflow fails; `uv lock --upgrade` moves the lock to the newest releases. Dependabot bumps the lock monthly with `versioning-strategy: lockfile-only`, so the lower bounds in `pyproject.toml`, which users install against, are only changed by hand.
 - Markdown carries no hard line wraps: a paragraph, a list item or a table row is a single line. Code fences, headings and the rows of badges keep their line structure.
 - Release notes go in `release-notes/` as part of a release commit.

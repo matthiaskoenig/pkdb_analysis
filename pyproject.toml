@@ -80,6 +80,12 @@ packages = ["src/pkpdutils"]
 testpaths = ["tests"]
 # the tests run in parallel (pytest-xdist), `pytest -n 0` runs them in one process
 addopts = "-n auto"
+# the tests which run the documentation and the examples in a subprocess each;
+# continuous integration runs them on linux only, see docs/development.md
+markers = [
+    "docs: runs the python snippets of a page of `docs/`",
+    "examples: runs an example script of `examples/`",
+]
 
 [tool.ty.environment]
 # the package lives in the src layout, the examples are a package at the root of
