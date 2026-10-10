@@ -199,6 +199,71 @@ For effect timecourses the same interval carries `interval_auec`, `interval_emax
 
 Flags: `POSITIVE_SLOPE` (the terminal regression does not decline; \(\lambda_z\) and everything derived from it is `NaN`), `TOO_FEW_POINTS` (no window with the minimal number of points), `EXTRAPOLATION_HIGH`, `NO_MAX` (the maximum is the last point), `NO_ABSORPTION` (the maximum is the first point of an extravascular curve), `BLQ_TRUNCATED`, `NO_DATA` (fewer than two points), `DELTA_WINDOW_CHANGE` (the delta method skipped points at which the terminal window moved, see [Uncertainty](uncertainty.md)), `INCOMPLETE_INTERVAL` (the last dosing interval is not covered by the data; its parameters and the steady state parameters are `NaN`), `EXTRAPOLATED_TROUGH` (the trough of at least one dosing interval of a bolus was regressed because the sample at the dose time carries the post-dose value), `SPAN_LOW` (the terminal phase covers fewer than two half-lives, `lambda_z_span < 2`), `NOT_ACCEPTED` (a threshold of `NCAOptions.acceptance` is not met, see "Acceptance criteria and exclusions" below), `PARTIAL_EXTRAPOLATED` (a named partial area reaches beyond the last measurable value and was completed with the terminal regression, see "Partial areas").
 
+### Long simulations and terminal selection
+
+Long ODE simulations can reach concentrations that reflect integrator noise
+rather than elimination. `BEST_FIT` may select a smooth tail at `1e-15` to
+`1e-20` of the peak because its adjusted R² is high. A good regression score
+does not establish that those concentrations contain useful information.
+
+For simulated concentration profiles, `NCAOptions(lloq_relative=1e-8)` is a
+starting point: the cutoff is computed independently as `1e-8 * Cmax` for each
+analysed curve, including curves with different scales in one batch. Choose
+the fraction against the solver tolerances and check the selected window.
+The larger of this cutoff and the absolute limit is used. The absolute limit
+comes from `NCAOptions.lloq` when supplied, otherwise from the sample's assay
+limit. The existing BLQ rules then apply, including to named partial areas.
+For repeated dosing, the point parameters use the maximum of the slice from
+the reference dose; interval parameters retain their existing handling of
+measured values. Bootstrap and delta analyses resolve the relative cutoff
+on each replicate or perturbed curve as well.
+
+The relative cutoff defaults to `None`. Assay data therefore retain their
+absolute quantification limits. By default, a selected terminal regression
+containing a concentration below `1e-8 * Cmax` carries
+`TERMINAL_LOW_CONCENTRATION` and the analysis logs a warning. This diagnostic
+changes no points or estimates, and may also flag a valid long decay. Review
+it rather than assuming it proves noise. Set
+`TerminalPhase(relative_warning=None)` to disable the diagnostic or supply
+a different fraction to change its threshold.
+
+```python
+import numpy as np
+from pkpdutils import NCAOptions, Timecourse, nca_single
+
+sim_t = np.arange(0.0, 1001.0, 10.0)
+sim_c = np.exp(-0.1 * sim_t)
+sim_tail = sim_t >= 400
+sim_c[sim_tail] = 1e-18 * np.exp(-0.02 * (sim_t[sim_tail] - 400))
+sim_tc = Timecourse(time=sim_t, value=sim_c, time_unit="min", unit="mg/l")
+sim_result = nca_single(sim_tc, options=NCAOptions(lloq_relative=1e-8))
+print(round(sim_result["thalf"].item(), 3))
+```
+
+```text
+6.931
+```
+
+`BEST_FIT` chooses the best adjusted R² among suffix windows after the peak;
+it can discard earlier post-peak points. `ALL_AFTER_TMAX` instead regresses
+all eligible positive points strictly after the peak, reproducing the
+selection rule of `pkdb_analysis` 0.3.1. For ICG-PDR workflows that define
+the decline over all post-peak samples, select that method explicitly:
+
+```python
+from pkpdutils import NCAOptions, TerminalMethod, TerminalPhase
+
+icg_options = NCAOptions(
+    terminal=TerminalPhase(method=TerminalMethod.ALL_AFTER_TMAX),
+    lloq_relative=1e-8,  # optional noise floor for simulated concentrations
+)
+```
+
+Neither method establishes a reliable half-life from numerical noise.
+Both honor BLQ exclusions and the end-of-infusion restriction. A manual
+window overrides the selection method and still carries the low-concentration
+diagnostic when its selected points fall below the warning threshold.
+
 ## API
 
 One curve:

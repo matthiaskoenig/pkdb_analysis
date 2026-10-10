@@ -357,7 +357,10 @@ def bolus_c0(
 
 
 def resolve_lloq(
-    options: NCAOptions, lloq: np.ndarray | None, n_rows: int
+    options: NCAOptions,
+    lloq: np.ndarray | None,
+    n_rows: int,
+    c: np.ndarray | None = None,
 ) -> np.ndarray | None:
     """The limit of quantification of every row.
 
@@ -366,17 +369,32 @@ def resolve_lloq(
         lloq: the limit of every row `(N,)` (the per-sample `lloq` of the
             batch), `None` without one
         n_rows: number of rows `N`
+        c: concentrations `(N, n)`, required with `lloq_relative`
 
     Returns:
         One limit per row, `None` when neither the options nor the batch name
         one. `NCAOptions.lloq` wins over the per-sample limit; a row whose
-        limit is `NaN` has none.
+        limit is `NaN` has none. When `lloq_relative` is set, the larger of
+        the absolute limit and its fraction of the finite positive row
+        maximum is used. A row without positive concentrations has no
+        relative cutoff.
+
+    Raises:
+        ValueError: if a relative cutoff is requested without concentrations.
     """
     if options.lloq is not None:
-        return np.full(n_rows, float(options.lloq))
-    if lloq is None:
-        return None
-    return np.asarray(lloq, dtype=np.float64).reshape(n_rows)
+        absolute = np.full(n_rows, float(options.lloq))
+    elif lloq is None:
+        absolute = None
+    else:
+        absolute = np.asarray(lloq, dtype=np.float64).reshape(n_rows)
+    if options.lloq_relative is None:
+        return absolute
+    if c is None:
+        raise ValueError("Concentrations are required to resolve 'lloq_relative'")
+    peak = np.max(np.where(np.isfinite(c) & (c > 0), c, 0.0), axis=1)
+    relative = np.where(peak > 0, options.lloq_relative * peak, np.nan)
+    return relative if absolute is None else np.fmax(absolute, relative)
 
 
 def _imputed_value(
@@ -649,7 +667,7 @@ def compute_parameters(
         t = t - shift[:, None]
     rules = options.blq_rules
     c, truncated, blq_in_curve = apply_blq(
-        c, resolve_lloq(options, lloq, t.shape[0]), rules
+        c, resolve_lloq(options, lloq, t.shape[0], c), rules
     )
     if options.kind is Kind.EFFECT:
         return _effect_parameters(t, c, truncated, options)
@@ -1505,7 +1523,7 @@ def run_analysis_rows(
             dose_amount, dose_time, dose_duration, options, n_rows=t.shape[0]
         )
         cleaned, _, _ = apply_blq(
-            c, resolve_lloq(options, lloq, t.shape[0]), options.blq_rules
+            c, resolve_lloq(options, lloq, t.shape[0], c), options.blq_rules
         )
         areas, extrapolated = named_partial_aucs(
             t - first_time[:, None],
@@ -1617,6 +1635,15 @@ def nca(timecourses: Timecourses, *, options: NCAOptions | None = None) -> NCARe
     # `flags` is the last variable of the result, the uncertainty variables and
     # `n` go before it
     flags = values.pop("flags")
+    low_terminal = (flags & int(NCAFlag.TERMINAL_LOW_CONCENTRATION)) != 0
+    if low_terminal.any():
+        logger.warning(
+            "%d curve(s) have terminal regression concentrations below %g * Cmax; "
+            "inspect possible numerical noise, set NCAOptions(lloq_relative=1e-8) "
+            "for simulated profiles, or review the terminal window",
+            int(low_terminal.sum()),
+            options.terminal.relative_warning,
+        )
 
     units: dict[str, str] = {}
     if options.partial_aucs:

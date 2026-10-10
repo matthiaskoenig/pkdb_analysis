@@ -165,6 +165,9 @@ class NCAFlag(IntFlag):
     #: a named partial area (`NCAOptions.partial_aucs`) reaches beyond the last
     #: measurable value and was completed with the terminal regression
     PARTIAL_EXTRAPOLATED = 4096
+    #: the terminal regression includes concentrations below the configured
+    #: fraction of the observed maximum; inspect possible numerical noise
+    TERMINAL_LOW_CONCENTRATION = 8192
 
 
 def decode_flags(value: int) -> list[str]:
@@ -417,6 +420,10 @@ class TerminalPhase(BaseModel):
         min_adj_r2: minimal adjusted R² a regression must reach, `None` for no limit
         tie_tolerance: a window with more points wins over the best adjusted R²
             when its adjusted R² is within this tolerance of the best
+        relative_warning: flag a selected regression containing values below
+            this fraction of the observed maximum; `None` disables the
+            diagnostic. This detects possible integrator noise without
+            excluding points or changing the fit
         windows: the terminal window `(t_first, t_last)` of single samples,
             keyed by the sample label (the label of a batch with one sample
             dimension, the tuple of labels of a batch with several, and the
@@ -454,6 +461,7 @@ class TerminalPhase(BaseModel):
     points: tuple[int, ...] | None = None
     min_adj_r2: float | None = Field(default=None, ge=0.0, le=1.0)
     tie_tolerance: float = Field(default=1e-4, ge=0.0)
+    relative_warning: float | None = Field(default=1e-8, gt=0.0, lt=1.0)
     windows: dict[Any, tuple[float, float]] | None = None
     keep_candidates: bool = False
 
@@ -496,6 +504,11 @@ class NCAOptions(BaseModel):
         lloq: lower limit of quantification in the unit of the values, `None`
             to take the per-sample `lloq` of the batch (the coordinate the
             readers of `pkpdutils.io` write), and no limit without one
+        lloq_relative: optional concentration cutoff as a fraction of each
+            analysed curve's finite positive maximum. `1e-8` is a starting
+            point for simulated curves with integrator noise; `None` leaves
+            the absolute assay limit alone. The larger of this cutoff and
+            the resolved absolute `lloq` is used with the same BLQ rules
         blq: handling of values below `lloq`, one of the two classic
             `BLQHandling` values or a `BLQRules` rule set by position
         c0_method: estimate of C(0) after an intravenous bolus
@@ -567,7 +580,8 @@ class NCAOptions(BaseModel):
     kind: Kind = Kind.CONCENTRATION
     auc_method: AUCMethod = AUCMethod.LINEAR_LOG
     terminal: TerminalPhase = TerminalPhase()
-    lloq: float | None = Field(default=None, gt=0.0)
+    lloq: float | None = Field(default=None, gt=0.0, allow_inf_nan=False)
+    lloq_relative: float | None = Field(default=None, gt=0.0, lt=1.0)
     blq: BLQHandling | BLQRules = BLQHandling.NAN
     c0_method: C0Method = C0Method.LOG_BACK_EXTRAPOLATION
     extrapolation_warning: float = Field(default=0.2, gt=0.0, lt=1.0)
@@ -599,6 +613,8 @@ class NCAOptions(BaseModel):
             ValueError: for an empty name or an interval which does not end
                 after it starts.
         """
+        if self.kind is Kind.EFFECT and self.lloq_relative is not None:
+            raise ValueError("'lloq_relative' applies only to concentration curves")
         for name, (t_start, t_end) in self.partial_aucs.items():
             if not name:
                 raise ValueError("a partial area needs a name")
