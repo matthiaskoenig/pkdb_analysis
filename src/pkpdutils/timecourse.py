@@ -213,6 +213,41 @@ def _values_equal(a: float | np.ndarray | None, b: float | np.ndarray | None) ->
     return bool(np.array_equal(a, b, equal_nan=True))
 
 
+def _check_uncertainty(
+    values: np.ndarray,
+    *,
+    sd: np.ndarray | None,
+    se: np.ndarray | None,
+    n: np.ndarray | float | None,
+) -> None:
+    """Validate spreads and counts, allowing missing metadata and empty points.
+
+    Args:
+        values: observed values, NaN for missing points.
+        sd: standard deviations, broadcastable to `values`.
+        se: standard errors, broadcastable to `values`.
+        n: counts, broadcastable to `values`; NaN for unknown counts and zero
+            only where the observed value is missing.
+
+    Raises:
+        ValueError: for negative or infinite spreads/counts or a zero count
+            associated with an observed value.
+    """
+    if n is not None:
+        counts = np.asarray(n, dtype=np.float64)
+        if (np.isinf(counts) | (counts < 0)).any():
+            raise ValueError(
+                "'n' must be finite and non-negative, or NaN for unknown counts"
+            )
+        if ((counts == 0) & np.isfinite(values)).any():
+            raise ValueError("'n' must be positive wherever 'value' is observed")
+    for name, spread in (("sd", sd), ("se", se)):
+        if spread is not None and (np.isinf(spread) | (spread < 0)).any():
+            raise ValueError(
+                f"'{name}' must be finite and non-negative, or NaN for missing spread"
+            )
+
+
 class Dosing(BaseModel):
     """The dosing protocol of a timecourse: the doses given and the times they were given.
 
@@ -623,6 +658,8 @@ class Timecourse(BaseModel):
             )
         if np.isnan(time).any():
             raise ValueError("'time' contains NaN")
+        if not np.isfinite(time).all():
+            raise ValueError("'time' must be finite")
         if np.unique(time).size != time.size:
             raise ValueError("'time' contains duplicate values")
 
@@ -652,9 +689,10 @@ class Timecourse(BaseModel):
                     f"'n' has length {n.size}, 'time' has length {time.size}"
                 )
 
+        _check_uncertainty(value, sd=arrays["sd"], se=arrays["se"], n=n)
         # derive the missing one of sd and se
         if n is not None:
-            sqrt_n = np.sqrt(n)
+            sqrt_n = np.sqrt(np.where(np.asarray(n) > 0, n, np.nan))
             if arrays["se"] is None and arrays["sd"] is not None:
                 arrays["se"] = arrays["sd"] / sqrt_n
             elif arrays["sd"] is None and arrays["se"] is not None:
@@ -1859,6 +1897,30 @@ class Timecourses:
         time_var = ds[TIMES_VAR] if TIMES_VAR in ds else ds[TIME_DIM]
         if "units" not in time_var.attrs:
             raise ValueError("the time coordinate needs attrs['units']")
+        times = time_var.to_numpy()
+        if np.isinf(times).any() or (TIMES_VAR not in ds and np.isnan(times).any()):
+            raise ValueError(
+                "Sampling times must be finite; NaN is allowed only for batch padding"
+            )
+        if (
+            TIMES_VAR in ds
+            and (np.isnan(times) & np.isfinite(ds["value"].to_numpy())).any()
+        ):
+            raise ValueError("NaN sampling times may only pad missing values")
+        count = None
+        if "n" in ds:
+            counts = ds["n"]
+            count = (
+                counts.transpose(*(d for d in layout if d in counts.dims))
+                .to_numpy()
+                .reshape(tuple(ds.sizes[d] if d in counts.dims else 1 for d in layout))
+            )
+        _check_uncertainty(
+            ds["value"].to_numpy(),
+            sd=None if "sd" not in ds else ds["sd"].to_numpy(),
+            se=None if "se" not in ds else ds["se"].to_numpy(),
+            n=count,
+        )
         self.ds: xr.Dataset = ds
         #: the units `_check_units_once` has parsed, so that building single
         #: timecourses parses the three unit strings of the batch once
@@ -2374,7 +2436,8 @@ class Timecourses:
                 if per_time
                 else np.broadcast_to(n_raw, sample_shape).copy()
             )
-            root_n = np.sqrt(n_arr) if per_time else np.sqrt(n_arr)[..., None]
+            positive_n = np.where(n_arr > 0, n_arr, np.nan)
+            root_n = np.sqrt(positive_n) if per_time else np.sqrt(positive_n)[..., None]
             data_vars["n"] = (
                 all_dims if per_time else dims,
                 n_arr,
@@ -2446,9 +2509,8 @@ class Timecourses:
         the same dose unit. The protocols are padded to the longest one. The batch keeps
         one `n` per sample, and the counts per time point when the `n` of a
         curve varies over its time points (`n_subjects` reads the number of
-        subjects back either way). `sd`, `se` and `n` are kept only when every
-        curve carries them; a field which some curves are missing is dropped
-        for the whole batch and logs a warning.
+        subjects back either way). Available `sd`, `se` and `n` are retained;
+        a field missing from a curve is represented by `NaN` and logs a warning.
 
         Args:
             timecourses: the curves
@@ -2497,11 +2559,15 @@ class Timecourses:
                 arrays: the arrays to stack, one per sample.
 
             Returns:
-                The padded array, or `None` when any element of `arrays` is `None`.
+                The padded array, with missing rows filled with `NaN`, or
+                `None` when every element of `arrays` is `None`.
             """
-            if any(a is None for a in arrays):
+            if all(a is None for a in arrays):
                 return None
-            return pad_rows([a for a in arrays if a is not None], n_time)
+            return pad_rows(
+                [np.full(n_time, np.nan) if a is None else a for a in arrays],
+                n_time,
+            )
 
         def warn_partial(name: str, arrays: Sequence[Any]) -> None:
             """Warn when some but not all curves carry an optional field.
@@ -2515,7 +2581,7 @@ class Timecourses:
             ]
             if without and len(without) != len(arrays):
                 logger.warning(
-                    "'%s' is missing for %s, the batch of %d curves carries no '%s'",
+                    "'%s' is missing for %s; retained in the batch of %d curves with NaN for missing '%s'",
                     name,
                     without,
                     len(arrays),
@@ -2537,12 +2603,15 @@ class Timecourses:
         se = padded([tc.se for tc in timecourses])
         n_values = [tc.n for tc in timecourses]
         n: np.ndarray | None = None
-        if all(v is not None for v in n_values):
+        if any(v is not None for v in n_values):
             # a curve carries its count as one number or per time point; the
             # batch keeps the counts per time point when one of them varies
             counts = padded(
                 [
-                    np.broadcast_to(np.asarray(v, dtype=np.float64), tc.time.shape)
+                    np.broadcast_to(
+                        np.asarray(np.nan if v is None else v, dtype=np.float64),
+                        tc.time.shape,
+                    )
                     for tc, v in zip(timecourses, n_values, strict=True)
                 ]
             )
@@ -2747,12 +2816,14 @@ class Timecourses:
         values = padded(value)
         spread = {"sd": padded(sd), "se": padded(se)}
         subjects = padded(n)
+        assert values is not None
+        _check_uncertainty(values, sd=spread["sd"], se=spread["se"], n=subjects)
         if subjects is not None:
             # `sd` and `se` are derived from each other per time point, as a
             # single curve does; the batch keeps one `n` per sample unless a
             # sample counts its time points separately
             with np.errstate(invalid="ignore"):
-                root = np.sqrt(subjects)
+                root = np.sqrt(np.where(subjects > 0, subjects, np.nan))
             if spread["se"] is None and spread["sd"] is not None:
                 spread["se"] = spread["sd"] / root
             elif spread["sd"] is None and spread["se"] is not None:
@@ -3528,10 +3599,10 @@ class Timecourses:
         the samples is not propagated: the spread of the group curve is the
         scatter of the curves which were reduced.
 
-        The dosing protocol of the group is the protocol of its samples when
-        they share one, and the protocol of the first sample with a warning
-        when they do not; `relative_to_dose` aligns the samples beforehand
-        when they were dosed at different times.
+        The dosing protocol of the group is retained when the samples share
+        one protocol and route across the reduced dimension. Otherwise dosing
+        metadata is dropped with a warning; `relative_to_dose` can align samples
+        beforehand when they were dosed at different times.
 
         Args:
             dim: the sample dimension to reduce.
@@ -3644,6 +3715,21 @@ class Timecourses:
         if dose is not None:
             ds = ds.assign(dose)
             ds = ds.assign_coords({DOSE_DIM: batch.ds[DOSE_DIM]})
+            routes = batch.routes
+            if routes is not None:
+                ds = ds.assign_coords(
+                    {
+                        ROUTE_VAR: (
+                            rest,
+                            np.take(routes, 0, axis=batch.sample_dims.index(dim)),
+                        )
+                    }
+                )
+        elif batch.has_dose:
+            ds.attrs.pop("route", None)
+            ds.attrs.pop("steady_state_marker", None)
+            if ROUTE_VAR in ds.coords:
+                ds = ds.drop_vars(ROUTE_VAR)
         return Timecourses(ds)
 
     def dose_normalized(
@@ -3713,9 +3799,8 @@ class Timecourses:
 
         Returns:
             `dose_amount`, `dose_time` and `dose_duration` of the group,
-            `None` for a batch without doses; the protocol of the first
-            sample, with a warning, when the samples of a group do not share
-            one protocol.
+            `None` for a batch without doses or, with a warning, when the
+            samples differ in protocol or route across the reduced dimension.
         """
         if not self.has_dose:
             return None
@@ -3724,21 +3809,26 @@ class Timecourses:
         shared = all(
             bool(
                 np.all(
-                    np.isclose(
+                    np.equal(
                         rows := self.ds[name].transpose(dim, ...).to_numpy(),
                         rows[:1],
-                        equal_nan=True,
                     )
+                    | (np.isnan(rows) & np.isnan(rows[:1]))
                 )
             )
             for name in names
         )
+        routes = self.routes
+        if routes is not None:
+            route_rows = np.moveaxis(routes, self.sample_dims.index(dim), 0)
+            shared = shared and bool(np.all(route_rows == route_rows[:1]))
         if not shared:
             logger.warning(
                 "the samples of the group differ in their dosing protocol; the "
-                "mean curve carries the protocol of the first sample along '%s'",
+                "mean curve drops dosing metadata along '%s'",
                 dim,
             )
+            return None
         return first
 
     def dosing_of(self, **indexers: Any) -> Dosing | None:

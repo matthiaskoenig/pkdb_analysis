@@ -19,6 +19,8 @@ flowchart LR
 
 **Self-contained HTML.** `write_html` embeds the figures as base64 PNG and carries its own style sheet, so the page is one file which needs no directory beside it. `write_markdown` writes the figures as `<stem>_1.png`, `<stem>_2.png` next to the document and references them by name, which is the form a static site or a pandoc conversion wants.
 
+Both writers stream table rows to disk instead of building formatted copies of the entire document. Working memory for table export stays bounded as the number of rows grows; HTML still encodes one image at a time to embed it.
+
 **How the numbers are formatted.** A float in a table is rounded to three significant digits with the same rule the publication tables of the package use (`pkpdutils.result.format_number`), so a report shows the numbers a manuscript shows; `digits=` changes it per table or for the whole report. A table which already holds formatted strings, as `summary_table` returns, passes through untouched. Every cell is escaped, so a parameter name with angle brackets stays text instead of becoming markup.
 
 **What `study_report` assembles.** The sections ICH M13A (2.2.2) asks for, in its order: the sentence describing the non-compartmental methods, the summary statistics of every parameter with the eight statistics M13A lists, the ratio of the observed to the extrapolated area of every subject with the acceptability verdict, the parameters of every subject, the mean curves per group and one analysis panel per subject. The report is returned rather than written, so anything else can be added before it goes to a file.

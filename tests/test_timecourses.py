@@ -458,10 +458,13 @@ def test_from_timecourses_partial_spread_warns(
     ]
     with caplog.at_level(logging.WARNING, logger="pkpdutils.timecourse"):
         tcs = Timecourses.from_timecourses(timecourses)
-    assert tcs.sd is None
-    assert tcs.se is None
-    assert tcs.n is None
-    assert not tcs.has_uncertainty
+    assert tcs.sd is not None and tcs.se is not None and tcs.n is not None
+    assert timecourses[0].sd is not None and timecourses[0].se is not None
+    np.testing.assert_allclose(tcs.sd[0], timecourses[0].sd)
+    np.testing.assert_allclose(tcs.se[0], timecourses[0].se)
+    assert np.isnan(tcs.sd[1]).all() and np.isnan(tcs.se[1]).all()
+    np.testing.assert_allclose(tcs.n, [6, np.nan], equal_nan=True)
+    assert tcs.has_uncertainty
     assert "'sd'" in caplog.text
     assert "'b'" in caplog.text
 
@@ -1499,9 +1502,10 @@ def test_mean_warns_on_different_protocols(
     with caplog.at_level(logging.WARNING, logger="pkpdutils.timecourse"):
         group = tcs.mean("individual")
     assert "dosing protocol" in caplog.text
-    dose_amount = group.dose_amount
-    assert dose_amount is not None
-    np.testing.assert_allclose(dose_amount, [100.0])
+    assert not group.has_dose
+    assert group.route is None
+    assert group.dose_amount is None
+    assert "drops dosing metadata" in caplog.text
 
 
 def test_mean_of_a_ragged_batch_uses_the_union_grid() -> None:
@@ -1845,3 +1849,189 @@ def test_ragged_mean_keeps_remaining_dimensions_and_stable_variance() -> None:
         equal_nan=True,
     )
     np.testing.assert_array_equal(result.ds["group"], ["a", "b"])
+
+
+@pytest.mark.parametrize("bad_time", [np.inf, -np.inf])
+@pytest.mark.parametrize("per_sample", [False, True])
+def test_batch_rejects_infinite_sampling_times(
+    bad_time: float, per_sample: bool
+) -> None:
+    times = np.array([0.0, bad_time])
+    if per_sample:
+        times = times[None, :]
+    with pytest.raises(ValueError, match="Sampling times must be finite"):
+        Timecourses.from_arrays(times, [[1.0, 2.0]], time_unit="hr", unit="mg/L")
+
+
+def test_batch_nan_times_are_only_allowed_as_missing_point_padding() -> None:
+    with pytest.raises(ValueError, match="Sampling times must be finite"):
+        Timecourses.from_arrays(
+            [0.0, np.nan], [[1.0, np.nan]], time_unit="hr", unit="mg/L"
+        )
+    with pytest.raises(ValueError, match="only pad missing values"):
+        Timecourses.from_arrays(
+            [[0.0, np.nan]], [[1.0, 2.0]], time_unit="hr", unit="mg/L"
+        )
+    batch = Timecourses.from_arrays(
+        [[0.0, 1.0, np.nan], [0.0, 1.0, 2.0]],
+        [[1.0, 2.0, np.nan], [2.0, 3.0, 4.0]],
+        n=[[1.0, 1.0, 0.0], [np.nan, np.nan, np.nan]],
+        time_unit="hr",
+        unit="mg/L",
+    )
+    assert batch.isel(individual=0).size == 2
+    assert batch.n is not None
+    assert batch.n[0, 2] == 0
+
+
+@pytest.mark.parametrize(
+    "field,bad",
+    [
+        ("n", 0.0),
+        ("n", -1.0),
+        ("n", np.inf),
+        ("sd", -1.0),
+        ("sd", np.inf),
+        ("se", -1.0),
+        ("se", np.inf),
+    ],
+)
+@pytest.mark.parametrize("constructor", ["arrays", "dataframe", "dataset", "events"])
+def test_batch_constructors_reject_invalid_uncertainty(
+    field: str, bad: float, constructor: str
+) -> None:
+    from pkpdutils.io import read_events
+
+    values = [[1.0, 2.0]]
+    array_fields: dict[str, Any] = {field: [bad] if field == "n" else [[bad, bad]]}
+    frame_fields: dict[str, Any] = {field: field.upper()}
+    with pytest.raises(ValueError, match=field):
+        if constructor == "arrays":
+            Timecourses.from_arrays(
+                [0.0, 1.0],
+                values,
+                time_unit="hr",
+                unit="mg/L",
+                **array_fields,
+            )
+        elif constructor == "dataset":
+            batch = Timecourses.from_arrays(
+                [0.0, 1.0], values, time_unit="hr", unit="mg/L"
+            )
+            batch.ds[field] = (("individual", "time"), [[bad, bad]])
+            Timecourses(batch.ds)
+        else:
+            frame = pd.DataFrame(
+                {
+                    "ID": [1, 1],
+                    "TIME": [0.0, 1.0],
+                    "DV": [1.0, 2.0],
+                    field.upper(): [bad, bad],
+                }
+            )
+            if constructor == "events":
+                read_events(
+                    frame, time_unit="hr", unit="mg/L", dose_unit="mg", route="oral"
+                )
+            else:
+                Timecourses.from_dataframe(
+                    frame,
+                    sample=["ID"],
+                    time="TIME",
+                    value="DV",
+                    time_unit="hr",
+                    unit="mg/L",
+                    **frame_fields,
+                )
+
+
+@pytest.mark.parametrize("method", ["bootstrap", "delta"])
+def test_nca_retains_uncertainty_only_for_curves_that_have_it(method: str) -> None:
+    from pkpdutils import NCAOptions, nca
+
+    times = np.array([0.0, 1.0, 2.0, 4.0, 8.0])
+    values = 10.0 * np.exp(-0.3 * times)
+    curves = [
+        Timecourse(
+            time=times,
+            value=values,
+            sd=0.1 * values,
+            n=8,
+            time_unit="hr",
+            unit="mg/L",
+            label="group",
+        ),
+        Timecourse(
+            time=times, value=values, time_unit="hr", unit="mg/L", label="individual"
+        ),
+    ]
+    batch = Timecourses.from_timecourses(curves)
+    result = nca(batch, options=NCAOptions(uncertainty=method, seed=1, n_boot=100))
+    assert np.isfinite(result["auc_last_se"].values[0])
+    assert np.isnan(result["auc_last_se"].values[1])
+    assert np.isfinite(result["auc_last"].values).all()
+
+
+def test_mean_drops_inconsistent_routes_and_nca_has_no_dose_parameters(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    from pkpdutils import NCAOptions, nca
+
+    curves = [
+        Timecourse(
+            time=T,
+            value=V[0],
+            time_unit="hr",
+            unit="mg/L",
+            dose=Dose(amount=100.0, unit="mg", route=route),
+        )
+        for route in (Route.ORAL, Route.IV_BOLUS)
+    ]
+    with caplog.at_level(logging.WARNING, logger="pkpdutils.timecourse"):
+        group = Timecourses.from_timecourses(curves).mean("individual")
+    assert not group.has_dose and group.route is None
+    assert "route" not in group.ds.coords and "route" not in group.ds.attrs
+    assert "drops dosing metadata" in caplog.text
+    result = nca(group, options=NCAOptions(uncertainty="delta"))
+    assert np.isfinite(result["auc_last"].values).all()
+    for field in ("cl", "cl_f", "vz", "vz_f"):
+        assert field not in result.ds or np.isnan(result[field].values).all()
+
+
+def test_mean_preserves_routes_that_are_consistent_within_remaining_groups() -> None:
+    values = np.stack([V[:2], V[:2]])
+    batch = Timecourses.from_arrays(
+        T,
+        values,
+        dims=("individual", "arm"),
+        coords={"arm": ["oral", "iv"], "route": ("arm", ["oral", "iv_bolus"])},
+        dose=Dose(amount=100.0, unit="mg"),
+        time_unit="hr",
+        unit="mg/L",
+    )
+    batch.ds.attrs.pop("route")
+    group = batch.mean("individual")
+    assert group.has_dose
+    np.testing.assert_array_equal(group.routes, ["oral", "iv_bolus"])
+    assert group.sel(arm="oral").dose is not None
+    iv_dose = group.sel(arm="iv").dose
+    assert iv_dose is not None
+    assert iv_dose.route is Route.IV_BOLUS
+
+
+def test_event_reader_retains_partially_known_subject_counts() -> None:
+    from pkpdutils.io import read_events
+
+    frame = pd.DataFrame(
+        {
+            "ID": [1, 1, 2, 2],
+            "TIME": [0.0, 1.0, 0.0, 1.0],
+            "DV": [1.0, 2.0, 1.0, 2.0],
+            "N": [8.0, 8.0, np.nan, np.nan],
+        }
+    )
+    batch = read_events(
+        frame, time_unit="hr", unit="mg/L", dose_unit="mg", route="oral"
+    )
+    assert batch.n is not None
+    np.testing.assert_allclose(batch.n, [8.0, np.nan], equal_nan=True)

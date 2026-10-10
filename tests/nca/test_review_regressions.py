@@ -2,12 +2,31 @@
 
 import importlib
 import json
+import warnings
 
 import numpy as np
 import pytest
 
 from pkpdutils import Timecourse, Timecourses
 from pkpdutils.nca import NCAOptions, nca, nca_single
+
+
+def test_zero_counts_on_empty_points_do_not_warn_in_uncertainty() -> None:
+    batch = Timecourses.from_arrays(
+        [0, 1, 2],
+        [[np.nan] * 3],
+        sd=[[0.0] * 3],
+        n=0,
+        time_unit="h",
+        unit="mg/l",
+        dims=("individual",),
+    )
+    # A dataset from another producer may carry SD without a derived SE.
+    batch = Timecourses(batch.ds.drop_vars("se"))
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", RuntimeWarning)
+        result = nca(batch, options=NCAOptions(n_boot=10, seed=1))
+    assert np.isnan(result.ds.auc_last_se.to_numpy()).all()
 
 
 def curve(*, offset: float = 0.0, rate: float = 0.3) -> Timecourse:

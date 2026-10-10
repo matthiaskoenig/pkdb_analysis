@@ -311,18 +311,19 @@ def resolve_spread(
         if timecourses.n is None
         else np.asarray(timecourses.n, dtype=np.float64).reshape(n_rows, -1)
     )
+    root_n = None if n is None else np.sqrt(np.where(n > 0, n, np.nan))
     if kind is BootstrapSpread.SE:
         if se is not None:
             return se
-        if sd is not None and n is not None:
-            return sd / np.sqrt(n)
+        if sd is not None and root_n is not None:
+            return sd / root_n
         raise ValueError(
             "The batch has no 'se' and it cannot be derived ('sd' and 'n' needed)"
         )
     if sd is not None:
         return sd
-    if se is not None and n is not None:
-        return se * np.sqrt(n)
+    if se is not None and root_n is not None:
+        return se * root_n
     raise ValueError(
         "The batch has no 'sd' and it cannot be derived ('se' and 'n' needed)"
     )

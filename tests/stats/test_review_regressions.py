@@ -126,3 +126,67 @@ def test_offset_units_are_explicitly_rejected():
 def test_invalid_pvalues_are_rejected(values):
     with pytest.raises(ValueError, match="p values"):
         multiple_comparison(values)
+
+
+def test_mann_whitney_distribution_at_exact_limit_preserves_combinatorics():
+    from math import comb
+
+    counts = statistical_tests._mann_whitney_counts(50, 50)
+    assert counts[0] == counts[-1] == 1
+    assert np.all(counts >= 0)
+    np.testing.assert_array_equal(counts, counts[::-1])
+    assert counts.sum() == pytest.approx(comb(100, 50), rel=2e-16)
+    probabilities = counts / counts.sum()
+    assert probabilities.sum() == pytest.approx(1)
+    assert np.all(np.diff(np.cumsum(probabilities)) >= 0)
+
+
+@pytest.mark.parametrize("size", [40, 50])
+@pytest.mark.parametrize("level", [0.999999999999, np.nextafter(1.0, 0.0)])
+def test_hodges_lehmann_extreme_interval_has_conservative_coverage(size, level):
+    # Finite, distinct observations; no tie correction clouds the exact null.
+    a = ParameterSample(values=np.arange(size, dtype=float))
+    b = ParameterSample(values=np.arange(size, dtype=float) + 0.5)
+    result = hodges_lehmann(a, b, paired=False, ci_level=level)
+    assert result.ci_low <= result.effect <= result.ci_high
+    assert np.isfinite(result.ci_low) and np.isfinite(result.ci_high)
+    assert level <= result.ci_level <= 1
+    assert result.ci_low == -result.ci_high - 1
+
+
+@pytest.mark.parametrize("paired", [True, False])
+def test_large_finite_pair_values_and_median_do_not_overflow(paired):
+    x = np.array([1e308, 1.2e308, 1.1e308])
+    y = None if paired else np.zeros(2)
+    selector = statistical_tests._PairOrderStatistics(x, y)
+    expected = (
+        statistical_tests._walsh_averages(x) if paired else np.sort(np.repeat(x, 2))
+    )
+    with np.errstate(over="raise", invalid="raise"):
+        actual = np.array([selector[i] for i in range(selector.size)])
+        np.testing.assert_array_equal(actual, expected)
+        assert selector.median() == pytest.approx(1.1e308)
+
+
+@pytest.mark.parametrize("paired", [True, False])
+def test_large_finite_hodges_lehmann_matches_both_memory_paths(monkeypatch, paired):
+    a = ParameterSample(values=np.array([1e308, 1.2e308, 1.1e308]))
+    b = ParameterSample(values=np.zeros(3))
+    # Variance/effect-size moments can overflow independently of the finite
+    # location estimate, so suppress their floating warnings in this test.
+    with np.errstate(over="ignore", invalid="ignore"):
+        expected = hodges_lehmann(a, b, paired=paired)
+        monkeypatch.setattr(statistical_tests, "HL_MATERIALIZE_PAIRS", 0)
+        actual = hodges_lehmann(a, b, paired=paired)
+    assert actual.effect == expected.effect == pytest.approx(1.1e308)
+    assert (actual.ci_low, actual.ci_high) == (expected.ci_low, expected.ci_high)
+
+
+def test_pair_midpoint_preserves_subnormal_and_cancellation_precision():
+    small = np.nextafter(0.0, 1.0)
+    largest = np.finfo(float).max
+    a = np.array([small, largest, largest, 1.0])
+    b = np.array([small, largest, -largest, np.nextafter(1.0, 2.0)])
+    with np.errstate(over="raise", invalid="raise"):
+        actual = statistical_tests._midpoint(a, b)
+    np.testing.assert_array_equal(actual, [small, largest, 0.0, 1.0])

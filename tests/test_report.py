@@ -2,6 +2,7 @@
 
 import base64
 import re
+import tracemalloc
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -222,3 +223,26 @@ def test_report_distinguishes_unevaluable_extrapolation() -> None:
     caption = report.sections[2].caption
     assert "cannot be evaluated" in caption
     assert "is acceptable" not in caption
+
+
+@pytest.mark.parametrize("kind", ["html", "markdown"])
+def test_large_report_tables_have_bounded_working_memory(
+    tmp_path: Path, kind: str
+) -> None:
+    frame = pd.DataFrame(
+        {"id": np.arange(5_000), "text": ["<data> " + "x" * 1024] * 5_000}
+    )
+    report = Report().add_table(frame)
+    path = tmp_path / f"table.{kind}"
+    tracemalloc.start()
+    try:
+        getattr(report, f"write_{kind}")(path)
+        peak = tracemalloc.get_traced_memory()[1]
+    finally:
+        tracemalloc.stop()
+    # The output is over 5 MB. Export should retain only a row and the file
+    # buffer, rather than formatted copies of every cell and the whole file.
+    assert peak < 1024 * 1024
+    text = path.read_text(encoding="utf-8")
+    assert text.count("&lt;data&gt;") == 5_000
+    assert "4999" in text

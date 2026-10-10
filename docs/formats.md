@@ -22,7 +22,7 @@ flowchart LR
   N --> PP["NCAResult<br/>to_pp / write_pp<br/>PP domain"]
 ```
 
-**Event records.** NONMEM and Monolix exchange data as one row per event of one subject: a row is a dose or an observation, and the columns describe what happened at that time - `AMT`/`DV` the amount or the value, `EVID`/`MDV` which kind of row it is. Repeated dosing does not need one row per dose: `ADDL`/`II` expand one dose record into several at a fixed interval, and `SS` marks a dose as already at steady state, standing for a dosing history rather than a single administration. With an `EVID` column the two rules are read independently, so a row may be a dose (`EVID 1`) and carry an observed value; without one a row with `AMT > 0` is a dose and nothing else, as NM-TRAN reads such a table, and a `DV` on it is ignored with a warning. A table which records a dose and a sample in one row therefore needs an `EVID` column.
+**Event records.** NONMEM and Monolix exchange data as one row per event of one subject: a row is a dose or an observation, and the columns describe what happened at that time - `AMT`/`DV` the amount or the value, `EVID`/`MDV` which kind of row it is. Repeated dosing does not need one row per dose: `ADDL`/`II` expand one dose record into several at a fixed interval, and `SS` marks a dose as already at steady state, standing for a dosing history rather than a single administration. An `EVID 1` row is dose-only: its `DV` is ignored even when positive, because event tables often use dummy values on dose rows. A sample taken at the dose time needs a separate `EVID 0` row with the same `ID` and `TIME`. Without an `EVID` column, `AMT > 0` identifies a dose-only row and a `DV` on it is ignored with a warning; the separate observation row has `AMT == 0`.
 
 **The two table layout.** PKNCA keeps the concentrations and the doses in separate tables, joined by the subject (and, for a multi-analyte or multi-period study, further grouping columns). This is closer to how data usually arrives from a bioanalytical lab and a dosing log than the single event table, and `pkpdutils.io.read_pknca` reads both without merging them first.
 
@@ -34,6 +34,17 @@ flowchart LR
 
 ## NONMEM / Monolix event records
 
+To record a dose and a sample at the same time, use separate event rows:
+
+```csv
+ID,TIME,DV,AMT,EVID,MDV
+S1,0,999,100,1,1
+S1,0,5,0,0,0
+S1,1,3,0,0,0
+```
+
+The dose is 100 at time 0. The observed values are 5 at time 0 and 3 at time 1; the positive dummy value 999 on the dose row is ignored.
+
 `read_events`/`Timecourses.from_events` and the inverse `write_events`/`to_events`, the one row per event format[^bauer].
 
 | column | role | notes |
@@ -42,8 +53,8 @@ flowchart LR
 | `TIME` | time of the row | in `time_unit` |
 | `DV` (Monolix `OBSERVATION`) | observed value | in `unit`; a dose row leaves it empty |
 | `AMT` (Monolix `AMOUNT`) | dose amount | in `dose_unit`; `0` or empty for an observation |
-| `EVID` | event kind | `1` dose, `0` observation, `2`/`3` dropped (logged), `4` (reset and dose) raises: the reader would merge the periods it separates into one protocol; without this column `AMT > 0` is a dose only and a value in `DV` on such a row is ignored (logged) |
-| `MDV` | missing dependent value | `1` marks the value of the row as missing even with a value in `DV`; the row keeps its sampling time and is read as `NaN` (`keep_missing=False` drops it instead) |
+| `EVID` | event kind | `1` dose-only (`DV` ignored), `0` observation, `2`/`3` dropped (logged), `4` (reset and dose) raises: the reader would merge the periods it separates into one protocol; without this column `AMT > 0` is a dose only and a value in `DV` on such a row is ignored (logged) |
+| `MDV` | missing dependent value | `0` is an observed value, `1` marks it as missing even with a value in `DV`; the row keeps its sampling time and is read as `NaN` (`keep_missing=False` drops it instead) |
 | `SD`/`SE`/`N` | uncertainty of a group curve | written by `write_events` when the batch carries them and read back into `sd`, `se` and `n`; `N` is constant within a subject |
 | `RATE` | infusion rate | duration `= AMT / RATE` for `RATE > 0`; `RATE -1`/`-2` (a modelled rate) is not data and raises |
 | `TINF` (Monolix `INFUSION DURATION`) | infusion duration | wins over `RATE` when positive |
@@ -52,7 +63,7 @@ flowchart LR
 | `SS` (Monolix `STEADY STATE`) | steady state dose | `1` stands for `ss_doses` (default 5) preceding doses at `II` and sets `attrs["steady_state_marker"]` on the batch; `0` is a plain dose, any other value raises |
 | `CMT`/`ADM` | compartment | not interpreted, not a route |
 
-Numeric columns accept missing cells, `.` and blank strings as missing values. Other non-numeric values raise an error with the column and row, so a typo does not silently remove an observation. `ss_doses` must be a non-negative integer. Dose expansion and padded dose storage are limited to one million records or slots by default; set `max_expanded_doses` in `read_events` or `Timecourses.from_events` explicitly when a larger protocol is needed. The limit is checked before allocating the expanded records or padded arrays.
+Numeric columns accept missing cells, `.` and blank strings as missing values. Other non-numeric values raise an error with the column and row, so a typo does not silently remove an observation. If `EVID` is present, every row must supply a finite integer from 0 through 4. Fractional, missing, infinite and unsupported event codes raise with the row and subject. Optional `MDV` and `SS` flags accept only 0 or 1; missing cells mean 0, while fractional, infinite and unsupported values raise. `ss_doses` must be a non-negative integer. Dose expansion and padded dose storage are limited to one million records or slots by default; set `max_expanded_doses` in `read_events` or `Timecourses.from_events` explicitly when a larger protocol is needed. The limit is checked before allocating the expanded records or padded arrays.
 
 ```python
 import io

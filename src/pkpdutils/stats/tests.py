@@ -553,6 +553,23 @@ EXACT_MAX_N: int = 50
 HL_MATERIALIZE_PAIRS: int = 250_000
 
 
+def _midpoint(a: np.ndarray | float, b: np.ndarray | float) -> np.ndarray:
+    """Average finite values without overflowing their intermediate sum.
+
+    Retain ordinary arithmetic (including subnormal precision) wherever its
+    sum is finite; halve the operands first only when that sum overflows.
+    """
+    a_arr, b_arr = np.asarray(a, dtype=np.float64), np.asarray(b, dtype=np.float64)
+    with np.errstate(over="ignore", invalid="ignore"):
+        total = a_arr + b_arr
+        result = np.asarray(total / 2.0)
+        overflowed = ~np.isfinite(total)
+        if np.any(overflowed):
+            a_arr, b_arr = np.broadcast_arrays(a_arr, b_arr)
+            result[overflowed] = a_arr[overflowed] / 2.0 + b_arr[overflowed] / 2.0
+        return result
+
+
 class _PairOrderStatistics:
     """Exact pair order selection without storing the quadratic population."""
 
@@ -570,8 +587,9 @@ class _PairOrderStatistics:
 
     def _value(self, i: int, j: int) -> float:
         # Match the arithmetic of the materialized implementation exactly.
-        value = float(self.x[i] + self.y[j])
-        return value / 2.0 if self.paired else value
+        if self.paired:
+            return float(_midpoint(self.x[i], self.y[j]))
+        return float(self.x[i] + self.y[j])
 
     def _count(self, pivot: float) -> tuple[int, float, float]:
         n = self.x.size
@@ -583,19 +601,22 @@ class _PairOrderStatistics:
         while np.any(left < right):
             active = np.flatnonzero(left < right)
             middle = left[active] + (right[active] - left[active]) // 2
-            values = self.x[active] + self.y[middle]
-            if self.paired:
-                values /= 2.0
+            values = (
+                _midpoint(self.x[active], self.y[middle])
+                if self.paired
+                else self.x[active] + self.y[middle]
+            )
             lower = values <= pivot
             left[active[lower]] = middle[lower] + 1
             right[active[~lower]] = middle[~lower]
         below_rows = np.flatnonzero(left > starts)
         above_rows = np.flatnonzero(left < self.y.size)
-        below_values = self.x[below_rows] + self.y[left[below_rows] - 1]
-        above_values = self.x[above_rows] + self.y[left[above_rows]]
         if self.paired:
-            below_values /= 2.0
-            above_values /= 2.0
+            below_values = _midpoint(self.x[below_rows], self.y[left[below_rows] - 1])
+            above_values = _midpoint(self.x[above_rows], self.y[left[above_rows]])
+        else:
+            below_values = self.x[below_rows] + self.y[left[below_rows] - 1]
+            above_values = self.x[above_rows] + self.y[left[above_rows]]
         return (
             int(np.sum(left - starts)),
             float(np.max(below_values)) if below_rows.size else -math.inf,
@@ -614,7 +635,7 @@ class _PairOrderStatistics:
             count, _, above = self._count(low)
             if rank <= count:
                 break
-            pivot = low / 2.0 + high / 2.0
+            pivot = float(_midpoint(low, high))
             if pivot <= low or pivot >= high:
                 pivot = low
             count, below, above = self._count(pivot)
@@ -629,7 +650,7 @@ class _PairOrderStatistics:
         middle = self.size // 2
         if self.size % 2:
             return self[middle]
-        return (self[middle - 1] + self[middle]) / 2.0
+        return float(_midpoint(self[middle - 1], self[middle]))
 
 
 def _signed_rank_counts(n: int) -> np.ndarray:
@@ -661,7 +682,8 @@ def _mann_whitney_counts(m: int, n: int) -> np.ndarray:
     \(\binom{m+n}{m}_q = \prod_{i=1}^{m} (1 - q^{n+i}) / (1 - q^i)\),
     accumulated one factor at a time: the division by \(1 - q^i\) is a prefix
     sum of stride \(i\), the multiplication by \(1 - q^{n+i}\) a subtraction
-    of stride \(n + i\), both exact in integers.
+    of stride \(n + i\), both computed with Python integers before the
+    completed non-negative distribution is converted to float for probabilities.
 
     Args:
         m: the size of the first sample.
@@ -671,15 +693,18 @@ def _mann_whitney_counts(m: int, n: int) -> np.ndarray:
         The counts, indexed by the value of `U` from 0 to `m * n`.
     """
     size = m * n + 1
-    counts = np.zeros(size)
-    counts[0] = 1.0
+    # Cancellation in the polynomial division/subtraction corrupts even the
+    # tails if float64 is used here: at m=n=50, coefficients exceed 2**53.
+    # Python integers keep every intermediate coefficient exact.
+    counts = np.zeros(size, dtype=object)
+    counts[0] = 1
     for i in range(1, m + 1):
         # dividing by `1 - q**i` is the prefix sum of every residue class of i
         for offset in range(i):
             counts[offset::i] = np.cumsum(counts[offset::i])
         if n + i < size:
             counts[n + i :] = counts[n + i :] - counts[: size - n - i]
-    return counts
+    return counts.astype(np.float64)
 
 
 def _order_statistic(counts: np.ndarray, alpha: float) -> int:
@@ -771,7 +796,7 @@ def _walsh_averages(d: np.ndarray) -> np.ndarray:
         The `n (n + 1) / 2` averages, sorted.
     """
     i, j = np.triu_indices(d.size)
-    return np.sort((d[i] + d[j]) / 2.0)
+    return np.sort(_midpoint(d[i], d[j]))
 
 
 def hodges_lehmann(
@@ -924,7 +949,11 @@ def hodges_lehmann(
     effect = (
         estimates.median()
         if isinstance(estimates, _PairOrderStatistics)
-        else float(np.median(estimates))
+        else float(
+            _midpoint(
+                estimates[(estimates.size - 1) // 2], estimates[estimates.size // 2]
+            )
+        )
     )
     if rank < 1:
         logger.debug(

@@ -1053,3 +1053,112 @@ def test_events_accepts_explicit_missing_numeric_markers(marker: str) -> None:
     )
     np.testing.assert_array_equal(batch.values, [[2.0, 1.0]])
     np.testing.assert_array_equal(batch.dose_amount, [[100.0]])
+
+
+def test_events_preserves_separate_dose_and_observation_at_same_time() -> None:
+    # Explicit event codes identify separate events. A positive DV on EVID 1
+    # can be a dummy value and must never become an automatic observation.
+    frame = pd.DataFrame(
+        {
+            "ID": ["S1"] * 3,
+            "TIME": [0.0, 0.0, 1.0],
+            "DV": [999.0, 5.0, 3.0],
+            "AMT": [100.0, 0.0, 0.0],
+            "EVID": [1, 0, 0],
+            "MDV": [0, 0, 0],
+        }
+    )
+    batch = read_events(
+        frame, time_unit="hr", unit="mg/L", dose_unit="mg", route="iv_bolus"
+    )
+    observation = batch.sel(individual="S1")
+    np.testing.assert_array_equal(observation.time, [0.0, 1.0])
+    np.testing.assert_array_equal(observation.value, [5.0, 3.0])
+    np.testing.assert_array_equal(batch.dose_time, [[0.0]])
+    np.testing.assert_array_equal(batch.dose_amount, [[100.0]])
+    back = read_events(
+        write_events(batch),
+        time_unit="hr",
+        unit="mg/L",
+        dose_unit="mg",
+        route="iv_bolus",
+    )
+    assert back == batch
+
+
+@pytest.mark.parametrize(
+    "flag,bad",
+    [
+        ("EVID", 0.5),
+        ("EVID", -1),
+        ("EVID", 5),
+        ("EVID", np.nan),
+        ("EVID", np.inf),
+        ("EVID", -np.inf),
+        ("EVID", "typo"),
+        ("MDV", 0.5),
+        ("MDV", -1),
+        ("MDV", 2),
+        ("MDV", np.inf),
+        ("SS", 0.5),
+        ("SS", -1),
+        ("SS", 2),
+        ("SS", np.inf),
+    ],
+)
+def test_events_rejects_invalid_flags_with_row_and_subject(flag: str, bad: Any) -> None:
+    frame = pd.DataFrame(
+        {
+            "ID": ["S1", "S2", "S2"],
+            "TIME": [0.0, 1.0, 2.0],
+            "DV": [np.nan, 5.0, 3.0],
+            "AMT": [100.0, 0.0, 0.0],
+            "EVID": [1.0, 0.0, 0.0],
+            "MDV": [1.0, 0.0, 0.0],
+            "SS": [0.0, 0.0, 0.0],
+        }
+    )
+    frame[flag] = frame[flag].astype(object)
+    frame.loc[1, flag] = bad
+    with pytest.raises(ValueError) as error:
+        read_events(frame, time_unit="hr", unit="mg/L", dose_unit="mg", route="oral")
+    message = str(error.value)
+    assert flag in message
+    assert "row 1" in message
+    assert "subject S2" in message
+
+
+@pytest.mark.parametrize("flag", ["MDV", "SS"])
+def test_events_validates_optional_flags_before_dropping_other_events(
+    flag: str,
+) -> None:
+    frame = pd.DataFrame(
+        {
+            "ID": ["S1"] * 3,
+            "TIME": [0.0, 1.0, 2.0],
+            "DV": [np.nan, 5.0, 3.0],
+            "AMT": [100.0, 0.0, 0.0],
+            "EVID": [1, 2, 0],
+            flag: [0.0, np.inf, 0.0],
+        }
+    )
+    with pytest.raises(ValueError, match=rf"{flag}.*subject S1, row 1"):
+        read_events(frame, time_unit="hr", unit="mg/L", dose_unit="mg", route="oral")
+
+
+def test_events_defaults_missing_optional_flags_to_zero() -> None:
+    frame = pd.DataFrame(
+        {
+            "ID": ["S1"] * 3,
+            "TIME": [0.0, 1.0, 2.0],
+            "DV": [np.nan, 5.0, 3.0],
+            "AMT": [100.0, 0.0, 0.0],
+            "EVID": [1, 0, 0],
+            "MDV": [1.0, np.nan, 0.0],
+            "SS": [0.0, np.nan, 0.0],
+        }
+    )
+    batch = read_events(
+        frame, time_unit="hr", unit="mg/L", dose_unit="mg", route="oral"
+    )
+    np.testing.assert_array_equal(batch.sel(individual="S1").value, [5.0, 3.0])

@@ -1,3 +1,5 @@
+from typing import Any
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -437,3 +439,44 @@ def test_timecourse_rejects_an_empty_unit() -> None:
         Timecourse(time=[0, 1], value=[1, 2], time_unit="", unit="mg/l")
     tc = Timecourse(time=[0, 1], value=[1, 2], time_unit="hr", unit="dimensionless")
     assert tc.unit == "dimensionless"
+
+
+@pytest.mark.parametrize("bad_time", [np.inf, -np.inf])
+def test_timecourse_rejects_infinite_sampling_time(bad_time: float) -> None:
+    with pytest.raises(ValueError, match=r"time.*finite"):
+        Timecourse(time=[0.0, bad_time], value=[1.0, 2.0], time_unit="hr", unit="mg/L")
+
+
+@pytest.mark.parametrize(
+    "field,bad_value",
+    [
+        ("n", 0.0),
+        ("n", -1.0),
+        ("n", np.inf),
+        ("sd", -1.0),
+        ("sd", np.inf),
+        ("se", -1.0),
+        ("se", np.inf),
+    ],
+)
+def test_timecourse_rejects_invalid_uncertainty(field: str, bad_value: float) -> None:
+    fields: dict[str, Any] = {
+        field: bad_value if field == "n" else [bad_value, bad_value]
+    }
+    with pytest.raises(ValueError, match=field):
+        Timecourse(
+            time=[0.0, 1.0], value=[1.0, 2.0], time_unit="hr", unit="mg/L", **fields
+        )
+
+
+def test_timecourse_keeps_unknown_counts_zero_spread_and_empty_points() -> None:
+    tc = Timecourse(
+        time=[0.0, 1.0, 2.0],
+        value=[1.0, np.nan, 2.0],
+        n=[np.nan, 0.0, 4.0],
+        sd=[0.0, np.nan, 1.0],
+        time_unit="hr",
+        unit="mg/L",
+    )
+    assert tc.se is not None
+    np.testing.assert_allclose(tc.se, [np.nan, np.nan, 0.5], equal_nan=True)
