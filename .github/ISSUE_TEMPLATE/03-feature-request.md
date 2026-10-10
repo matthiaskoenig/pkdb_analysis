@@ -7,7 +7,7 @@ about: Suggest an idea for this project
 
 <!-- Please make sure you check all these items before submitting your feature request. -->
 
-- [ ] There are [no similar issues or pull requests](https://github.com/matthiaskoenig/pkdb_analysis/issues) for this yet.
+- [ ] There are [no similar issues or pull requests](https://github.com/matthiaskoenig/pkpdutils/issues) for this yet.
 
 ### Is your feature related to a problem? Please describe it.
 
