@@ -8,7 +8,7 @@ about: Report a bug to help improve this project
 Before you create a new problem report, please look through the list of existing open
  and closed issues to see if there are similar ones.
 
-https://github.com/matthiaskoenig/pkdb_analysis/issues
+https://github.com/matthiaskoenig/pkpdutils/issues
 
 -->
 
@@ -37,7 +37,7 @@ Create a [minimal, complete, verifiable example](https://stackoverflow.com/help/
 <!-- Run the following code and paste the output between the ``` tickmarks below
 inside the details block.
 
-python -c "import pkdb_analysis;pkdb_analysis.show_versions()"
+python -c "import sys, pkpdutils; print(sys.version, pkpdutils.__version__)"
 
 -->
 
